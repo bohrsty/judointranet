@@ -1,0 +1,73 @@
+<pdml>
+<body>
+<font face="Helvetica" size="12pt">
+	<b>
+		<cell left="20mm" top="15mm" width="150mm" align="center" next="break">Ausschreibung: ###t.name### (###t.guertelfarbe###)</cell>
+		<cell left="20mm" width="150mm" align="center">der ###t.altersklasse### am ###t.datum.j.F.Y### in ###a.hallen.ort###</cell>
+	</b>
+</font>
+<font face="Helvetica" size="10pt">
+	<b><cell left="20mm" top="50mm" width="40mm" align="left" next="right">Veranstalter:</cell></b>
+	<multicell width="140mm" align="left" next="break">###a.veranstalter###</multicell>
+	<br height="3mm">
+	<b><cell left="20mm" width="40mm" align="left" next="right">Ausrichter:</cell></b>
+	<multicell width="140mm" align="left" next="break">###a.verein###</multicell>
+	<br height="3mm">
+	<b><cell left="20mm" width="40mm" align="left" next="right">Ort:</cell></b>
+	<multicell width="140mm" align="left" next="break">###a.hallen.halle###</multicell>
+	<br height="3mm">
+	<b><cell left="20mm" width="40mm" align="left" next="right">Wiegen:</cell></b>
+	<multicell width="140mm" align="left" next="break">###a.wiegen###</multicell>
+	<br height="3mm">
+	<b><cell left="20mm" width="40mm" align="left" next="right">Startberechtigt:</cell></b>
+	<multicell width="140mm" align="left" next="break">###a.startberechtigt###</multicell>
+	<br height="3mm">
+	<b><cell left="20mm" width="40mm" align="left" next="right">Gewichtsklassen:</cell></b>
+	<multicell width="140mm" align="left" next="break">###a.gewichtsklassen###</multicell>
+	<br height="3mm">
+	<b><cell left="20mm" width="40mm" align="left" next="right">Modus:</cell></b>
+	<multicell width="140mm" align="left" next="break">###a.modus###</multicell>
+	<br height="3mm">
+	<b><cell left="20mm" width="40mm" align="left" next="right">Meldegeld:</cell></b>
+	<multicell width="140mm" align="left" next="break">###a.meldegeld###</multicell>
+	<br height="3mm">
+	<b><cell left="20mm" width="40mm" align="left" next="right">Meldung:</cell></b>
+	<multicell width="140mm" align="left" next="break">###a.meldung###</multicell>
+	<br height="3mm">
+	<b><cell left="20mm" width="40mm" align="left" next="right">Meldungen an:</cell></b>
+	<multicell width="140mm" align="left" next="break">###a.referenten.komplett###</multicell>
+	<br height="3mm">
+	<b><cell left="20mm" width="40mm" align="left" next="right">Meldeschluss:</cell></b>
+	<multicell width="140mm" align="left" next="break">###a.meldeschluss###</multicell>
+	<br height="3mm">
+	<b><cell left="20mm" width="40mm" align="left" next="right">Hinweis:</cell></b>
+	<multicell width="140mm" align="left" next="break">###a.hinweis###</multicell>
+</font>
+	
+	<img src="tpl/pdml/njv_logo.jpg" top="10mm" left="182.9mm" height="13mm">
+	<img src="tpl/pdml/ls_logo.jpg" top="25.7mm" left="182.9mm" height="13mm">
+	
+	<line from="20mm,24.4mm" to="201.8mm,24.4mm" width="0.5mm" color="#fe0000">
+	<line from="20mm,282.8mm" to="201.8mm,282.8mm" width="0.5mm" color="#000000">
+	
+	<font face="Helvetica" size="10pt">
+		<b><cell left="20mm" top="26mm" width="160mm" align="right">Bezirksfachverband Judo L&uuml;neburg/Stade</cell></b>
+	</font>
+	
+	<font face="Helvetica" size="8pt">
+		<cell left="20mm" top="283.8mm" width="40mm" align="left" next="right">[Version ###a.version###]</cell>
+	</font>
+	<font face="Helvetica" size="6pt">
+		<multicell width="140mm" align="right">Eine Untergliederung des Nieders&auml;chsischen Judoverbandes e.V.</multicell>
+	</font>
+	
+	<font face="Helvetica" size="10pt">
+		<cell left="30mm" top="274mm" width="100mm" align="left" next="right">###a.referenten.namen###</cell>
+		<multicell width="80mm" align="left" next="break">###a.ansp###</multicell>
+		<br height="1mm">
+		<cell left="30mm" width="100mm" align="left" next="right">###a.referenten.posten###</cell>
+		<multicell width="80mm" align="left" next="break">###a.verein###</multicell>
+	</font>
+
+</body>
+</pdml>
