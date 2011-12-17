@@ -122,7 +122,8 @@ class NBform_v_ansp extends NBform {
 		$optionen = array(0 => '---ausw&auml;hlen---');
 		while($zeile = $ergebnis->fetch_array(MYSQL_ASSOC)) {
 			
-			$optionen[$zeile['id']] = utf8_encode($zeile['bezeichnung']);
+//			$optionen[$zeile['id']] = utf8_encode($zeile['bezeichnung']);
+			$optionen[$zeile['id']] = $zeile['bezeichnung'];
 		}
 		
 		// datenbankobjekt schliessen
@@ -211,7 +212,8 @@ class NBform_v_ansp extends NBform {
 			if($i != count($explode)-1) { 
 				$sql_into .= ', ';
 			}
-			$sql_values .= '"'.utf8_decode($this->get_daten_by_name($name)->get_wert()).'"';
+//			$sql_values .= '"'.utf8_decode($this->get_daten_by_name($name)->get_wert()).'"';
+			$sql_values .= '"'.$this->get_daten_by_name($name)->get_wert().'"';
 			if($i != count($explode)-1) { 
 				$sql_values .= ', ';
 			}

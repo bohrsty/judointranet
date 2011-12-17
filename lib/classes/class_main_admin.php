@@ -233,7 +233,8 @@ class NBmain_admin extends NBmain {
 			if($th == '') {
 				for($i=1;$i<count($schluessel);$i++) {
 					
-					$args = array($this->replace_umlaute(htmlspecialchars(utf8_encode($schluessel[$i]))));
+//					$args = array($this->replace_umlaute(htmlspecialchars(utf8_encode($schluessel[$i]))));
+					$args = array($this->replace_umlaute(htmlspecialchars($schluessel[$i])));
 					$th .= $this->parse_wrapper($this->get_from_gc('adminliste_th','wrapper'),$args);
 				}
 				// tr zufuegen
@@ -251,7 +252,8 @@ class NBmain_admin extends NBmain {
 						$td .= $this->parse_wrapper($this->get_from_gc('adminliste_td','wrapper'),$args);
 					} else {
 						
-						$args = array(nl2br($this->replace_umlaute(htmlspecialchars(utf8_encode($wert)))));
+//						$args = array(nl2br($this->replace_umlaute(htmlspecialchars(utf8_encode($wert)))));
+						$args = array(nl2br($this->replace_umlaute(htmlspecialchars($wert))));
 						$td .= $this->parse_wrapper($this->get_from_gc('adminliste_td','wrapper'),$args);
 					}
 				}

@@ -27,6 +27,7 @@ class NBdb extends NBobject {
 		
 		// klassenvariablen initialisieren
 		$db = new mysqli($this->get_from_gc('host','db'), $this->get_from_gc('username','db'), $this->get_from_gc('password','db'), $this->get_from_gc('database','db'));
+		$db->set_charset('utf8');
 		$this->set_db($db);
 	}
 	

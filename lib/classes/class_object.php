@@ -275,9 +275,13 @@ class NBobject {
 				switch($typ) {
 					
 					case 'html':
-						$string = str_replace('###'.$keys[$i].'###',nl2br($this->replace_umlaute(htmlspecialchars(utf8_encode($array[$keys[$i]])))),$string);
+//						$string = str_replace('###'.$keys[$i].'###',nl2br($this->replace_umlaute(htmlspecialchars(utf8_encode($array[$keys[$i]])))),$string);
+						$string = str_replace('###'.$keys[$i].'###',nl2br($this->replace_umlaute(htmlspecialchars($array[$keys[$i]]))),$string);
 					break;
 					case 'pdml':
+						$string = str_replace('###'.$keys[$i].'###',nl2br($array[$keys[$i]]),$string);
+					break;
+					case 'html2pdf':
 						$string = str_replace('###'.$keys[$i].'###',nl2br($array[$keys[$i]]),$string);
 					break;
 					case 'text':

@@ -27,7 +27,7 @@ $_SESSION['GC'] = $GC;
 
 $main = new NBmain();
 
-$main->inhalt('<div class="align_right"><p class="fsize_07">Eingeloggt als: '.utf8_encode($_SESSION['benutzer']->get_bezeichnung()). ' ['.$_SESSION['benutzer']->get_login().']</p></div>');
+$main->inhalt('<div class="align_right"><p class="fsize_07">Eingeloggt als: '.$_SESSION['benutzer']->get_bezeichnung(). ' ['.$_SESSION['benutzer']->get_login().']</p></div>');
 $main->inhalt('<p><h2>Herzlich Willkommen</h2></p>');
 $main->inhalt('<p>auf den Intranetseiten des Bezirksfachverbandes L&uuml;neburg/Stade</p>');
 

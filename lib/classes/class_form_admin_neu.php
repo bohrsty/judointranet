@@ -170,7 +170,8 @@ class NBform_admin_neu extends NBform {
 			if($i != count($explode)-1) { 
 				$sql_into .= ', ';
 			}
-			$sql_values .= '"'.utf8_decode($this->get_daten_by_name($name)->get_wert()).'"';
+//			$sql_values .= '"'.utf8_decode($this->get_daten_by_name($name)->get_wert()).'"';
+			$sql_values .= '"'.$this->get_daten_by_name($name)->get_wert().'"';
 			if($i != count($explode)-1) { 
 				$sql_values .= ', ';
 			}
@@ -245,7 +246,8 @@ class NBform_admin_neu extends NBform {
 			// felder trennen
 			list($name,$name2) = explode('.',$feld,3);
 			
-			$this->get_daten_by_name($name)->set_wert(utf8_encode($werte[$name]));
+//			$this->get_daten_by_name($name)->set_wert(utf8_encode($werte[$name]));
+			$this->get_daten_by_name($name)->set_wert($werte[$name]);
 		}
 		$this->set_checked(false);
 	}

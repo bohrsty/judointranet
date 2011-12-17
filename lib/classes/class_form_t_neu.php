@@ -120,7 +120,8 @@ class NBform_t_neu extends NBform {
 		$optionen = array(0 => '---ausw&auml;hlen---');
 		while($zeile = $ergebnis->fetch_array(MYSQL_ASSOC)) {
 			
-			$optionen[$zeile['id']] = utf8_encode($zeile['bezeichnung']);
+//			$optionen[$zeile['id']] = utf8_encode($zeile['bezeichnung']);
+			$optionen[$zeile['id']] = $zeile['bezeichnung'];
 		}
 		
 		// datenbankobjekt schliessen
@@ -212,8 +213,10 @@ class NBform_t_neu extends NBform {
 					VALUES
 						(NULL,"'
 						.$termin_datum.'","'
-						.utf8_decode($this->get_daten_by_name('t.name')->get_wert()).'","'
-						.utf8_decode($this->get_daten_by_name('t.kurzname')->get_wert()).'","'
+//						.utf8_decode($this->get_daten_by_name('t.name')->get_wert()).'","'
+//						.utf8_decode($this->get_daten_by_name('t.kurzname')->get_wert()).'","'
+						.$this->get_daten_by_name('t.name')->get_wert().'","'
+						.$this->get_daten_by_name('t.kurzname')->get_wert().'","'
 						.$this->get_daten_by_name('t.kategorie')->get_wert().'",
 						"")';
 		
@@ -259,10 +262,14 @@ class NBform_t_neu extends NBform {
 		$db->close();
 				
 		// daten setzen
-		$this->get_daten_by_name('t.datum')->set_wert(utf8_encode(date('d.m.Y',strtotime($werte['datum']))));
-		$this->get_daten_by_name('t.name')->set_wert(utf8_encode($werte['name']));
-		$this->get_daten_by_name('t.kurzname')->set_wert(utf8_encode($werte['kurzname']));
-		$this->get_daten_by_name('t.kategorie')->set_wert(utf8_encode($werte['kategorie']));
+//		$this->get_daten_by_name('t.datum')->set_wert(utf8_encode(date('d.m.Y',strtotime($werte['datum']))));
+//		$this->get_daten_by_name('t.name')->set_wert(utf8_encode($werte['name']));
+//		$this->get_daten_by_name('t.kurzname')->set_wert(utf8_encode($werte['kurzname']));
+//		$this->get_daten_by_name('t.kategorie')->set_wert(utf8_encode($werte['kategorie']));
+		$this->get_daten_by_name('t.datum')->set_wert(date('d.m.Y',strtotime($werte['datum'])));
+		$this->get_daten_by_name('t.name')->set_wert($werte['name']);
+		$this->get_daten_by_name('t.kurzname')->set_wert($werte['kurzname']);
+		$this->get_daten_by_name('t.kategorie')->set_wert($werte['kategorie']);
 		
 		$this->set_checked(false);
 		
@@ -298,9 +305,11 @@ class NBform_t_neu extends NBform {
 			// sql zusammenbauen
 			// datum formatieren
 			if($name2 == 'datum') {
-				$sql .= $name2.'="'.utf8_decode(date('Y-m-d',strtotime($this->get_daten_by_name($name)->get_wert()))).'"';
+//				$sql .= $name2.'="'.utf8_decode(date('Y-m-d',strtotime($this->get_daten_by_name($name)->get_wert()))).'"';
+				$sql .= $name2.'="'.date('Y-m-d',strtotime($this->get_daten_by_name($name)->get_wert())).'"';
 			} else {
-				$sql .= $name2.'="'.utf8_decode($this->get_daten_by_name($name)->get_wert()).'"';
+//				$sql .= $name2.'="'.utf8_decode($this->get_daten_by_name($name)->get_wert()).'"';
+				$sql .= $name2.'="'.$this->get_daten_by_name($name)->get_wert().'"';
 			}
 			if($i != count($explode)-1) { 
 				$sql .= ', ';

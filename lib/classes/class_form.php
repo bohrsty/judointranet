@@ -301,7 +301,8 @@ class NBform extends NBobject {
 			list($name,$name2) = explode('.',$feld,3);
 			
 			// sql zusammenbauen
-			$sql .= $name.'="'.utf8_decode($this->get_daten_by_name($name)->get_wert()).'"';
+//			$sql .= $name.'="'.utf8_decode($this->get_daten_by_name($name)->get_wert()).'"';
+			$sql .= $name.'="'.$this->get_daten_by_name($name)->get_wert().'"';
 			if($i != count($explode)-1) { 
 				$sql .= ', ';
 			}

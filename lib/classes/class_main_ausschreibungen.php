@@ -473,9 +473,12 @@ class NBmain_ausschreibungen extends NBmain {
 			// reihe erzeugen
 			$reihe_args = array(	$class,
 									date('d.m.Y',strtotime($werte['datum'])),
-									htmlentities($werte['name']),
-									htmlentities($werte['altersklasse']),
-									htmlentities($werte['ort']),
+//									htmlentities($werte['name']),
+									$this->replace_umlaute($werte['name']),
+//									htmlentities($werte['altersklasse']),
+									$this->replace_umlaute($werte['altersklasse']),
+//									htmlentities($werte['ort']),
+									$this->replace_umlaute($werte['ort']),
 									$links);
 			$reihen .= $this->parse_wrapper($this->get_from_gc('terminliste_reihe','wrapper'),$reihe_args);
 			
@@ -530,7 +533,8 @@ class NBmain_ausschreibungen extends NBmain {
 					a.meldeschluss AS "a.meldeschluss",a.meldung_an AS "split.meldung_an",
 					hw.hinweis AS "a.hinweis",
 					van.name AS "a.ansp",
-					vl.pfad AS "pdml.path"
+					vl.pfad AS "pdml.path",
+					vl.pfad AS "html2pdf.path"
 					FROM termin AS t,
 					t_kategorie AS k,
 					a_hallen AS h,
@@ -636,12 +640,12 @@ class NBmain_ausschreibungen extends NBmain {
 			// 20100101
 			$ausschreibung['t.datum.Ymd'] = date('Ymd',strtotime($ausschreibung['t.datum']));
 			// 01. Januar 2010
-			$ausschreibung['t.datum.j.F.Y'] = strftime('%e. %B %Y',strtotime($ausschreibung['t.datum']));
+			$ausschreibung['t.datum.j.F.Y'] = utf8_encode(strftime('%e. %B %Y',strtotime($ausschreibung['t.datum'])));
 			// 01012010
 			$ausschreibung['t.datum.dmY'] = date('dmY',strtotime($ausschreibung['t.datum']));
 			
 			// meldeschluss datum formatieren
-			$ausschreibung['a.meldeschluss'] = strftime('%e. %B %Y',strtotime($ausschreibung['a.meldeschluss']));
+			$ausschreibung['a.meldeschluss'] = utf8_encode(strftime('%e. %B %Y',strtotime($ausschreibung['a.meldeschluss'])));
 			
 			// version erzeugen
 			$ausschreibung['a.version'] = date('dmy');
@@ -671,7 +675,8 @@ class NBmain_ausschreibungen extends NBmain {
 			}
 			
 			// pdf-dateinamen erzeugen
-			$ausschreibung['pdml.filename'] = $this->replace_marker($this->get_from_gc('ausschr_filename_tpl','termin'),$ausschreibung);
+//			$ausschreibung['pdml.filename'] = $this->replace_marker($this->get_from_gc('ausschr_filename_tpl','termin'),$ausschreibung);
+			$ausschreibung['html2pdf.filename'] = $this->replace_marker($this->get_from_gc('ausschr_filename_tpl','termin'),$ausschreibung);
 			
 			// rueckgabe
 			return $ausschreibung;
@@ -776,22 +781,40 @@ class NBmain_ausschreibungen extends NBmain {
 					$html .= $this->read_error('tid_not_found');
 				} else {
 				
-					// pdml-datei einlesen
-					$fh = fopen($ausschreibung['pdml.path'],'r');
-					$pdml = fread($fh,filesize($ausschreibung['pdml.path']));
+//					// pdml-datei einlesen
+//					$fh = fopen($ausschreibung['pdml.path'],'r');
+					// html2pdf-datei einlesen
+					$fh = fopen($ausschreibung['html2pdf.path'],'r');
+//					$pdml = fread($fh,filesize($ausschreibung['pdml.path']));
+					$html2pdf = fread($fh,filesize($ausschreibung['html2pdf.path']));
 					fclose($fh);
 			
 					// marker ersetzen
-					$tmp = $this->replace_marker($pdml,$ausschreibung,'pdml');
-					$pdml = $this->replace_marker($tmp,$ausschreibung,'pdml');
+//					$tmp = $this->replace_marker($pdml,$ausschreibung,'pdml');
+//					$pdml = $this->replace_marker($tmp,$ausschreibung,'pdml');
+					$tmp = $this->replace_marker($html2pdf,$ausschreibung,'html2pdf');
+					$html2pdf = $this->replace_marker($tmp,$ausschreibung,'html2pdf');
+					$html2pdf = $this->replace_umlaute($html2pdf);
 					
-					// pdml vorbereiten
-					$_SESSION['pdml']['dateiname'] = $ausschreibung['pdml.filename'];
-					$_SESSION['pdml']['pdml'] = $pdml;
+					// pdf-ausgabe vorbereiten
+					require_once('lib/html2pdf/html2pdf.class.php');
 					
-					// pdml extern aufrufen
-					header('Location: topdf.php');
-					exit();
+					// objekt erzeugen
+					$pdf = new HTML2PDF('P', 'A4', 'de', true, 'UTF-8', array(0, 0, 0, 0));
+					
+					// konvertieren
+					$pdf->writeHTML($html2pdf, false);
+					
+					// ausgabe
+					$pdf->Output($ausschreibung['html2pdf.filename'],'D');
+					
+//					// pdml vorbereiten
+//					$_SESSION['pdml']['dateiname'] = $ausschreibung['pdml.filename'];
+//					$_SESSION['pdml']['pdml'] = $pdml;
+					
+//					// pdml extern aufrufen
+//					header('Location: topdf.php');
+//					exit();
 				}
 				
 			break;

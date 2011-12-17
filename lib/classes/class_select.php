@@ -285,10 +285,12 @@ class NBselect extends NBobject {
 			// wenn v.ansp, verein anhaengen
 			if($name == 'v.ansp') {
 				
-				$return = utf8_encode($zeile['abez']).' ('.utf8_encode($zeile['vbez']).')';
+//				$return = utf8_encode($zeile['abez']).' ('.utf8_encode($zeile['vbez']).')';
+				$return = $zeile['abez'].' ('.$zeile['vbez'].')';
 			} else {
 				
-				$return = utf8_encode($zeile['bezeichnung']);
+//				$return = utf8_encode($zeile['bezeichnung']);
+				$return = $zeile['bezeichnung'];
 			}
 		}
 		

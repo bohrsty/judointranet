@@ -136,10 +136,12 @@ class NBform_a_neu extends NBform {
 			// wenn v.ansp, verein anhaengen
 			if($name == 'v.ansp') {
 				
-				$optionen[$zeile['id']] = utf8_encode($zeile['abez']).' ('.utf8_encode($zeile['vbez']).')';
+//				$optionen[$zeile['id']] = utf8_encode($zeile['abez']).' ('.utf8_encode($zeile['vbez']).')';
+				$optionen[$zeile['id']] = $zeile['abez'].' ('.$zeile['vbez'].')';
 			} else {
 				
-				$optionen[$zeile['id']] = utf8_encode($zeile['bezeichnung']);
+//				$optionen[$zeile['id']] = utf8_encode($zeile['bezeichnung']);
+				$optionen[$zeile['id']] = $zeile['bezeichnung'];
 			}
 		}
 		
@@ -330,19 +332,25 @@ class NBform_a_neu extends NBform {
 		
 			// wenn datum, umwandeln
 			if($name == 'a.meldeschluss') {
-				$this->get_daten_by_name($name)->set_wert(utf8_encode(date('d.m.Y',strtotime($wert))));
+//				$this->get_daten_by_name($name)->set_wert(utf8_encode(date('d.m.Y',strtotime($wert))));
+				$this->get_daten_by_name($name)->set_wert(date('d.m.Y',strtotime($wert)));
 			} elseif($name == 'meldung_an') {
 				// pruefen, ob mehrere
 				if(strpos($wert,',') === false) {
-					$this->get_daten_by_name('a.meldung-an0')->set_wert(utf8_encode($wert));
-					$this->get_daten_by_name('a.meldung-an1')->set_wert(utf8_encode(0));
+//					$this->get_daten_by_name('a.meldung-an0')->set_wert(utf8_encode($wert));
+//					$this->get_daten_by_name('a.meldung-an1')->set_wert(utf8_encode(0));
+					$this->get_daten_by_name('a.meldung-an0')->set_wert($wert);
+					$this->get_daten_by_name('a.meldung-an1')->set_wert(0);
 				} else {
 					list($m1,$m2) = explode(',',$wert);
-					$this->get_daten_by_name('a.meldung-an0')->set_wert(utf8_encode($m1));
-					$this->get_daten_by_name('a.meldung-an1')->set_wert(utf8_encode($m2));
+//					$this->get_daten_by_name('a.meldung-an0')->set_wert(utf8_encode($m1));
+//					$this->get_daten_by_name('a.meldung-an1')->set_wert(utf8_encode($m2));
+					$this->get_daten_by_name('a.meldung-an0')->set_wert($m1);
+					$this->get_daten_by_name('a.meldung-an1')->set_wert($m2);
 				}
 			} else {
-				$this->get_daten_by_name($name)->set_wert(utf8_encode($wert));
+//				$this->get_daten_by_name($name)->set_wert(utf8_encode($wert));
+				$this->get_daten_by_name($name)->set_wert($wert);
 			}
 		}
 		
@@ -381,7 +389,8 @@ class NBform_a_neu extends NBform {
 			// sql zusammenbauen
 			// datum formatieren
 			if($name2 == 'meldeschluss') {
-				$sql .= $name2.'="'.utf8_decode(date('Y-m-d',strtotime($this->get_daten_by_name($name)->get_wert()))).'"';
+//				$sql .= $name2.'="'.utf8_decode(date('Y-m-d',strtotime($this->get_daten_by_name($name)->get_wert()))).'"';
+				$sql .= $name2.'="'.date('Y-m-d',strtotime($this->get_daten_by_name($name)->get_wert())).'"';
 			} elseif(strpos($name2,'meldung-an') !== false) {
 				// nach 1. und 2. referenten trennen
 				if($name2 == 'meldung-an0') {
@@ -395,7 +404,8 @@ class NBform_a_neu extends NBform {
 					$sql .= 'meldung_an ="'.$meldung_an.'", ';
 				}
 			} else {
-				$sql .= $name2.'_id ="'.utf8_decode($this->get_daten_by_name($name)->get_wert()).'"';
+//				$sql .= $name2.'_id ="'.utf8_decode($this->get_daten_by_name($name)->get_wert()).'"';
+				$sql .= $name2.'_id ="'.$this->get_daten_by_name($name)->get_wert().'"';
 			}
 			if($i != count($explode)-1 && strpos($name2,'meldung-an') === false) { 
 				$sql .= ', ';
