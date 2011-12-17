@@ -12,13 +12,12 @@ require('lib/functions.php');
 /*
  * konfig einlesen und diverse einstellungen festlegen
  */
-$GC = init();
+init();
 
 /*
- * session starten und konfig in session speichern
+ * session starten
  */
 session_start();
-$_SESSION['GC'] = $GC;
 
 
 /*

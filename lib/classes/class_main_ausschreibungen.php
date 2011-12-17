@@ -93,7 +93,7 @@ class NBmain_ausschreibungen extends NBmain {
 			}
 			
 			// formular anzeigen	
-			$_SESSION['form_a_neu'] = new NBform_a_neu($_SESSION['GC']['termin']['a_neu_tpl_path'],'ausschreibungen.php?id=ausschreibung&aktion=neu&tid='.$this->get_get('tid'));
+			$_SESSION['form_a_neu'] = new NBform_a_neu($this->get_from_gc('a_neu_tpl_path','termin'),'ausschreibungen.php?id=ausschreibung&aktion=neu&tid='.$this->get_get('tid'));
 		
 			// ausgabe
 			$html .= $_SESSION['form_a_neu']->to_html();
@@ -147,7 +147,7 @@ class NBmain_ausschreibungen extends NBmain {
 			}
 			
 			// formular anzeigen	
-			$_SESSION['form_t_neu'] = new NBform_t_neu($_SESSION['GC']['termin']['t_neu_tpl_path'],'ausschreibungen.php?id=termin&aktion=neu');
+			$_SESSION['form_t_neu'] = new NBform_t_neu($this->get_from_gc('t_neu_tpl_path','termin'),'ausschreibungen.php?id=termin&aktion=neu');
 		
 			// ausgabe
 			$html .= $_SESSION['form_t_neu']->to_html();
@@ -206,7 +206,7 @@ class NBmain_ausschreibungen extends NBmain {
 					}
 					
 					// formular anzeigen	
-					$_SESSION['form_a_bearbeiten'] = new NBform_a_neu($_SESSION['GC']['termin']['a_neu_tpl_path'],'ausschreibungen.php?id=ausschreibung&aktion=bearbeiten&aid='.$this->get_get('aid'));
+					$_SESSION['form_a_bearbeiten'] = new NBform_a_neu($this->get_from_gc('a_neu_tpl_path','termin'),'ausschreibungen.php?id=ausschreibung&aktion=bearbeiten&aid='.$this->get_get('aid'));
 					
 					// werte laden
 					$_SESSION['form_a_bearbeiten']->read_werte($this->get_get('aid'));
@@ -838,7 +838,7 @@ class NBmain_ausschreibungen extends NBmain {
 				} else {
 					
 					// formular anzeigen	
-					$_SESSION['form_t_bearbeiten'] = new NBform_t_neu($_SESSION['GC']['termin']['t_neu_tpl_path'],'ausschreibungen.php?id=termin&aktion=bearbeiten&tid='.$this->get_get('tid'));
+					$_SESSION['form_t_bearbeiten'] = new NBform_t_neu($this->get_from_gc('t_neu_tpl_path','termin'),'ausschreibungen.php?id=termin&aktion=bearbeiten&tid='.$this->get_get('tid'));
 					
 					// werte laden
 					$aid = $_SESSION['form_t_bearbeiten']->read_werte($this->get_get('tid'));

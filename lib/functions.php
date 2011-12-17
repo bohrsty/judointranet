@@ -8,10 +8,7 @@
 
 
 /**
- * setzt einige standardeinstellungen fuer das laufende skript liest die
- * konfig aus und gibt sie zurueck
- * 
- * @return array konfigurationsreinstellungen als array
+ * setzt einige standardeinstellungen fuer das laufende skript und liest die konfig ein
  */
 function init() {
 	
@@ -19,22 +16,22 @@ function init() {
 	define("SICHERUNG", 'Sicherung');
 	
 	// konfiguration einlesen
-	$GC = parse_ini_file('cnf/config.ini',true);
+	$GLOBALS['konfig'] = new NBkonfig('cnf/config.ini');
+	$GC = $GLOBALS['konfig'];
+	
 	// locale fuer datum auf deutsch setzen
 	setlocale(LC_ALL, 'de_DE@euro');
+	
 	// zeitzone setzen
-	date_default_timezone_set($GC['global']['timezone']);
+	date_default_timezone_set($GC->return_konfig('global','timezone'));
 	
 	// admin-button-beschriftungen setzen
-	$GC['intern']['submit_name'] = 'submit';
-	$GC['intern']['submit_wert'] = 'Speichern';
+	$GC->add_to_konfig('intern','submit_name','submit');
+	$GC->add_to_konfig('intern','submit_wert','Speichern');
 	
 	// login-button-beschriftungen setzen
-	$GC['intern']['submit_login_name'] = 'submit_login';
-	$GC['intern']['submit_login_wert'] = 'Login';
-	
-	// konfig zurueckgeben
-	return $GC;
+	$GC->add_to_konfig('intern','submit_login_name','submit_login');
+	$GC->add_to_konfig('intern','submit_login_wert','Login');
 }
 
 

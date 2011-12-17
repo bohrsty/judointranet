@@ -50,7 +50,7 @@ class NBdb extends NBobject {
 	/*
 	 * methoden
 	 */
-		/**
+	/**
 	 * instance_of den namen der klasse zurueck
 	 * 
 	 * @return string name der klasse

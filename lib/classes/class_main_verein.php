@@ -80,7 +80,7 @@ class NBmain_verein extends NBmain {
 			
 			// bearbeiten
 			// pruefen, ob formular abgeschickt
-			if(isset($_POST[$this->get_from_gc('submit_name','intern')]) && $_POST[$this->get_from_gc('submit_name','intern')] == $_SESSION['GC']['intern']['submit_wert']) {
+			if(isset($_POST[$this->get_from_gc('submit_name','intern')]) && $_POST[$this->get_from_gc('submit_name','intern')] == $this->get_from_gc('submit_wert','intern')) {
 			
 				// post einlesen
 				$html .= $_SESSION['form_vansp_bearbeiten']->read_post();
@@ -95,7 +95,7 @@ class NBmain_verein extends NBmain {
 			} else {
 				
 				// formular anzeigen	
-				$_SESSION['form_vansp_bearbeiten'] = new NBform_v_ansp($_SESSION['GC']['admin']['tpl_'.$id],'verein.php?id='.$id.'&aktion=bearbeiten&aid='.$this->get_get('aid'),$konfig);
+				$_SESSION['form_vansp_bearbeiten'] = new NBform_v_ansp($this->get_from_gc('tpl_'.$id,'admin'),'verein.php?id='.$id.'&aktion=bearbeiten&aid='.$this->get_get('aid'),$konfig);
 				
 				// werte laden
 				$_SESSION['form_vansp_bearbeiten']->read_werte($this->get_get('aid'));
@@ -157,7 +157,7 @@ class NBmain_verein extends NBmain {
 		
 			// neu erstellen (alles andere)
 			// pruefen, ob formular abgeschickt
-			if(isset($_POST[$this->get_from_gc('submit_name','intern')]) && $_POST[$this->get_from_gc('submit_name','intern')] == $_SESSION['GC']['intern']['submit_wert']) {
+			if(isset($_POST[$this->get_from_gc('submit_name','intern')]) && $_POST[$this->get_from_gc('submit_name','intern')] == $this->get_from_gc('submit_wert','intern')) {
 			
 				// post einlesen
 				$html .= $_SESSION['form_vansp_neu']->read_post();

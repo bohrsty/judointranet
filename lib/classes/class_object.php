@@ -47,41 +47,12 @@ class NBobject {
 	 * 
 	 * @param string $konfig zurueck zu gebende konfigurationseinstellung
 	 * @param string $bereich abschnitt der ini-datei
-	 * @param bool $aus_db true = aus der datenbank lesen, false = aus der session
 	 * @return string wert der konfigurationseinstellung
 	 */
-	protected function get_from_gc($konfig,$bereich,$aus_db=false) {
+	protected function get_from_gc($konfig,$bereich) {
 		
-		// pruefen, ob aus datenbank oder session
-		if($aus_db === false) {
-			
-			// aus session zurueckgeben
-			return $_SESSION['GC'][$bereich][$konfig];
-		} else {
-			
-			// aus datenbank zurueckgeben
-			// datenbank-objekt holen
-			$db = new NBdb();
-			
-			// abfrage vorbereiten
-			$sql = 'SELECT wert
-					FROM konfig
-					WHERE name="'.$konfig.'"
-					AND bereich="'.$bereich.'"';
-			
-			// abfrage ausfuehren
-			$resultat = $db->query($sql);
-			
-			// datenbank-objekt schliessen
-			$db->close();
-			
-			// resultat verarbeiten
-			list($wert) = $resultat->fetch_array(MYSQL_NUM);
-			
-			// rueckgabe
-			return $wert;
-		}
-		
+		// einstellung zurueckgeben
+		return $GLOBALS['konfig']->return_konfig($bereich,$konfig);
 	}
 	
 	
