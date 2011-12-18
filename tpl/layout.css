@@ -141,12 +141,12 @@ div.navi_1_a a {
 }
 
 table#table_terminlist {
-  border: 1px solid blue;
   width: 85%;
 }
 
 tr.tl_th {
-  background-color: red;
+  background-color: blue;
+  color: white;
 }
 
 tr.tl_row_odd {
@@ -158,19 +158,142 @@ tr.tl_row_odd td {
 }
 tr.tl_row_even {
   border: 0;
-  background-color: yellow;
+  background-color: #ccf;
 }
 
 tr.tl_row_even td {
   border: 0;
 }
 
+tr.td_row td {
+	vertical-align: top;
+	background-color: #ccf;
+}
+
+th.adminliste_th {
+	background-color: blue;
+	color: white;
+}
+
+td.adminliste_td {
+	background-color: #ccf;
+}
+
+th.details-name {
+	background-color: blue;
+	color: white;
+}
+
+td.details-name {
+	background-color: #ccf;
+}
+
+th.details-wert {
+	background-color: blue;
+	color: white;
+}
+
+td.details-wert {
+	background-color: #ccf;
+}
+
+th.ansp-name {
+	background-color: blue;
+	color: white;
+}
+
+td.ansp-name {
+	background-color: #ccf;
+	width: 400px;
+}
+
+th.ansp-aktionen {
+	background-color: blue;
+	color: white;
+}
+
+td.ansp-aktionen {
+	background-color: #ccf;
+}
+
+th.vl-nummer {
+	background-color: blue;
+	color: white;
+}
+
+td.vl-nummer {
+	background-color: #ccf;
+}
+
+th.vl-verein {
+	background-color: blue;
+	color: white;
+}
+
+td.vl-verein {
+	background-color: #ccf;
+}
+
+td.form_admin_text {
+	width: 150px;
+	vertical-align: top;
+}
+
+td.form_admin_form {
+	vertical-align: top;
+}
+
+td.form_aneu_text {
+	width: 300px;
+	vertical-align: top;
+}
+
+td.form_aneu_form {
+	vertical-align: top;
+}
+
+input.admin-input {
+	width: 400px;
+}
+
+textarea.admin-textarea {
+	width: 400px;
+	height: 200px;
+}
+
+input.vansp-input {
+	width: 400px;
+}
+
+textarea.vansp-textarea {
+	width: 400px;
+	height: 200px;
+}
+
+input.termin-input {
+	width: 400px;
+}
+
+textarea.termin-textarea {
+	width: 400px;
+	height: 200px;
+}
+
 /* login formular */
 div#div_login_form {
-	margin: 200px auto;
+	margin: 150px auto;
 	width: 400px;
-	height: 300px;
-	border: 1px dashed black;
+	height: 250px;
+	border: 2px dashed blue;
+	padding: 7px;
+}
+
+div#message {
+	margin-bottom: 50px;
+}
+
+div#message p {
+	font-weight: bold;
 }
 
 /* fehlermeldungen */
@@ -215,6 +338,7 @@ span.fett {
 
 .erforderlich {
 	color: red;
+	vertical-align: top;
 }
 
 p.unterstrichen {

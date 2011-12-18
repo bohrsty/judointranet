@@ -212,6 +212,9 @@ class NBmain_verein extends NBmain {
 		// datenbank-objekt schliessen
 		$db->close();
 		
+		// tabelle vorbereiten
+		$vl_daten = '';
+		
 		// resultat durchlaufen und in wrapper einbetten
 		while(list($nummer,$name) = $resultat->fetch_array(MYSQL_NUM)) {
 			
@@ -219,8 +222,12 @@ class NBmain_verein extends NBmain {
 //			$args = array($nummer,utf8_encode($name));
 			$args = array($nummer,$name);
 			
-			$return .= $this->parse_wrapper($this->get_from_gc('vereinsliste','wrapper'),$args);
+			$vl_daten .= $this->parse_wrapper($this->get_from_gc('vereinsliste_reihe','wrapper'),$args);
 		}
+		
+		// in tabelle einfuegen
+		$args = array($vl_daten);
+		$return .= $this->parse_wrapper($this->get_from_gc('vereinsliste_tabelle','wrapper'),$args);
 		
 		// rueckgabe
 		return $return;
@@ -255,6 +262,9 @@ class NBmain_verein extends NBmain {
 		// datenbank-objekt schliessen
 		$db->close();
 		
+		// tabelle vorbereiten
+		$ansp_daten = '';
+		
 		// resultat durchlaufen und in wrapper einbetten
 		while(list($a_id,$a_name,$v_name) = $resultat->fetch_array(MYSQL_NUM)) {
 			
@@ -262,8 +272,13 @@ class NBmain_verein extends NBmain {
 //			$args = array(utf8_encode($a_name).' ('.utf8_encode($v_name).')','verein.php?id=vansp&aktion=bearbeiten&aid='.$a_id,'verein.php?id=vansp&aktion=loeschen&aid='.$a_id);
 			$args = array($a_name.' ('.$v_name.')','verein.php?id=vansp&aktion=bearbeiten&aid='.$a_id,'verein.php?id=vansp&aktion=loeschen&aid='.$a_id);
 			
-			$return .= $this->parse_wrapper($this->get_from_gc('ansp_anspliste','wrapper'),$args);
+			$ansp_daten .= $this->parse_wrapper($this->get_from_gc('ansp_reihe','wrapper'),$args);
 		}
+		
+		// in tabelle einfuegen
+		$args = array($ansp_daten);
+		$return .= $this->parse_wrapper($this->get_from_gc('ansp_tabelle','wrapper'),$args);
+		
 		
 		// rueckgabe
 		return $return;

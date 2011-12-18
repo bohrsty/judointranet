@@ -4,15 +4,23 @@
 	<div id="ueberschrift">
 	  <div class="erforderlich">* = erforderliche Eingabe oder Auswahl</div>
 	</div>
-###marker_erforderlich_ende###	
-	<div id="mgeld_bezeichnung">
-	  <div class="mgeld_form">Bezeichnung: ###bezeichnung.NBinput###</div>
-	</div>
-	
-	<div id="mgeld_meldegeld">
-	  <div class="mgeld_form">Meldegeld: ###meldegeld.NBtextarea###</div>
-	</div>
+###marker_erforderlich_ende###
+	<table id="meldegeld">
+		<tr>
+			<td class="form_admin_text">Bezeichnung:</td>
+			<td class="form_admin_form">###bezeichnung.NBinput###</td>
+		</tr>
+		<tr>
+			<td class="form_admin_text">Meldegeld:</td>
+			<td class="form_admin_form">###meldegeld.NBtextarea###</td>
+		</tr>
 ###marker_buttons_start###
-	<input type="submit" name="###submit_name###" value="###submit_wert###" /><input type='reset' name="###reset_name###" value="###reset_value###" />
+		<tr>
+			<td></td>
+			<td class="form_admin_button">
+				<input type="submit" name="###submit_name###" value="###submit_wert###" /><input type='reset' name="###reset_name###" value="###reset_value###" />
+			</td>
+		</tr>
 </form>
 ###marker_buttons_ende###
+	</table>

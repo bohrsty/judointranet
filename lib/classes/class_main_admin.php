@@ -234,7 +234,7 @@ class NBmain_admin extends NBmain {
 				for($i=1;$i<count($schluessel);$i++) {
 					
 //					$args = array($this->replace_umlaute(htmlspecialchars(utf8_encode($schluessel[$i]))));
-					$args = array($this->replace_umlaute(htmlspecialchars($schluessel[$i])));
+					$args = array($this->replace_umlaute(htmlspecialchars(ucfirst($schluessel[$i]))));
 					$th .= $this->parse_wrapper($this->get_from_gc('adminliste_th','wrapper'),$args);
 				}
 				// tr zufuegen

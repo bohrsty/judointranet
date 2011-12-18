@@ -78,11 +78,11 @@ class NBform_v_ansp extends NBform {
 			switch($typ) {
 				
 				case 'NBtextarea':
-					$daten[] = new NBtextarea($name,'class="textarea"',$erforderlich);
+					$daten[] = new NBtextarea($name,'class="vansp-textarea"',$erforderlich);
 				break;
 				
 				case 'NBinput':
-					$daten[] = new NBinput($name,'text','class="input"',$erforderlich,$datentyp);
+					$daten[] = new NBinput($name,'text','class="vansp-input"',$erforderlich,$datentyp);
 				break;
 				
 				case 'NBselect':

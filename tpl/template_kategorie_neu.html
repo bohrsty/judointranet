@@ -5,22 +5,30 @@
 	  <div class="erforderlich">* = erforderliche Eingabe oder Auswahl</div>
 	</div>
 ###marker_erforderlich_ende###
-	<div id="kategorie_bezeichnung">
-	  <div class="kategorie_form">Bezeichnung: ###bezeichnung.NBinput###</div>
-	</div>
-	
-	<div id="kategorie_altersklassen">
-	  <div class="kategorie_form">Altersklassen: ###altersklasse.NBinput###</div>
-	</div>
-		
-	<div id="kategorie_guertelfarben">
-	  <div class="kategorie_form">G&uuml;rtelfarben: ###guertelfarben.NBinput###</div>
-	</div>
-	
-	<div id="kategorie_jahrgaenge">
-	  <div class="kategorie_form">Jahrg&auml;nge: ###jahrgaenge.NBinput###</div>
-	</div>
+	<table id="kategorie">
+		<tr>
+			<td class="form_admin_text">Bezeichnung:</td>
+			<td class="form_admin_form">###bezeichnung.NBinput###</td>
+		</tr>
+		<tr>
+			<td class="form_admin_text">Altersklasse:</td>
+			<td class="form_admin_form">###altersklasse.NBinput###</td>
+		</tr>
+		<tr>
+			<td class="form_admin_text">G&uuml;rtelfarben:</td>
+			<td class="form_admin_form">###guertelfarben.NBinput###</td>
+		</tr>
+		<tr>
+			<td class="form_admin_text">Jarhg&auml;nge:</td>
+			<td class="form_admin_form">###jahrgaenge.NBinput###</td>
+		</tr>
 ###marker_buttons_start###
-	<input type="submit" name="###submit_name###" value="###submit_wert###" /><input type='reset' name="###reset_name###" value="###reset_value###" />
+		<tr>
+			<td></td>
+			<td class="form_admin_button">
+				<input type="submit" name="###submit_name###" value="###submit_wert###" /><input type='reset' name="###reset_name###" value="###reset_value###" />
+			</td>
+		</tr>
 </form>
 ###marker_buttons_ende###
+	</table>

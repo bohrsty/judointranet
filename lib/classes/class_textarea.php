@@ -98,14 +98,24 @@ class NBtextarea extends NBobject {
 	public function to_html() {
 		
 		// auf fehler pruefen
-		if($this->get_error() == '') {
+		if($this->get_error() != '') {
 			
 			// css anpassen
-			$this->set_css('class="textarea"');
-		} else {
+			$css = $this->get_css();
 			
-			// css anpassen
-			$this->set_css('class="textarea error"');
+			// pruefen, ob class
+			if(substr($css,0,5) == 'class') {
+				
+				// an = trennen
+				list($class,$werte) = explode('=',$css,2);
+				
+				// aktuelle klasse auslesen
+				$klasse = substr($werte,1,-1);
+				
+				// neues class-tag zusammensetzen
+				$css = $class . '="' . $klasse . ' error"';
+			}
+			$this->set_css($css);
 		}
 		
 		// erforderlich?

@@ -78,11 +78,11 @@ class NBform_admin_neu extends NBform {
 			switch($typ) {
 				
 				case 'NBtextarea':
-					$daten[] = new NBtextarea($name,'class="textarea"',$erforderlich);
+					$daten[] = new NBtextarea($name,'class="admin-textarea"',$erforderlich);
 				break;
 				
 				case 'NBinput':
-					$daten[] = new NBinput($name,'text','class="input"',$erforderlich,$datentyp);
+					$daten[] = new NBinput($name,'text','class="admin-input"',$erforderlich,$datentyp);
 				break;
 			}
 		}

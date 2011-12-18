@@ -4,18 +4,26 @@
 	  <div class="erforderlich">* = erforderliche Eingabe oder Auswahl</div>
 	</div>
 ###marker_erforderlich_ende###
-	<div id="vansp_verein">
-	  <div class="vansp_form">Verein: ###verein.NBselect###</div>
-	</div>
-		
-	<div id="vansp_bezeichnung">
-	  <div class="vansp_form">Bezeichnung: ###bezeichnung.NBinput###</div>
-	</div>
-	
-	<div id="vansp_name">
-	  <div class="vansp_form">Name: ###name.NBinput###</div>
-	</div>
+	<table id="vansp">
+		<tr>
+			<td class="form_admin_text">Verein:</td>
+			<td class="form_admin_form">###verein.NBselect###</td>
+		</tr>
+		<tr>
+			<td class="form_admin_text">Anzeigename:</td>
+			<td class="form_admin_form">###bezeichnung.NBinput###</td>
+		</tr>
+		<tr>
+			<td class="form_admin_text">Name:</td>
+			<td class="form_admin_form">###name.NBinput###</td>
+		</tr>
 ###marker_buttons_start###
-	<input type="submit" name="###submit_name###" value="###submit_wert###" /><input type='reset' name="###reset_name###" value="###reset_value###" />
+		<tr>
+			<td></td>
+			<td class="form_admin_button">
+				<input type="submit" name="###submit_name###" value="###submit_wert###" /><input type='reset' name="###reset_name###" value="###reset_value###" />
+			</td>
+		</tr>
 </form>
 ###marker_buttons_ende###
+	</table>

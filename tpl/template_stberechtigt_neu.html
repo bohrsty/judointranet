@@ -4,15 +4,23 @@
 	<div id="ueberschrift">
 	  <div class="erforderlich">* = erforderliche Eingabe oder Auswahl</div>
 	</div>
-###marker_erforderlich_ende###	
-	<div id="stberechtigt_bezeichnung">
-	  <div class="stberechtigt_form">Bezeichnung: ###bezeichnung.NBinput###</div>
-	</div>
-	
-	<div id="stberechtigt_berechtigte">
-	  <div class="stberechtigt_form">Startberechtigt: ###berechtigte.NBtextarea###</div>
-	</div>
+###marker_erforderlich_ende###
+	<table id="stberechtigt">
+		<tr>
+			<td class="form_admin_text">Bezeichnung:</td>
+			<td class="form_admin_form">###bezeichnung.NBinput###</td>
+		</tr>
+		<tr>
+			<td class="form_admin_text">Startberechtigt:</td>
+			<td class="form_admin_form">###berechtigte.NBtextarea###</td>
+		</tr>
 ###marker_buttons_start###
-	<input type="submit" name="###submit_name###" value="###submit_wert###" /><input type='reset' name="###reset_name###" value="###reset_value###" />
+		<tr>
+			<td></td>
+			<td class="form_admin_button">
+				<input type="submit" name="###submit_name###" value="###submit_wert###" /><input type='reset' name="###reset_name###" value="###reset_value###" />
+			</td>
+		</tr>
 </form>
 ###marker_buttons_ende###
+	</table>

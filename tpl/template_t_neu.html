@@ -5,15 +5,30 @@
 	  <div class="erforderlich">* = erforderliche Eingabe oder Auswahl</div>
 	</div>
 ###marker_erforderlich_ende###
-	<div id="form_termin">
-	  <div class="a_neu_form">Datum: ###t.datum.NBinput###, Name: ###t.name.NBinput###, Kurzname: ###t.kurzname.NBinput###</div>
-	</div>
-	
-	<div id="form_kategorie">
-	  <div class="a_neu_form">Kategorie: ###t.kategorie.NBselect###</div>
-	</div>
-
+	<table id="t-neu">
+		<tr>
+			<td class="form_admin_text">Datum:</td>
+			<td class="form_admin_form">###t.datum.NBinput###</td>
+		</tr>
+		<tr>
+			<td class="form_admin_text">Name:</td>
+			<td class="form_admin_form">###t.name.NBinput###</td>
+		</tr>
+		<tr>
+			<td class="form_admin_text">Kurzname:</td>
+			<td class="form_admin_form">###t.kurzname.NBinput###</td>
+		</tr>
+		<tr>
+			<td class="form_admin_text">Kategorie:</td>
+			<td class="form_admin_form">###t.kategorie.NBselect###</td>
+		</tr>
 ###marker_buttons_start###
-	<input type="submit" name="###submit_name###" value="###submit_wert###" /><input type='reset' name="###reset_name###" value="###reset_value###" />
+		<tr>
+			<td></td>
+			<td class="form_admin_button">
+				<input type="submit" name="###submit_name###" value="###submit_wert###" /><input type='reset' name="###reset_name###" value="###reset_value###" />
+			</td>
+		</tr>
 </form>
 ###marker_buttons_ende###
+	</table>

@@ -79,11 +79,11 @@ class NBform_a_neu extends NBform {
 			switch($typ) {
 				
 				case 'NBselect':
-					$daten[] = new NBselect($name,'class="select"',1,$this->read_optionen($name),$erforderlich);
+					$daten[] = new NBselect($name,'class="auss-select"',1,$this->read_optionen($name),$erforderlich);
 				break;
 				
 				case 'NBinput':
-					$daten[] = new NBinput($name,'text','class="input"',$erforderlich,$datentyp);
+					$daten[] = new NBinput($name,'text','class="auss-input"',$erforderlich,$datentyp);
 				break;
 			}
 		}
