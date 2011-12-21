@@ -40,13 +40,21 @@ function init() {
 
 
 /**
- * laed die klassendefinition der uebergebenen klasse
+ * loads the class-definition of given class from lib
  */
-function __autoload($klasse) {
+function __autoload($class) {
 	
-	// klassen laden
-	$dateiname = 'class_'.substr($klasse,2).'.php';
-	include('lib/classes/'.$dateiname);
+	// check if old style
+	if(substr($class,0,2) == 'NB') {
+		
+		// load class
+		$filename = 'class_'.substr($class,2).'.php';
+		include('lib/classes/'.$filename);
+	} else {
+		
+		// load new classes
+		include_once('lib/_classes/class.'.$class.'.php');
+	}
 }
 
 
