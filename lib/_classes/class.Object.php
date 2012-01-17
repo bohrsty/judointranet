@@ -19,6 +19,10 @@ class Object extends NBobject {
 	 */
 	public function __construct() {
 		
+		// set config if not exists
+		if(!isset($_SESSION['GC'])) {
+			$_SESSION['GC'] = new Config();
+		}
 	}
 	
 	/*
