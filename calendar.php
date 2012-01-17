@@ -15,11 +15,12 @@ init();
  */
 session_start();
 
-$main_view = new MainView();
+$calendar_view = new CalendarView();
 
-$main_view->init();
+$calendar_view->init();
 
-$main_view->output();
+$calendar_view->output();
+
 
 
 

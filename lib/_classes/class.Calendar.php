@@ -15,6 +15,7 @@ class Calendar extends Object {
 	private $date;
 	private $type;
 	private $ann_id;
+	private $rights;
 	
 	/*
 	 * getter/setter
@@ -55,6 +56,12 @@ class Calendar extends Object {
 	private function set_ann_id($ann_id) {
 		$this->ann_id = $ann_id;
 	}
+	private function get_rights(){
+		return $this->rights;
+	}
+	private function set_rights($rights) {
+		$this->rights = $rights;
+	}
 	
 	/*
 	 * constructor/destructor
@@ -63,6 +70,7 @@ class Calendar extends Object {
 		
 		// get field for given id
 		$this->get_from_db($id);
+		$this->set_rights(new Rights('calendar',$id));
 	}
 	
 	/*
@@ -109,6 +117,37 @@ class Calendar extends Object {
 		// close db
 		$stmt->close();
 		$db->close();
+	}
+	
+	
+	
+	
+	/**
+	 * return_date returns the value of $date formatted with $format if given
+	 * 
+	 * @param string $format format to use with date()
+	 * @return string value of $date
+	 */
+	public function return_date($format='') {
+		
+		// check if format given
+		if($format != '') {
+			return date($format,strtotime($this->get_date()));
+		} else {
+			return $this->get_date();
+		}
+	}
+	
+	
+	
+	
+	/**
+	 * return_name returns the value of $name
+	 * 
+	 * @return string value of $name
+	 */
+	public function return_name() {
+		return $this->get_name();
 	}
 }
 

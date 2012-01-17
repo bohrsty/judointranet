@@ -1,0 +1,1 @@
+<a class="###a.class###" href="###a.href###" alt="###a.alt###">###a.name###</a>
