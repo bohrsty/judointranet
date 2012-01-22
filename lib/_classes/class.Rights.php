@@ -10,6 +10,7 @@ class Rights extends Object {
 	 * class-variables
 	 */
 	private $rights;
+	private $table;
 	
 	/*
 	 * getter/setter
@@ -20,14 +21,34 @@ class Rights extends Object {
 	private function set_rights($rights) {
 		$this->rights = $rights;
 	}
+	private function get_table(){
+		return $this->table;
+	}
+	private function set_table($table) {
+		$this->table = $table;
+	}
 	
 	/*
 	 * constructor/destructor
 	 */
-	public function __construct($table,$id) {
+	public function __construct($table,$arg) {
 		
-		// get right for given id
-		$this->get_from_db($table,$id);
+		// parent constructor
+		parent::__construct();
+		
+		// set table
+		$this->set_table($table);
+		
+		// check arg
+		if(is_array($arg)) {
+			
+			// set rights
+			$this->set_rights($arg);
+		} else {
+			
+			// get right for given id
+			$this->get_from_db($arg);
+		}
 	}
 	
 	/*
@@ -40,44 +61,33 @@ class Rights extends Object {
 	 * @param int $id id of the content-entry
 	 * @return void
 	 */
-	private function get_from_db($table_name,$table_id) {
+	private function get_from_db($table_id) {
 		
 		// get db-object
 		$db = Db::newDb();
 		
 		// prepare sql-statement
-		$stmt = $db->prepare(	'
-						SELECT r.id,r.user_group,r.ug_id,r.rights
-						FROM rights AS r
-						WHERE r.table_name = ?
-						AND r.ug_id = ?');
+		$sql = 'SELECT r.id,r.g_id
+				FROM rights AS r
+				WHERE r.table_name = "'.$this->get_table().'"
+				AND r.table_id = '.$table_id;
 		
-		// insert variables
-		$stmt->bind_param('is',$table_id,$table_name);
-		
-		// execute statement
-		$stmt->execute();
-		
-		// bind variables to result
-		$id = $ug_id = 0; $user_group = $rights = '';
-		$stmt->bind_result($id,$user_group,$ug_id,$rights);
+		// execute
+		$result = $db->query($sql);
 		
 		// fetch result
 		$all_rights = array();
-		while($stmt->fetch()); {
+		while(list($id,$g_id) = $result->fetch_array(MYSQL_NUM)); {
 		
 			// set variables to array
-			$all_rights[$id] = array(
-								'user_group' => $user_group,
-								'ug_id' => $ug_id,
-								'rights' => $rights);
-			
-			$this->set_rights($all_rights);
+			$all_rights[$id] = $g_id;
 		}
 		
 		// close db
-		$stmt->close();
 		$db->close();
+		
+		// set rights
+		$this->set_rights($all_rights);
 	}
 	
 	
@@ -95,83 +105,116 @@ class Rights extends Object {
 	 */
 	public static function get_authorized_entries($table) {
 		
-		// get userid and groups
-		$userid = $_SESSION['user']->userid();
+		// get groups
 		$group_ids = $_SESSION['user']->groups();
 		
 		// get db-object
 		$db = Db::newDb();
 		
 		// groups
-		$sql_groups = '	SELECT r.table_id
-						FROM rights AS r
-						WHERE r.table_name = ?
-						AND r.user_group = "group"
-						AND r.ug_id = (';
+		$sql = 'SELECT r.table_id
+				FROM rights AS r
+				WHERE r.table_name = "'.$table.'"
+				AND (';
 		for($i = 0;$i<count($group_ids);$i++) {
+			
+			// field
+			$sql .= 'r.g_id = ';
 			
 			// last entry
 			if($group_ids[$i]==count($group_ids)-1){
-				$sql_groups .= $group_ids[$i];
+				$sql .= $group_ids[$i];
 			} else {
-				$sql_groups .= $group_ids[$i].' OR ';
+				$sql .= $group_ids[$i].' OR ';
 			}
 		}
-		$sql_groups .= ')';
-		
-		
-		// prepare statement
-		$stmt = $db->prepare($sql_groups);
-		
-		// insert variables
-		$stmt->bind_param('s',$table);
+		$sql .= ')';	
 		
 		// execute
-		$stmt->execute();
+		$result = $db->query($sql);
 		
 		// fetch results
-		$entry_id = 0;
-		$stmt->bind_result($entry_id);
 		$entry_ids = array();
-		while($stmt->fetch()) {
-			$entry_ids[] = $entry_id;
-		}
-		
-		// close statement
-		$stmt->close();
-		
-		
-		// user
-		$sql_user = '	SELECT r.table_id
-						FROM rights AS r
-						WHERE r.table_name = ?
-						AND r.user_group = "user"
-						AND r.ug_id = ?';
-		
-		// prepare statement
-		$stmt = $db->prepare($sql_user);
-		
-		// insert variables
-		$stmt->bind_param('si',$table,$userid);
-		
-		// execute
-		$stmt->execute();
-		
-		// fetch results
-		$stmt->bind_result($entry_id);
-		while($stmt->fetch()) {
+		while(list($entry_id) = $result->fetch_array(MYSQL_NUM)) {
 			$entry_ids[] = $entry_id;
 		}
 		
 		// close db
-		$stmt->close();
 		$db->close();
 		
-		// unique $calendar_ids
+		// unique $entry_ids
 		$entry_ids = array_unique($entry_ids,SORT_NUMERIC);
 		
 		// return
 		return $entry_ids;
+	}
+	
+	
+	
+	
+	
+	/**
+	 * write_db writes the rights to the database
+	 * 
+	 * @param int $table_id id of the inserted element
+	 * @return void
+	 */
+	public function write_db($table_id) {
+		
+		// read rights
+		$rights = $this->get_rights();
+		$new_rights = array();
+		// get action
+		$action = $rights['action'];
+		
+		// get db-object
+		$db = Db::newDb();
+		
+		// action
+		if($action == 'new') {
+			
+			// insert
+			// walk through array
+			foreach($rights[$action] as $no => $g_id) {
+				
+				// add values
+				$sql = 'INSERT INTO rights (id,g_id,table_name,table_id)';
+				$sql .= 'VALUES (NULL,'.$g_id.',"'.$this->get_table().'",'.$table_id.')';
+				
+				// execute
+				$db->query($sql);
+				
+				// prepare $new_rights
+				$new_rights[$db->insert_id] = $g_id;
+			}
+		} elseif($action == 'update') {
+			
+			// update
+		} else {
+			
+			// error
+			$errno = $GLOBALS['Error']->error_raised('DbActionUnknown','write_rights',$action);
+			throw new Exception('DbActionUnkknown',$errno);
+		}
+		
+		// close db
+		$db->close();
+		
+		// set new rights
+		$this->set_rights($new_rights);
+	}
+	
+	
+	
+	
+	
+	/**
+	 * return_rights returns the actual group-ids from $rights
+	 * 
+	 * @return array group_ids from $rights
+	 */
+	public function return_rights() {
+		return $this->get_rights();
 	}
 }
 

@@ -125,7 +125,7 @@ class MainView extends PageView {
 						
 						// set contents
 						// title
-						$this->add_output(array('title' => $this->title($this->lang('class.MainView#init#login#title'))));
+						$this->add_output(array('title' => $this->title(parent::lang('class.MainView#init#login#title'))));
 						// main-content
 						$this->add_output(array('main' => $this->login()));
 						// navi
@@ -137,7 +137,7 @@ class MainView extends PageView {
 						
 						// set contents
 						// title
-						$this->add_output(array('title' => $this->title($this->lang('class.MainView#init#logout#title'))));
+						$this->add_output(array('title' => $this->title(parent::lang('class.MainView#init#logout#title'))));
 						// main-content
 						$this->add_output(array('main' => $_SESSION['user']->logout()));
 						$this->put_userinfo();
@@ -159,7 +159,7 @@ class MainView extends PageView {
 				// error not authorized
 				// set contents
 				// title
-				$this->add_output(array('title' => $this->title($this->lang('class.MainView#init#Error#NotAuthorized'))));
+				$this->add_output(array('title' => $this->title(parent::lang('class.MainView#init#Error#NotAuthorized'))));
 				// navi
 				$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 				// main content
@@ -171,7 +171,7 @@ class MainView extends PageView {
 			
 			// id not set
 			// title
-			$this->add_output(array('title' => $this->title($this->lang('class.MainView#init#default#title')))); 
+			$this->add_output(array('title' => $this->title(parent::lang('class.MainView#init#default#title')))); 
 			// default-content
 			$this->add_output(array('main' => '<h2>default content</h2>'));
 			// navi
@@ -223,28 +223,28 @@ class MainView extends PageView {
 		
 		// renderer
 		$renderer = HTML_QuickForm2_Renderer::factory('default');
-		$renderer->setOption('required_note',$this->lang('class.MainView#login#form#requiredNote'));
+		$renderer->setOption('required_note',parent::lang('class.MainView#login#form#requiredNote'));
 		
 		// elements
 		// username
-		$username = $form->addElement('text','username')->setLabel($this->lang('class.MainView#login#form#username').':');
-		$username->addRule('required',$this->lang('class.MainView#login#rule#required.username'));
+		$username = $form->addElement('text','username')->setLabel(parent::lang('class.MainView#login#form#username').':');
+		$username->addRule('required',parent::lang('class.MainView#login#rule#required.username'));
 //		$username->addRule('regexp','');
 		
 		// password
-		$password = $form->addElement('password','password')->setLabel($this->lang('class.MainView#login#form#password').':');		
-		$password->addRule('required',$this->lang('class.MainView#login#rule#required.password'));
+		$password = $form->addElement('password','password')->setLabel(parent::lang('class.MainView#login#form#password').':');		
+		$password->addRule('required',parent::lang('class.MainView#login#rule#required.password'));
 //		$password->addRule('regexp','');
 		
 		// submit-button
-		$form->addElement('submit','submit',array('value' => $this->lang('class.MainView#login#form#loginButton')));
+		$form->addElement('submit','submit',array('value' => parent::lang('class.MainView#login#form#loginButton')));
 		
 		// callback
 		$form->addRule('callback','Authentifizierung fehlgeschlagen',array('callback' => array($this,'callback_check_login')));
 		
 		// prepare message array
 		$contents = array(
-						'p.caption' => $this->lang('class.MainView#login#message#caption'),
+						'p.caption' => parent::lang('class.MainView#login#message#caption'),
 						'p.message' => '',
 						'p.form' => ''
 					);
@@ -259,7 +259,7 @@ class MainView extends PageView {
 		} else {
 			
 			// set message and form
-			$contents['p.message'] = $this->lang($_SESSION['user']->return_login_message());
+			$contents['p.message'] = parent::lang($_SESSION['user']->return_login_message());
 			$contents['p.form'] = $form->render($renderer);
 		}
 		

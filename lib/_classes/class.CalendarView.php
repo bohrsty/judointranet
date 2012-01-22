@@ -52,10 +52,15 @@ class CalendarView extends PageView {
 							'id' => crc32('CalendarView') // 4126450689
 						),
 						'secondlevel' => array(
-							0 => array(
+							1 => array(
 								'getid' => 'listall', 
 								'name' => 'class.CalendarView#connectnavi#secondlevel#listall',
 								'id' => crc32('CalendarView|listall') // 316626287
+							),
+							0 => array(
+								'getid' => 'new', 
+								'name' => 'class.CalendarView#connectnavi#secondlevel#new',
+								'id' => crc32('CalendarView|new') // 1338371484
 							)
 						)
 					);
@@ -107,7 +112,7 @@ class CalendarView extends PageView {
 						
 						// set contents
 						// title
-						$this->add_output(array('title' => $this->title($this->lang('class.CalendarView#init#listall#title'))));
+						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#listall#title'))));
 						// navi
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 						// main-content
@@ -117,7 +122,7 @@ class CalendarView extends PageView {
 						$this->add_output(array('main' => $this->p('','')));
 						
 						// prepare dates
-						$from = time();
+						$from = strtotime('yesterday');
 						$to = strtotime('next year');
 
 						// check $_GET['from'] and $_GET['to']
@@ -128,6 +133,17 @@ class CalendarView extends PageView {
 							$to = strtotime($this->get('to'));
 						}
 						$this->add_output(array('main' => $this->listall($to,$from)));
+					break;
+					
+					case 'new':
+						
+						// set contents
+						// title
+						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#listall#title'))));
+						// navi
+						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
+						// main-content
+						$this->add_output(array('main' => $this->new_entry()));
 					break;
 					
 					default:
@@ -143,7 +159,7 @@ class CalendarView extends PageView {
 				// error not authorized
 				// set contents
 				// title
-				$this->add_output(array('title' => $this->title($this->lang('class.CalendarView#init#Error#NotAuthorized'))));
+				$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#Error#NotAuthorized'))));
 				// navi
 				$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 				// main content
@@ -155,7 +171,7 @@ class CalendarView extends PageView {
 			
 			// id not set
 			// title
-			$this->add_output(array('title' => $this->title($this->lang('class.CalendarView#init#default#title')))); 
+			$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#default#title')))); 
 			// default-content
 			$this->add_output(array('main' => '<h2>default content</h2>'));
 			// navi
@@ -195,8 +211,8 @@ class CalendarView extends PageView {
 		}
 		
 		$contents = array();
-		$contents['th.date'] = $this->lang('class.CalendarView#listall#TH#date');
-		$contents['th.name'] = $this->lang('class.CalendarView#listall#TH#name');
+		$contents['th.date'] = parent::lang('class.CalendarView#listall#TH#date');
+		$contents['th.name'] = parent::lang('class.CalendarView#listall#TH#name');
 		
 		// parse th
 		$th_out .= $th->parse($contents);
@@ -280,6 +296,9 @@ class CalendarView extends PageView {
 			$calendar_entries[] = new Calendar($id);
 		}
 		
+		// sort calendar-entries
+		usort($calendar_entries,array($this,'callback_compare_calendars'));
+		
 		// return calendar-objects
 		return $calendar_entries;
 	}
@@ -326,9 +345,9 @@ class CalendarView extends PageView {
 			// href
 			$contents['a.href'] = 'calendar.php?id='.$getid.'&from='.date('Y-m-d',time()).'&to='.date('Y-m-d',strtotime($date));
 			// alt
-			$contents['a.alt'] = $this->lang('class.CalendarView#get_date_links#alt#'.$name);
+			$contents['a.alt'] = parent::lang('class.CalendarView#get_date_links#alt#'.$name);
 			// linktext
-			$contents['a.name'] = $this->lang('class.CalendarView#get_date_links#dates#'.$name);
+			$contents['a.name'] = parent::lang('class.CalendarView#get_date_links#dates#'.$name);
 			
 			// parse template
 			$output .= $a->parse($contents);
@@ -337,6 +356,240 @@ class CalendarView extends PageView {
 		
 		// return
 		return $output;
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * new_entry creates the "new-entry"-form and handle its response
+	 * 
+	 * @return string html-string with the "new-entry"-form
+	 */
+	private function new_entry() {
+		
+		// prepare return
+		$return = '';
+		
+		// formular
+		require_once('HTML/QuickForm2.php');
+		require_once('HTML/QuickForm2/Renderer.php');
+				
+		$form = new HTML_QuickForm2(
+								'new_calendar_entry',
+								'post',
+								array(
+									'name' => 'new_calendar_entry',
+									'action' => 'calendar.php?id=new'
+								)
+							);
+		
+		$now_year = (int) date('Y');
+		$now_month = (int) date('m');
+		$now_day = (int) date('d');
+		$year_min = $now_year;
+		$year_max = $now_year + 3;
+		$form->addDataSource(new HTML_QuickForm2_DataSource_Array(array('rights' => '0',
+																		'dateGroup' => array(
+																			'day' => $now_day,
+																			'month' => $now_month,
+																			'year' => $now_year))));
+		
+		// renderer
+		$renderer = HTML_QuickForm2_Renderer::factory('default');
+		$renderer->setOption('required_note',parent::lang('class.CalendarView#new_entry#form#requiredNote'));
+		
+		// elements
+		// date - group
+		$date_group = $form->addGroup('dateGroup');
+		$date_group->setLabel(parent::lang('class.CalendarView#new_entry#form#date').':');
+		// rule
+		$date_group->addRule('required',parent::lang('class.CalendarView#new_entry#rule#required.date'));
+		$date_group->addRule('callback',parent::lang('class.CalendarView#new_entry#rule#check.date'),array($this,'callback_check_date'));
+		
+		// select day
+		$options = array('--');
+		for($i=1;$i<=31;$i++) {
+			$options[$i] = $i;
+		}
+		$select_day = $date_group->addElement('select','day',array());
+		$select_day->loadOptions($options);
+		
+		// select month
+		$options = array('--');
+		for($i=1;$i<=12;$i++) {
+			$options[$i] = parent::lang('class.CalendarView#new_entry#date#month.'.$i);
+		}
+		$select_month = $date_group->addElement('select','month',array());
+		$select_month->loadOptions($options);
+		
+		// select year
+		$options = array('--');
+		for($i=$year_min;$i<=$year_max;$i++) {
+			$options[$i] = $i;
+		}
+		$select_year = $date_group->addElement('select','year',array());
+		$select_year->loadOptions($options);
+		
+		
+		// name
+		$name = $form->addElement('text','name');
+		$name->setLabel(parent::lang('class.CalendarView#new_entry#form#name').':');
+		$name->addRule('required',parent::lang('class.CalendarView#new_entry#rule#required.name'));
+		$name->addRule(
+					'regex',
+					parent::lang('class.CalendarView#new_entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('name.desc').']',
+					$_SESSION['GC']->return_config('name.regexp'));
+		
+		
+		// shortname
+		$shortname = $form->addElement('text','shortname');
+		$shortname->setLabel(parent::lang('class.CalendarView#new_entry#form#shortname').':');
+		$shortname->addRule(
+						'regex',
+						parent::lang('class.CalendarView#new_entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('name.desc').']',
+						$_SESSION['GC']->return_config('name.regexp'));
+	
+	
+		// type
+		$options = array_merge(array(0 => '--'),Calendar::return_types());
+		$type = $form->addElement('select','type');
+		$type->setLabel(parent::lang('class.CalendarView#new_entry#form#type').':');
+		$type->loadOptions($options);
+		$type->addRule('required',parent::lang('class.CalendarView#new_entry#rule#required.type'));
+		$type->addRule('callback',parent::lang('class.CalendarView#new_entry#rule#check.select'),array($this,'callback_check_select'));
+		
+		
+		// entry_content
+		$content = $form->addElement('textarea','entry_content');
+		$content->setLabel(parent::lang('class.CalendarView#new_entry#form#entry_content').':');
+		$content->addRule(
+						'regex',
+						parent::lang('class.CalendarView#new_entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('textarea.desc').']',
+						$_SESSION['GC']->return_config('textarea.regexp'));
+		
+		
+		// select rights
+		$options = User::return_all_groups();
+		$rights = $form->addElement('select','rights',array('multiple' => 'multiple','size' => 5));
+		$rights->setLabel(parent::lang('class.CalendarView#new_entry#form#rights').':');
+		$rights->loadOptions($options);
+		
+		
+		// submit-button
+		$form->addElement('submit','submit',array('value' => parent::lang('class.CalendarView#new_entry#form#submitButton')));
+		
+		// validate
+		if($form->validate()) {
+			
+			// create calendar-object
+			$data = $form->getValue();
+			
+			$right_array = array(
+								'action' => 'new',
+								'new' => $data['rights']);
+			
+			$calendar = new Calendar(array(
+								'date' => $data['dateGroup']['day'].'.'.$data['dateGroup']['month'].'.'.$data['dateGroup']['year'],
+								'name' => $data['name'],
+								'shortname' => $data['shortname'],
+								'type' => $data['type'],
+								'content' => $data['entry_content'],
+								'rights' => $right_array
+								)
+				);
+				
+			// write to db
+			$calendar->write_db();
+			
+			// put entry to output
+			// read template
+			try {
+				$calendar_details = new HtmlTemplate('templates/calendar.details.tpl');
+			} catch(Exception $e) {
+				$GLOBALS['Error']->handle_error($e);
+			}
+			// set return
+			$return = $calendar->details_to_html($calendar_details);
+		} else {
+			$return = $form->render($renderer);
+		}
+		
+		// return
+		return $return;
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * callback_check_date checks if a correct date is selected
+	 * 
+	 * @param array $args arguments to check
+	 * @return bool true, if ok, false otherwise
+	 */
+	public function callback_check_date($args) {
+		
+		// check values
+		if($args['day'] == 0 || $args['month'] == 0 || $args['year'] == 0) {
+			return false;
+		} else {
+			return checkdate($args['month'],$args['day'],$args['year']);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * callback_check_select checks if a value other than 0 is selected
+	 * 
+	 * @param array $args arguments to check
+	 * @return bool true, if ok, false otherwise
+	 */
+	public function callback_check_select($args) {
+		
+		// check values
+		if($args == '0') {
+			return false;
+		}
+		return true;
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * callback_compare_calendars compares two calendar-objects by date (for uksort)
+	 * 
+	 * @param object $first first calendar-objects
+	 * @param object $second second calendar-object
+	 * @return int -1 if $first<$second, 0 if equal, 1 if $first>$second
+	 */
+	public function callback_compare_calendars($first,$second) {
+	
+		// compare dates
+		if($first->return_date() < $second->return_date()) {
+			return -1;
+		}
+		if($first->return_date() == $second->return_date()) {
+			return 0;
+		}
+		if($first->return_date() > $second->return_date()) {
+			return 1;
+		}
 	}
 }
 

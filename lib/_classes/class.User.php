@@ -122,8 +122,31 @@ class User extends Object {
 	 */
 	private function read_groups() {
 		
+		// prepare return
+		$groups = array(0);
+		
+		// get db-object
+		$db = Db::newDb();
+		
+		// prepare sql-statement
+		$sql = "SELECT ug.group_id
+				FROM user2group AS ug
+				WHERE ug.user_id = '".$this->get_id()."'";
+		
+		// execute statement
+		$result = $db->query($sql);
+		
+		// if no result, only public access
+		if($result->num_rows != 0) {
+		
+			// fetch result
+			while(list($group) = $result->fetch_array(MYSQL_NUM)) {
+				$groups[] = $group;
+			}
+		}
+		
 		// return array
-		return array(0);
+		return $groups;
 	}
 	
 	
@@ -217,8 +240,8 @@ class User extends Object {
 		// logout-message
 		// set contents
 		$contents = array(
-						'p.caption' => $this->lang('class.User#logout#logout#caption'),
-						'p.message' => $this->lang('class.User#logout#logout#message')
+						'p.caption' => parent::lang('class.User#logout#logout#caption'),
+						'p.message' => parent::lang('class.User#logout#logout#message')
 					);
 		
 		// return html
@@ -293,6 +316,9 @@ class User extends Object {
 		unset($db_result['id']);
 		$this->set_userinfo($db_result);
 		
+		// set groups
+		$this->set_groups($this->read_groups());
+		
 		// set loginstatus
 		$this->set_loggedin($loggedin);
 		
@@ -357,6 +383,46 @@ class User extends Object {
 				return false;
 			}
 		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * return_all_groups returns an array of group-ids and their names
+	 * 
+	 * @return array array containing all group-ids and names
+	 */
+	public static function return_all_groups() {
+		
+		// prepare return
+		$groups = array(0 => parent::lang('class.User#return_all_groups#rights#public.access'));
+		
+		// get db-object
+		$db = Db::newDb();
+		
+		// prepare sql-statement
+		$sql = "SELECT `g`.`id`,`g`.`name`
+				FROM `group` AS g";
+		
+		// execute statement
+		$result = $db->query($sql);
+		
+		// fetch result
+		while(list($id,$name) = $result->fetch_array(MYSQL_NUM)) {
+			
+			// add to array
+			$groups[$id] = $name;
+		}
+ 			
+		// sort
+		sort($groups,SORT_LOCALE_STRING);
+		
+		// return
+		return $groups;
 	}
 }
 

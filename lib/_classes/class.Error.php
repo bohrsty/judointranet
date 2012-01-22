@@ -95,8 +95,8 @@ class Error extends Object {
 								
 				// fatal error, die()
 				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
-				$message .= '<h3 style="color: red;">'.$this->lang('class.Error#handle_error#GETInvalidChars#ERROR.caption').'</h3>';
-				$message .= '<p>'.$this->lang('class.Error#handle_error#GETInvalidChars#ERROR.message').'</p>';
+				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#GETInvalidChars#ERROR.caption').'</h3>';
+				$message .= '<p>'.parent::lang('class.Error#handle_error#GETInvalidChars#ERROR.message').'</p>';
 				$message .= '[GETInvalidChars in '.$this->return_entry($errno).']';
 				$message .= '</div>';
 				die($message);
@@ -105,7 +105,7 @@ class Error extends Object {
 			case 'POSTInvalidChars':
 				
 				// non-fatal error, message
-				$message = '<p class="posterror">'.$this->lang('class.Error#handle_error#POSTInvalidChars#ERROR.message').'</p>';
+				$message = '<p class="posterror">'.parent::lang('class.Error#handle_error#POSTInvalidChars#ERROR.message').'</p>';
 				
 				// set output
 				$errors = $this->get_errors();
@@ -117,8 +117,8 @@ class Error extends Object {
 				
 				// fatal error, die()
 				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
-				$message .= '<h3 style="color: red;">'.$this->lang('class.Error#handle_error#ReadTemplateFile#ERROR.caption').'</h3>';
-				$message .= '<p>'.$this->lang('class.Error#handle_error#ReadTemplateFile#ERROR.message').'</p>';
+				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#ReadTemplateFile#ERROR.caption').'</h3>';
+				$message .= '<p>'.parent::lang('class.Error#handle_error#ReadTemplateFile#ERROR.message').'</p>';
 				$message .= '[ReadTemplateFile: "'.$this->return_message($errno).'"]';
 				$message .= '</div>';
 				die($message);
@@ -128,8 +128,8 @@ class Error extends Object {
 				
 				// non-fatal error, message
 				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
-				$message .= '<h3 style="color: red;">'.$this->lang('class.Error#handle_error#GETUnknownId#ERROR.caption').'</h3>';
-				$message .= '<p>'.$this->lang('class.Error#handle_error#GETUnknownId#ERROR.message').'</p>';
+				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#GETUnknownId#ERROR.caption').'</h3>';
+				$message .= '<p>'.parent::lang('class.Error#handle_error#GETUnknownId#ERROR.message').'</p>';
 				$message .= '[GETUnknownId: "'.$this->return_entry($errno).'"]';
 				$message .= '</div>';
 				
@@ -143,8 +143,8 @@ class Error extends Object {
 				
 				// fatal error, die()
 				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
-				$message .= '<h3 style="color: red;">'.$this->lang('class.Error#handle_error#CannotGetNavi#ERROR.caption').'</h3>';
-				$message .= '<p>'.$this->lang('class.Error#handle_error#CannotGetNavi#ERROR.message').'</p>';
+				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#CannotGetNavi#ERROR.caption').'</h3>';
+				$message .= '<p>'.parent::lang('class.Error#handle_error#CannotGetNavi#ERROR.message').'</p>';
 				$message .= '[CannotGetNavi from '.$this->return_entry($errno).']';
 				$message .= '</div>';
 				die($message);
@@ -154,9 +154,24 @@ class Error extends Object {
 				
 				// non-fatal error, message
 				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
-				$message .= '<h3 style="color: red;">'.$this->lang('class.Error#handle_error#NotAuthorized#ERROR.caption').'</h3>';
-				$message .= '<p>'.$this->lang('class.Error#handle_error#NotAuthorized#ERROR.message').'</p>';
+				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#NotAuthorized#ERROR.caption').'</h3>';
+				$message .= '<p>'.parent::lang('class.Error#handle_error#NotAuthorized#ERROR.message').'</p>';
 				$message .= '[NotAuthorized: "'.$this->return_entry($errno).'"]';
+				$message .= '</div>';
+				
+				// set output
+				$errors = $this->get_errors();
+				$errors[$errno]['output'] = $message;
+				$this->set_errors($errors);
+			break;
+			
+			case 'DbActionUnknown':
+				
+				// non-fatal error, message
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
+				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#DbActionUnknown#ERROR.caption').'</h3>';
+				$message .= '<p>'.parent::lang('class.Error#handle_error#DbActionUnknown#ERROR.message').'</p>';
+				$message .= '[DbActionUnknown: "'.$this->return_entry($errno).'"]';
 				$message .= '</div>';
 				
 				// set output

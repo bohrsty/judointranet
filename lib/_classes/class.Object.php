@@ -4,7 +4,7 @@
 /**
  * class Object is father-class of all other objects
  */
-class Object extends NBobject {
+class Object {
 	
 	/*
 	 * class-variables
@@ -20,7 +20,7 @@ class Object extends NBobject {
 	public function __construct() {
 		
 		// set config if not exists
-		if(!isset($_SESSION['GC'])) {
+		if(!isset($_SESSION['GC']) || isset($_GET['rc'])) {
 			$_SESSION['GC'] = new Config();
 		}
 	}
@@ -74,7 +74,7 @@ class Object extends NBobject {
 	 * @param string $string string to be parsed and "translated", splitmarker "#"
 	 * @return string translated value of the string
 	 */
-	protected function lang($string) {
+	protected static function lang($string) {
 		
 		// split string
 		$i = explode('#',$string,4);

@@ -35,6 +35,7 @@ class Config extends Object {
 		
 		// set initial values
 		$this->read_config();
+		$this->read_config_file();
 		$this->set_sessionconfig(array());
 	}
 	
@@ -129,6 +130,33 @@ class Config extends Object {
 		
 		// set config
 		$this->set_sessionconfig($config);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * read_config_file reads the configured parts from the configfile
+	 * 
+	 * @return void
+	 */
+	public function read_config_file() {
+		
+		// get config
+		$config = $this->get_config();
+		
+		// read configuration from ini-file
+		$file = parse_ini_file('cnf/config.ini',true);
+		
+		// merge arrays
+		$config = array_merge($config,$file['regexp']);
+		
+		// set config
+		$this->set_config($config);
 	}
 }
 

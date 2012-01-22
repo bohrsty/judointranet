@@ -62,6 +62,14 @@ div#content {
 	padding: 3px;
 }
 
+div.quickform div.row {
+	margin-bottom: 10px;
+}
+
+.even {
+	background-color: #ccf;
+}
+
 /* navi */
 div.navi_0 {
 	border: 1px solid blue;
@@ -130,4 +138,11 @@ form#login .error input {
 
 form#login span.error {
 	color: red;
+}
+
+/*
+ * fonts
+ */
+div.calendar-details p.details span{
+	font-weight: bold;
 }

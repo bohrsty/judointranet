@@ -40,6 +40,9 @@ class PageView extends Object {
 	 */
 	public function __construct() {
 		
+		// parent constructor
+		parent::__construct();
+		
 		// initialize error-handling
 		$GLOBALS['Error'] = new Error();
 		
@@ -234,7 +237,7 @@ class PageView extends Object {
 	protected function title($title) {
 		
 		// return combined prefix and title
-		return $this->lang('class.PageView#title#prefix#title').' '.$title;
+		return parent::lang('class.PageView#title#prefix#title').' '.$title;
 	}
 	
 	
@@ -318,8 +321,8 @@ class PageView extends Object {
 			// set firstlevel
 			$output .= $navi_0->parse(array(
 										'navi.0.href' => $firstlevel['file'],
-										'navi.0.alt' => $this->lang('class.'.$firstlevel['class'].'#connectnavi#firstlevel#name'),
-										'navi.0.name' => $this->lang($firstlevel['name'])));
+										'navi.0.alt' => parent::lang('class.'.$firstlevel['class'].'#connectnavi#firstlevel#name'),
+										'navi.0.name' => parent::lang($firstlevel['name'])));
 			
 			// walk through secondlevel
 			$secondlevel = $naviitems[$i]['secondlevel'];
@@ -336,8 +339,8 @@ class PageView extends Object {
 					// active
 					$active = array(
 								'navi.1a.href' => $firstlevel['file'].'?id='.$secondlevel[$j]['getid'],
-								'navi.1a.alt' => $this->lang($secondlevel[$j]['name']),
-								'navi.1a.name' => $this->lang($secondlevel[$j]['name']));
+								'navi.1a.alt' => parent::lang($secondlevel[$j]['name']),
+								'navi.1a.name' => parent::lang($secondlevel[$j]['name']));
 					// if login, add base64-encoded uri
 					if($secondlevel[$j]['getid'] == 'login' && $this->get('id') != 'login' && $this->get('id') != 'logout') {
 						$active['navi.1a.href'] = $firstlevel['file'].'?id='.$secondlevel[$j]['getid'].'&r='.base64_encode($_SERVER['REQUEST_URI']);
@@ -348,8 +351,8 @@ class PageView extends Object {
 					// inactive
 					$inactive = array(
 									'navi.1i.href' => $firstlevel['file'].'?id='.$secondlevel[$j]['getid'],
-									'navi.1i.alt' => $this->lang($secondlevel[$j]['name']),
-									'navi.1i.name' => $this->lang($secondlevel[$j]['name']));
+									'navi.1i.alt' => parent::lang($secondlevel[$j]['name']),
+									'navi.1i.name' => parent::lang($secondlevel[$j]['name']));
 					// if login, add base64-encoded uri
 					if($secondlevel[$j]['getid'] == 'login' && $this->get('id') != 'login' && $this->get('id') != 'logout') {
 						$inactive['navi.1i.href'] = $firstlevel['file'].'?id='.$secondlevel[$j]['getid'].'&r='.base64_encode($_SERVER['REQUEST_URI']);
@@ -419,7 +422,7 @@ class PageView extends Object {
 		if($name !== false) {
 			$this->add_output(array('logininfo' => $name),true);
 		} else {
-			$this->add_output(array('logininfo' => $this->lang('class.PageView#PageView#logininfo#NotLoggedin')),true);
+			$this->add_output(array('logininfo' => parent::lang('class.PageView#PageView#logininfo#NotLoggedin')),true);
 		}
 	}
 }

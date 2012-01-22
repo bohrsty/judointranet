@@ -43,6 +43,10 @@ $lang = array(
 				'ERROR.message' => 'Sie sind nicht berechtigt diese Seite an zu zeigen, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
 									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
 									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
+			),
+			'DbActionUnknown' => array(
+				'ERROR.caption' => 'FEHLER',
+				'ERROR.message' => 'Der Eintrag konnte nicht gespeichert werden, bitte probieren Sie es erneut oder wenden sich an Ihre Systembetreuer.'
 			)
 		
 		)
@@ -71,7 +75,8 @@ $lang = array(
 				'name' => 'Kalender'
 			),
 			'secondlevel' => array(
-				'listall' => 'Listenansicht'
+				'listall' => 'Listenansicht',
+				'new' => 'Neuen Eintrag erstellen'
 			)
 		),
 		'get_date_links' => array(
@@ -90,6 +95,40 @@ $lang = array(
 				'next_month' => 'n&auml;chster Monat',
 				'half_year' => 'n&auml;chstes halbes Jahr',
 				'next_year' => 'n&auml;chstes Jahr'
+			)
+		),
+		'new_entry' => array(
+			'form' => array(
+				'requiredNote' => '<span class="required">*</span> erforderliches Feld',
+				'date' => 'Datum',
+				'submitButton' => 'Speichern',
+				'name' => 'Name',
+				'shortname' => 'Kurzbezeichnung',
+				'type' => 'Veranstaltungstyp',
+				'rights' => 'Berechtigte Gruppen (mehrfache Auswahl: &lt;STRG&gt; gedr&uuml;ckt halten und Gruppen ausw&auml;hlen)',
+				'entry_content' => 'Inhalt/Beschreibung'
+			),
+			'rule' => array(
+				'required.date' => 'Datum muss ausgew&auml;hlt werden!',
+				'check.date' => 'Korrektes Datum muss ausgew&auml;hlt werden!',
+				'required.name' => 'Name muss eingetragen werden!',
+				'required.type' => 'Typ muss ausgew&auml;hlt werden!',
+				'check.select' => 'Feld muss ausgew&auml;ht werden!',
+				'regexp.allowedChars' => 'Es k&ouml;nnen nur folgende Zeichen eingegeben werden!'
+			),
+			'date' => array(
+				'month.1' => 'Jan',
+				'month.2' => 'Feb',
+				'month.3' => 'M&auml;r',
+				'month.4' => 'Apr',
+				'month.5' => 'Mai',
+				'month.6' => 'Jun',
+				'month.7' => 'Jul',
+				'month.8' => 'Aug',
+				'month.9' => 'Sep',
+				'month.10' => 'Okt',
+				'month.11' => 'Nov',
+				'month.12' => 'Dez'
 			)
 		)
 	),
@@ -167,6 +206,28 @@ $lang = array(
 		'login' => array(
 			'message' => array(
 				'default' => 'Bitte einloggen',
+			)
+		),
+		'return_all_groups' => array(
+			'rights' => array(
+				'public.access' => 'Alle (&ouml;ffentlicher Zugriff)'
+			)
+		)
+	),
+	'class.Calendar' => array(
+		'return_types' => array(
+			'type' => array(
+				'name.event' => 'Turnier/Meisterschaft'
+			)
+		),
+		'details_to_html' => array(
+			'data' => array(
+				'name' => '<span>Veranstaltung:</span><br />',
+				'shortname' => '<span>Kurzname:</span><br />',
+				'date' => '<span>Datum:</span><br />',
+				'type' => '<span>Art:</span><br />',
+				'content' => '<span>Beschreibung:</span><br />',
+				'rights' => '<span>Berechtigte Gruppen:</span><br />'
 			)
 		)
 	)
