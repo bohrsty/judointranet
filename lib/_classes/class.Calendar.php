@@ -172,6 +172,18 @@ class Calendar extends Object {
 	
 	
 	/**
+	 * return_id returns the calendar-id
+	 * 
+	 * @return int value of $id
+	 */
+	public function return_id() {
+		return $this->get_id();
+	}
+	
+	
+	
+	
+	/**
 	 * return_name returns the value of $name
 	 * 
 	 * @return string value of $name
@@ -247,7 +259,7 @@ class Calendar extends Object {
 		$data = array(
 					'name' => parent::lang('class.Calendar#details_to_html#data#name').$this->get_name(),
 					'shortname' => parent::lang('class.Calendar#details_to_html#data#shortname').$this->get_shortname(),
-					'date' => parent::lang('class.Calendar#details_to_html#data#date').$this->get_date(),
+					'date' => parent::lang('class.Calendar#details_to_html#data#date').$this->return_date('d.m.Y'),
 					'type' => parent::lang('class.Calendar#details_to_html#data#type').$this->return_type('translated'),
 					'content' => parent::lang('class.Calendar#details_to_html#data#content').$this->get_content(),
 					'rights' => parent::lang('class.Calendar#details_to_html#data#rights').$rights_string

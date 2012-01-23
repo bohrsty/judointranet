@@ -333,6 +333,11 @@ class PageView extends Object {
 					continue;
 				}
 				
+				// check visibility
+				if($secondlevel[$j]['show'] === false) {
+					continue;
+				}
+				
 				// check active or inactive
 				if($file == $naviitems[$i]['firstlevel']['file'] && $this->get('id') == $secondlevel[$j]['getid']) {
 					
@@ -420,6 +425,9 @@ class PageView extends Object {
 		// check if userinfo exists and set to output
 		$name = $_SESSION['user']->return_userinfo('name');
 		if($name !== false) {
+			
+			// add userinfos
+			$name = parent::lang('class.PageView#PageView#logininfo#LoggedinAs').' '.$name.' ('.$_SESSION['user']->return_userinfo('username').')';
 			$this->add_output(array('logininfo' => $name),true);
 		} else {
 			$this->add_output(array('logininfo' => parent::lang('class.PageView#PageView#logininfo#NotLoggedin')),true);

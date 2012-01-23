@@ -146,3 +146,8 @@ form#login span.error {
 div.calendar-details p.details span{
 	font-weight: bold;
 }
+
+p.logininfo {
+	text-align: right;
+	font-size: 10pt;
+}

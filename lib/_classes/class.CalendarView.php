@@ -55,12 +55,20 @@ class CalendarView extends PageView {
 							1 => array(
 								'getid' => 'listall', 
 								'name' => 'class.CalendarView#connectnavi#secondlevel#listall',
-								'id' => crc32('CalendarView|listall') // 316626287
+								'id' => crc32('CalendarView|listall'), // 316626287
+								'show' => true
 							),
 							0 => array(
 								'getid' => 'new', 
 								'name' => 'class.CalendarView#connectnavi#secondlevel#new',
-								'id' => crc32('CalendarView|new') // 1338371484
+								'id' => crc32('CalendarView|new'), // 1338371484
+								'show' => true
+							),
+							2 => array(
+								'getid' => 'details', 
+								'name' => 'class.CalendarView#connectnavi#secondlevel#details',
+								'id' => crc32('CalendarView|details'), // 982147 
+								'show' => false
 							)
 						)
 					);
@@ -139,11 +147,21 @@ class CalendarView extends PageView {
 						
 						// set contents
 						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#listall#title'))));
+						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#new#title'))));
 						// navi
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 						// main-content
 						$this->add_output(array('main' => $this->new_entry()));
+					break;
+					
+					case 'details':
+						// set contents
+						// title
+						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#details#title'))));
+						// navi
+						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
+						// main-content
+						$this->add_output(array('main' => $this->details($this->get('cid'))));
 					break;
 					
 					default:
@@ -203,6 +221,13 @@ class CalendarView extends PageView {
 		// read all entries in future
 		$entries = $this->read_all_entries();
 		
+		// get template
+		try {
+			$a = new HtmlTemplate('templates/a.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
+		
 		// th: get template and set content-array to parse
 		try {
 			$th = new HtmlTemplate('templates/calendar.listall.th.tpl');
@@ -243,9 +268,17 @@ class CalendarView extends PageView {
 					$contents['class.tr'] = 'calendar.listall.tr odd';
 				}
 				
+				// prepare name
+				$content = array(
+					'a.class' => '',
+					'a.href' => 'calendar.php?id=details&cid='.$entry->return_id(),
+					'a.alt' => $entry->return_name(),
+					'a.name' => $entry->return_name()
+				);
+				
 				// list-entry
 				$contents['tr.date'] = $entry->return_date('d.m.Y');
-				$contents['tr.name'] = $entry->return_name();
+				$contents['tr.name'] = $a->parse($content);
 				
 				// parse-template
 				$tr_out .= $tr->parse($contents);
@@ -590,6 +623,34 @@ class CalendarView extends PageView {
 		if($first->return_date() > $second->return_date()) {
 			return 1;
 		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * details returns the details of a calendar-entry as html-string
+	 * 
+	 * @param int $cid entry-id for calendar
+	 * @return string html-string with the details of the calendar entry
+	 */
+	private function details($cid) {
+	
+		// get calendar-object
+		$calendar = new Calendar($cid);
+		
+		// read template
+		try {
+			$calendar_details = new HtmlTemplate('templates/calendar.details.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
+		
+		// return html-string
+		return $calendar->details_to_html($calendar_details);
 	}
 }
 

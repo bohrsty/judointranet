@@ -63,7 +63,8 @@ class MainView extends PageView {
 					array(
 						'getid' => 'logout', 
 						'name' => 'class.PageView#navi#secondlevel#logout',
-						'id' => crc32('MainView|logout') // 447709445
+						'id' => crc32('MainView|logout'), // 447709445
+						'show' => true
 					)
 				);
 		} else {
@@ -73,7 +74,8 @@ class MainView extends PageView {
 					array(
 						'getid' => 'login', 
 						'name' => 'class.PageView#navi#secondlevel#login',
-						'id' => crc32('MainView|login') // 2785044012
+						'id' => crc32('MainView|login'), // 2785044012
+						'show' => true
 					)
 				);
 		}

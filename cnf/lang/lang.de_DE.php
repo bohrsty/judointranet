@@ -68,6 +68,12 @@ $lang = array(
 			),
 			'Error' => array(
 				'NotAuthorized' => 'FEHLER - Nicht berechtigt'
+			),
+			'new' => array(
+				'title' => 'Kalender: Neuer Eintrag'
+			),
+			'details' => array(
+				'title' => 'Kalender: Termindetails'
 			)
 		),
 		'connectnavi' => array(
@@ -146,7 +152,8 @@ $lang = array(
 		),
 		'PageView' => array(
 			'logininfo' => array(
-				'NotLoggedin' => 'Nicht eingelogged.'
+				'NotLoggedin' => 'Nicht angemeldet.',
+				'LoggedinAs' => 'Angemeldet als:'
 			)
 		)
 	),

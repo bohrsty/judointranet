@@ -314,6 +314,7 @@ class User extends Object {
 		$db_result = $result->fetch_array(MYSQL_ASSOC);
 		$this->set_id($db_result['id']);
 		unset($db_result['id']);
+		$db_result['username'] = $username;
 		$this->set_userinfo($db_result);
 		
 		// set groups
