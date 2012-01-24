@@ -143,6 +143,33 @@ class User extends Object {
 			while(list($group) = $result->fetch_array(MYSQL_NUM)) {
 				$groups[] = $group;
 			}
+			
+			// free result
+			$result->close();
+			
+			// get membergroups
+			$sql = "SELECT gg.g_id,gg.member_id
+					FROM group2group AS gg";
+			
+			// execute
+			$result = $db->query($sql);
+			
+			// fetch result
+			$rec_groups = $groups;
+			$members = array();
+			while(list($g_id,$member_id) = $result->fetch_array(MYSQL_NUM)) {
+				$members[$g_id] = $member_id;
+			}
+			
+			// find members
+			for($i=1;$i<count($groups);$i++) {
+				$rec_groups[] = $this->list_groups_rec($rec_groups,$members,$rec_groups[$i]);
+			}
+			
+			// merge results
+			$groups = array_merge($groups,$rec_groups);
+			// unique array
+			$groups = array_values(array_unique($groups,SORT_NUMERIC));
 		}
 		
 		// return array
@@ -393,11 +420,12 @@ class User extends Object {
 	
 	
 	/**
-	 * return_all_groups returns an array of group-ids and their names
+	 * return_all_groups returns an array of the users group-ids and their names
 	 * 
+	 * @param bool $admin returns all groups if true
 	 * @return array array containing all group-ids and names
 	 */
-	public static function return_all_groups() {
+	public function return_all_groups($admin=false) {
 		
 		// prepare return
 		$groups = array(0 => parent::lang('class.User#return_all_groups#rights#public.access'));
@@ -412,19 +440,63 @@ class User extends Object {
 		// execute statement
 		$result = $db->query($sql);
 		
-		// fetch result
-		while(list($id,$name) = $result->fetch_array(MYSQL_NUM)) {
+		// fetch result	
+		while(list($g_id,$name) = $result->fetch_array(MYSQL_NUM)) {
 			
 			// add to array
-			$groups[$id] = $name;
+			$groups[$g_id] = $name;
 		}
- 			
+		
 		// sort
-		sort($groups,SORT_LOCALE_STRING);
+		asort($groups,SORT_LOCALE_STRING);
+		
+ 		// check admin
+ 		if($admin === true) {
+ 			
+ 			// return all groups
+ 			$return = $groups;
+ 		} else {
+ 			
+ 			// return own groups
+ 			// get own group-ids
+ 			$mygroups = $this->get_groups();
+			
+ 			// walk through $mygroups
+ 			$owngroups = array();
+ 			foreach($mygroups as $group) {
+ 				$owngroups[$group] = $groups[$group];
+ 			}
+ 			
+ 			// sort
+ 			asort($owngroups,SORT_LOCALE_STRING);
+ 			
+			$return = $owngroups; 			
+ 		}
 		
 		// return
-		return $groups;
+		return $return;
 	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * list_groups_rec
+	 * 
+	 */
+	private function list_groups_rec(&$groups,$members,$group) {
+		
+		// find $group in $members and recurse
+		if(isset($members[$group])) {
+			$groups[] = $this->list_groups_rec($groups,$members,$members[$group]);
+			return $members[$group];
+		} else {
+			return $group;
+		}
+	} 
 }
 
 

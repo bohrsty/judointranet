@@ -427,10 +427,10 @@ class PageView extends Object {
 		if($name !== false) {
 			
 			// add userinfos
-			$name = parent::lang('class.PageView#PageView#logininfo#LoggedinAs').' '.$name.' ('.$_SESSION['user']->return_userinfo('username').')';
+			$name = parent::lang('class.PageView#put_userinfo#logininfo#LoggedinAs').' '.$name.' ('.$_SESSION['user']->return_userinfo('username').')';
 			$this->add_output(array('logininfo' => $name),true);
 		} else {
-			$this->add_output(array('logininfo' => parent::lang('class.PageView#PageView#logininfo#NotLoggedin')),true);
+			$this->add_output(array('logininfo' => parent::lang('class.PageView#put_userinfo#logininfo#NotLoggedin')),true);
 		}
 	}
 }

@@ -506,7 +506,7 @@ class CalendarView extends PageView {
 		
 		
 		// select rights
-		$options = User::return_all_groups();
+		$options = $_SESSION['user']->return_all_groups();
 		$rights = $form->addElement('select','rights',array('multiple' => 'multiple','size' => 5));
 		$rights->setLabel(parent::lang('class.CalendarView#new_entry#form#rights').':');
 		$rights->loadOptions($options);

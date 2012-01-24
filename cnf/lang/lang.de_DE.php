@@ -150,7 +150,7 @@ $lang = array(
 				'logout' => 'Logout'
 			)
 		),
-		'PageView' => array(
+		'put_userinfo' => array(
 			'logininfo' => array(
 				'NotLoggedin' => 'Nicht angemeldet.',
 				'LoggedinAs' => 'Angemeldet als:'

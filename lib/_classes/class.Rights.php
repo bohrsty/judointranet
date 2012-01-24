@@ -119,15 +119,9 @@ class Rights extends Object {
 		for($i = 0;$i<count($group_ids);$i++) {
 			
 			// field
-			$sql .= 'r.g_id = ';
-			
-			// last entry
-			if($group_ids[$i]==count($group_ids)-1){
-				$sql .= $group_ids[$i];
-			} else {
-				$sql .= $group_ids[$i].' OR ';
-			}
+			$sql .= 'r.g_id = '.$group_ids[$i].' OR ';
 		}
+		$sql = substr($sql,0,-4);
 		$sql .= ')';	
 		
 		// execute

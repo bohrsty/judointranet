@@ -246,7 +246,8 @@ class Calendar extends Object {
 	public function details_to_html($template) {
 		
 		// prepare rights
-		$groups = User::return_all_groups();
+		$groups = $_SESSION['user']->return_all_groups(true);
+//		$groups = User::return_all_groups();
 		$rights = $this->get_rights()->return_rights();
 		$rights_string = '';
 
