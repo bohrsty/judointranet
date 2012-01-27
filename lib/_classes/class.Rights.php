@@ -47,7 +47,7 @@ class Rights extends Object {
 		} else {
 			
 			// get right for given id
-			$this->get_from_db($arg);
+			$this->get_from_db($arg);			
 		}
 	}
 	
@@ -70,14 +70,14 @@ class Rights extends Object {
 		$sql = 'SELECT r.id,r.g_id
 				FROM rights AS r
 				WHERE r.table_name = "'.$this->get_table().'"
-				AND r.table_id = '.$table_id;
+				AND r.table_id = '.(int) $table_id;
 		
 		// execute
 		$result = $db->query($sql);
 		
 		// fetch result
 		$all_rights = array();
-		while(list($id,$g_id) = $result->fetch_array(MYSQL_NUM)); {
+		while(list($id,$g_id) = $result->fetch_array(MYSQL_NUM)) {
 		
 			// set variables to array
 			$all_rights[$id] = $g_id;

@@ -158,12 +158,12 @@ class User extends Object {
 			$rec_groups = $groups;
 			$members = array();
 			while(list($g_id,$member_id) = $result->fetch_array(MYSQL_NUM)) {
-				$members[$g_id] = $member_id;
+				$members[$g_id][] = $member_id;
 			}
 			
 			// find members
 			for($i=1;$i<count($groups);$i++) {
-				$rec_groups[] = $this->list_groups_rec($rec_groups,$members,$rec_groups[$i]);
+				$this->list_groups_rec($rec_groups,$members,$groups[$i]);
 			}
 			
 			// merge results
@@ -422,40 +422,55 @@ class User extends Object {
 	/**
 	 * return_all_groups returns an array of the users group-ids and their names
 	 * 
-	 * @param bool $admin returns all groups if true
+	 * @param string $param returns all groups if admin, sortable if sort
 	 * @return array array containing all group-ids and names
 	 */
-	public function return_all_groups($admin=false) {
+	public function return_all_groups($param='') {
 		
 		// prepare return
-		$groups = array(0 => parent::lang('class.User#return_all_groups#rights#public.access'));
+		if($param != 'sort') {
+			$groups = array(0 => parent::lang('class.User#return_all_groups#rights#public.access'));
+		} else {
+			$groups = array();
+		}
 		
 		// get db-object
 		$db = Db::newDb();
 		
 		// prepare sql-statement
-		$sql = "SELECT `g`.`id`,`g`.`name`
+		$sql = "SELECT `g`.`id`,`g`.`name`,`g`.`sortable`
 				FROM `group` AS g";
 		
 		// execute statement
 		$result = $db->query($sql);
 		
 		// fetch result	
-		while(list($g_id,$name) = $result->fetch_array(MYSQL_NUM)) {
+		while(list($g_id,$name,$sortable) = $result->fetch_array(MYSQL_NUM)) {
 			
-			// add to array
-			$groups[$g_id] = $name;
+			// check if sortable
+			if($param == 'sort') {
+				
+				// add only sortable
+				if($sortable == 1) {
+					$groups[$g_id] = $name;
+				}
+				
+				// set return
+				$return = $groups;
+			} else {
+				$groups[$g_id] = $name;
+			}
 		}
 		
 		// sort
 		asort($groups,SORT_LOCALE_STRING);
 		
  		// check admin
- 		if($admin === true) {
+ 		if($param == 'admin') {
  			
  			// return all groups
  			$return = $groups;
- 		} else {
+ 		} elseif($param != 'sort') {
  			
  			// return own groups
  			// get own group-ids
@@ -491,10 +506,13 @@ class User extends Object {
 		
 		// find $group in $members and recurse
 		if(isset($members[$group])) {
-			$groups[] = $this->list_groups_rec($groups,$members,$members[$group]);
-			return $members[$group];
+			for($i=0;$i<count($members[$group]);$i++) {
+				$this->list_groups_rec($groups,$members,$members[$group][$i]);				
+echo $members[$group][$i]."<br />\n";				
+				$groups[] = $members[$group][$i];
+			}
 		} else {
-			return $group;
+			$groups[] = $group;
 		}
 	} 
 }

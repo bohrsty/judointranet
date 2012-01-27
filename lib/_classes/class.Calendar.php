@@ -196,6 +196,18 @@ class Calendar extends Object {
 	
 	
 	/**
+	 * return_rights returns the value of $rights
+	 * 
+	 * @return object value of $rights
+	 */
+	public function return_rights() {
+		return $this->get_rights();
+	}
+	
+	
+	
+	
+	/**
 	 * write_db writes the calendar-entry to db
 	 * 
 	 * @return void
@@ -246,8 +258,7 @@ class Calendar extends Object {
 	public function details_to_html($template) {
 		
 		// prepare rights
-		$groups = $_SESSION['user']->return_all_groups(true);
-//		$groups = User::return_all_groups();
+		$groups = $_SESSION['user']->return_all_groups('admin');
 		$rights = $this->get_rights()->return_rights();
 		$rights_string = '';
 

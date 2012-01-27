@@ -85,7 +85,7 @@ $lang = array(
 				'new' => 'Neuen Eintrag erstellen'
 			)
 		),
-		'get_date_links' => array(
+		'get_sort_links' => array(
 			'dates' => array(
 				'next_day' => 'Morgen',
 				'next_week' => 'n&auml;chste Woche',
@@ -94,13 +94,21 @@ $lang = array(
 				'half_year' => 'n&auml;chstes halbes Jahr',
 				'next_year' => 'n&auml;chstes Jahr'
 			),
+			'reset' => array(
+				'all' => 'Alle Filter zur&uuml;cksetzen',
+				'date' => 'Datumsfilter zur&uuml;cksetzen',
+				'groups' => 'Gruppenfilter zur&uuml;cksetzen'
+			),
 			'alt' => array(
 				'next_day' => 'Morgen',
 				'next_week' => 'n&auml;chste Woche',
 				'two_weeks' => 'n&auml;chste zwei Wochen',
 				'next_month' => 'n&auml;chster Monat',
 				'half_year' => 'n&auml;chstes halbes Jahr',
-				'next_year' => 'n&auml;chstes Jahr'
+				'next_year' => 'n&auml;chstes Jahr',
+				'resetAll' => 'Alle Filter zur&uuml;cksetzen',
+				'resetDate' => 'Datumsfilter zur&uuml;cksetzen',
+				'resetGroups' => 'Gruppenfilter zur&uuml;cksetzen'
 			)
 		),
 		'new_entry' => array(

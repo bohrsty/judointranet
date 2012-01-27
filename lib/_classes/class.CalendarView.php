@@ -125,9 +125,7 @@ class CalendarView extends PageView {
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 						// main-content
 						// date-links
-						$this->add_output(array('main' => $this->get_date_links($this->get('id'))));
-						// p
-						$this->add_output(array('main' => $this->p('','')));
+						$this->add_output(array('main' => $this->get_sort_links($this->get('id'))));
 						
 						// prepare dates
 						$from = strtotime('yesterday');
@@ -218,8 +216,22 @@ class CalendarView extends PageView {
 		$th_out = '';
 		$tr_out = '';
 		
-		// read all entries in future
-		$entries = $this->read_all_entries();
+		// read all entries
+		$calendars = $this->read_all_entries();
+		// check sort
+		$entries = array();
+		if($this->get('sort') !== false) {
+			
+			// check if entry is in sort
+			foreach($calendars as $id => $entry) {
+				
+				if(in_array($this->get('sort'),$entry->return_rights()->return_rights())) {
+					$entries[$id] = $entry;
+				}
+			}
+		} else {
+			$entries = $calendars;
+		}
 		
 		// get template
 		try {
@@ -343,15 +355,16 @@ class CalendarView extends PageView {
 	
 	
 	/**
-	 * get_date_links returns links to list "week" "month" "year" etc
+	 * get_sort_links returns links to list "week" "month" "year" etc
+	 * and sortable groups
 	 * 
 	 * @param string $getid $_GET['get'] to use in links
 	 * @return string html-string with the links
 	 */
-	private function get_date_links($getid) {
+	private function get_sort_links($getid) {
 		
 		// prepare output
-		$output = '';
+		$date_links = $group_links = $output = $reset_links = '';
 		
 		// read template
 		try {
@@ -359,6 +372,48 @@ class CalendarView extends PageView {
 		} catch(Exception $e) {
 			$GLOBALS['Error']->handle_error($e);
 		}
+		// prepare links
+		$contents = array();
+		$contents['a.class'] = 'a';
+		
+		
+		// if sort, attach sort
+		$sort = '';
+		if($this->get('sort') !== false) {
+			$sort = '&sort='.$this->get('sort');
+		}
+		// if from or to add from or to
+		$from = $to = '';
+		if($this->get('from') !== false) {
+			$from = '&from='.$this->get('from');
+		}
+		if($this->get('to') !== false) {
+			$to = '&to='.$this->get('to');
+		}
+		
+		// prepare resetlinks
+		// all
+		$contents = array(	'a.href' => 'calendar.php?id='.$getid, // href
+							'a.alt' => parent::lang('class.CalendarView#get_sort_links#alt#resetAll'), // alt
+							'a.name' => parent::lang('class.CalendarView#get_sort_links#reset#all') // linktext
+			);
+		$reset_links .= $a->parse($contents)."\n";
+		
+		// dates
+		$contents = array(	'a.href' => 'calendar.php?id='.$getid.$sort, // href
+							'a.alt' => parent::lang('class.CalendarView#get_sort_links#alt#resetDate'), // alt
+							'a.name' => parent::lang('class.CalendarView#get_sort_links#reset#date') // linktext
+			);
+		$reset_links .= $a->parse($contents)."\n";
+		
+		// groups
+		$contents = array(	'a.href' => 'calendar.php?id='.$getid.$from.$to, // href
+							'a.alt' => parent::lang('class.CalendarView#get_sort_links#alt#resetGroups'), // alt
+							'a.name' => parent::lang('class.CalendarView#get_sort_links#reset#groups') // linktext
+			);
+		$reset_links .= $a->parse($contents)."\n";
+		
+		$output .= $this->p('',$reset_links);
 		
 		// prepare content
 		$dates = array(
@@ -369,23 +424,43 @@ class CalendarView extends PageView {
 					'half_year' => '+6 months',
 					'next_year' => '+1 year'
 					);
-		$contents = array();
-		$contents['a.class'] = 'a';
 		
 		// create links
 		foreach($dates as $name => $date) {
 			
 			// href
-			$contents['a.href'] = 'calendar.php?id='.$getid.'&from='.date('Y-m-d',time()).'&to='.date('Y-m-d',strtotime($date));
+			$contents['a.href'] = 'calendar.php?id='.$getid.'&from='.date('Y-m-d',time()).'&to='.date('Y-m-d',strtotime($date)).$sort;
 			// alt
-			$contents['a.alt'] = parent::lang('class.CalendarView#get_date_links#alt#'.$name);
+			$contents['a.alt'] = parent::lang('class.CalendarView#get_sort_links#alt#'.$name);
 			// linktext
-			$contents['a.name'] = parent::lang('class.CalendarView#get_date_links#dates#'.$name);
+			$contents['a.name'] = parent::lang('class.CalendarView#get_sort_links#dates#'.$name);
 			
 			// parse template
-			$output .= $a->parse($contents);
-			$output .= " \n";	
+			$date_links .= $a->parse($contents)."\n";
 		}
+		
+		// add <p>
+		$output .= $this->p('',$date_links);
+		
+		// add group-links
+		$groups = $_SESSION['user']->return_all_groups('sort');
+		
+		// create links
+		foreach($groups as $g_id => $name) {
+			
+			// href
+			$contents['a.href'] = 'calendar.php?id='.$getid.'&sort='.$g_id.$from.$to;
+			// alt
+			$contents['a.alt'] = $name;
+			// linktext
+			$contents['a.name'] = $name;
+			
+			// parse template
+			$group_links .= $a->parse($contents)."\n";
+		}
+		
+		// add <p>
+		$output .= $this->p('',$group_links);
 		
 		// return
 		return $output;
