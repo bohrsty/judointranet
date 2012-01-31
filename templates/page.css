@@ -70,6 +70,22 @@ div.quickform div.row {
 	background-color: #ccf;
 }
 
+td.admin {
+	text-align: center;
+}
+
+th.name {
+	width: 450px;
+}
+
+th.date {
+	width: 120px;
+}
+
+td.date {
+	text-align: center;
+}
+
 /* navi */
 div.navi_0 {
 	border: 1px solid blue;
@@ -117,6 +133,22 @@ div#login-out {
 	padding: 7px;
 }
 
+div#confirm {
+	margin: 130px auto;
+	width: 430px;
+	min-height: 250px;
+	border: 2px dashed blue;
+	padding: 7px;
+}
+
+div#confirm div.quickform {
+	float: left;
+}
+
+div#cancel {
+	padding-left: 100px;
+}
+
 /*
  * quickform2
  */
@@ -138,6 +170,13 @@ form#login .error input {
 
 form#login span.error {
 	color: red;
+}
+
+/*
+ * confirmation
+ */
+input#yes-0 {
+	width: 80px;
 }
 
 /*

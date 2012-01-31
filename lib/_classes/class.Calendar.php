@@ -17,6 +17,7 @@ class Calendar extends Object {
 	private $content;
 	private $ann_id;
 	private $rights;
+	private $valid;
 	
 	/*
 	 * getter/setter
@@ -69,6 +70,12 @@ class Calendar extends Object {
 	private function set_rights($rights) {
 		$this->rights = $rights;
 	}
+	private function get_valid(){
+		return $this->valid;
+	}
+	private function set_valid($valid) {
+		$this->valid = $valid;
+	}
 	
 	/*
 	 * constructor/destructor
@@ -91,6 +98,7 @@ class Calendar extends Object {
 			$this->set_date($arg['date']);
 			$this->set_type($arg['type']);
 			$this->set_content($arg['content']);
+			$this->set_valid($arg['valid']);
 			
 			// set rights
 			$this->set_rights(new Rights('calendar',$arg['rights']));
@@ -118,7 +126,7 @@ class Calendar extends Object {
 		
 		// prepare sql-statement
 		$stmt = $db->prepare(	'
-						SELECT c.name,c.shortname,c.date,c.type,c.content,c.ann_id
+						SELECT c.name,c.shortname,c.date,c.type,c.content,c.ann_id,c.valid
 						FROM calendar AS c
 						WHERE c.id = ?');
 		
@@ -129,8 +137,8 @@ class Calendar extends Object {
 		$stmt->execute();
 		
 		// bind variables to result
-		$name = $shortname = $date = $type = $content = ''; $ann_id = 0;
-		$stmt->bind_result($name,$shortname,$date,$type,$content,$ann_id);
+		$name = $shortname = $date = $type = $content = ''; $ann_id = $valid = 0;
+		$stmt->bind_result($name,$shortname,$date,$type,$content,$ann_id,$valid);
 		
 		// fetch result
 		$stmt->fetch();
@@ -143,6 +151,7 @@ class Calendar extends Object {
 		$this->set_type($type);
 		$this->set_content($content);
 		$this->set_ann_id($ann_id);
+		$this->set_valid($valid);
 		
 		// close db
 		$stmt->close();
@@ -208,11 +217,35 @@ class Calendar extends Object {
 	
 	
 	/**
+	 * return_valid returns the value of $valid
+	 * 
+	 * @return int value of $valid
+	 */
+	public function return_valid() {
+		return $this->get_valid();
+	}
+	
+	
+	
+	
+	/**
+	 * disable sets the calendar-entry invalid
+	 * 
+	 * @return void
+	 */
+	public function disable() {
+		return $this->set_valid(0);
+	}
+	
+	
+	
+	
+	/**
 	 * write_db writes the calendar-entry to db
 	 * 
 	 * @return void
 	 */
-	public function write_db() {
+	public function write_db($action='new') {
 		
 		// prepare timestamp
 		$timestamp = date('Y-m-d',strtotime($this->get_date()));
@@ -220,27 +253,60 @@ class Calendar extends Object {
 		// get db-object
 		$db = Db::newDb();
 		
-		// prepare sql-statement
-		$sql = 'INSERT INTO calendar (id,name,shortname,date,type,content,ann_id)
-				VALUES (null,"'
-				.$this->get_name().'","'
-				.$this->get_shortname().'","'
-				.$timestamp.'","'
-				.$this->get_type().'","'
-				.$this->get_content().'",0)';
+		// check action
+		if($action == 'new') {
 		
-		// execute
-		$db->query($sql);
-		
-		// get insert_id
-		$table_id = $db->insert_id;
-		
-		// set id and ann_id
-		$this->set_id($table_id);
-		$this->set_ann_id(0);
-		
-		// write rights
-		$this->get_rights()->write_db($table_id);
+			// insert
+			// prepare sql-statement
+			$sql = 'INSERT INTO calendar (id,name,shortname,date,type,content,ann_id,valid)
+					VALUES (null,"'
+					.$this->get_name().'","'
+					.$this->get_shortname().'","'
+					.$timestamp.'","'
+					.$this->get_type().'","'
+					.$this->get_content().'",
+					0,'
+					.$this->get_valid().')';
+			
+			// execute
+			$db->query($sql);
+			
+			// get insert_id
+			$insert_id = $db->insert_id;
+			
+			// set id and ann_id
+			$this->set_id($insert_id);
+			$this->set_ann_id(0);
+			
+			// write rights
+			try {
+				$this->get_rights()->write_db($insert_id);
+			} catch(Exception $e) {
+				throw new Exception('DbActionUnknown',$e->getCode());
+			}
+		} elseif($action == 'update') {
+			
+			// update
+			// prepare sql-statement
+			$sql = 'UPDATE calendar
+					SET
+						name = "'.$this->get_name().'",
+						shortname = "'.$this->get_shortname().'",
+						date = "'.$timestamp.'",
+						type = "'.$this->get_type().'",
+						content = "'.$this->get_content().'",
+						ann_id = "'.$this->get_ann_id().'",
+						valid = '.$this->get_valid().'
+					WHERE id = "'.$this->get_id().'"';
+			
+			// execute
+			$db->query($sql);
+		} else {
+			
+			// error
+			$errno = $GLOBALS['Error']->error_raised('DbActionUnknown','write_calendar',$action);
+			throw new Exception('DbActionUnknown',$errno);
+		}
 		
 		// close db
 		$db->close();
@@ -318,6 +384,32 @@ class Calendar extends Object {
 		
 		// return
 		return $return;
+	}
+	
+	
+	
+	
+	/**
+	 * check_id checks if the given id exists in db
+	 * 
+	 * @return bool true if id exists, false otherwise
+	 */
+	public static function check_id($id) {
+		
+		// get db-object
+		$db = Db::newDb();
+		
+		// prepare sql
+		$sql = "SELECT id FROM calendar WHERE id=$id";
+		
+		// execute
+		$result = $db->query($sql);
+		
+		if($result->num_rows == 0) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 }
 

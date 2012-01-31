@@ -1,4 +1,3 @@
-<table id="###table.id###">
-	###th###
-	###tr###
+<table###table.params###>
+	###table.content###
 </table>

@@ -10,6 +10,7 @@ class Rights extends Object {
 	 * class-variables
 	 */
 	private $rights;
+	private $new_rights;
 	private $table;
 	
 	/*
@@ -20,6 +21,12 @@ class Rights extends Object {
 	}
 	private function set_rights($rights) {
 		$this->rights = $rights;
+	}
+	private function get_new_rights(){
+		return $this->new_rights;
+	}
+	private function set_new_rights($new_rights) {
+		$this->new_rights = $new_rights;
 	}
 	private function get_table(){
 		return $this->table;
@@ -157,9 +164,12 @@ class Rights extends Object {
 		
 		// read rights
 		$rights = $this->get_rights();
-		$new_rights = array();
+		$update_rights = array();
 		// get action
-		$action = $rights['action'];
+		$action = 'update';
+		if(isset($rights['action'])) {
+			$action = $rights['action'];
+		}
 		
 		// get db-object
 		$db = Db::newDb();
@@ -172,30 +182,58 @@ class Rights extends Object {
 			foreach($rights[$action] as $no => $g_id) {
 				
 				// add values
-				$sql = 'INSERT INTO rights (id,g_id,table_name,table_id)';
-				$sql .= 'VALUES (NULL,'.$g_id.',"'.$this->get_table().'",'.$table_id.')';
+				$sql = 'INSERT INTO rights (id,g_id,table_name,table_id)
+						VALUES (NULL,'.$g_id.',"'.$this->get_table().'",'.$table_id.')';
 				
 				// execute
 				$db->query($sql);
 				
-				// prepare $new_rights
-				$new_rights[$db->insert_id] = $g_id;
+				// prepare $update_rights
+				$update_rights[$db->insert_id] = $g_id;
 			}
 		} elseif($action == 'update') {
 			
 			// update
+			
+			// get new_rights
+			$new_rights = $this->get_new_rights();
+						
+			// walk through rights to insert
+			foreach($new_rights['insert'] as $no => $g_id) {
+				
+				// prepare insert-statement
+				$sql = 'INSERT INTO rights (id,g_id,table_name,table_id)
+						VALUES (NULL,'.$g_id.',"'.$this->get_table().'",'.$table_id.')';
+				
+				// execute
+				$db->query($sql);
+				
+				// prepare $update_rights
+				$update_rights[$db->insert_id] = $g_id;
+			}
+			
+			// walk through rights to remove
+			foreach($new_rights['remove'] as $id => $g_id) {
+				
+				// prepare delete-statement
+				$sql = 'DELETE FROM rights
+						WHERE id = '.$id;
+				
+				// execute
+				$db->query($sql);
+			}
 		} else {
 			
 			// error
 			$errno = $GLOBALS['Error']->error_raised('DbActionUnknown','write_rights',$action);
-			throw new Exception('DbActionUnkknown',$errno);
+			throw new Exception('DbActionUnknown',$errno);
 		}
 		
 		// close db
 		$db->close();
 		
 		// set new rights
-		$this->set_rights($new_rights);
+		$this->set_rights($update_rights);
 	}
 	
 	
@@ -209,6 +247,47 @@ class Rights extends Object {
 	 */
 	public function return_rights() {
 		return $this->get_rights();
+	}
+	
+	
+	
+	
+	
+	/**
+	 * update sets the new rights-entries to $new_rights separated in insert,
+	 * update and delete
+	 * 
+	 * @param int $table_id id of the calendar-entry
+	 * @param array $rights array containing new rights-entries
+	 */
+	public function update($table_id,$new_rights) {
+		
+		// get $rights
+		$rights = $this->get_rights();
+		
+		// prepare update_rights
+		$update_rights = array();
+		
+		// walk through $new_rights to get insert g-ids
+		for($i=0;$i<count($new_rights);$i++) {
+			
+			// check if actual g_id is in $rights
+			if(!in_array($new_rights[$i],$rights)) {
+				$update_rights['insert'][] = $new_rights[$i];
+			}
+		}
+		
+		// delete
+		// get difference
+		$diff = array_diff_assoc($rights,$new_rights);
+		
+		// walk through diff
+		foreach($diff as $id => $g_id) {
+			
+			$update_rights['remove'][$id] = $g_id;
+		}
+		
+		$this->set_new_rights($update_rights);
 	}
 }
 

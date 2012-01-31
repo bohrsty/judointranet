@@ -47,6 +47,12 @@ $lang = array(
 			'DbActionUnknown' => array(
 				'ERROR.caption' => 'FEHLER',
 				'ERROR.message' => 'Der Eintrag konnte nicht gespeichert werden, bitte probieren Sie es erneut oder wenden sich an Ihre Systembetreuer.'
+			),
+			'CidNotExists' => array(
+				'ERROR.caption' => 'FEHLER',
+				'ERROR.message' => 'Der Termin existiert nicht, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+									Wenn der Fehler weiterhin auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
 			)
 		
 		)
@@ -56,7 +62,16 @@ $lang = array(
 		'listall' => array(
 			'TH' => array(
 				'date' => 'Datum',
-				'name' => 'Veranstaltung'
+				'name' => 'Veranstaltung',
+				'admin' => 'Aufgaben'
+			),
+			'alt' => array(
+				'edit' => 'bearbeiten',
+				'delete' => 'l&ouml;schen'
+			),
+			'title' => array(
+				'edit' => 'bearbeitet diesen Eintrag',
+				'delete' => 'l&ouml;scht diesen Eintrag'
 			)
 		),
 		'init' => array(
@@ -74,6 +89,12 @@ $lang = array(
 			),
 			'details' => array(
 				'title' => 'Kalender: Termindetails'
+			),
+			'edit' => array(
+				'title' => 'Kalender: Termin bearbeiten'
+			),
+			'delete' => array(
+				'title' => 'Kalender: Termin l&ouml;schen'
 			)
 		),
 		'connectnavi' => array(
@@ -143,6 +164,19 @@ $lang = array(
 				'month.10' => 'Okt',
 				'month.11' => 'Nov',
 				'month.12' => 'Dez'
+			)
+		),
+		'delete' => array(
+			'form' => array(
+				'yes' => 'Ja',
+				'cancel' => 'abbrechen'
+			),
+			'message' => array(
+				'confirm' => 'Wollen Sie diesen Eintrag wirklich l&ouml;schen?',
+				'done' => 'Der Eintrag wurde erfolgreich gel&ouml;scht.'
+			),
+			'alt' => array(
+				'cancel' => 'Bricht den L&ouml;schvorgang ab'
 			)
 		)
 	),

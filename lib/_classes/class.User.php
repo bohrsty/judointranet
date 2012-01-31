@@ -499,8 +499,12 @@ class User extends Object {
 	
 	
 	/**
-	 * list_groups_rec
+	 * list_groups_rec sets the membergroups for the given $group using $members
+	 * into $groups using recursion
 	 * 
+	 * @param array $groups referenced array to add the membergroups
+	 * @param array $members array containing all memberships
+	 * @param int $group group to find membergroups
 	 */
 	private function list_groups_rec(&$groups,$members,$group) {
 		
@@ -508,13 +512,12 @@ class User extends Object {
 		if(isset($members[$group])) {
 			for($i=0;$i<count($members[$group]);$i++) {
 				$this->list_groups_rec($groups,$members,$members[$group][$i]);				
-echo $members[$group][$i]."<br />\n";				
 				$groups[] = $members[$group][$i];
 			}
 		} else {
 			$groups[] = $group;
 		}
-	} 
+	}
 }
 
 

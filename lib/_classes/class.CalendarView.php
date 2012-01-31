@@ -69,6 +69,18 @@ class CalendarView extends PageView {
 								'name' => 'class.CalendarView#connectnavi#secondlevel#details',
 								'id' => crc32('CalendarView|details'), // 982147 
 								'show' => false
+							),
+							3 => array(
+								'getid' => 'edit', 
+								'name' => 'class.CalendarView#connectnavi#secondlevel#edit',
+								'id' => crc32('CalendarView|edit'), // 2115932867
+								'show' => false
+							),
+							4 => array(
+								'getid' => 'delete', 
+								'name' => 'class.CalendarView#connectnavi#secondlevel#delete',
+								'id' => crc32('CalendarView|delete'), //  360902721
+								'show' => false
 							)
 						)
 					);
@@ -153,13 +165,63 @@ class CalendarView extends PageView {
 					break;
 					
 					case 'details':
+						
 						// set contents
 						// title
 						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#details#title'))));
 						// navi
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 						// main-content
-						$this->add_output(array('main' => $this->details($this->get('cid'))));
+						// if cid does not exist, error
+						if(Calendar::check_id($this->get('cid'))) {
+							$this->add_output(array('main' => $this->details($this->get('cid'))));
+						} else {
+							
+							// error
+							$errno = $GLOBALS['Error']->error_raised('CidNotExists','details',$this->get('cid'));
+							$GLOBALS['Error']->handle_error($errno);
+							$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
+						}
+					break;
+					
+					case 'edit':
+						
+						// set contents
+						// title
+						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#edit#title'))));
+						// navi
+						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
+						// main-content
+						// if cid does not exist, error
+						if(Calendar::check_id($this->get('cid'))) {
+							$this->add_output(array('main' => $this->edit($this->get('cid'))));
+						} else {
+							
+							// error
+							$errno = $GLOBALS['Error']->error_raised('CidNotExists','edit',$this->get('cid'));
+							$GLOBALS['Error']->handle_error($errno);
+							$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
+						}
+					break;
+					
+					case 'delete':
+						
+						// set contents
+						// title
+						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#delete#title'))));
+						// navi
+						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
+						// main-content
+						// if cid does not exist, error
+						if(Calendar::check_id($this->get('cid'))) {
+							$this->add_output(array('main' => $this->delete($this->get('cid'))));
+						} else {
+							
+							// error
+							$errno = $GLOBALS['Error']->error_raised('CidNotExists','delete',$this->get('cid'));
+							$GLOBALS['Error']->handle_error($errno);
+							$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
+						}
 					break;
 					
 					default:
@@ -212,9 +274,7 @@ class CalendarView extends PageView {
 	private function listall($timeto,$timefrom) {
 		
 		// prepare return
-		$output = '';
-		$th_out = '';
-		$tr_out = '';
+		$output = $tr_out = $th_out = '';
 		
 		// read all entries
 		$calendars = $this->read_all_entries();
@@ -233,84 +293,182 @@ class CalendarView extends PageView {
 			$entries = $calendars;
 		}
 		
-		// get template
+		// get templates
+		// a
 		try {
 			$a = new HtmlTemplate('templates/a.tpl');
 		} catch(Exception $e) {
 			$GLOBALS['Error']->handle_error($e);
 		}
-		
-		// th: get template and set content-array to parse
-		try {
-			$th = new HtmlTemplate('templates/calendar.listall.th.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		
-		$contents = array();
-		$contents['th.date'] = parent::lang('class.CalendarView#listall#TH#date');
-		$contents['th.name'] = parent::lang('class.CalendarView#listall#TH#name');
-		
-		// parse th
-		$th_out .= $th->parse($contents);
-		
-		// parse list of entries
-		try {
-			$tr = new HtmlTemplate('templates/calendar.listall.tr.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		
-		// walk through entries
-		$counter = 0;
-		foreach($entries as $no => $entry) {
-			
-			// check timefrom and timeto
-			if($entry->return_date('U') > $timefrom && $entry->return_date('U') <= $timeto) {
-				
-				// set content-array
-				$contents = array();
-				
-				// odd or even
-				if($counter%2 == 0) {
-					// even
-					$contents['class.tr'] = 'calendar.listall.tr even';
-				} else {
-					// odd
-					$contents['class.tr'] = 'calendar.listall.tr odd';
-				}
-				
-				// prepare name
-				$content = array(
-					'a.class' => '',
-					'a.href' => 'calendar.php?id=details&cid='.$entry->return_id(),
-					'a.alt' => $entry->return_name(),
-					'a.name' => $entry->return_name()
-				);
-				
-				// list-entry
-				$contents['tr.date'] = $entry->return_date('d.m.Y');
-				$contents['tr.name'] = $a->parse($content);
-				
-				// parse-template
-				$tr_out .= $tr->parse($contents);
-				
-				// increment counter
-				$counter++;
-			}
-		}
-		
-		// complete table
+		// table
 		try {
 			$table = new HtmlTemplate('templates/table.tpl');
 		} catch(Exception $e) {
 			$GLOBALS['Error']->handle_error($e);
 		}
-		$contents = array();
-		$contents['table.id'] = 'calendar.listall';
-		$contents['th'] = $th_out;
-		$contents['tr'] = $tr_out;
-		$output = $table->parse($contents);
+		// tr
+		try {
+			$tr = new HtmlTemplate('templates/tr.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
+		// th
+		try {
+			$th = new HtmlTemplate('templates/th.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
+		// td
+		try {
+			$td = new HtmlTemplate('templates/td.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
+		// img
+		try {
+			$img = new HtmlTemplate('templates/img.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
+		
+		// prepare th
+		$th_out .= $th->parse(array( // date
+				'th.params' => ' class="date"',
+				'th.content' => parent::lang('class.CalendarView#listall#TH#date')
+			));
+		$th_out .= $th->parse(array( // name
+				'th.params' => ' class="name"',
+				'th.content' => parent::lang('class.CalendarView#listall#TH#name')
+			));
+		// if loggedin show admin links
+		if($_SESSION['user']->loggedin() === true) {
+			$th_out .= $th->parse(array( // admin
+					'th.params' => ' class="admin"',
+					'th.content' => parent::lang('class.CalendarView#listall#TH#admin')
+				));
+		}
+		
+		// parse tr for th
+		$tr_out .= $tr->parse(array(
+				'tr.params' => '',
+				'tr.content' => $th_out)
+			);
+		
+		// walk through entries
+		$counter = 0;
+		foreach($entries as $no => $entry) {
+			
+			// check if valid
+			if($entry->return_valid() == 1) {
+					
+				// check timefrom and timeto
+				if($entry->return_date('U') > $timefrom && $entry->return_date('U') <= $timeto) {
+					
+					// odd or even
+					if($counter%2 == 0) {
+						// even
+						$tr_params = ' class="calendar.listall.tr even"';
+					} else {
+						// odd
+						$tr_params = ' class="calendar.listall.tr odd"';
+					}
+					
+					// prepare name-link
+					$a_out = $a->parse(array(
+							'a.params' => '',
+							'a.href' => 'calendar.php?id=details&cid='.$entry->return_id(),
+							'a.alt' => $entry->return_name(),
+							'a.content' => $entry->return_name()
+						));
+					
+					// prepare td
+					$td_out = $td->parse(array( // date
+							'td.params' => ' class="date"',
+							'td.content' => $entry->return_date('d.m.Y')
+						));
+					$td_out .= $td->parse(array( // name
+							'td.params' => '',
+							'td.content' => $a_out
+						));
+						
+					// add admin
+					// get intersection of user-groups and rights
+					$intersect = array_intersect(array_keys($_SESSION['user']->return_all_groups()),$entry->return_rights()->return_rights());
+					$admin = false;
+					// check if $intersect has values other than 0
+					foreach($intersect as $num => $igroup) {
+						if($igroup != 0) {
+							$admin = true;
+							break;
+						}
+					}
+					
+					// if $admin is true add admin-links
+					if($admin === true) {
+						
+						// prepare edit
+						// prepare img
+						$img_out = $img->parse(array(
+								'img.src' => 'img/edit.png',
+								'img.alt' => parent::lang('class.CalendarView#listall#alt#edit'),
+								'img.params' => 'title="'.parent::lang('class.CalendarView#listall#title#edit').'"'
+							));
+						
+						// prepare edit-link
+						$a_out = $a->parse(array(
+								'a.params' => '',
+								'a.href' => 'calendar.php?id=edit&cid='.$entry->return_id(),
+								'a.alt' => parent::lang('class.CalendarView#listall#alt#edit'),
+								'a.content' => $img_out
+							));
+							
+						// prepare delete
+						// prepare img
+						$img_out = $img->parse(array(
+								'img.src' => 'img/delete.png',
+								'img.alt' => parent::lang('class.CalendarView#listall#alt#delete'),
+								'img.params' => 'title="'.parent::lang('class.CalendarView#listall#title#delete').'"'
+							));
+						
+						// prepare delete-link
+						$a_out .= $a->parse(array(
+								'a.params' => '',
+								'a.href' => 'calendar.php?id=delete&cid='.$entry->return_id(),
+								'a.alt' => parent::lang('class.CalendarView#listall#alt#delete'),
+								'a.content' => $img_out
+							));
+						// prepare td
+						$td_out .= $td->parse(array( // admin
+							'td.params' => ' class="admin"',
+							'td.content' => $a_out
+						));
+					} else {
+						// add empty td
+						// prepare td
+						$td_out .= $td->parse(array( // admin
+							'td.params' => '',
+							'td.content' => ''
+						));
+					}
+					
+					// prepare tr
+					$tr_out .= $tr->parse(array(
+							'tr.params' => $tr_params,
+							'tr.content' => $td_out
+						));
+					
+					// increment counter
+					$counter++;
+				}
+			} else {
+				
+				// deleted items
+			}
+		}
+		
+		// complete table
+		$output = $table->parse(array(	'table.params' => ' id="calendar.listall"',
+										'table.content' => $tr_out));
 		
 		// return
 		return $output;
@@ -374,7 +532,7 @@ class CalendarView extends PageView {
 		}
 		// prepare links
 		$contents = array();
-		$contents['a.class'] = 'a';
+		$contents['a.params'] = ' class="a"';
 		
 		
 		// if sort, attach sort
@@ -393,23 +551,26 @@ class CalendarView extends PageView {
 		
 		// prepare resetlinks
 		// all
-		$contents = array(	'a.href' => 'calendar.php?id='.$getid, // href
+		$contents = array(	'a.params' => '',
+							'a.href' => 'calendar.php?id='.$getid, // href
 							'a.alt' => parent::lang('class.CalendarView#get_sort_links#alt#resetAll'), // alt
-							'a.name' => parent::lang('class.CalendarView#get_sort_links#reset#all') // linktext
+							'a.content' => parent::lang('class.CalendarView#get_sort_links#reset#all') // linktext
 			);
 		$reset_links .= $a->parse($contents)."\n";
 		
 		// dates
-		$contents = array(	'a.href' => 'calendar.php?id='.$getid.$sort, // href
+		$contents = array(	'a.params' => '',
+							'a.href' => 'calendar.php?id='.$getid.$sort, // href
 							'a.alt' => parent::lang('class.CalendarView#get_sort_links#alt#resetDate'), // alt
-							'a.name' => parent::lang('class.CalendarView#get_sort_links#reset#date') // linktext
+							'a.content' => parent::lang('class.CalendarView#get_sort_links#reset#date') // linktext
 			);
 		$reset_links .= $a->parse($contents)."\n";
 		
 		// groups
-		$contents = array(	'a.href' => 'calendar.php?id='.$getid.$from.$to, // href
+		$contents = array(	'a.params' => '',
+							'a.href' => 'calendar.php?id='.$getid.$from.$to, // href
 							'a.alt' => parent::lang('class.CalendarView#get_sort_links#alt#resetGroups'), // alt
-							'a.name' => parent::lang('class.CalendarView#get_sort_links#reset#groups') // linktext
+							'a.content' => parent::lang('class.CalendarView#get_sort_links#reset#groups') // linktext
 			);
 		$reset_links .= $a->parse($contents)."\n";
 		
@@ -433,7 +594,7 @@ class CalendarView extends PageView {
 			// alt
 			$contents['a.alt'] = parent::lang('class.CalendarView#get_sort_links#alt#'.$name);
 			// linktext
-			$contents['a.name'] = parent::lang('class.CalendarView#get_sort_links#dates#'.$name);
+			$contents['a.content'] = parent::lang('class.CalendarView#get_sort_links#dates#'.$name);
 			
 			// parse template
 			$date_links .= $a->parse($contents)."\n";
@@ -453,7 +614,7 @@ class CalendarView extends PageView {
 			// alt
 			$contents['a.alt'] = $name;
 			// linktext
-			$contents['a.name'] = $name;
+			$contents['a.content'] = $name;
 			
 			// parse template
 			$group_links .= $a->parse($contents)."\n";
@@ -606,7 +767,8 @@ class CalendarView extends PageView {
 								'shortname' => $data['shortname'],
 								'type' => $data['type'],
 								'content' => $data['entry_content'],
-								'rights' => $right_array
+								'rights' => $right_array,
+								'valid' => 1
 								)
 				);
 				
@@ -726,6 +888,122 @@ class CalendarView extends PageView {
 		
 		// return html-string
 		return $calendar->details_to_html($calendar_details);
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * edit edits the given entry
+	 * 
+	 * @param int $cid entry-id for calendar
+	 * @return string html-string
+	 */
+	private function edit($cid) {
+	
+		// get calendar-object
+		$calendar = new Calendar($cid);
+				
+		// return html-string
+		return 'edit';
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * delete deletes the given entry
+	 * 
+	 * @param int $cid entry-id for calendar
+	 * @return string html-string
+	 */
+	private function delete($cid) {
+	
+		// prepare return
+		$output = '';
+		
+		// get templates
+		try {
+			$confirmation = new HtmlTemplate('templates/div.confirmation.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
+		try {
+			$a = new HtmlTemplate('templates/a.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
+		try {
+			$div = new HtmlTemplate('templates/div.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
+		
+		// prepare confirmation-form
+		require_once('HTML/QuickForm2.php');
+		
+		$form = new HTML_QuickForm2(
+								'confirm',
+								'post',
+								array(
+									'name' => 'confirm',
+									'action' => 'calendar.php?id=delete&cid='.$this->get('cid')
+								)
+							);
+		
+		// add button
+		$form->addElement('submit','yes',array('value' => parent::lang('class.CalendarView#delete#form#yes')));
+		
+		// prepare cancel
+		$cancel_a = $a->parse(array(
+				'a.params' => '',
+				'a.href' => 'calendar.php?id=listall',
+				'a.alt' => parent::lang('class.CalendarView#delete#alt#cancel'),
+				'a.content' => parent::lang('class.CalendarView#delete#form#cancel')
+			));
+		$cancel = $div->parse(array(
+				'div.params' => ' id="cancel"',
+				'div.content' => $cancel_a
+		));
+		
+		// set output
+		$output = $confirmation->parse(array(
+				'p.message' => parent::lang('class.CalendarView#delete#message#confirm'),
+				'p.form' => $form."\n".$cancel
+			));
+		
+		// validate
+		if($form->validate()) {
+		
+			// get calendar-object
+			$calendar = new Calendar($cid);
+			
+			// disable entry
+			$calendar->disable();
+			
+			// set output
+			$output = $confirmation->parse(array(
+					'p.message' => parent::lang('class.CalendarView#delete#message#done'),
+					'p.form' => ''
+				));
+			
+			// write entry
+			try {
+				$calendar->write_db('update');
+			} catch(Exception $e) {
+				$GLOBALS['Error']->handle_error($e);
+				$output = $GLOBALS['Error']->to_html($e);
+			}
+		}
+		
+		// return
+		return $output;
 	}
 }
 
