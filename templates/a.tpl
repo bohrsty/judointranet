@@ -1,1 +1,1 @@
-<a###a.params### href="###a.href###" alt="###a.alt###">###a.content###</a>
+<a###a.params### href="###a.href###" title="###a.title###">###a.content###</a>

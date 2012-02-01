@@ -86,6 +86,12 @@ td.date {
 	text-align: center;
 }
 
+div#sortlinks {
+	max-height: 120px;
+	overflow: scroll;
+	margin-bottom: 20px;
+}
+
 /* navi */
 div.navi_0 {
 	border: 1px solid blue;

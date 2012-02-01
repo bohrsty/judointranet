@@ -321,8 +321,8 @@ class PageView extends Object {
 			// set firstlevel
 			$output .= $navi_0->parse(array(
 										'navi.0.href' => $firstlevel['file'],
-										'navi.0.alt' => parent::lang('class.'.$firstlevel['class'].'#connectnavi#firstlevel#name'),
-										'navi.0.name' => parent::lang($firstlevel['name'])));
+										'navi.0.title' => parent::lang('class.'.$firstlevel['class'].'#connectnavi#firstlevel#name'),
+										'navi.0.content' => parent::lang($firstlevel['name'])));
 			
 			// walk through secondlevel
 			$secondlevel = $naviitems[$i]['secondlevel'];
@@ -344,8 +344,8 @@ class PageView extends Object {
 					// active
 					$active = array(
 								'navi.1a.href' => $firstlevel['file'].'?id='.$secondlevel[$j]['getid'],
-								'navi.1a.alt' => parent::lang($secondlevel[$j]['name']),
-								'navi.1a.name' => parent::lang($secondlevel[$j]['name']));
+								'navi.1a.title' => parent::lang($secondlevel[$j]['name']),
+								'navi.1a.content' => parent::lang($secondlevel[$j]['name']));
 					// if login, add base64-encoded uri
 					if($secondlevel[$j]['getid'] == 'login' && $this->get('id') != 'login' && $this->get('id') != 'logout') {
 						$active['navi.1a.href'] = $firstlevel['file'].'?id='.$secondlevel[$j]['getid'].'&r='.base64_encode($_SERVER['REQUEST_URI']);
@@ -356,8 +356,8 @@ class PageView extends Object {
 					// inactive
 					$inactive = array(
 									'navi.1i.href' => $firstlevel['file'].'?id='.$secondlevel[$j]['getid'],
-									'navi.1i.alt' => parent::lang($secondlevel[$j]['name']),
-									'navi.1i.name' => parent::lang($secondlevel[$j]['name']));
+									'navi.1i.title' => parent::lang($secondlevel[$j]['name']),
+									'navi.1i.content' => parent::lang($secondlevel[$j]['name']));
 					// if login, add base64-encoded uri
 					if($secondlevel[$j]['getid'] == 'login' && $this->get('id') != 'login' && $this->get('id') != 'logout') {
 						$inactive['navi.1i.href'] = $firstlevel['file'].'?id='.$secondlevel[$j]['getid'].'&r='.base64_encode($_SERVER['REQUEST_URI']);

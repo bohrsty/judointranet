@@ -120,7 +120,7 @@ $lang = array(
 				'date' => 'Datumsfilter zur&uuml;cksetzen',
 				'groups' => 'Gruppenfilter zur&uuml;cksetzen'
 			),
-			'alt' => array(
+			'title' => array(
 				'next_day' => 'Morgen',
 				'next_week' => 'n&auml;chste Woche',
 				'two_weeks' => 'n&auml;chste zwei Wochen',
@@ -175,7 +175,7 @@ $lang = array(
 				'confirm' => 'Wollen Sie diesen Eintrag wirklich l&ouml;schen?',
 				'done' => 'Der Eintrag wurde erfolgreich gel&ouml;scht.'
 			),
-			'alt' => array(
+			'title' => array(
 				'cancel' => 'Bricht den L&ouml;schvorgang ab'
 			)
 		)

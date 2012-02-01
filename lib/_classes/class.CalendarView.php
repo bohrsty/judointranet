@@ -377,7 +377,7 @@ class CalendarView extends PageView {
 					$a_out = $a->parse(array(
 							'a.params' => '',
 							'a.href' => 'calendar.php?id=details&cid='.$entry->return_id(),
-							'a.alt' => $entry->return_name(),
+							'a.title' => $entry->return_name(),
 							'a.content' => $entry->return_name()
 						));
 					
@@ -418,7 +418,7 @@ class CalendarView extends PageView {
 						$a_out = $a->parse(array(
 								'a.params' => '',
 								'a.href' => 'calendar.php?id=edit&cid='.$entry->return_id(),
-								'a.alt' => parent::lang('class.CalendarView#listall#alt#edit'),
+								'a.title' => parent::lang('class.CalendarView#listall#title#edit'),
 								'a.content' => $img_out
 							));
 							
@@ -434,21 +434,14 @@ class CalendarView extends PageView {
 						$a_out .= $a->parse(array(
 								'a.params' => '',
 								'a.href' => 'calendar.php?id=delete&cid='.$entry->return_id(),
-								'a.alt' => parent::lang('class.CalendarView#listall#alt#delete'),
+								'a.title' => parent::lang('class.CalendarView#listall#title#delete'),
 								'a.content' => $img_out
 							));
 						// prepare td
 						$td_out .= $td->parse(array( // admin
-							'td.params' => ' class="admin"',
-							'td.content' => $a_out
-						));
-					} else {
-						// add empty td
-						// prepare td
-						$td_out .= $td->parse(array( // admin
-							'td.params' => '',
-							'td.content' => ''
-						));
+								'td.params' => ' class="admin"',
+								'td.content' => $a_out
+							));
 					}
 					
 					// prepare tr
@@ -524,12 +517,18 @@ class CalendarView extends PageView {
 		// prepare output
 		$date_links = $group_links = $output = $reset_links = '';
 		
-		// read template
+		// read templates
 		try {
 			$a = new HtmlTemplate('templates/a.tpl');
 		} catch(Exception $e) {
 			$GLOBALS['Error']->handle_error($e);
 		}
+		try {
+			$div = new HtmlTemplate('templates/div.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
+		
 		// prepare links
 		$contents = array();
 		$contents['a.params'] = ' class="a"';
@@ -553,7 +552,7 @@ class CalendarView extends PageView {
 		// all
 		$contents = array(	'a.params' => '',
 							'a.href' => 'calendar.php?id='.$getid, // href
-							'a.alt' => parent::lang('class.CalendarView#get_sort_links#alt#resetAll'), // alt
+							'a.title' => parent::lang('class.CalendarView#get_sort_links#title#resetAll'), // alt
 							'a.content' => parent::lang('class.CalendarView#get_sort_links#reset#all') // linktext
 			);
 		$reset_links .= $a->parse($contents)."\n";
@@ -561,7 +560,7 @@ class CalendarView extends PageView {
 		// dates
 		$contents = array(	'a.params' => '',
 							'a.href' => 'calendar.php?id='.$getid.$sort, // href
-							'a.alt' => parent::lang('class.CalendarView#get_sort_links#alt#resetDate'), // alt
+							'a.title' => parent::lang('class.CalendarView#get_sort_links#title#resetDate'), // alt
 							'a.content' => parent::lang('class.CalendarView#get_sort_links#reset#date') // linktext
 			);
 		$reset_links .= $a->parse($contents)."\n";
@@ -569,7 +568,7 @@ class CalendarView extends PageView {
 		// groups
 		$contents = array(	'a.params' => '',
 							'a.href' => 'calendar.php?id='.$getid.$from.$to, // href
-							'a.alt' => parent::lang('class.CalendarView#get_sort_links#alt#resetGroups'), // alt
+							'a.title' => parent::lang('class.CalendarView#get_sort_links#title#resetGroups'), // alt
 							'a.content' => parent::lang('class.CalendarView#get_sort_links#reset#groups') // linktext
 			);
 		$reset_links .= $a->parse($contents)."\n";
@@ -592,7 +591,7 @@ class CalendarView extends PageView {
 			// href
 			$contents['a.href'] = 'calendar.php?id='.$getid.'&from='.date('Y-m-d',time()).'&to='.date('Y-m-d',strtotime($date)).$sort;
 			// alt
-			$contents['a.alt'] = parent::lang('class.CalendarView#get_sort_links#alt#'.$name);
+			$contents['a.title'] = parent::lang('class.CalendarView#get_sort_links#title#'.$name);
 			// linktext
 			$contents['a.content'] = parent::lang('class.CalendarView#get_sort_links#dates#'.$name);
 			
@@ -624,7 +623,10 @@ class CalendarView extends PageView {
 		$output .= $this->p('',$group_links);
 		
 		// return
-		return $output;
+		return $div->parse(array(
+				'div.params' => ' id="sortlinks"',
+				'div.content' => $output
+			));
 	}
 	
 	
@@ -964,7 +966,7 @@ class CalendarView extends PageView {
 		$cancel_a = $a->parse(array(
 				'a.params' => '',
 				'a.href' => 'calendar.php?id=listall',
-				'a.alt' => parent::lang('class.CalendarView#delete#alt#cancel'),
+				'a.title' => parent::lang('class.CalendarView#delete#title#cancel'),
 				'a.content' => parent::lang('class.CalendarView#delete#form#cancel')
 			));
 		$cancel = $div->parse(array(
