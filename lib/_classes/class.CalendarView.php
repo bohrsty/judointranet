@@ -671,15 +671,15 @@ class CalendarView extends PageView {
 		
 		// renderer
 		$renderer = HTML_QuickForm2_Renderer::factory('default');
-		$renderer->setOption('required_note',parent::lang('class.CalendarView#new_entry#form#requiredNote'));
+		$renderer->setOption('required_note',parent::lang('class.CalendarView#entry#form#requiredNote'));
 		
 		// elements
 		// date - group
 		$date_group = $form->addGroup('dateGroup');
-		$date_group->setLabel(parent::lang('class.CalendarView#new_entry#form#date').':');
+		$date_group->setLabel(parent::lang('class.CalendarView#entry#form#date').':');
 		// rule
-		$date_group->addRule('required',parent::lang('class.CalendarView#new_entry#rule#required.date'));
-		$date_group->addRule('callback',parent::lang('class.CalendarView#new_entry#rule#check.date'),array($this,'callback_check_date'));
+		$date_group->addRule('required',parent::lang('class.CalendarView#entry#rule#required.date'));
+		$date_group->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.date'),array($this,'callback_check_date'));
 		
 		// select day
 		$options = array('--');
@@ -692,7 +692,7 @@ class CalendarView extends PageView {
 		// select month
 		$options = array('--');
 		for($i=1;$i<=12;$i++) {
-			$options[$i] = parent::lang('class.CalendarView#new_entry#date#month.'.$i);
+			$options[$i] = parent::lang('class.CalendarView#entry#date#month.'.$i);
 		}
 		$select_month = $date_group->addElement('select','month',array());
 		$select_month->loadOptions($options);
@@ -708,50 +708,50 @@ class CalendarView extends PageView {
 		
 		// name
 		$name = $form->addElement('text','name');
-		$name->setLabel(parent::lang('class.CalendarView#new_entry#form#name').':');
-		$name->addRule('required',parent::lang('class.CalendarView#new_entry#rule#required.name'));
+		$name->setLabel(parent::lang('class.CalendarView#entry#form#name').':');
+		$name->addRule('required',parent::lang('class.CalendarView#entry#rule#required.name'));
 		$name->addRule(
 					'regex',
-					parent::lang('class.CalendarView#new_entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('name.desc').']',
+					parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('name.desc').']',
 					$_SESSION['GC']->return_config('name.regexp'));
 		
 		
 		// shortname
 		$shortname = $form->addElement('text','shortname');
-		$shortname->setLabel(parent::lang('class.CalendarView#new_entry#form#shortname').':');
+		$shortname->setLabel(parent::lang('class.CalendarView#entry#form#shortname').':');
 		$shortname->addRule(
 						'regex',
-						parent::lang('class.CalendarView#new_entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('name.desc').']',
+						parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('name.desc').']',
 						$_SESSION['GC']->return_config('name.regexp'));
 	
 	
 		// type
 		$options = array_merge(array(0 => '--'),Calendar::return_types());
 		$type = $form->addElement('select','type');
-		$type->setLabel(parent::lang('class.CalendarView#new_entry#form#type').':');
+		$type->setLabel(parent::lang('class.CalendarView#entry#form#type').':');
 		$type->loadOptions($options);
-		$type->addRule('required',parent::lang('class.CalendarView#new_entry#rule#required.type'));
-		$type->addRule('callback',parent::lang('class.CalendarView#new_entry#rule#check.select'),array($this,'callback_check_select'));
+		$type->addRule('required',parent::lang('class.CalendarView#entry#rule#required.type'));
+		$type->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.select'),array($this,'callback_check_select'));
 		
 		
 		// entry_content
 		$content = $form->addElement('textarea','entry_content');
-		$content->setLabel(parent::lang('class.CalendarView#new_entry#form#entry_content').':');
+		$content->setLabel(parent::lang('class.CalendarView#entry#form#entry_content').':');
 		$content->addRule(
 						'regex',
-						parent::lang('class.CalendarView#new_entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('textarea.desc').']',
+						parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('textarea.desc').']',
 						$_SESSION['GC']->return_config('textarea.regexp'));
 		
 		
 		// select rights
 		$options = $_SESSION['user']->return_all_groups();
 		$rights = $form->addElement('select','rights',array('multiple' => 'multiple','size' => 5));
-		$rights->setLabel(parent::lang('class.CalendarView#new_entry#form#rights').':');
+		$rights->setLabel(parent::lang('class.CalendarView#entry#form#rights').':');
 		$rights->loadOptions($options);
 		
 		
 		// submit-button
-		$form->addElement('submit','submit',array('value' => parent::lang('class.CalendarView#new_entry#form#submitButton')));
+		$form->addElement('submit','submit',array('value' => parent::lang('class.CalendarView#entry#form#submitButton')));
 		
 		// validate
 		if($form->validate()) {
@@ -878,18 +878,28 @@ class CalendarView extends PageView {
 	 */
 	private function details($cid) {
 	
-		// get calendar-object
-		$calendar = new Calendar($cid);
-		
-		// read template
-		try {
-			$calendar_details = new HtmlTemplate('templates/calendar.details.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
+		// check rights
+		if(Rights::check_rights($cid,'calendar',true)) {
+				
+			// get calendar-object
+			$calendar = new Calendar($cid);
+			
+			// read template
+			try {
+				$calendar_details = new HtmlTemplate('templates/calendar.details.tpl');
+			} catch(Exception $e) {
+				$GLOBALS['Error']->handle_error($e);
+			}
+			
+			// return html-string
+			return $calendar->details_to_html($calendar_details);
+		} else {
+			
+			// error
+			$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+			$GLOBALS['Error']->handle_error($errno);
+			return $GLOBALS['Error']->to_html($errno);
 		}
-		
-		// return html-string
-		return $calendar->details_to_html($calendar_details);
 	}
 	
 	
@@ -905,12 +915,178 @@ class CalendarView extends PageView {
 	 * @return string html-string
 	 */
 	private function edit($cid) {
-	
-		// get calendar-object
-		$calendar = new Calendar($cid);
+		
+		// check rights
+		if(Rights::check_rights($cid,'calendar')) {
 				
-		// return html-string
-		return 'edit';
+			// get calendar-object
+			$calendar = new Calendar($cid);
+					
+			// prepare return
+			$return = '';
+			
+			// formular
+			require_once('HTML/QuickForm2.php');
+			require_once('HTML/QuickForm2/Renderer.php');
+					
+			$form = new HTML_QuickForm2(
+									'edit_calendar_entry',
+									'post',
+									array(
+										'name' => 'edit_calendar_entry',
+										'action' => 'calendar.php?id=edit&cid='.$cid
+									)
+								);
+			
+			$now_year = (int) date('Y');
+			$year_min = $now_year;
+			$year_max = $now_year + 3;
+			$form->addDataSource(new HTML_QuickForm2_DataSource_Array(array(
+					'dateGroup' => array(
+						'day' => (int) $calendar->return_date('d'),
+						'month' => (int) $calendar->return_date('m'),
+						'year' => (int) $calendar->return_date('Y')
+					),
+					'name' => $calendar->return_name(),
+					'shortname' => $calendar->return_shortname(),
+					'type' => $calendar->return_type(),
+					'entry_content' => $calendar->return_content(),
+					'rights' => $calendar->return_rights()->return_rights()
+				)));
+			
+			// renderer
+			$renderer = HTML_QuickForm2_Renderer::factory('default');
+			$renderer->setOption('required_note',parent::lang('class.CalendarView#entry#form#requiredNote'));
+			
+			// elements
+			// date - group
+			$date_group = $form->addGroup('dateGroup');
+			$date_group->setLabel(parent::lang('class.CalendarView#entry#form#date').':');
+			// rule
+			$date_group->addRule('required',parent::lang('class.CalendarView#entry#rule#required.date'));
+			$date_group->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.date'),array($this,'callback_check_date'));
+			
+			// select day
+			$options = array('--');
+			for($i=1;$i<=31;$i++) {
+				$options[$i] = $i;
+			}
+			$select_day = $date_group->addElement('select','day',array());
+			$select_day->loadOptions($options);
+			
+			// select month
+			$options = array('--');
+			for($i=1;$i<=12;$i++) {
+				$options[$i] = parent::lang('class.CalendarView#entry#date#month.'.$i);
+			}
+			$select_month = $date_group->addElement('select','month',array());
+			$select_month->loadOptions($options);
+			
+			// select year
+			$options = array('--');
+			for($i=$year_min;$i<=$year_max;$i++) {
+				$options[$i] = $i;
+			}
+			$select_year = $date_group->addElement('select','year',array());
+			$select_year->loadOptions($options);
+			
+			
+			// name
+			$name = $form->addElement('text','name');
+			$name->setLabel(parent::lang('class.CalendarView#entry#form#name').':');
+			$name->addRule('required',parent::lang('class.CalendarView#entry#rule#required.name'));
+			$name->addRule(
+						'regex',
+						parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('name.desc').']',
+						$_SESSION['GC']->return_config('name.regexp'));
+			
+			
+			// shortname
+			$shortname = $form->addElement('text','shortname');
+			$shortname->setLabel(parent::lang('class.CalendarView#entry#form#shortname').':');
+			$shortname->addRule(
+							'regex',
+							parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('name.desc').']',
+							$_SESSION['GC']->return_config('name.regexp'));
+		
+		
+			// type
+			$options = array_merge(array(0 => '--'),Calendar::return_types());
+			$type = $form->addElement('select','type');
+			$type->setLabel(parent::lang('class.CalendarView#entry#form#type').':');
+			$type->loadOptions($options);
+			$type->addRule('required',parent::lang('class.CalendarView#entry#rule#required.type'));
+			$type->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.select'),array($this,'callback_check_select'));
+			
+			
+			// entry_content
+			$content = $form->addElement('textarea','entry_content');
+			$content->setLabel(parent::lang('class.CalendarView#entry#form#entry_content').':');
+			$content->addRule(
+							'regex',
+							parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('textarea.desc').']',
+							$_SESSION['GC']->return_config('textarea.regexp'));
+			
+			
+			// select rights
+			$options = $_SESSION['user']->return_all_groups();
+			$rights = $form->addElement('select','rights',array('multiple' => 'multiple','size' => 5));
+			$rights->setLabel(parent::lang('class.CalendarView#entry#form#rights').':');
+			$rights->loadOptions($options);
+			
+			
+			// submit-button
+			$form->addElement('submit','submit',array('value' => parent::lang('class.CalendarView#entry#form#submitButton')));
+			
+			// validate
+			if($form->validate()) {
+				
+				// create calendar-object
+				$data = $form->getValue();
+				
+				$calendar_new = array(
+						'date' => $data['dateGroup']['day'].'.'.$data['dateGroup']['month'].'.'.$data['dateGroup']['year'],
+						'name' => $data['name'],
+						'shortname' => $data['shortname'],
+						'type' => $data['type'],
+						'content' => $data['entry_content'],
+						'rights' => $data['rights'],
+						'valid' => 1
+					);
+					
+				// update calendar
+				$calendar->update($calendar_new);
+				
+				// put entry to output
+				// read template
+				try {
+					$calendar_details = new HtmlTemplate('templates/calendar.details.tpl');
+				} catch(Exception $e) {
+					$GLOBALS['Error']->handle_error($e);
+				}
+				
+				// write entry
+				try {
+					$calendar->write_db('update');
+					// set return
+					$return = $calendar->details_to_html($calendar_details);
+				} catch(Exception $e) {
+					$GLOBALS['Error']->handle_error($e);
+					$return = $GLOBALS['Error']->to_html($e);
+				}
+			} else {
+				$return = $form->render($renderer);
+			}
+			
+			// return
+			return $return;
+		} else {
+			
+			// error
+			$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+			$GLOBALS['Error']->handle_error($errno);
+			return $GLOBALS['Error']->to_html($errno);
+		}
 	}
 	
 	
@@ -927,85 +1103,95 @@ class CalendarView extends PageView {
 	 */
 	private function delete($cid) {
 	
-		// prepare return
-		$output = '';
-		
-		// get templates
-		try {
-			$confirmation = new HtmlTemplate('templates/div.confirmation.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		try {
-			$a = new HtmlTemplate('templates/a.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		try {
-			$div = new HtmlTemplate('templates/div.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		
-		// prepare confirmation-form
-		require_once('HTML/QuickForm2.php');
-		
-		$form = new HTML_QuickForm2(
-								'confirm',
-								'post',
-								array(
-									'name' => 'confirm',
-									'action' => 'calendar.php?id=delete&cid='.$this->get('cid')
-								)
-							);
-		
-		// add button
-		$form->addElement('submit','yes',array('value' => parent::lang('class.CalendarView#delete#form#yes')));
-		
-		// prepare cancel
-		$cancel_a = $a->parse(array(
-				'a.params' => '',
-				'a.href' => 'calendar.php?id=listall',
-				'a.title' => parent::lang('class.CalendarView#delete#title#cancel'),
-				'a.content' => parent::lang('class.CalendarView#delete#form#cancel')
-			));
-		$cancel = $div->parse(array(
-				'div.params' => ' id="cancel"',
-				'div.content' => $cancel_a
-		));
-		
-		// set output
-		$output = $confirmation->parse(array(
-				'p.message' => parent::lang('class.CalendarView#delete#message#confirm'),
-				'p.form' => $form."\n".$cancel
-			));
-		
-		// validate
-		if($form->validate()) {
-		
-			// get calendar-object
-			$calendar = new Calendar($cid);
+		// check rights
+		if(Rights::check_rights($cid,'calendar')) {
+				
+			// prepare return
+			$output = '';
 			
-			// disable entry
-			$calendar->disable();
+			// get templates
+			try {
+				$confirmation = new HtmlTemplate('templates/div.confirmation.tpl');
+			} catch(Exception $e) {
+				$GLOBALS['Error']->handle_error($e);
+			}
+			try {
+				$a = new HtmlTemplate('templates/a.tpl');
+			} catch(Exception $e) {
+				$GLOBALS['Error']->handle_error($e);
+			}
+			try {
+				$div = new HtmlTemplate('templates/div.tpl');
+			} catch(Exception $e) {
+				$GLOBALS['Error']->handle_error($e);
+			}
+			
+			// prepare confirmation-form
+			require_once('HTML/QuickForm2.php');
+			
+			$form = new HTML_QuickForm2(
+									'confirm',
+									'post',
+									array(
+										'name' => 'confirm',
+										'action' => 'calendar.php?id=delete&cid='.$this->get('cid')
+									)
+								);
+			
+			// add button
+			$form->addElement('submit','yes',array('value' => parent::lang('class.CalendarView#delete#form#yes')));
+			
+			// prepare cancel
+			$cancel_a = $a->parse(array(
+					'a.params' => '',
+					'a.href' => 'calendar.php?id=listall',
+					'a.title' => parent::lang('class.CalendarView#delete#title#cancel'),
+					'a.content' => parent::lang('class.CalendarView#delete#form#cancel')
+				));
+			$cancel = $div->parse(array(
+					'div.params' => ' id="cancel"',
+					'div.content' => $cancel_a
+			));
 			
 			// set output
 			$output = $confirmation->parse(array(
-					'p.message' => parent::lang('class.CalendarView#delete#message#done'),
-					'p.form' => ''
+					'p.message' => parent::lang('class.CalendarView#delete#message#confirm'),
+					'p.form' => $form."\n".$cancel
 				));
 			
-			// write entry
-			try {
-				$calendar->write_db('update');
-			} catch(Exception $e) {
-				$GLOBALS['Error']->handle_error($e);
-				$output = $GLOBALS['Error']->to_html($e);
+			// validate
+			if($form->validate()) {
+			
+				// get calendar-object
+				$calendar = new Calendar($cid);
+				
+				// disable entry
+				$calendar->update(array('valid' => 0));
+				
+				// set output
+				$output = $confirmation->parse(array(
+						'p.message' => parent::lang('class.CalendarView#delete#message#done'),
+						'p.form' => ''
+					));
+				
+				// write entry
+				try {
+					$calendar->write_db('update');
+				} catch(Exception $e) {
+					$GLOBALS['Error']->handle_error($e);
+					$output = $GLOBALS['Error']->to_html($e);
+				}
 			}
+			
+			// return
+			return $output;
+		} else {
+			
+			// error
+			$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+			$GLOBALS['Error']->handle_error($errno);
+			return $GLOBALS['Error']->to_html($errno);
 		}
-		
-		// return
-		return $output;
 	}
 }
 

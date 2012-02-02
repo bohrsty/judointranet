@@ -205,6 +205,30 @@ class Calendar extends Object {
 	
 	
 	/**
+	 * return_shortname returns the value of $shortname
+	 * 
+	 * @return string value of $shortname
+	 */
+	public function return_shortname() {
+		return $this->get_shortname();
+	}
+	
+	
+	
+	
+	/**
+	 * return_content returns the value of $content
+	 * 
+	 * @return string value of $content
+	 */
+	public function return_content() {
+		return $this->get_content();
+	}
+	
+	
+	
+	
+	/**
 	 * return_rights returns the value of $rights
 	 * 
 	 * @return object value of $rights
@@ -223,18 +247,6 @@ class Calendar extends Object {
 	 */
 	public function return_valid() {
 		return $this->get_valid();
-	}
-	
-	
-	
-	
-	/**
-	 * disable sets the calendar-entry invalid
-	 * 
-	 * @return void
-	 */
-	public function disable() {
-		return $this->set_valid(0);
 	}
 	
 	
@@ -301,6 +313,13 @@ class Calendar extends Object {
 			
 			// execute
 			$db->query($sql);
+			
+			// write rights
+			try {
+				$this->get_rights()->write_db($this->get_id());
+			} catch(Exception $e) {
+				throw new Exception('DbActionUnknown',$e->getCode());
+			}
 		} else {
 			
 			// error
@@ -409,6 +428,41 @@ class Calendar extends Object {
 			return false;
 		} else {
 			return true;
+		}
+	}
+	
+	
+	
+	
+	/**
+	 * update sets the values from given array to this
+	 * 
+	 * @param array $calendar array containing the new values
+	 * @return void
+	 */
+	public function update($calendar) {
+		
+		// walk through array
+		foreach($calendar as $name => $value) {
+			
+			// check $name
+			if($name == 'date') {
+				$this->set_date($value);
+			} elseif($name == 'name') {
+				$this->set_name($value);
+			} elseif($name == 'shortname') {
+				$this->set_shortname($value);
+			} elseif($name == 'type') {
+				$this->set_type($value);
+			} elseif($name == 'content') {
+				$this->set_content($value);
+			} elseif($name == 'rights') {
+				$this->get_rights()->update($this->get_id(),$value);
+			} elseif($name == 'valid') {
+				$this->set_valid($value);
+			} elseif($name == 'ann_id') {
+				$this->set_ann_id($value);
+			}
 		}
 	}
 }

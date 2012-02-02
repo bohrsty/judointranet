@@ -233,7 +233,11 @@ class Rights extends Object {
 		$db->close();
 		
 		// set new rights
-		$this->set_rights($update_rights);
+		// add inserted rights
+		$merge_rights = array_merge($rights,$update_rights);
+		// remove deleted rights
+		$set_rights = array_diff($merge_rights,$new_rights['remove']);
+		$this->set_rights($set_rights);
 	}
 	
 	
@@ -264,9 +268,9 @@ class Rights extends Object {
 		
 		// get $rights
 		$rights = $this->get_rights();
-		
+				
 		// prepare update_rights
-		$update_rights = array();
+		$update_rights = array('insert' => array(),'remove' => array());
 		
 		// walk through $new_rights to get insert g-ids
 		for($i=0;$i<count($new_rights);$i++) {
@@ -278,16 +282,71 @@ class Rights extends Object {
 		}
 		
 		// delete
-		// get difference
-		$diff = array_diff_assoc($rights,$new_rights);
-		
-		// walk through diff
-		foreach($diff as $id => $g_id) {
+		// walk through $rights
+		foreach($rights as $id => $g_id) {
 			
-			$update_rights['remove'][$id] = $g_id;
+			// check if actual right is not in new_rights => remove
+			if(!in_array($g_id,$new_rights)) {
+				$update_rights['remove'][$id] = $g_id;
+			}
+		}		
+		$this->set_new_rights($update_rights);
+	}
+	
+	
+	
+	
+	
+	/**
+	 * check_rights if the loggedin user has rights on the given table and
+	 * table_id
+	 * 
+	 * @param int $table_id id of the entry
+	 * @param string $table name of the table
+	 * @param bool $public if true, include public-access in check
+	 * @return bool true if user has rights, false otherwise
+	 */
+	public static function check_rights($table_id,$table,$public=false) {
+		
+		// get groups
+		$groups = $_SESSION['user']->groups();
+		
+		// get rights for given id and table
+		// get db-object
+		$db = Db::newDb();
+		
+		// prepare sql-statement
+		$sql = 'SELECT r.id,r.g_id
+				FROM rights AS r
+				WHERE r.table_name = "'.$table.'"
+				AND r.table_id = '.(int) $table_id;
+		
+		// execute
+		$result = $db->query($sql);
+		
+		// fetch result
+		$all_rights = array();
+		while(list($id,$g_id) = $result->fetch_array(MYSQL_NUM)) {
+		
+			// set variables to array
+			$all_rights[$id] = $g_id;
 		}
 		
-		$this->set_new_rights($update_rights);
+		// walk through groups and check if in rights
+		foreach($groups as $no => $group_id) {
+			if($public) {
+				if(in_array($group_id,$all_rights)) {
+					return true;
+				}
+			} else {
+				if(in_array($group_id,$all_rights) && $group_id != 0) {
+					return true;
+				}
+			}
+		}
+		
+		// else return false
+		return false;
 	}
 }
 

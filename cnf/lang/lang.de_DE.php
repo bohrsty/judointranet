@@ -132,7 +132,7 @@ $lang = array(
 				'resetGroups' => 'Gruppenfilter zur&uuml;cksetzen'
 			)
 		),
-		'new_entry' => array(
+		'entry' => array(
 			'form' => array(
 				'requiredNote' => '<span class="required">*</span> erforderliches Feld',
 				'date' => 'Datum',
