@@ -10,7 +10,6 @@ class PageView extends Object {
 	 * class-variables
 	 */
 	private $get;
-//	private $post;
 	private $output;
 	
 	/*
@@ -22,12 +21,6 @@ class PageView extends Object {
 	private function set_get($get) {
 		$this->get = $get;
 	}
-//	private function get_post(){
-//		return $this->post;
-//	}
-//	private function set_post($post) {
-//		$this->post = $post;
-//	}
 	private function get_output(){
 		return $this->output;
 	}
@@ -90,29 +83,8 @@ class PageView extends Object {
 			}
 		}
 		
-		// walk through $_POST if defined
-//		$post = null;
-//		if(isset($_POST)) {
-//			
-//			foreach($_POST as $post_entry => $post_value) {
-//				
-//				// check value
-//				$value = $this->check_valid_chars('postvalue',$post_value);
-//				$errno = null;
-//				if($value === false) {
-//					
-//					// handle error
-//					$errno = $GLOBALS['Error']->error_raised('POSTInvalidChars','entry:'.$post_entry,$post_entry);
-//				}
-//				
-//				// store value
-//				$post[$post_entry] = array($post_value,$errno);
-//			}
-//		}
-		
 		// set class-variables
 		$this->set_get($get);
-//		$this->set_post($post);
 	}
 	
 	
@@ -136,28 +108,6 @@ class PageView extends Object {
 			return false;
 		}
 	}
-	
-	
-	
-	
-	
-	
-	/**
-	 * post returns the value of $_POST[$var] if set
-	 * 
-	 * @param string $var text of key in $_POST-array
-	 * @return string value of the $_POST-key, or false if not set
-	 */
-//	public function post($var) {
-//		
-//		// check if key is set
-//		$post = $this->get_post();
-//		if(isset($post[$var])) {
-//			return $post[$var];
-//		} else {
-//			return false;
-//		}
-//	}
 	
 	
 	

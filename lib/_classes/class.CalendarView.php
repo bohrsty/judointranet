@@ -485,7 +485,8 @@ class CalendarView extends PageView {
 		$calendar_entries = array();
 				
 		// get authorized ids
-		$calendar_ids = Rights::get_authorized_entries('calendar');
+//		$calendar_ids = Rights::get_authorized_entries('calendar');
+		$calendar_ids = Calendar::return_calendars();
 		
 		// create calendar-objects
 		foreach($calendar_ids as $index => $id) {
@@ -646,9 +647,6 @@ class CalendarView extends PageView {
 		$return = '';
 		
 		// formular
-		require_once('HTML/QuickForm2.php');
-		require_once('HTML/QuickForm2/Renderer.php');
-				
 		$form = new HTML_QuickForm2(
 								'new_calendar_entry',
 								'post',
@@ -741,6 +739,13 @@ class CalendarView extends PageView {
 						'regex',
 						parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('textarea.desc').']',
 						$_SESSION['GC']->return_config('textarea.regexp'));
+		
+		
+		// select announcement
+		$options = array_merge(array(0 => '--'),Announcement::return_announcements());
+		$ann = $form->addElement('select','announcement',array());
+		$ann->setLabel(parent::lang('class.CalendarView#entry#form#announcement').':');
+		$ann->loadOptions($options);
 		
 		
 		// select rights
@@ -924,10 +929,6 @@ class CalendarView extends PageView {
 					
 			// prepare return
 			$return = '';
-			
-			// formular
-			require_once('HTML/QuickForm2.php');
-			require_once('HTML/QuickForm2/Renderer.php');
 					
 			$form = new HTML_QuickForm2(
 									'edit_calendar_entry',
@@ -951,6 +952,7 @@ class CalendarView extends PageView {
 					'shortname' => $calendar->return_shortname(),
 					'type' => $calendar->return_type(),
 					'entry_content' => $calendar->return_content(),
+					'announcement' => $calendar->return_ann_id(),
 					'rights' => $calendar->return_rights()->return_rights()
 				)));
 			
@@ -1026,6 +1028,13 @@ class CalendarView extends PageView {
 							'regex',
 							parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('textarea.desc').']',
 							$_SESSION['GC']->return_config('textarea.regexp'));
+			
+		
+			// select announcement
+			$options = Announcement::get_announcements();
+			$ann = $form->addElement('select','announcement',array());
+			$ann->setLabel(parent::lang('class.CalendarView#entry#form#announcement').':');
+			$ann->loadOptions($options);
 			
 			
 			// select rights

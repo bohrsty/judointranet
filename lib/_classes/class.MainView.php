@@ -210,10 +210,7 @@ class MainView extends PageView {
 			$r = '&r='.$this->get('r');
 		}
 		
-		// formular
-		require_once('HTML/QuickForm2.php');
-		require_once('HTML/QuickForm2/Renderer.php');
-				
+		// formular		
 		$form = new HTML_QuickForm2(
 								'login',
 								'post',

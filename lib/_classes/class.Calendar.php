@@ -4,30 +4,22 @@
 /**
  * class calendar implements a date (i.e. event)
  */
-class Calendar extends Object {
+class Calendar extends Page {
 	
 	/*
 	 * class-variables
 	 */
-	private $id;
 	private $name;
 	private $shortname;
 	private $date;
 	private $type;
 	private $content;
 	private $ann_id;
-	private $rights;
 	private $valid;
 	
 	/*
 	 * getter/setter
 	 */
-	private function get_id(){
-		return $this->id;
-	}
-	private function set_id($id) {
-		$this->id = $id;
-	}
 	private function get_name(){
 		return $this->name;
 	}
@@ -64,12 +56,6 @@ class Calendar extends Object {
 	private function set_ann_id($ann_id) {
 		$this->ann_id = $ann_id;
 	}
-	private function get_rights(){
-		return $this->rights;
-	}
-	private function set_rights($rights) {
-		$this->rights = $rights;
-	}
 	private function get_valid(){
 		return $this->valid;
 	}
@@ -81,6 +67,9 @@ class Calendar extends Object {
 	 * constructor/destructor
 	 */
 	public function __construct($arg) {
+		
+		// parent constructor
+		parent::__construct();
 		
 		// if $arg is array, create new entry, else get entry from db by given id
 		if(is_array($arg)) {
@@ -125,23 +114,16 @@ class Calendar extends Object {
 		$db = Db::newDb();
 		
 		// prepare sql-statement
-		$stmt = $db->prepare(	'
-						SELECT c.name,c.shortname,c.date,c.type,c.content,c.ann_id,c.valid
-						FROM calendar AS c
-						WHERE c.id = ?');
+		$sql = "
+			SELECT c.name,c.shortname,c.date,c.type,c.content,c.ann_id,c.valid
+			FROM calendar AS c
+			WHERE c.id = $id";
 		
-		// insert variables
-		$stmt->bind_param('i',$id);
-		
-		// execute statement
-		$stmt->execute();
-		
-		// bind variables to result
-		$name = $shortname = $date = $type = $content = ''; $ann_id = $valid = 0;
-		$stmt->bind_result($name,$shortname,$date,$type,$content,$ann_id,$valid);
+		// execute
+		$result = $db->query($sql);
 		
 		// fetch result
-		$stmt->fetch();
+		list($name,$shortname,$date,$type,$content,$ann_id,$valid) = $result->fetch_array(MYSQL_NUM);
 		
 		// set variables to object
 		$this->set_id($id);
@@ -154,7 +136,6 @@ class Calendar extends Object {
 		$this->set_valid($valid);
 		
 		// close db
-		$stmt->close();
 		$db->close();
 	}
 	
@@ -229,24 +210,24 @@ class Calendar extends Object {
 	
 	
 	/**
-	 * return_rights returns the value of $rights
-	 * 
-	 * @return object value of $rights
-	 */
-	public function return_rights() {
-		return $this->get_rights();
-	}
-	
-	
-	
-	
-	/**
 	 * return_valid returns the value of $valid
 	 * 
 	 * @return int value of $valid
 	 */
 	public function return_valid() {
 		return $this->get_valid();
+	}
+	
+	
+	
+	
+	/**
+	 * return_ann_id returns the value of $ann_id
+	 * 
+	 * @return int value of $ann_id
+	 */
+	public function return_ann_id() {
+		return $this->get_ann_id();
 	}
 	
 	
@@ -464,6 +445,24 @@ class Calendar extends Object {
 				$this->set_ann_id($value);
 			}
 		}
+	}
+	
+	
+	
+	
+	/**
+	 * return_calendars returns an array containing all calendar-id the
+	 * user has rights to
+	 * 
+	 * @return array array containing the calendar_ids the user has rights to
+	 */
+	public static function return_calendars() {
+		
+		// get ids
+		$return = Rights::get_authorized_entries('calendar');
+		
+		// return
+		return $return;
 	}
 }
 

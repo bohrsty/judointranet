@@ -141,7 +141,8 @@ $lang = array(
 				'shortname' => 'Kurzbezeichnung',
 				'type' => 'Veranstaltungstyp',
 				'rights' => 'Berechtigte Gruppen (mehrfache Auswahl: &lt;STRG&gt; gedr&uuml;ckt halten und Gruppen ausw&auml;hlen)',
-				'entry_content' => 'Inhalt/Beschreibung'
+				'entry_content' => 'Inhalt/Beschreibung',
+				'announcement' => 'Ausschreibung'
 			),
 			'rule' => array(
 				'required.date' => 'Datum muss ausgew&auml;hlt werden!',
@@ -277,6 +278,24 @@ $lang = array(
 				'type' => '<span>Art:</span><br />',
 				'content' => '<span>Beschreibung:</span><br />',
 				'rights' => '<span>Berechtigte Gruppen:</span><br />'
+			)
+		)
+	),
+	'class.Field' => array(
+		'read_quickform' => array(
+			'date' => array(
+				'month.1' => 'Jan',
+				'month.2' => 'Feb',
+				'month.3' => 'M&auml;r',
+				'month.4' => 'Apr',
+				'month.5' => 'Mai',
+				'month.6' => 'Jun',
+				'month.7' => 'Jul',
+				'month.8' => 'Aug',
+				'month.9' => 'Sep',
+				'month.10' => 'Okt',
+				'month.11' => 'Nov',
+				'month.12' => 'Dez'
 			)
 		)
 	)
