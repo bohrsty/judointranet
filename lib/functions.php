@@ -1,78 +1,30 @@
 <?php
 
-
-
-
-
-
-
-
-/**
- * setzt einige standardeinstellungen fuer das laufende skript und liest die konfig ein
- */
-function init() {
-	
-	// sicherung der skripte definieren
-	define("SICHERUNG", 'Sicherung');
-	
-	// konfiguration einlesen
-	$GLOBALS['konfig'] = new NBkonfig('cnf/config.ini');
-	$GC = $GLOBALS['konfig'];
-	
-	// locale fuer datum auf deutsch setzen
-	setlocale(LC_ALL, 'de_DE@euro');
-	
-	// zeitzone setzen
-	date_default_timezone_set($GC->return_konfig('global','timezone'));
-	
-	// admin-button-beschriftungen setzen
-	$GC->add_to_konfig('intern','submit_name','submit');
-	$GC->add_to_konfig('intern','submit_wert','Speichern');
-	
-	// login-button-beschriftungen setzen
-	$GC->add_to_konfig('intern','submit_login_name','submit_login');
-	$GC->add_to_konfig('intern','submit_login_wert','Login');
-}
-
-
-
-
-
-
 /**
  * loads the class-definition of given class from lib
  */
 function __autoload($class) {
-	
-	// check if old style
-	if(substr($class,0,2) == 'NB') {
+
+	// load quickform
+	if(substr($class,0,4) == 'HTML') {
 		
-		// load class
-		$filename = 'class_'.substr($class,2).'.php';
-		include('lib/classes/'.$filename);
-	} else {
-		
-		// load quickform
-		if(substr($class,0,4) == 'HTML') {
-			
-			// explode _
-			$parts = explode('_',$class);
-			$path = '';
-			for($i=0;$i<count($parts);$i++) {
-				if($i == count($parts)-1) {
-					$path .= $parts[$i].'.php';
-				} else {
-					$path .= $parts[$i].'/';
-				}
+		// explode _
+		$parts = explode('_',$class);
+		$path = '';
+		for($i=0;$i<count($parts);$i++) {
+			if($i == count($parts)-1) {
+				$path .= $parts[$i].'.php';
+			} else {
+				$path .= $parts[$i].'/';
 			}
-			
-			// include
-			include_once($path);
-		} else {
-		
-			// load new classes
-			include_once('lib/_classes/class.'.$class.'.php');
 		}
+		
+		// include
+		include_once($path);
+	} else {
+	
+		// load new classes
+		include_once('lib/classes/class.'.$class.'.php');
 	}
 }
 

@@ -179,6 +179,15 @@ $lang = array(
 			'title' => array(
 				'cancel' => 'Bricht den L&ouml;schvorgang ab'
 			)
+		),
+		'read_preset_form' => array(
+			'select' => array(
+				'choosePreset' => 'Ausschreibungsvorlage ausw&auml;hlen',
+				'submit' => '+'
+			),
+			'rule' => array(
+				'select' => 'Bitte eine Vorlage ausw&auml;hlen'
+			)
 		)
 	),
 	'class.PageView' => array(
@@ -296,6 +305,67 @@ $lang = array(
 				'month.10' => 'Okt',
 				'month.11' => 'Nov',
 				'month.12' => 'Dez'
+			)
+		),
+		'element' => array(
+			'rule' => array(
+				'required.date' => 'Datum muss ausgew&auml;hlt werden!',
+				'check.date' => 'Korrektes Datum muss ausgew&auml;hlt werden!',
+				'required.text' => 'Feld muss ausgef&uuml;llt werden!',
+				'regexp.allowedChars' => 'Es k&ouml;nnen nur folgende Zeichen eingegeben werden!',
+				'required.checkbox' => 'Auswahlfeld muss angehakt werden!'
+			)
+		)
+	),
+	'class.AnnouncementView' => array(
+		'connectnavi' => array(
+			'firstlevel' => array(
+				'name' => 'Ausschreibungen'
+			),
+			'secondlevel' => array(
+				'listall' => 'Listenansicht',
+				'new' => 'Neuen Eintrag erstellen'
+			)
+		),
+		'init' => array(
+			'new' => array(
+				'title' => 'Ausschreibung: Neuer Eintrag'
+			),
+		),
+		'entry' => array(
+			'form' => array(
+				'requiredNote' => '<span class="required">*</span> erforderliches Feld'
+			)
+		),
+		'new_entry' => array(
+			'form' => array(
+				'submitButton' => 'Speichern'
+			)
+		)
+	),
+	'class.InventoryView' => array(
+		'connectnavi' => array(
+			'firstlevel' => array(
+				'name' => 'Inventar'
+			),
+			'secondlevel' => array(
+				'listall' => 'Listenansicht',
+				'my' => 'Eigene verwalten'
+			)
+		),
+		'my' => array(
+			'TH' => array(
+				'name' => 'Objekt',
+				'number' => 'Inventarnummer',
+				'admin' => 'Aufgaben'
+			),
+			'title' => array(
+				'give' => 'Objekt abgeben',
+				'take' => 'Objekt annehmen'
+			),
+			'content' => array(
+				'give' => 'abgeben',
+				'take' => 'annehmen'
 			)
 		)
 	)

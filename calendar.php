@@ -1,17 +1,12 @@
 <?php
 
 /*
- * lib einlesen
+ * required lib
  */
 require('lib/functions.php');
 
 /*
- * konfig einlesen
- */
-init();
-
-/*
- * session starten
+ * start session
  */
 session_start();
 

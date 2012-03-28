@@ -10,11 +10,11 @@ require('lib/functions.php');
  */
 session_start();
 
-$main_view = new MainView();
+$announcement_view = new AnnouncementView();
 
-$main_view->init();
+$announcement_view->init();
 
-$main_view->output();
+$announcement_view->output();
 
 
 

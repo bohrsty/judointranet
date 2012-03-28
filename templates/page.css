@@ -70,12 +70,12 @@ div.quickform div.row {
 	background-color: #ccf;
 }
 
-td.admin {
-	text-align: center;
+th.admin {
+	width:400px;
 }
 
 th.name {
-	width: 450px;
+	width: 400px;
 }
 
 th.date {
@@ -90,6 +90,22 @@ div#sortlinks {
 	max-height: 120px;
 	overflow: scroll;
 	margin-bottom: 20px;
+}
+
+td.admin div.row {
+	float: left;
+}
+
+td.admin div.row select {
+	font-size:10pt;
+}
+
+td.admin div.row input {
+	font-size:10pt;
+}
+
+td.admin div.admin-links {
+	float: left;
 }
 
 /* navi */
