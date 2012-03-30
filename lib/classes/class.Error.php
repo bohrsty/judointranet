@@ -195,6 +195,36 @@ class Error extends Object {
 				$this->set_errors($errors);
 			break;
 			
+			case 'NotOwned':
+				
+				// non-fatal error, message
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
+				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#NotOwned#ERROR.caption').'</h3>';
+				$message .= '<p>'.parent::lang('class.Error#handle_error#NotOwned#ERROR.message').'</p>';
+				$message .= '[NotOwned: "'.$this->return_entry($errno).'" in '.$this->return_message($errno).']';
+				$message .= '</div>';
+				
+				// set output
+				$errors = $this->get_errors();
+				$errors[$errno]['output'] = $message;
+				$this->set_errors($errors);
+			break;
+			
+			case 'NotGiven':
+				
+				// non-fatal error, message
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
+				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#NotGiven#ERROR.caption').'</h3>';
+				$message .= '<p>'.parent::lang('class.Error#handle_error#NotGiven#ERROR.message').'</p>';
+				$message .= '[NotGiven: "'.$this->return_entry($errno).'" in '.$this->return_message($errno).']';
+				$message .= '</div>';
+				
+				// set output
+				$errors = $this->get_errors();
+				$errors[$errno]['output'] = $message;
+				$this->set_errors($errors);
+			break;
+			
 			default:
 				
 			break;

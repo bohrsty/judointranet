@@ -61,7 +61,7 @@ class User extends Object {
 	 */
 	public function __construct() {
 		
-		// set userid 0 per default
+		// set userid default to 0
 		$this->set_id(0);
 		
 		// set loginstatus
@@ -320,19 +320,20 @@ class User extends Object {
 	/**
 	 * change_user sets the information of the given userid from db
 	 * 
-	 * @param int $username username of the user
+	 * @param mixed $value value for $field
 	 * @param bool $loggedin new loginstatus of the user
+	 * @param string $field database field to change user to $value
 	 * @return void
 	 */
-	public function change_user($username,$loggedin) {
+	public function change_user($value,$loggedin,$field = 'username') {
 		
 		// get db-object
 		$db = Db::newDb();
 		
 		// prepare sql-statement
-		$sql = "SELECT u.id,u.name
+		$sql = "SELECT u.id,u.name,u.username
 				FROM user AS u
-				WHERE u.username = '$username'";
+				WHERE u.$field = '$value'";
 		
 		// execute statement
 		$result = $db->query($sql);
@@ -341,7 +342,6 @@ class User extends Object {
 		$db_result = $result->fetch_array(MYSQL_ASSOC);
 		$this->set_id($db_result['id']);
 		unset($db_result['id']);
-		$db_result['username'] = $username;
 		$this->set_userinfo($db_result);
 		
 		// set groups
@@ -392,7 +392,7 @@ class User extends Object {
 	/**
 	 * return_userinfo returns the asked info from $userinfo
 	 * 
-	 * @param string $info name of the info to be returned
+	 * @param string $name name of the info to be returned
 	 * @return string asked userinfo, if exists, false otherwise
 	 */
 	public function return_userinfo($name) {
@@ -517,6 +517,52 @@ class User extends Object {
 		} else {
 			$groups[] = $group;
 		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * return_all_users returns all users from db as array containing
+	 * user-objects
+	 * 
+	 * @param array $exclude array containing usernames not to include in list
+	 * @return array array containing all user-objects
+	 */
+	public function return_all_users($exclude = array()) {
+		
+		// prepare return
+		$users = array();
+		
+		// get db-object
+		$db = Db::newDb();
+		
+		// prepare sql-statement
+		$sql = "SELECT u.username
+				FROM user AS u";
+		
+		// execute statement
+		$result = $db->query($sql);
+		
+		//fetch result
+		while(list($username) = $result->fetch_array(MYSQL_NUM)) {
+			
+			// safe object in array
+			$user = new User();
+			$user->change_user($username,false);
+			
+			// exclude
+			if(!in_array($username,$exclude)) {
+			
+				$users[] = $user;
+			}
+		}
+		
+		// return
+		return $users;
 	}
 }
 

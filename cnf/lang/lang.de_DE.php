@@ -53,6 +53,18 @@ $lang = array(
 				'ERROR.message' => 'Der Termin existiert nicht, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
 									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
 									Wenn der Fehler weiterhin auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
+			),
+			'NotOwned' => array(
+				'ERROR.caption' => 'FEHLER',
+				'ERROR.message' => 'Sie sind nicht Eigent&uuml;mer dieses Objekts, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
+			),
+			'NotGiven' => array(
+				'ERROR.caption' => 'FEHLER',
+				'ERROR.message' => 'Sie haben dieses Objekts nicht abgegeben, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
 			)
 		
 		)
@@ -315,6 +327,12 @@ $lang = array(
 				'regexp.allowedChars' => 'Es k&ouml;nnen nur folgende Zeichen eingegeben werden!',
 				'required.checkbox' => 'Auswahlfeld muss angehakt werden!'
 			)
+		),
+		'value_to_html' => array(
+			'checkbox.value' => array(
+				'checked' => 'Ja',
+				'unchecked' => 'Nein'
+			)
 		)
 	),
 	'class.AnnouncementView' => array(
@@ -350,7 +368,28 @@ $lang = array(
 			),
 			'secondlevel' => array(
 				'listall' => 'Listenansicht',
-				'my' => 'Eigene verwalten'
+				'my' => 'Eigene verwalten',
+				'give' => 'Objekt abgeben',
+				'take' => 'Objekt annehmen',
+				'cancel' => 'Objekt zur&uuml;ckziehen'
+			)
+		),
+		'init' => array(
+			'my' => array(
+				'title' => 'Inventar: Eigene Objekte'
+			),
+
+			'default' => array(
+				'title' => 'Inventar'
+			),
+			'Error' => array(
+				'NotAuthorized' => 'FEHLER - Nicht berechtigt'
+			),
+			'give' => array(
+				'title' => 'Inventar: Objekt abgeben'
+			),
+			'cancel' => array(
+				'title' => 'Inventar: Objekt zur&uuml;ckziehen'
 			)
 		),
 		'my' => array(
@@ -361,11 +400,63 @@ $lang = array(
 			),
 			'title' => array(
 				'give' => 'Objekt abgeben',
-				'take' => 'Objekt annehmen'
+				'take' => 'Objekt annehmen',
+				'cancel' => 'Objekt zur&uuml;ckziehen',
+				'details' => 'Details'
 			),
 			'content' => array(
 				'give' => 'abgeben',
-				'take' => 'annehmen'
+				'take' => 'annehmen',
+				'cancel' => 'zur&uuml;ckziehen'
+			)
+		),
+		'give' => array(
+			'form' => array(
+				'submitButton' => 'Speichern'
+			),
+			'page' => array(
+				'headline' => 'Objekt abgeben',
+				'objectinfo.head' => '',
+				'objectinfo.tail' => ' abgeben an',
+				'accessory.required' => 'Bitte unbedingt das zu &uuml;bergebende Zubeh&ouml;r anhaken, sonst muss davon ausgegangen werden, dass es einbehalten wurde und kostenpflichtig ersetzt werden muss!',
+				'headline.givento' => ' abgegeben an ',
+				'accessory.given' => 'Zu &uuml;bergebendes Zubeh&ouml;r:'
+			)
+		),
+		'entry' => array(
+			'form' => array(
+				'requiredNote' => '<span class="required">*</span> erforderliches Feld'
+			),
+			'rule' => array(
+				'required.give_to' => 'Annehmender Benutzer muss ausgew&auml;hlt werden!',
+				'check.give_to' => 'Annehmender Benutzer muss ausgew&auml;hlt werden!'
+			)
+		),
+		'cancel' => array(
+			'form' => array(
+				'yes' => 'Ja',
+				'cancel' => 'abbrechen'
+			),
+			'message' => array(
+				'confirm' => 'Wollen Sie dieses Objekt wirklich zur&uuml;ckziehen?',
+				'done' => 'Das Objekt wurde erfolgreich zur&uuml;ckgezogen.'
+			),
+			'title' => array(
+				'cancel' => 'Bricht den Vorgang ab'
+			)
+		),
+		'listall' => array(
+			'TH' => array(
+				'name' => 'Objekt',
+				'number' => 'Inventarnummer',
+				'owner' => 'Besitzer',
+				'status' => 'Status'
+			),
+			'status' => array(
+				'givento' => 'abzugeben an'
+			),
+			'title' => array(
+				'details' => 'Details'
 			)
 		)
 	)

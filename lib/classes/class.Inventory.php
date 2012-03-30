@@ -110,10 +110,13 @@ class Inventory extends Object {
 		
 		// get owned
 		$owned_action = Inventory::movement_last_row($db,$id,'action');
-		if($owned_action !== false) {
-			$this->set_owned($owned_action);
-		} else {
+		$owned_userid = Inventory::movement_last_row($db,$id,'user_id',2);
+		if($owned_action === false) {
 			$this->set_owned('');
+		} elseif($owned_action[0] == 'given' && $owned_userid[1] == $_SESSION['user']->userid()) {
+			$this->set_owned('givento');
+		} else {
+			$this->set_owned($owned_action[0]);
 		}
 		
 		// close db
@@ -262,10 +265,10 @@ class Inventory extends Object {
 		for($i=0;$i<count($all);$i++) {
 			
 			// get user_id
-			$user_id = Inventory::movement_last_row($db,$all[$i],'user_id');
+			$user_id = Inventory::movement_last_row($db,$all[$i],'user_id',2);
 				
 			// check user_id
-			if($user_id == $_SESSION['user']->userid()) {
+			if($user_id[0] == $_SESSION['user']->userid() || $user_id[1] == $_SESSION['user']->userid()) {
 				$return[] = $all[$i];
 			}
 		}
@@ -288,7 +291,7 @@ class Inventory extends Object {
 	 * @param string $field database-field to be returned
 	 * @return mixed the value of the requested $field or false if no result
 	 */
-	public static function movement_last_row($db,$id,$field) {
+	public static function movement_last_row($db,$id,$field,$rows = 1) {
 				
 		// prepare sql-statement
 		$sql = "SELECT im.id,im.date_time,im.action,im.user_id
@@ -304,17 +307,23 @@ class Inventory extends Object {
 			return false;
 		}
 		
-		// fetch result
-		$last_element = $result->num_rows -1;
-		$result->data_seek($last_element);
-		
-		$movement = $result->fetch_array(MYSQL_ASSOC);
+		// walk through rows
+		$movement = array();
+		for($i=0;$i<$rows;$i++) {
+			
+			// fetch result
+			$element = $result->num_rows -1 -$i;
+			$result->data_seek($element);
+			
+			$fetch = $result->fetch_array(MYSQL_ASSOC);
+			$movement[] = $fetch[$field];
+		}
 		
 		// clear result
 		$result->close();
 		
 		// return
-		return $movement[$field];
+		return $movement;
 	}
 }
 

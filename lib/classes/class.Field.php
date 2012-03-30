@@ -326,6 +326,42 @@ class Field extends Object {
 		
 		return $this->get_type();
 	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * value_to_html returns the field and its $value as html embedded in $template
+	 * 
+	 * @param object $template the HtmlTemplate-object to embed the field
+	 * @param mixed $value the value of the field
+	 * @return string the html-representation
+	 */
+	public function value_to_html($template,$value) {
+		
+		// check value
+		$checked_value = '';
+		if($this->get_type() == 'checkbox') {
+			
+			// check if not null
+			if(isset($value)) {
+				$checked_value = parent::lang('class.Field#value_to_html#checkbox.value#checked');
+			} else {
+				$checked_value = parent::lang('class.Field#value_to_html#checkbox.value#unchecked');
+			}
+		}
+		
+		// prepare values for template-p
+		$content = array(
+					'params' => '',
+					'text' => $this->get_name().': '.$checked_value
+				);
+		
+		// return
+		return $template->parse($content);
+	}
 }
 
 
