@@ -264,6 +264,9 @@ class User extends Object {
 			}
 		}
 		
+		// read config again
+		$_SESSION['GC'] = new Config();
+		
 		// logout-message
 		// set contents
 		$contents = array(

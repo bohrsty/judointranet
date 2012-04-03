@@ -264,12 +264,23 @@ class Inventory extends Object {
 		// check movements on each entry
 		for($i=0;$i<count($all);$i++) {
 			
-			// get user_id
-			$user_id = Inventory::movement_last_row($db,$all[$i],'user_id',2);
+			// get user_id and action
+			$action = Inventory::movement_last_row($db,$all[$i],'action');
+			$user_id = Inventory::movement_last_row($db,$all[$i],'user_id',3);
+			
+			// check action
+			if($action[0] == 'taken') {
 				
-			// check user_id
-			if($user_id[0] == $_SESSION['user']->userid() || $user_id[1] == $_SESSION['user']->userid()) {
-				$return[] = $all[$i];
+				// check user_id
+				if($user_id[0] == $_SESSION['user']->userid() || ($user_id[1] == $_SESSION['user']->userid() && $user_id[0] != $user_id[2])) {
+					$return[] = $all[$i];
+				}
+			} else {
+				
+				// check user_id
+				if($user_id[0] == $_SESSION['user']->userid() || $user_id[1] == $_SESSION['user']->userid()) {
+					$return[] = $all[$i];
+				}
 			}
 		}
 		
@@ -324,6 +335,85 @@ class Inventory extends Object {
 		
 		// return
 		return $movement;
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * movement_last_accessories tests if the $field has been given in last
+	 * movement 
+	 * 
+	 * @param object $field field object to test
+	 * @return bool true, if accessorie given, false otherwise
+	 */
+	public function movement_last_accessories($field) {
+				
+		// get db-object
+		$db = Db::newDb();
+		
+		// get last movements
+		$id = Inventory::movement_last_row($db,$this->return_id(),'id');
+		
+		// prepare sql-statement
+		$sql = "SELECT v.value
+				FROM value AS v
+				WHERE table_name = 'inventory_movement'
+				AND table_id = ".$id[0]."
+				AND field_id = ".$field->return_id();
+		
+		// execute
+		$result = $db->query($sql);
+		
+		// fetch result
+		list($value) = $result->fetch_array(MYSQL_NUM);
+		
+		// return
+		if($value == 1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * movement_last_values returns an array containing the field values
+	 * of the last movement 
+	 * 
+	 * @return array array contains tht field values of the last movement
+	 */
+	public function movement_last_values() {
+				
+		// get db-object
+		$db = Db::newDb();
+		
+		// get last movements
+		$id = Inventory::movement_last_row($db,$this->return_id(),'id',2);
+		
+		// prepare sql-statement
+		$sql = "SELECT v.field_id,v.value
+				FROM value AS v
+				WHERE table_name = 'inventory_movement'
+				AND table_id = ".$id[1];
+		
+		// execute
+		$result = $db->query($sql);
+		
+		// fetch result
+		$return = array();
+		while(list($field_id,$value) = $result->fetch_array(MYSQL_NUM)) {
+			$return['inventory-'.$field_id] = $value;
+		}
+		
+		// return
+		return $return;
 	}
 }
 

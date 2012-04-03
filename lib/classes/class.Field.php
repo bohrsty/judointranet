@@ -135,7 +135,7 @@ class Field extends Object {
 	 * 
 	 * @return void
 	 */
-	public function read_quickform() {
+	public function read_quickform($options = array()) {
 		
 		// prepare return
 		$element = null;
@@ -144,7 +144,7 @@ class Field extends Object {
 		if($this->get_type() == 'text') {
 			
 			// textarea
-			$element = HTML_QuickForm2_Factory::createElement('textarea', $this->get_table().'-'.$this->get_id());
+			$element = HTML_QuickForm2_Factory::createElement('textarea', $this->get_table().'-'.$this->get_id(),$options);
 			$element->setLabel($this->get_name().':');
 			
 			// add rules
@@ -158,7 +158,7 @@ class Field extends Object {
 		} elseif($this->get_type() == 'date') {
 			
 			// date-group
-			$element = HTML_QuickForm2_Factory::createElement('group', $this->get_table().'-'.$this->get_id());
+			$element = HTML_QuickForm2_Factory::createElement('group', $this->get_table().'-'.$this->get_id(),$options);
 			$element->setLabel($this->get_name().':');
 			
 			$now_year = (int) date('Y');
@@ -197,7 +197,7 @@ class Field extends Object {
 		} elseif($this->get_type() == 'checkbox') {
 			
 			// checkbox
-			$element = HTML_QuickForm2_Factory::createElement('checkbox', $this->get_table().'-'.$this->get_id());
+			$element = HTML_QuickForm2_Factory::createElement('checkbox', $this->get_table().'-'.$this->get_id(),$options);
 			$element->setLabel($this->get_name().':');
 			
 			// add rules
@@ -233,9 +233,10 @@ class Field extends Object {
 	/**
 	 * read_value reads the actual value from the db
 	 * 
+	 * @param array $data values (table, table_id, field_id) can override the instancevariables
 	 * @return void
 	 */
-	public function read_value() {
+	public function read_value($data = null) {
 		
 		// prepare return
 		$value = '';
@@ -243,12 +244,23 @@ class Field extends Object {
 		// get db-object
 		$db = Db::newDb();
 		
+		// check override
+		if(is_null($data)) {
+			$table = $this->get_table();
+			$table_id = $this->get_table_id();
+			$field_id = $this->get_id();
+		} else {
+			$table = $data['table'];
+			$table_id = $data['table_id'];
+			$field_id = $data['field_id'];
+		}
+		
 		// prepare sql-statement
 		$sql = "SELECT v.value
 				FROM value AS v
-				WHERE v.table_name = '".$this->get_table()."'
-				AND v.table_id = ".$this->get_table_id()."
-				AND v.field_id = ".$this->get_id();
+				WHERE v.table_name = '$table'
+				AND v.table_id = $table_id
+				AND v.field_id = $field_id";
 		
 		// execute
 		$result = $db->query($sql);
@@ -346,21 +358,30 @@ class Field extends Object {
 		if($this->get_type() == 'checkbox') {
 			
 			// check if not null
-			if(isset($value)) {
+			if(isset($value) && $value == 1) {
 				$checked_value = parent::lang('class.Field#value_to_html#checkbox.value#checked');
 			} else {
 				$checked_value = parent::lang('class.Field#value_to_html#checkbox.value#unchecked');
 			}
+		} else {
+			$checked_value = $value;
 		}
 		
-		// prepare values for template-p
-		$content = array(
-					'params' => '',
-					'text' => $this->get_name().': '.$checked_value
-				);
+		// check template
+		if(!is_null($template)) {
+			
+			// prepare values for template-p
+			$content = array(
+						'params' => '',
+						'text' => $this->get_name().': '.$checked_value
+					);
 		
-		// return
-		return $template->parse($content);
+			// return
+			return $template->parse($content);
+		} else {
+			return $this->get_name().': '.$checked_value;
+		}
+		
 	}
 }
 

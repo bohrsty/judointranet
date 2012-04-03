@@ -65,6 +65,12 @@ $lang = array(
 				'ERROR.message' => 'Sie haben dieses Objekts nicht abgegeben, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
 									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
 									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
+			),
+			'NotGivenTo' => array(
+				'ERROR.caption' => 'FEHLER',
+				'ERROR.message' => 'Dieses Objekts wurde nicht abgegeben, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
 			)
 		
 		)
@@ -371,7 +377,8 @@ $lang = array(
 				'my' => 'Eigene verwalten',
 				'give' => 'Objekt abgeben',
 				'take' => 'Objekt annehmen',
-				'cancel' => 'Objekt zur&uuml;ckziehen'
+				'cancel' => 'Objekt zur&uuml;ckziehen',
+				'details' => 'Details'
 			)
 		),
 		'init' => array(
@@ -388,8 +395,14 @@ $lang = array(
 			'give' => array(
 				'title' => 'Inventar: Objekt abgeben'
 			),
+			'take' => array(
+				'title' => 'Inventar: Objekt annehmen'
+			),
 			'cancel' => array(
 				'title' => 'Inventar: Objekt zur&uuml;ckziehen'
+			),
+			'details' => array(
+				'title' => 'Inventar: Details'
 			)
 		),
 		'my' => array(
@@ -421,6 +434,18 @@ $lang = array(
 				'accessory.required' => 'Bitte unbedingt das zu &uuml;bergebende Zubeh&ouml;r anhaken, sonst muss davon ausgegangen werden, dass es einbehalten wurde und kostenpflichtig ersetzt werden muss!',
 				'headline.givento' => ' abgegeben an ',
 				'accessory.given' => 'Zu &uuml;bergebendes Zubeh&ouml;r:'
+			)
+		),
+		'take' => array(
+			'form' => array(
+				'submitButton' => 'Speichern'
+			),
+			'page' => array(
+				'headline' => 'Objekt annehmen',
+				'headline.taken' => '&uuml;bernommen',
+				'accessory.required' => 'Bitte unbedingt das &uuml;bernommene Zubeh&ouml;r anhaken, sonst muss davon ausgegangen werden, dass es einbehalten wurde und kostenpflichtig ersetzt werden muss!',
+				'accessory.taken' => '&Uuml;bernommenes Zubeh&ouml;r:',
+				'TakeFrom' => '&Uuml;bernommen von'
 			)
 		),
 		'entry' => array(
@@ -457,6 +482,11 @@ $lang = array(
 			),
 			'title' => array(
 				'details' => 'Details'
+			)
+		),
+		'details' => array(
+			'accessories' => array(
+				'list' => 'Zubeh&ouml;r'
 			)
 		)
 	)
