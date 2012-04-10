@@ -87,6 +87,12 @@ class InventoryView extends PageView {
 								'name' => 'class.InventoryView#connectnavi#secondlevel#details',
 								'id' => crc32('InventoryView|details'), // 2301889492
 								'show' => false
+							),
+							6 => array(
+								'getid' => 'movement', 
+								'name' => 'class.InventoryView#connectnavi#secondlevel#movement',
+								'id' => crc32('InventoryView|movement'), // 2029386500
+								'show' => false
 							)
 						)
 					);
@@ -201,6 +207,17 @@ class InventoryView extends PageView {
 						$this->add_output(array('main' => $this->details($this->get('did'))));
 					break;
 					
+					case 'movement':
+						
+						// set contents
+						// title
+						$this->add_output(array('title' => $this->title(parent::lang('class.InventoryView#init#movement#title'))));
+						// navi
+						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
+						// main-content
+						$this->add_output(array('main' => $this->movement($this->get('mid'))));
+					break;
+					
 					default:
 						
 						// id set, but no functionality
@@ -228,10 +245,74 @@ class InventoryView extends PageView {
 			// title
 			$this->add_output(array('title' => $this->title(parent::lang('class.InventoryView#init#default#title')))); 
 			// default-content
-			$this->add_output(array('main' => '<h2>default content</h2>'));
+			$this->add_output(array('main' => $this->default_content()));
 			// navi
 			$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * default_content returns the html-content to be displayed on page without
+	 * parameters or functions
+	 * 
+	 * @return string html-content as default content
+	 */
+	private function default_content() {
+		
+		// prepare return
+		$return = '';
+		
+		// get templates
+		// hx
+		try {
+			$hx = new HtmlTemplate('templates/hx.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
+		// p
+		try {
+			$p = new HtmlTemplate('templates/p.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
+		
+		// prepare headline
+		$return .= $hx->parse(array(
+						'hx.x' => 2,
+						'hx.parameters' => '',
+						'hx.content' => parent::lang('class.InventoryView#default_content#headline#text')
+					));
+		
+		// explain my
+		$return .= $hx->parse(array(
+						'hx.x' => 4,
+						'hx.parameters' => '',
+						'hx.content' => parent::lang('class.InventoryView#default_content#explain#my.hx')
+					));
+		$return .= $p->parse(array(
+						'parameters' => '',
+						'text' => parent::lang('class.InventoryView#default_content#explain#my.p')
+					));
+		
+		// explain listall
+		$return .= $hx->parse(array(
+						'hx.x' => 4,
+						'hx.parameters' => '',
+						'hx.content' => parent::lang('class.InventoryView#default_content#explain#listall.hx')
+					));
+		$return .= $p->parse(array(
+						'parameters' => '',
+						'text' => parent::lang('class.InventoryView#default_content#explain#listall.p')
+					));
+					
+		// return
+		return $return;
 	}
 	
 	
@@ -625,7 +706,7 @@ class InventoryView extends PageView {
 		// check rights
 		if(Rights::check_rights($did,'inventory')) {
 				
-			// get calendar-object
+			// get inventory-object
 			$inventory = new Inventory($did);
 			
 			// check owned
@@ -789,7 +870,7 @@ class InventoryView extends PageView {
 			// get db-object
 			$db = Db::newDb();
 			
-			// get calendar-object
+			// get inventory-object
 			$inventory = new Inventory($did);
 			
 			// check owned
@@ -948,7 +1029,7 @@ class InventoryView extends PageView {
 		// check rights
 		if(Rights::check_rights($did,'inventory')) {
 				
-			// get calendar-object
+			// get inventory-object
 			$inventory = new Inventory($did);
 			
 			// get preset
@@ -1072,7 +1153,7 @@ class InventoryView extends PageView {
 		// check rights
 		if(Rights::check_rights($did,'inventory')) {
 				
-			// get calendar-object
+			// get invetory-object
 			$inventory = new Inventory($did);
 			
 			// get preset
@@ -1134,6 +1215,165 @@ class InventoryView extends PageView {
 			
 			// error
 			$errno = $GLOBALS['Error']->error_raised('NotAuthorized',$this->get('id'),$did);
+			$GLOBALS['Error']->handle_error($errno);
+			return $GLOBALS['Error']->to_html($errno);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * movement returns the details of a movement-entry as html
+	 * 
+	 * @param int $mid entry-id for the movement
+	 * @return string html-string with the details of the movement entry
+	 */
+	private function movement($mid) {
+	
+		// get db-object
+		$db = Db::newDb();
+		
+		// get movement details
+		// prepare sql-statement
+		$sql = "SELECT m.inventory_id
+				FROM inventory_movement AS m
+				WHERE m.id = $mid";
+		
+		// execute
+		$result = $db->query($sql);
+		
+		// fetch result
+		list($inventory_id) = $result->fetch_array(MYSQL_NUM);
+		
+		// get invetory-object
+		$inventory = new Inventory($inventory_id);
+		
+		// get preset
+		$preset = $inventory->return_preset();
+		
+		// get fields
+		$fields = $preset->return_fields();
+		
+		// check rights
+		if(Rights::check_rights($inventory->return_id(),'inventory')) {
+			
+			// get templates
+			// hx
+			try {
+				$hx = new HtmlTemplate('templates/hx.tpl');
+			} catch(Exception $e) {
+				$GLOBALS['Error']->handle_error($e);
+			}
+			// p
+			try {
+				$p = new HtmlTemplate('templates/p.tpl');
+			} catch(Exception $e) {
+				$GLOBALS['Error']->handle_error($e);
+			}
+			// a
+			try {
+				$a = new HtmlTemplate('templates/a.tpl');
+			} catch(Exception $e) {
+				$GLOBALS['Error']->handle_error($e);
+			}
+			
+			// prepare sql
+			$sql = "SELECT m.id,m.user_id,m.action,m.date_time
+					FROM inventory_movement AS m
+					WHERE m.inventory_id=".$inventory->return_id()."
+					ORDER BY m.date_time ASC";
+			
+			// execute
+			$result = $db->query($sql);
+			
+			// fetch result
+			$i = 0;
+			$movements_data = array();
+			while(list($m_id,$m_user_id,$m_action,$m_date_time) = $result->fetch_array(MYSQL_NUM)) {
+				$movements_data[$i]['id'] = $m_id;
+				$movements_data[$i]['user_id'] = $m_user_id;
+				$movements_data[$i]['action'] = $m_action;
+				$movements_data[$i]['date_time'] = $m_date_time;
+				$i++;
+			}
+			
+			// get actual movement data
+			$data = array();
+			for($i=0;$i<count($movements_data); $i++) {
+				
+				// check actual mid and previous
+				if($movements_data[$i]['id'] == $mid) {
+					$data[0]['id'] = $movements_data[$i]['id'];
+					$data[0]['user_id'] = $movements_data[$i]['user_id'];
+					$data[0]['action'] = $movements_data[$i]['action'];
+					$data[0]['date_time'] = $movements_data[$i]['date_time'];
+					
+					// check first
+					if($i != 0) {
+						$data[1]['id'] = $movements_data[$i-1]['id'];
+						$data[1]['user_id'] = $movements_data[$i-1]['user_id'];
+						$data[1]['action'] = $movements_data[$i-1]['action'];
+					}
+				}
+			}
+			
+			// walk through movements
+			$movement_out = $hx->parse(array(
+							'hx.x' => 2,
+							'hx.parameters' => '',
+							'hx.content' => parent::lang('class.InventoryView#movement#hx#movement').$inventory->return_name().' ('.$inventory->return_inventory_no().')'
+						));
+			$movement_out .= $hx->parse(array(
+							'hx.x' => 3,
+							'hx.parameters' => '',
+							'hx.content' => parent::lang('class.InventoryView#movement#hx#at').date('d.m.Y',strtotime($data[0]['date_time']))
+						));
+			$a_out = $a->parse(array(
+							'a.params' => '',
+							'a.href' => 'javascript:history.back(1)',
+							'a.title' => parent::lang('class.InventoryView#movement#back#title'),
+							'a.content' => parent::lang('class.InventoryView#movement#back#name')
+						));
+			$movement_out .= $p->parse(array(
+							'parameters' => '',
+							'text' => $a_out
+						));
+			foreach($data as $movement) {
+				
+				// get user
+				$user = new User();
+				$user->change_user($movement['user_id'],false,'id');
+				
+				// prepare fields
+				$fields_out = '';
+				foreach($fields as $field) {
+					
+					// get values
+					$data = array(
+							'table' => 'inventory_movement',
+							'table_id' => $movement['id'],
+							'field_id' => $field->return_id());
+					$field->read_value($data);
+					$fields_out .= $field->value_to_html($p,$field->return_value());
+				}
+				$movement_out .= $hx->parse(array(
+							'hx.x' => 3,
+							'hx.parameters' => '',
+							'hx.content' => parent::lang('class.InventoryView#movement#fields#'.$movement['action']).' '.$user->return_userinfo('name')
+						));
+				$movement_out .= $fields_out;
+			}
+			
+			// return
+			return $movement_out;
+		} else {
+			
+			// error
+			$errno = $GLOBALS['Error']->error_raised('NotAuthorized',$this->get('id'),$mid);
 			$GLOBALS['Error']->handle_error($errno);
 			return $GLOBALS['Error']->to_html($errno);
 		}
@@ -1264,6 +1504,12 @@ class InventoryView extends PageView {
 		} catch(Exception $e) {
 			$GLOBALS['Error']->handle_error($e);
 		}
+		// a
+		try {
+			$a = new HtmlTemplate('templates/a.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
 		
 		// get db-object
 		$db = Db::newDb();
@@ -1293,34 +1539,42 @@ class InventoryView extends PageView {
 				$tr_params = ' class="inventory.movements.tr odd"';
 			}
 			
+			// prepare link to movements
+			$a_out = $a->parse(array(
+						'a.params' => '',
+						'a.href' => 'inventory.php?id=movement&mid='.$movement_id,
+						'a.title' => parent::lang('class.InventoryView#get_movements#date#title'),
+						'a.content' => date('d.m.Y',strtotime($date_time))
+					));
+			
 			// prepare td
 			$td_out = $td->parse(array(
 						'td.params' => '',
-						'td.content' => date('d.m.Y',strtotime($date_time))
+						'td.content' => $a_out
 					));
 			$td_out .= $td->parse(array(
 						'td.params' => '',
 						'td.content' => $name
 					));
 			
-			// prepare fields
-			$fields_out = '';
-			foreach($fields as $field) {
-				
-				// get values
-				$data = array(
-						'table' => 'inventory_movement',
-						'table_id' => $movement_id,
-						'field_id' => $field->return_id());
-				$field->read_value($data);
-				$fields_out .= $field->value_to_html(null,$field->return_value()).', ';
-			}
-			$fields_out = substr($fields_out,0,-2);
-			
-			$td_out .= $td->parse(array(
-						'td.params' => '',
-						'td.content' => $fields_out
-					));
+//			// prepare fields
+//			$fields_out = '';
+//			foreach($fields as $field) {
+//				
+//				// get values
+//				$data = array(
+//						'table' => 'inventory_movement',
+//						'table_id' => $movement_id,
+//						'field_id' => $field->return_id());
+//				$field->read_value($data);
+//				$fields_out .= $field->value_to_html(null,$field->return_value()).', ';
+//			}
+//			$fields_out = substr($fields_out,0,-2);
+//			
+//			$td_out .= $td->parse(array(
+//						'td.params' => '',
+//						'td.content' => $fields_out
+//					));
 			
 			// prepare tr
 			$tr_out .= $tr->parse(array(

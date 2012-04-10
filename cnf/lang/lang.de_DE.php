@@ -378,7 +378,8 @@ $lang = array(
 				'give' => 'Objekt abgeben',
 				'take' => 'Objekt annehmen',
 				'cancel' => 'Objekt zur&uuml;ckziehen',
-				'details' => 'Details'
+				'details' => 'Details',
+				'movement' => '&Uuml;bergaben'
 			)
 		),
 		'init' => array(
@@ -403,6 +404,9 @@ $lang = array(
 			),
 			'details' => array(
 				'title' => 'Inventar: Details'
+			),
+			'movement' => array(
+				'title' => 'Inventar: &Uuml;bergaben'
 			)
 		),
 		'my' => array(
@@ -487,6 +491,39 @@ $lang = array(
 		'details' => array(
 			'accessories' => array(
 				'list' => 'Zubeh&ouml;r'
+			)
+		),
+		'get_movements' => array(
+			'date' => array(
+				'title' => '&Uuml;bergaben anzeigen'
+			)
+		),
+		'movement' => array(
+			'fields' => array(
+				'taken' => 'Angenommen von',
+				'given' => 'Abgegeben von'
+			),
+			'hx' => array(
+				'movement' => '&Uuml;bergabe von ',
+				'at' => 'am '
+			),
+			'back' => array(
+				'title' => 'zur&uuml;ck',
+				'name' => 'zur&uuml;ck zur Liste'
+			)
+		),
+		'default_content' => array(
+			'headline' => array(
+				'text' => 'Inventarverwaltung'
+			),
+			'explain' => array(
+				'my.hx' => 'Eigene verwalten',
+				'my.p' =>	'Unter "Eigene verwalten" werden die Objekte angezeigt, die derzeit in deinem Besitz sind oder die an dich abgegeben wurden.<br />
+							Wenn ein Objekt abgegeben werden soll, ist der Empf&auml;nger aus zu w&auml;hlen und das zu &uuml;bergebende Zubeh&ouml;r an zu haken.<br />
+							Beim Annehmen eines Objekts ist der Empfang des &uuml;bernommenen Zubeh&ouml;rs zu best&auml;tigen.',
+				'listall.hx' => 'Listenansicht',
+				'listall.p' =>	'Die Listenansicht bietet einen &Uuml;berblick &uuml;ber das Inventar, die derzeitigen Besitzer und den Status eines Objekts. Die Details eines
+								Objekts zeigen die &Uuml;bergaben und Details zum &uuml;bergebenen Zube&ouml;r.'
 			)
 		)
 	)
