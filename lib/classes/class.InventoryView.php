@@ -937,7 +937,7 @@ class InventoryView extends PageView {
 				foreach($fields as $field) {
 					
 					// check if given
-					if($inventory->movement_last_accessories($field) === true) {
+					if($inventory->movement_last_accessories($field) === true || $field->return_type() == 'text') {
 					
 						// generate quickform
 						$field->read_quickform();
@@ -1181,19 +1181,31 @@ class InventoryView extends PageView {
 			} catch(Exception $e) {
 				$GLOBALS['Error']->handle_error($e);
 			}
+			// b
+			try {
+				$b = new HtmlTemplate('templates/b.tpl');
+			} catch(Exception $e) {
+				$GLOBALS['Error']->handle_error($e);
+			}
 			
 			// prepare return
 			$return = '';
 			
 			// get accessories
-			$accessories = parent::lang('class.InventoryView#details#accessories#list').': ';
+			$accessories = $b->parse(array(
+							'b.parameters' => '',
+							'b.content' => parent::lang('class.InventoryView#details#accessories#list').': '
+						));
 			foreach($fields as $field) {
 				
-				$accessories .= $field->return_name().', ';
+				// check type
+				if($field->return_type() != 'text') {
+					$accessories .= $field->return_name().', ';
+				}
 			}
 			$accessories = substr($accessories,0,-2);
 			$accessories_p = $p->parse(array(
-									'params' => '',
+									'parameters' => '',
 									'text' => $accessories
 								));
 			
@@ -1315,7 +1327,7 @@ class InventoryView extends PageView {
 					// check first
 					if($i != 0) {
 						$data[1]['id'] = $movements_data[$i-1]['id'];
-						$data[1]['user_id'] = $movements_data[$i-1]['user_id'];
+						$data[1]['user_id'] = $movements_data[$i-2]['user_id'];
 						$data[1]['action'] = $movements_data[$i-1]['action'];
 					}
 				}
@@ -1323,12 +1335,12 @@ class InventoryView extends PageView {
 			
 			// walk through movements
 			$movement_out = $hx->parse(array(
-							'hx.x' => 2,
+							'hx.x' => 3,
 							'hx.parameters' => '',
 							'hx.content' => parent::lang('class.InventoryView#movement#hx#movement').$inventory->return_name().' ('.$inventory->return_inventory_no().')'
 						));
 			$movement_out .= $hx->parse(array(
-							'hx.x' => 3,
+							'hx.x' => 4,
 							'hx.parameters' => '',
 							'hx.content' => parent::lang('class.InventoryView#movement#hx#at').date('d.m.Y',strtotime($data[0]['date_time']))
 						));
@@ -1361,7 +1373,7 @@ class InventoryView extends PageView {
 					$fields_out .= $field->value_to_html($p,$field->return_value());
 				}
 				$movement_out .= $hx->parse(array(
-							'hx.x' => 3,
+							'hx.x' => 4,
 							'hx.parameters' => '',
 							'hx.content' => parent::lang('class.InventoryView#movement#fields#'.$movement['action']).' '.$user->return_userinfo('name')
 						));

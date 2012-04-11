@@ -353,6 +353,14 @@ class Field extends Object {
 	 */
 	public function value_to_html($template,$value) {
 		
+		// get templates
+		// b
+		try {
+			$b = new HtmlTemplate('templates/b.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
+		
 		// check value
 		$checked_value = '';
 		if($this->get_type() == 'checkbox') {
@@ -367,19 +375,25 @@ class Field extends Object {
 			$checked_value = $value;
 		}
 		
+		// get fieldname bold
+		$field_name = $b->parse(array(
+					'b.parameters' => '',
+					'b.content' => $this->get_name().': '
+				));
+		
 		// check template
 		if(!is_null($template)) {
 			
 			// prepare values for template-p
 			$content = array(
 						'params' => '',
-						'text' => $this->get_name().': '.$checked_value
+						'text' => $field_name.$checked_value
 					);
 		
 			// return
 			return $template->parse($content);
 		} else {
-			return $this->get_name().': '.$checked_value;
+			return $field_name.$checked_value;
 		}
 		
 	}

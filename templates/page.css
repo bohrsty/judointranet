@@ -23,6 +23,31 @@ a:hover {
 }
 
 /*
+headlines
+*/
+
+h1 {
+	font-size: 20pt;
+}
+
+h2 {
+	font-size: 18pt;
+}
+
+h3 {
+	font-size: 16pt;
+}
+
+h4 {
+	font-size: 14pt;
+}
+
+h5 {
+	
+}
+
+
+/*
 layout
 */
 
@@ -63,7 +88,7 @@ div#content {
 }
 
 div.quickform div.row {
-	margin-bottom: 10px;
+	margin-bottom: 15px;
 }
 
 .even {
@@ -106,6 +131,16 @@ td.admin div.row input {
 
 td.admin div.admin-links {
 	float: left;
+}
+
+form#inventory_give textarea {
+	width: 350px;
+	height: 150px;
+}
+
+form#inventory_take textarea {
+	width: 350px;
+	height: 150px;
 }
 
 /* navi */

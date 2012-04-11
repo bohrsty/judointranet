@@ -523,7 +523,7 @@ $lang = array(
 							Beim Annehmen eines Objekts ist der Empfang des &uuml;bernommenen Zubeh&ouml;rs zu best&auml;tigen.',
 				'listall.hx' => 'Listenansicht',
 				'listall.p' =>	'Die Listenansicht bietet einen &Uuml;berblick &uuml;ber das Inventar, die derzeitigen Besitzer und den Status eines Objekts. Die Details eines
-								Objekts zeigen die &Uuml;bergaben und Details zum &uuml;bergebenen Zube&ouml;r.'
+								Objekts zeigen die &Uuml;bergaben und Details zum &uuml;bergebenen Zubeh&ouml;r.'
 			)
 		)
 	)
