@@ -315,6 +315,21 @@ class Field extends Object {
 	
 	
 	/**
+	 * return_table returns the value of $table
+	 * 
+	 * @return string the value of $table
+	 */
+	public function return_table() {
+		
+		return $this->get_table();
+	}
+	
+	
+	
+	
+	
+	
+	/**
 	 * return_id returns the value of $id
 	 * 
 	 * @return string the value of $id
@@ -396,6 +411,30 @@ class Field extends Object {
 			return $field_name.$checked_value;
 		}
 		
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * value_to_db sets the table_id and value and stores it in db
+	 * 
+	 * @param int $table_id id of the value in $table
+	 * @param mixed $value the value of the field
+	 */
+	public function value_to_db($table_id,$value) {
+		
+		// get db-object
+		$db = Db::newDb();
+		
+		// prepare sql
+		$sql = "INSERT INTO value (id,table_name,table_id,field_id,value)
+				VALUES (NULL,'".$this->get_table()."',$table_id,".$this->get_id().",'$value')";
+		
+		// execute
+		$db->query($sql);
 	}
 }
 

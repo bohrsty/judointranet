@@ -132,25 +132,11 @@ class AnnouncementView extends PageView {
 						
 						// set contents
 						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#listall#title'))));
+						$this->add_output(array('title' => $this->title(parent::lang('class.AnouncementView#init#listall#title'))));
 						// navi
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 						// main-content
-						// date-links
-						$this->add_output(array('main' => $this->get_sort_links($this->get('id'))));
-						
-						// prepare dates
-						$from = strtotime('yesterday');
-						$to = strtotime('next year');
-
-						// check $_GET['from'] and $_GET['to']
-						if($this->get('from') !== false) {
-							$from = strtotime($this->get('from'));
-						}
-						if($this->get('to') !== false) {
-							$to = strtotime($this->get('to'));
-						}
-						$this->add_output(array('main' => $this->listall($to,$from)));
+						$this->add_output(array('main' => $this->listall()));
 					break;
 					
 					case 'new':
@@ -442,8 +428,8 @@ class AnnouncementView extends PageView {
 								'td.params' => ' class="admin"',
 								'td.content' => $a_out
 							));
-						// if no announcement (ann_id==0), choose preset
-						if($entry->return_ann_id() == 0) {
+						// if no announcement (preset_id==0), choose preset
+						if($entry->return_preset_id() == 0) {
 							
 							// create form
 							$td_out .= $this->read_preset_form($entry->return_id());
@@ -521,118 +507,138 @@ class AnnouncementView extends PageView {
 		// check rights
 		if(Rights::check_rights($this->get('cid'),'calendar')) {
 			
-			// prepare return
-			$return = '';
+			// check cid and pid given
+			if ($this->get('cid') !== false && $this->get('pid') !== false) {
 			
-			// get preset
-			$preset = new Preset($this->get('pid'),'announcement',$this->get('cid'));
-			
-			// get fields
-			$fields = $preset->return_fields();
-			
-			// formular
-			$form = new HTML_QuickForm2(
-									'new_announcement',
-									'post',
-									array(
-										'name' => 'new_announcement',
-										'action' => 'announcement.php?id=new&cid='.$this->get('cid').'&pid='.$this->get('pid')
-									)
-								);
-			
-			// get dates (now)
-			$now_year = (int) date('Y');
-			$now_month = (int) date('m');
-			$now_day = (int) date('d');
-			
-			// get fieldtype "date" for values
-			$datevalues = array();
-			foreach($fields as $field) {
-				
-				// check type
-				if($field->return_type() == 'date') {
-					$datevalues['announcement-'.$field->return_id()]['day'] = $now_day;
-					$datevalues['announcement-'.$field->return_id()]['month'] = $now_month;
-					$datevalues['announcement-'.$field->return_id()]['year'] = $now_year; 
-				}
-			}
-			
-			$form->addDataSource(new HTML_QuickForm2_DataSource_Array($datevalues));
-			
-			// renderer
-			$renderer = HTML_QuickForm2_Renderer::factory('default');
-			$renderer->setOption('required_note',parent::lang('class.AnnouncementView#entry#form#requiredNote'));
-			
-			// generate field-quickform and add to form
-			foreach($fields as $field) {
-				
-				// generate quickform
-				$field->read_quickform();
-				
-				// add to form
-				$form->appendChild($field->return_quickform());
-			}
-			
-			// submit-button
-			$form->addSubmit('submit',array('value' => parent::lang('class.AnnouncementView#new_entry#form#submitButton')));
-			
-			// validate
-			if($form->validate()) {
-				
-				$test = '';
-				foreach($form->getValue() as $name => $value) {
-					if(substr($name,0,4) != '_qf_' && $name != 'submit') {
-						if(is_array($value)) {
-							$test .= $name.': '.$value['day'].'.'.$value['month'].'.'.$value['year'].'<br />';
-						} else {
-							$test .= $name.': '.$value.'<br />';
+				// check cid and pid exists
+				if(Calendar::check_id($this->get('cid')) && Preset::check_preset($this->get('pid'),'announcement')) {
+					
+					// prepare return
+					$return = '';
+					
+					// get preset
+					$preset = new Preset($this->get('pid'),'announcement',$this->get('cid'));
+					
+					// get fields
+					$fields = $preset->return_fields();
+					
+					// formular
+					$form = new HTML_QuickForm2(
+											'new_announcement',
+											'post',
+											array(
+												'name' => 'new_announcement',
+												'action' => 'announcement.php?id=new&cid='.$this->get('cid').'&pid='.$this->get('pid')
+											)
+										);
+					
+					// get dates (now)
+					$now_year = (int) date('Y');
+					$now_month = (int) date('m');
+					$now_day = (int) date('d');
+					
+					// get fieldtype "date" for values
+					$datevalues = array();
+					foreach($fields as $field) {
+						
+						// check type
+						if($field->return_type() == 'date') {
+							$datevalues['announcement-'.$field->return_id()]['day'] = $now_day;
+							$datevalues['announcement-'.$field->return_id()]['month'] = $now_month;
+							$datevalues['announcement-'.$field->return_id()]['year'] = $now_year; 
 						}
 					}
+					
+					$form->addDataSource(new HTML_QuickForm2_DataSource_Array($datevalues));
+					
+					// renderer
+					$renderer = HTML_QuickForm2_Renderer::factory('default');
+					$renderer->setOption('required_note',parent::lang('class.AnnouncementView#entry#form#requiredNote'));
+					
+					// generate field-quickform and add to form
+					foreach($fields as $field) {
+						
+						// generate quickform
+						$field->read_quickform();
+						
+						// add to form
+						$form->appendChild($field->return_quickform());
+					}
+					
+					// submit-button
+					$form->addSubmit('submit',array('value' => parent::lang('class.AnnouncementView#new_entry#form#submitButton')));
+					
+					// validate
+					if($form->validate()) {
+						
+						// get data
+						$data = $form->getValue();
+						
+						// insert announcement
+						
+						// insert values
+						foreach($fields as $field) {
+							$field->values_to_db($insert_id,$data[$field->return_table().'-'.$field->return_id()]);
+						}
+						
+						// update calendar-entry
+					} else {
+						$return = $form->render($renderer);
+					}
+						
+			//		// validate
+			//		if($form->validate()) {
+			//			
+			//			// create calendar-object
+			//			$data = $form->getValue();
+			//			
+			//			$right_array = array(
+			//								'action' => 'new',
+			//								'new' => $data['rights']);
+			//			
+			//			$calendar = new Calendar(array(
+			//								'date' => $data['dateGroup']['day'].'.'.$data['dateGroup']['month'].'.'.$data['dateGroup']['year'],
+			//								'name' => $data['name'],
+			//								'shortname' => $data['shortname'],
+			//								'type' => $data['type'],
+			//								'content' => $data['entry_content'],
+			//								'rights' => $right_array,
+			//								'valid' => 1
+			//								)
+			//				);
+			//				
+			//			// write to db
+			//			$calendar->write_db();
+			//			
+			//			// put entry to output
+			//			// read template
+			//			try {
+			//				$calendar_details = new HtmlTemplate('templates/calendar.details.tpl');
+			//			} catch(Exception $e) {
+			//				$GLOBALS['Error']->handle_error($e);
+			//			}
+			//			// set return
+			//			$return = $calendar->details_to_html($calendar_details);
+			//		} else {
+			//			$return = $form->render($renderer);
+			//		}
+			
+					// return
+					return $return;
+				} else {
+					
+				// error
+				$errno = $GLOBALS['Error']->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
+				$GLOBALS['Error']->handle_error($errno);
+				return $GLOBALS['Error']->to_html($errno);
 				}
-				$return = $test;
 			} else {
-				$return = $form->render($renderer);
-			}
 				
-	//		// validate
-	//		if($form->validate()) {
-	//			
-	//			// create calendar-object
-	//			$data = $form->getValue();
-	//			
-	//			$right_array = array(
-	//								'action' => 'new',
-	//								'new' => $data['rights']);
-	//			
-	//			$calendar = new Calendar(array(
-	//								'date' => $data['dateGroup']['day'].'.'.$data['dateGroup']['month'].'.'.$data['dateGroup']['year'],
-	//								'name' => $data['name'],
-	//								'shortname' => $data['shortname'],
-	//								'type' => $data['type'],
-	//								'content' => $data['entry_content'],
-	//								'rights' => $right_array,
-	//								'valid' => 1
-	//								)
-	//				);
-	//				
-	//			// write to db
-	//			$calendar->write_db();
-	//			
-	//			// put entry to output
-	//			// read template
-	//			try {
-	//				$calendar_details = new HtmlTemplate('templates/calendar.details.tpl');
-	//			} catch(Exception $e) {
-	//				$GLOBALS['Error']->handle_error($e);
-	//			}
-	//			// set return
-	//			$return = $calendar->details_to_html($calendar_details);
-	//		} else {
-	//			$return = $form->render($renderer);
-	//		}
-	
-			// return
-			return $return;
+				// error
+				$errno = $GLOBALS['Error']->error_raised('MissingParams','entry:cid_or_pid','cid_or_pid');
+				$GLOBALS['Error']->handle_error($errno);
+				return $GLOBALS['Error']->to_html($errno);
+			}
 		} else {
 			
 			// error
@@ -725,7 +731,7 @@ class AnnouncementView extends PageView {
 					'shortname' => $calendar->return_shortname(),
 					'type' => $calendar->return_type(),
 					'entry_content' => $calendar->return_content(),
-					'announcement' => $calendar->return_ann_id(),
+					'announcement' => $calendar->return_preset_id(),
 					'rights' => $calendar->return_rights()->return_rights()
 				)));
 			
@@ -801,13 +807,6 @@ class AnnouncementView extends PageView {
 							'regex',
 							parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('textarea.desc').']',
 							$_SESSION['GC']->return_config('textarea.regexp'));
-			
-		
-			// select announcement
-			$options = Announcement::get_announcements();
-			$ann = $form->addElement('select','announcement',array());
-			$ann->setLabel(parent::lang('class.CalendarView#entry#form#announcement').':');
-			$ann->loadOptions($options);
 			
 			
 			// select rights

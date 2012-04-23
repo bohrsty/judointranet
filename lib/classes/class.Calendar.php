@@ -14,7 +14,7 @@ class Calendar extends Page {
 	private $date;
 	private $type;
 	private $content;
-	private $ann_id;
+	private $preset_id;
 	private $valid;
 	
 	/*
@@ -50,11 +50,11 @@ class Calendar extends Page {
 	private function set_content($content) {
 		$this->content = $content;
 	}
-	private function get_ann_id(){
-		return $this->ann_id;
+	private function get_preset_id(){
+		return $this->preset_id;
 	}
-	private function set_ann_id($ann_id) {
-		$this->ann_id = $ann_id;
+	private function set_preset_id($preset_id) {
+		$this->preset_id = $preset_id;
 	}
 	private function get_valid(){
 		return $this->valid;
@@ -115,7 +115,7 @@ class Calendar extends Page {
 		
 		// prepare sql-statement
 		$sql = "
-			SELECT c.name,c.shortname,c.date,c.type,c.content,c.ann_id,c.valid
+			SELECT c.name,c.shortname,c.date,c.type,c.content,c.preset_id,c.valid
 			FROM calendar AS c
 			WHERE c.id = $id";
 		
@@ -123,7 +123,7 @@ class Calendar extends Page {
 		$result = $db->query($sql);
 		
 		// fetch result
-		list($name,$shortname,$date,$type,$content,$ann_id,$valid) = $result->fetch_array(MYSQL_NUM);
+		list($name,$shortname,$date,$type,$content,$preset_id,$valid) = $result->fetch_array(MYSQL_NUM);
 		
 		// set variables to object
 		$this->set_id($id);
@@ -132,7 +132,7 @@ class Calendar extends Page {
 		$this->set_date($date);
 		$this->set_type($type);
 		$this->set_content($content);
-		$this->set_ann_id($ann_id);
+		$this->set_preset_id($preset_id);
 		$this->set_valid($valid);
 		
 		// close db
@@ -222,12 +222,12 @@ class Calendar extends Page {
 	
 	
 	/**
-	 * return_ann_id returns the value of $ann_id
+	 * return_preset_id returns the value of $preset_id
 	 * 
-	 * @return int value of $ann_id
+	 * @return int value of $preset_id
 	 */
-	public function return_ann_id() {
-		return $this->get_ann_id();
+	public function return_preset_id() {
+		return $this->get_preset_id();
 	}
 	
 	
@@ -251,7 +251,7 @@ class Calendar extends Page {
 		
 			// insert
 			// prepare sql-statement
-			$sql = 'INSERT INTO calendar (id,name,shortname,date,type,content,ann_id,valid)
+			$sql = 'INSERT INTO calendar (id,name,shortname,date,type,content,preset_id,valid)
 					VALUES (null,"'
 					.$this->get_name().'","'
 					.$this->get_shortname().'","'
@@ -267,9 +267,9 @@ class Calendar extends Page {
 			// get insert_id
 			$insert_id = $db->insert_id;
 			
-			// set id and ann_id
+			// set id and preset_id
 			$this->set_id($insert_id);
-			$this->set_ann_id(0);
+			$this->set_preset_id(0);
 			
 			// write rights
 			try {
@@ -288,7 +288,7 @@ class Calendar extends Page {
 						date = "'.$timestamp.'",
 						type = "'.$this->get_type().'",
 						content = "'.$this->get_content().'",
-						ann_id = "'.$this->get_ann_id().'",
+						preset_id = "'.$this->get_preset_id().'",
 						valid = '.$this->get_valid().'
 					WHERE id = "'.$this->get_id().'"';
 			
@@ -441,8 +441,8 @@ class Calendar extends Page {
 				$this->get_rights()->update($this->get_id(),$value);
 			} elseif($name == 'valid') {
 				$this->set_valid($value);
-			} elseif($name == 'ann_id') {
-				$this->set_ann_id($value);
+			} elseif($name == 'preset_id') {
+				$this->set_preset_id($value);
 			}
 		}
 	}

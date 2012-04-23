@@ -448,8 +448,8 @@ class CalendarView extends PageView {
 								'div.params' => ' class="admin-links"',
 								'div.content' => $a_out
 							));
-						// if no announcement (ann_id==0), choose preset
-						if($entry->return_ann_id() == 0) {
+						// if no announcement (preset_id==0), choose preset
+						if($entry->return_preset_id() == 0) {
 							
 							// create form
 							$div_out .= $this->read_preset_form($entry->return_id());
@@ -961,7 +961,7 @@ class CalendarView extends PageView {
 					'shortname' => $calendar->return_shortname(),
 					'type' => $calendar->return_type(),
 					'entry_content' => $calendar->return_content(),
-					'announcement' => $calendar->return_ann_id(),
+					'announcement' => $calendar->return_preset_id(),
 					'rights' => $calendar->return_rights()->return_rights()
 				)));
 			
@@ -1037,13 +1037,6 @@ class CalendarView extends PageView {
 							'regex',
 							parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('textarea.desc').']',
 							$_SESSION['GC']->return_config('textarea.regexp'));
-			
-		
-			// select announcement
-			$options = Announcement::get_announcements();
-			$ann = $form->addElement('select','announcement',array());
-			$ann->setLabel(parent::lang('class.CalendarView#entry#form#announcement').':');
-			$ann->loadOptions($options);
 			
 			
 			// select rights
@@ -1226,10 +1219,10 @@ class CalendarView extends PageView {
 		
 		// form-object
 		$form = new HTML_QuickForm2(
-									'choose_preset'.$id,
+									'choose_preset_'.$id,
 									'post',
 									array(
-										'name' => 'choose_preset'.$id,
+										'name' => 'choose_preset_'.$id,
 										'action' => 'calendar.php?id=listall'
 									)
 								);

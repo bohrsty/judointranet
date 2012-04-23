@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `calendar` (
   `date` date NOT NULL,
   `type` varchar(25) COLLATE utf8_unicode_ci NOT NULL,
   `content` text COLLATE utf8_unicode_ci NOT NULL,
-  `ann_id` int(11) NOT NULL DEFAULT '0',
+  `preset_id` int(11) NOT NULL DEFAULT '0',
   `valid` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;

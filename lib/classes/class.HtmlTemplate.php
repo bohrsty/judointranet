@@ -2,7 +2,7 @@
 
 
 /**
- * class Announcement implements a announcement for a calenderentry
+ * class HtmlTemplate implements the handling of the templates
  */
 class HtmlTemplate extends Object {
 	

@@ -71,6 +71,18 @@ $lang = array(
 				'ERROR.message' => 'Dieses Objekts wurde nicht abgegeben, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
 									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
 									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
+			),
+			'MissingParams' => array(
+				'ERROR.caption' => 'FEHLER',
+				'ERROR.message' => 'Es fehlen Parameter, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
+			),
+			'WrongParams' => array(
+				'ERROR.caption' => 'FEHLER',
+				'ERROR.message' => 'Es wurden falsche Parameter &uuml;bergeben, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
 			)
 		
 		)
@@ -355,6 +367,9 @@ $lang = array(
 			'new' => array(
 				'title' => 'Ausschreibung: Neuer Eintrag'
 			),
+			'listall' => array(
+				'title' => 'Ausschreibung: Listenansicht'
+			)
 		),
 		'entry' => array(
 			'form' => array(

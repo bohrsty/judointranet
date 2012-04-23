@@ -187,7 +187,7 @@ class Preset extends Object {
 		// prepare sql-statement
 		$sql = "SELECT p.id,p.name
 				FROM preset AS p
-				WHERE p.table=$table";
+				WHERE p.table='$table'";
 		
 		// execute
 		$result = $db->query($sql);
@@ -203,6 +203,37 @@ class Preset extends Object {
 		
 		// return
 		return $presets;
+	}
+	
+	
+	
+	
+	/**
+	 * check_preset checks if the given id exists in db and is of $table
+	 * 
+	 * @param int $id id of the preset
+	 * @param string $table tablename the id is associated with
+	 * @return bool true if id exists and match $table, false otherwise
+	 */
+	public static function check_preset($id,$table) {
+		
+		// get db-object
+		$db = Db::newDb();
+		
+		// prepare sql
+		$sql = "SELECT p.id,p.table
+				FROM preset AS p
+				WHERE id=$id
+				AND p.table='$table'";
+		
+		// execute
+		$result = $db->query($sql);
+		
+		if($result->num_rows == 0) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 }
 

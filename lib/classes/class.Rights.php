@@ -236,7 +236,10 @@ class Rights extends Object {
 		// add inserted rights
 		$merge_rights = array_merge($rights,$update_rights);
 		// remove deleted rights
-		$set_rights = array_diff($merge_rights,$new_rights['remove']);
+		$set_rights = array();
+		if(isset($new_rights)) {
+			$set_rights = array_diff($merge_rights,$new_rights['remove']);
+		}
 		$this->set_rights($set_rights);
 	}
 	
