@@ -504,6 +504,14 @@ class AnnouncementView extends PageView {
 	 */
 	private function new_entry() {
 		
+		// get templates
+		// p
+		try {
+			$p = new HtmlTemplate('templates/p.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
+		
 		// check rights
 		if(Rights::check_rights($this->get('cid'),'calendar')) {
 			
@@ -511,13 +519,13 @@ class AnnouncementView extends PageView {
 			if ($this->get('cid') !== false && $this->get('pid') !== false) {
 			
 				// check cid and pid exists
-				if(Calendar::check_id($this->get('cid')) && Preset::check_preset($this->get('pid'),'announcement')) {
+				if(Calendar::check_id($this->get('cid')) && Preset::check_preset($this->get('pid'),'calendar')) {
 					
 					// prepare return
 					$return = '';
 					
 					// get preset
-					$preset = new Preset($this->get('pid'),'announcement',$this->get('cid'));
+					$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'));
 					
 					// get fields
 					$fields = $preset->return_fields();
@@ -543,9 +551,9 @@ class AnnouncementView extends PageView {
 						
 						// check type
 						if($field->return_type() == 'date') {
-							$datevalues['announcement-'.$field->return_id()]['day'] = $now_day;
-							$datevalues['announcement-'.$field->return_id()]['month'] = $now_month;
-							$datevalues['announcement-'.$field->return_id()]['year'] = $now_year; 
+							$datevalues['calendar-'.$field->return_id()]['day'] = $now_day;
+							$datevalues['calendar-'.$field->return_id()]['month'] = $now_month;
+							$datevalues['calendar-'.$field->return_id()]['year'] = $now_year; 
 						}
 					}
 					
@@ -574,63 +582,28 @@ class AnnouncementView extends PageView {
 						// get data
 						$data = $form->getValue();
 						
-						// insert announcement
-						
 						// insert values
 						foreach($fields as $field) {
-							$field->values_to_db($insert_id,$data[$field->return_table().'-'.$field->return_id()]);
+							
+							// values to db
+							$field->value_to_db($this->get('cid'),$data[$field->return_table().'-'.$field->return_id()]);
+							
+							// return field and value as HTML
+							$return .= $field->value_to_html($p,$data[$field->return_table().'-'.$field->return_id()]);
 						}
 						
-						// update calendar-entry
 					} else {
 						$return = $form->render($renderer);
 					}
-						
-			//		// validate
-			//		if($form->validate()) {
-			//			
-			//			// create calendar-object
-			//			$data = $form->getValue();
-			//			
-			//			$right_array = array(
-			//								'action' => 'new',
-			//								'new' => $data['rights']);
-			//			
-			//			$calendar = new Calendar(array(
-			//								'date' => $data['dateGroup']['day'].'.'.$data['dateGroup']['month'].'.'.$data['dateGroup']['year'],
-			//								'name' => $data['name'],
-			//								'shortname' => $data['shortname'],
-			//								'type' => $data['type'],
-			//								'content' => $data['entry_content'],
-			//								'rights' => $right_array,
-			//								'valid' => 1
-			//								)
-			//				);
-			//				
-			//			// write to db
-			//			$calendar->write_db();
-			//			
-			//			// put entry to output
-			//			// read template
-			//			try {
-			//				$calendar_details = new HtmlTemplate('templates/calendar.details.tpl');
-			//			} catch(Exception $e) {
-			//				$GLOBALS['Error']->handle_error($e);
-			//			}
-			//			// set return
-			//			$return = $calendar->details_to_html($calendar_details);
-			//		} else {
-			//			$return = $form->render($renderer);
-			//		}
-			
+					
 					// return
 					return $return;
 				} else {
 					
-				// error
-				$errno = $GLOBALS['Error']->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
-				$GLOBALS['Error']->handle_error($errno);
-				return $GLOBALS['Error']->to_html($errno);
+					// error
+					$errno = $GLOBALS['Error']->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
+					$GLOBALS['Error']->handle_error($errno);
+					return $GLOBALS['Error']->to_html($errno);
 				}
 			} else {
 				

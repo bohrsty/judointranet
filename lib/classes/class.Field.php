@@ -386,6 +386,8 @@ class Field extends Object {
 			} else {
 				$checked_value = parent::lang('class.Field#value_to_html#checkbox.value#unchecked');
 			}
+		} elseif($this->get_type() == 'date') {
+			$checked_value = date('d.m.Y',strtotime($value['year'].'-'.$value['month'].'-'.$value['day']));
 		} else {
 			$checked_value = $value;
 		}
@@ -426,12 +428,20 @@ class Field extends Object {
 	 */
 	public function value_to_db($table_id,$value) {
 		
+		// check type
+		$checked_value = '';
+		if($this->get_type() == 'date') {
+			$checked_value = date('Y-m-d',strtotime($value['year'].'-'.$value['month'].'-'.$value['day']));
+		} else {
+			$checked_value = $value;
+		}
+		
 		// get db-object
 		$db = Db::newDb();
 		
 		// prepare sql
 		$sql = "INSERT INTO value (id,table_name,table_id,field_id,value)
-				VALUES (NULL,'".$this->get_table()."',$table_id,".$this->get_id().",'$value')";
+				VALUES (NULL,'".$this->get_table()."',$table_id,".$this->get_id().",'$checked_value')";
 		
 		// execute
 		$db->query($sql);

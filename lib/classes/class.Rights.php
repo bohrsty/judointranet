@@ -199,28 +199,32 @@ class Rights extends Object {
 			$new_rights = $this->get_new_rights();
 						
 			// walk through rights to insert
-			foreach($new_rights['insert'] as $no => $g_id) {
-				
-				// prepare insert-statement
-				$sql = 'INSERT INTO rights (id,g_id,table_name,table_id)
-						VALUES (NULL,'.$g_id.',"'.$this->get_table().'",'.$table_id.')';
-				
-				// execute
-				$db->query($sql);
-				
-				// prepare $update_rights
-				$update_rights[$db->insert_id] = $g_id;
+			if(count($new_rights['insert']) > 0) {
+				foreach($new_rights['insert'] as $no => $g_id) {
+					
+					// prepare insert-statement
+					$sql = 'INSERT INTO rights (id,g_id,table_name,table_id)
+							VALUES (NULL,'.$g_id.',"'.$this->get_table().'",'.$table_id.')';
+					
+					// execute
+					$db->query($sql);
+					
+					// prepare $update_rights
+					$update_rights[$db->insert_id] = $g_id;
+				}
 			}
 			
 			// walk through rights to remove
-			foreach($new_rights['remove'] as $id => $g_id) {
-				
-				// prepare delete-statement
-				$sql = 'DELETE FROM rights
-						WHERE id = '.$id;
-				
-				// execute
-				$db->query($sql);
+			if(count($new_rights['remove']) > 0) {
+				foreach($new_rights['remove'] as $id => $g_id) {
+					
+					// prepare delete-statement
+					$sql = 'DELETE FROM rights
+							WHERE id = '.$id;
+					
+					// execute
+					$db->query($sql);
+				}
 			}
 		} else {
 			

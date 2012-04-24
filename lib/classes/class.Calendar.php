@@ -464,6 +464,39 @@ class Calendar extends Page {
 		// return
 		return $return;
 	}
+	
+	
+	
+	
+	/**
+	 * check_ann_value checks if the given calendar-entry has values on the
+	 * given preset-id
+	 * 
+	 * @param int $cid id of the calendar-entry
+	 * @return bool true if calendar-entry and preset has values, false otherwise
+	 */
+	public static function check_ann_value($cid) {
+		
+		// get db-object
+		$db = Db::newDb();
+		
+		// prepare sql-statement
+		$sql = "
+			SELECT v.id
+			FROM value AS v
+			WHERE v.table_name = 'calendar'
+			AND v.table_id = $cid";
+		
+		// execute
+		$result = $db->query($sql);
+		
+		// check result
+		if($result->num_rows > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
 
 

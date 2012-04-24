@@ -97,11 +97,15 @@ $lang = array(
 			),
 			'alt' => array(
 				'edit' => 'bearbeiten',
-				'delete' => 'l&ouml;schen'
+				'delete' => 'l&ouml;schen',
+				'AnnEdit' => 'Ausschreibung bearbeiten',
+				'AnnDelete' => 'Ausschreibung l&ouml;schen'
 			),
 			'title' => array(
 				'edit' => 'bearbeitet diesen Eintrag',
-				'delete' => 'l&ouml;scht diesen Eintrag'
+				'delete' => 'l&ouml;scht diesen Eintrag',
+				'AnnEdit' => 'bearbeitet die Ausschreibung',
+				'AnnDelete' => 'l&ouml;scht die Ausschreibung'
 			)
 		),
 		'init' => array(

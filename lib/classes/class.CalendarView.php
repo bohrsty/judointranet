@@ -443,17 +443,66 @@ class CalendarView extends PageView {
 								'a.title' => parent::lang('class.CalendarView#listall#title#delete'),
 								'a.content' => $img_out
 							));
-						// prepare div
-						$div_out = $div->parse(array(
-								'div.params' => ' class="admin-links"',
-								'div.content' => $a_out
-							));
-						// if no announcement (preset_id==0), choose preset
+						// if no announcement (preset_id==0), choose preset, if != 0 edit announcement
+						$div_out = '';
 						if($entry->return_preset_id() == 0) {
 							
+							// prepare div
+							$div_out .= $div->parse(array(
+									'div.params' => ' class="admin-links"',
+									'div.content' => $a_out
+								));
+							
 							// create form
-							$div_out .= $this->read_preset_form($entry->return_id());
+							$div_out .= $this->read_preset_form($entry);
+						} else {
+							
+							// get new or edit
+							$action = '';
+							if(Calendar::check_ann_value($entry->return_id(),$entry->return_preset_id()) === true) {
+								$action = 'edit';
+							} else {
+								$action = 'new';
+							}
+							
+							// show edit- and delete-link
+							// prepare img
+							$img_out = $img->parse(array(
+									'img.src' => 'img/ann_edit.png',
+									'img.alt' => parent::lang('class.CalendarView#listall#alt#AnnEdit'),
+									'img.params' => 'title="'.parent::lang('class.CalendarView#listall#title#AnnEdit').'"'
+								));
+							
+							// prepare announcement-edit-link
+							$a_out .= $a->parse(array(
+									'a.params' => '',
+									'a.href' => 'announcement.php?id='.$action.'&cid='.$entry->return_id().'&pid='.$entry->return_preset_id(),
+									'a.title' => parent::lang('class.CalendarView#listall#title#AnnEdit'),
+									'a.content' => $img_out
+								));
+							
+							// prepare img
+							$img_out = $img->parse(array(
+									'img.src' => 'img/ann_delete.png',
+									'img.alt' => parent::lang('class.CalendarView#listall#alt#AnnDelete'),
+									'img.params' => 'title="'.parent::lang('class.CalendarView#listall#title#AnnDelete').'"'
+								));
+							
+							// prepare announcement-delete-link
+							$a_out .= $a->parse(array(
+									'a.params' => '',
+									'a.href' => 'announcement.php?id=delete&cid='.$entry->return_id().'&pid='.$entry->return_preset_id(),
+									'a.title' => parent::lang('class.CalendarView#listall#title#AnnDelete'),
+									'a.content' => $img_out
+								));
+							
+							// prepare div
+							$div_out .= $div->parse(array(
+									'div.params' => ' class="admin-links"',
+									'div.content' => $a_out
+								));
 						}
+							
 						// prepare td
 						$td_out .= $td->parse(array( // admin
 								'td.params' => ' class="admin"',
@@ -1212,17 +1261,17 @@ class CalendarView extends PageView {
 	 * read_preset_form generates a quickform-object to choose the announcement-preset,
 	 * if validated redirect to announcement.php?id=new&cid=$id
 	 * 
-	 * @param int $id id of the actual calendarentry
+	 * @param object $calendar the actual calendarentry
 	 * @return object quickform-object to choose the preset, if validated redirect to new announcement
 	 */
-	private function read_preset_form($id) {
+	private function read_preset_form(&$calendar) {
 		
 		// form-object
 		$form = new HTML_QuickForm2(
-									'choose_preset_'.$id,
+									'choose_preset_'.$calendar->return_id(),
 									'post',
 									array(
-										'name' => 'choose_preset_'.$id,
+										'name' => 'choose_preset_'.$calendar->return_id(),
 										'action' => 'calendar.php?id=listall'
 									)
 								);
@@ -1243,9 +1292,11 @@ class CalendarView extends PageView {
 			// get data
 			$data = $form->getValue();
 			
-			// redirect and exit
-			header('Location: announcement.php?id=new&cid='.$id.'&pid='.$data['preset']);
-			exit;
+			// insert preset_id in calendar-entry
+			$update = array('preset_id' => $data['preset']);
+			$calendar->update($update);
+			$calendar->write_db('update');
+			
 		} else {
 			return $form;
 		}
