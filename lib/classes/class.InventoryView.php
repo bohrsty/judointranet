@@ -49,7 +49,8 @@ class InventoryView extends PageView {
 							'file' => 'inventory.php',
 							'position' => 3,
 							'class' => get_class(),
-							'id' => crc32('InventoryView') // 3652205019
+							'id' => crc32('InventoryView'), // 3652205019
+							'show' => true
 						),
 						'secondlevel' => array(
 							1 => array(

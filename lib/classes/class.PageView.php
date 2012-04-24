@@ -278,6 +278,11 @@ class PageView extends Object {
 				continue;
 			}
 			
+			// check visibility
+			if($firstlevel['show'] === false) {
+				continue;
+			}
+			
 			// set firstlevel
 			$output .= $navi_0->parse(array(
 										'navi.0.href' => $firstlevel['file'],

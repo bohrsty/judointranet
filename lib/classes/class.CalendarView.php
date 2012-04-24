@@ -49,7 +49,8 @@ class CalendarView extends PageView {
 							'file' => 'calendar.php',
 							'position' => 1,
 							'class' => get_class(),
-							'id' => crc32('CalendarView') // 4126450689
+							'id' => crc32('CalendarView'), // 4126450689
+							'show' => true
 						),
 						'secondlevel' => array(
 							1 => array(

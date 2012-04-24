@@ -49,7 +49,8 @@ class AnnouncementView extends PageView {
 							'file' => 'announcement.php',
 							'position' => 2,
 							'class' => get_class(),
-							'id' => crc32('AnnouncementView') // 3960320393
+							'id' => crc32('AnnouncementView'), // 3960320393
+							'show' => false
 						),
 						'secondlevel' => array(
 							0 => array(

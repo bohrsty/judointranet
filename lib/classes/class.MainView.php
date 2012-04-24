@@ -49,7 +49,8 @@ class MainView extends PageView {
 							'file' => 'index.php',
 							'position' => 0,
 							'class' => 'MainView',
-							'id' => crc32('MainView') // 2349400854
+							'id' => crc32('MainView'), // 2349400854
+							'show' => true
 						),
 						'secondlevel' => array(
 						)
