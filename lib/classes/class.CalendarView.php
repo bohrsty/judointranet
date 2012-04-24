@@ -1011,7 +1011,6 @@ class CalendarView extends PageView {
 					'shortname' => $calendar->return_shortname(),
 					'type' => $calendar->return_type(),
 					'entry_content' => $calendar->return_content(),
-					'announcement' => $calendar->return_preset_id(),
 					'rights' => $calendar->return_rights()->return_rights()
 				)));
 			

@@ -384,6 +384,11 @@ $lang = array(
 			'form' => array(
 				'submitButton' => 'Speichern'
 			)
+		),
+		'edit' => array(
+			'form' => array(
+				'submitButton' => 'Speichern'
+			)
 		)
 	),
 	'class.InventoryView' => array(

@@ -59,13 +59,13 @@ class AnnouncementView extends PageView {
 								'id' => crc32('AnnouncementView|new'), // 3704676583
 								'show' => false
 							),
-							3 => array(
+							1 => array(
 								'getid' => 'edit', 
 								'name' => 'class.AnnouncementView#connectnavi#secondlevel#edit',
 								'id' => crc32('AnnouncementView|edit'), // 3109695354
 								'show' => false
 							),
-							4 => array(
+							2 => array(
 								'getid' => 'delete', 
 								'name' => 'class.AnnouncementView#connectnavi#secondlevel#delete',
 								'id' => crc32('AnnouncementView|delete'), // 2505436613 
@@ -104,7 +104,7 @@ class AnnouncementView extends PageView {
 			$naviid = 0;
 			// walk through secondlevel-entries to find actual entry
 			for($i=0;$i<count($navi['secondlevel']);$i++) {
-				if($navi['secondlevel'][$i]['getid'] == $this->get('id')) {
+				if(isset($navi['secondlevel'][$i]['getid']) && $navi['secondlevel'][$i]['getid'] == $this->get('id')) {
 					
 					// store id and  break
 					$naviid = $navi['secondlevel'][$i]['id'];
@@ -370,174 +370,120 @@ class AnnouncementView extends PageView {
 	
 	
 	/**
-	 * edit edits the given entry
+	 * edit edits the entry
 	 * 
-	 * @param int $cid entry-id for calendar
 	 * @return string html-string
 	 */
 	private function edit($cid) {
 		
+		// get templates
+		// p
+		try {
+			$p = new HtmlTemplate('templates/p.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
+		
 		// check rights
-		if(Rights::check_rights($cid,'calendar')) {
-				
-			// get calendar-object
-			$calendar = new Calendar($cid);
+		if(Rights::check_rights($this->get('cid'),'calendar')) {
+			
+			// check cid and pid given
+			if ($this->get('cid') !== false && $this->get('pid') !== false) {
+			
+				// check cid and pid exists
+				if(Calendar::check_id($this->get('cid')) && Preset::check_preset($this->get('pid'),'calendar')) {
 					
-			// prepare return
-			$return = '';
+					// prepare return
+					$return = '';
 					
-			$form = new HTML_QuickForm2(
-									'edit_calendar_entry',
-									'post',
-									array(
-										'name' => 'edit_calendar_entry',
-										'action' => 'calendar.php?id=edit&cid='.$cid
-									)
-								);
-			
-			$now_year = (int) date('Y');
-			$year_min = $now_year;
-			$year_max = $now_year + 3;
-			$form->addDataSource(new HTML_QuickForm2_DataSource_Array(array(
-					'dateGroup' => array(
-						'day' => (int) $calendar->return_date('d'),
-						'month' => (int) $calendar->return_date('m'),
-						'year' => (int) $calendar->return_date('Y')
-					),
-					'name' => $calendar->return_name(),
-					'shortname' => $calendar->return_shortname(),
-					'type' => $calendar->return_type(),
-					'entry_content' => $calendar->return_content(),
-					'announcement' => $calendar->return_preset_id(),
-					'rights' => $calendar->return_rights()->return_rights()
-				)));
-			
-			// renderer
-			$renderer = HTML_QuickForm2_Renderer::factory('default');
-			$renderer->setOption('required_note',parent::lang('class.CalendarView#entry#form#requiredNote'));
-			
-			// elements
-			// date - group
-			$date_group = $form->addGroup('dateGroup');
-			$date_group->setLabel(parent::lang('class.CalendarView#entry#form#date').':');
-			// rule
-			$date_group->addRule('required',parent::lang('class.CalendarView#entry#rule#required.date'));
-			$date_group->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.date'),array($this,'callback_check_date'));
-			
-			// select day
-			$options = array('--');
-			for($i=1;$i<=31;$i++) {
-				$options[$i] = $i;
-			}
-			$select_day = $date_group->addElement('select','day',array());
-			$select_day->loadOptions($options);
-			
-			// select month
-			$options = array('--');
-			for($i=1;$i<=12;$i++) {
-				$options[$i] = parent::lang('class.CalendarView#entry#date#month.'.$i);
-			}
-			$select_month = $date_group->addElement('select','month',array());
-			$select_month->loadOptions($options);
-			
-			// select year
-			$options = array('--');
-			for($i=$year_min;$i<=$year_max;$i++) {
-				$options[$i] = $i;
-			}
-			$select_year = $date_group->addElement('select','year',array());
-			$select_year->loadOptions($options);
-			
-			
-			// name
-			$name = $form->addElement('text','name');
-			$name->setLabel(parent::lang('class.CalendarView#entry#form#name').':');
-			$name->addRule('required',parent::lang('class.CalendarView#entry#rule#required.name'));
-			$name->addRule(
-						'regex',
-						parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('name.desc').']',
-						$_SESSION['GC']->return_config('name.regexp'));
-			
-			
-			// shortname
-			$shortname = $form->addElement('text','shortname');
-			$shortname->setLabel(parent::lang('class.CalendarView#entry#form#shortname').':');
-			$shortname->addRule(
-							'regex',
-							parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('name.desc').']',
-							$_SESSION['GC']->return_config('name.regexp'));
-		
-		
-			// type
-			$options = array_merge(array(0 => '--'),Calendar::return_types());
-			$type = $form->addElement('select','type');
-			$type->setLabel(parent::lang('class.CalendarView#entry#form#type').':');
-			$type->loadOptions($options);
-			$type->addRule('required',parent::lang('class.CalendarView#entry#rule#required.type'));
-			$type->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.select'),array($this,'callback_check_select'));
-			
-			
-			// entry_content
-			$content = $form->addElement('textarea','entry_content');
-			$content->setLabel(parent::lang('class.CalendarView#entry#form#entry_content').':');
-			$content->addRule(
-							'regex',
-							parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('textarea.desc').']',
-							$_SESSION['GC']->return_config('textarea.regexp'));
-			
-			
-			// select rights
-			$options = $_SESSION['user']->return_all_groups();
-			$rights = $form->addElement('select','rights',array('multiple' => 'multiple','size' => 5));
-			$rights->setLabel(parent::lang('class.CalendarView#entry#form#rights').':');
-			$rights->loadOptions($options);
-			
-			
-			// submit-button
-			$form->addElement('submit','submit',array('value' => parent::lang('class.CalendarView#entry#form#submitButton')));
-			
-			// validate
-			if($form->validate()) {
-				
-				// create calendar-object
-				$data = $form->getValue();
-				
-				$calendar_new = array(
-						'date' => $data['dateGroup']['day'].'.'.$data['dateGroup']['month'].'.'.$data['dateGroup']['year'],
-						'name' => $data['name'],
-						'shortname' => $data['shortname'],
-						'type' => $data['type'],
-						'content' => $data['entry_content'],
-						'rights' => $data['rights'],
-						'valid' => 1
-					);
+					// get preset
+					$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'));
 					
-				// update calendar
-				$calendar->update($calendar_new);
-				
-				// put entry to output
-				// read template
-				try {
-					$calendar_details = new HtmlTemplate('templates/calendar.details.tpl');
-				} catch(Exception $e) {
-					$GLOBALS['Error']->handle_error($e);
-				}
-				
-				// write entry
-				try {
-					$calendar->write_db('update');
-					// set return
-					$return = $calendar->details_to_html($calendar_details);
-				} catch(Exception $e) {
-					$GLOBALS['Error']->handle_error($e);
-					$return = $GLOBALS['Error']->to_html($e);
+					// get fields
+					$fields = $preset->return_fields();
+					
+					// formular
+					$form = new HTML_QuickForm2(
+											'edit_announcement',
+											'post',
+											array(
+												'name' => 'edit_announcement',
+												'action' => 'announcement.php?id=edit&cid='.$this->get('cid').'&pid='.$this->get('pid')
+											)
+										);
+					
+					// values
+					$datasource = array();
+					foreach($fields as $field) {
+						
+						// read values
+						$field->read_value();
+						
+						// check type
+						if($field->return_type() == 'date') {
+							$datasource['calendar-'.$field->return_id()]['day'] = (int) date('d',strtotime($field->return_value()));
+							$datasource['calendar-'.$field->return_id()]['month'] = (int) date('m',strtotime($field->return_value()));
+							$datasource['calendar-'.$field->return_id()]['year'] = (int) date('Y',strtotime($field->return_value()));
+						} else {
+							$datasource['calendar-'.$field->return_id()] = $field->return_value();
+						}
+					}
+					
+					$form->addDataSource(new HTML_QuickForm2_DataSource_Array($datasource));
+					
+					// renderer
+					$renderer = HTML_QuickForm2_Renderer::factory('default');
+					$renderer->setOption('required_note',parent::lang('class.AnnouncementView#entry#form#requiredNote'));
+					
+					// generate field-quickform and add to form
+					foreach($fields as $field) {
+						
+						// generate quickform
+						$field->read_quickform();
+						
+						// add to form
+						$form->appendChild($field->return_quickform());
+					}
+					
+					// submit-button
+					$form->addSubmit('submit',array('value' => parent::lang('class.AnnouncementView#edit#form#submitButton')));
+					
+					// validate
+					if($form->validate()) {
+						
+						// get data
+						$data = $form->getValue();
+						
+						// insert values
+						foreach($fields as $field) {
+							
+							// values to db
+							$field->value_update_db($this->get('cid'),$data[$field->return_table().'-'.$field->return_id()]);
+							
+							// return field and value as HTML
+							$return .= $field->value_to_html($p,$data[$field->return_table().'-'.$field->return_id()]);
+						}
+						
+					} else {
+						$return = $form->render($renderer);
+					}
+					
+					// return
+					return $return;
+				} else {
+					
+					// error
+					$errno = $GLOBALS['Error']->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
+					$GLOBALS['Error']->handle_error($errno);
+					return $GLOBALS['Error']->to_html($errno);
 				}
 			} else {
-				$return = $form->render($renderer);
+				
+				// error
+				$errno = $GLOBALS['Error']->error_raised('MissingParams','entry:cid_or_pid','cid_or_pid');
+				$GLOBALS['Error']->handle_error($errno);
+				return $GLOBALS['Error']->to_html($errno);
 			}
-			
-			// return
-			return $return;
 		} else {
 			
 			// error

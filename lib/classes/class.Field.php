@@ -446,6 +446,41 @@ class Field extends Object {
 		// execute
 		$db->query($sql);
 	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * value_update_db sets the table_id and value and stores it in db
+	 * 
+	 * @param int $table_id id of the value in $table
+	 * @param mixed $value the value of the field
+	 */
+	public function value_update_db($table_id,$value) {
+		
+		// check type
+		$checked_value = '';
+		if($this->get_type() == 'date') {
+			$checked_value = date('Y-m-d',strtotime($value['year'].'-'.$value['month'].'-'.$value['day']));
+		} else {
+			$checked_value = $value;
+		}
+		
+		// get db-object
+		$db = Db::newDb();
+		
+		// prepare sql
+		$sql = "UPDATE value SET
+				value='$checked_value'
+				WHERE field_id = ".$this->get_id()."
+				AND table_id = $table_id
+				AND table_name = '".$this->get_table()."'";
+		
+		// execute
+		$db->query($sql);
+	}
 }
 
 
