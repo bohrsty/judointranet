@@ -444,19 +444,19 @@ class CalendarView extends PageView {
 								'a.title' => parent::lang('class.CalendarView#listall#title#delete'),
 								'a.content' => $img_out
 							));
-						// if no announcement (preset_id==0), choose preset, if != 0 edit announcement
-						$div_out = '';
+						// if no announcement (preset_id==0), choose preset
+						// prepare div
+						$div_out = $div->parse(array(
+								'div.params' => ' class="admin-links"',
+								'div.content' => $a_out
+							));
 						if($entry->return_preset_id() == 0) {
-							
-							// prepare div
-							$div_out .= $div->parse(array(
-									'div.params' => ' class="admin-links"',
-									'div.content' => $a_out
-								));
-							
 							// create form
 							$div_out .= $this->read_preset_form($entry);
-						} else {
+						} 
+						
+						// if announcement != 0 edit announcement
+						if($entry->return_preset_id() != 0) {
 							
 							// get new or edit
 							$action = '';
@@ -475,7 +475,7 @@ class CalendarView extends PageView {
 								));
 							
 							// prepare announcement-edit-link
-							$a_out .= $a->parse(array(
+							$a_out = $a->parse(array(
 									'a.params' => '',
 									'a.href' => 'announcement.php?id='.$action.'&cid='.$entry->return_id().'&pid='.$entry->return_preset_id(),
 									'a.title' => parent::lang('class.CalendarView#listall#title#AnnEdit'),
@@ -496,7 +496,6 @@ class CalendarView extends PageView {
 									'a.title' => parent::lang('class.CalendarView#listall#title#AnnDelete'),
 									'a.content' => $img_out
 								));
-							
 							// prepare div
 							$div_out .= $div->parse(array(
 									'div.params' => ' class="admin-links"',

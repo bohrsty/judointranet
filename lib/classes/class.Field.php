@@ -481,6 +481,31 @@ class Field extends Object {
 		// execute
 		$db->query($sql);
 	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * delete_value deletes the value in db
+	 * 
+	 * @param int $table_id id of the value in $table
+	 */
+	public function delete_value($table_id) {
+		
+		// get db-object
+		$db = Db::newDb();
+		
+		// prepare sql
+		$sql = "DELETE FROM value
+				WHERE field_id = ".$this->get_id()."
+				AND table_id = $table_id
+				AND table_name = '".$this->get_table()."'";
+		
+		// execute
+		$db->query($sql);
+	}
 }
 
 

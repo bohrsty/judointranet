@@ -389,6 +389,19 @@ $lang = array(
 			'form' => array(
 				'submitButton' => 'Speichern'
 			)
+		),
+		'delete' => array(
+			'form' => array(
+				'yes' => 'Ja',
+				'cancel' => 'abbrechen'
+			),
+			'message' => array(
+				'confirm' => 'Wollen Sie diesen Eintrag wirklich l&ouml;schen?',
+				'done' => 'Der Eintrag wurde erfolgreich gel&ouml;scht.'
+			),
+			'title' => array(
+				'cancel' => 'Bricht den L&ouml;schvorgang ab'
+			)
 		)
 	),
 	'class.InventoryView' => array(

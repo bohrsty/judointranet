@@ -136,16 +136,7 @@ class AnnouncementView extends PageView {
 						// navi
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 						// main-content
-						// if cid does not exist, error
-						if(Calendar::check_id($this->get('cid'))) {
-							$this->add_output(array('main' => $this->edit($this->get('cid'))));
-						} else {
-							
-							// error
-							$errno = $GLOBALS['Error']->error_raised('CidNotExists','edit',$this->get('cid'));
-							$GLOBALS['Error']->handle_error($errno);
-							$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
-						}
+						$this->add_output(array('main' => $this->edit()));
 					break;
 					
 					case 'delete':
@@ -156,16 +147,7 @@ class AnnouncementView extends PageView {
 						// navi
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 						// main-content
-						// if cid does not exist, error
-						if(Calendar::check_id($this->get('cid'))) {
-							$this->add_output(array('main' => $this->delete($this->get('cid'))));
-						} else {
-							
-							// error
-							$errno = $GLOBALS['Error']->error_raised('CidNotExists','delete',$this->get('cid'));
-							$GLOBALS['Error']->handle_error($errno);
-							$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
-						}
+						$this->add_output(array('main' => $this->delete()));
 					break;
 					
 					default:
@@ -374,7 +356,7 @@ class AnnouncementView extends PageView {
 	 * 
 	 * @return string html-string
 	 */
-	private function edit($cid) {
+	private function edit() {
 		
 		// get templates
 		// p
@@ -505,87 +487,116 @@ class AnnouncementView extends PageView {
 	 * @param int $cid entry-id for calendar
 	 * @return string html-string
 	 */
-	private function delete($cid) {
+	private function delete() {
 	
 		// check rights
-		if(Rights::check_rights($cid,'calendar')) {
-				
-			// prepare return
-			$output = '';
+		if(Rights::check_rights($this->get('cid'),'calendar')) {
 			
-			// get templates
-			try {
-				$confirmation = new HtmlTemplate('templates/div.confirmation.tpl');
-			} catch(Exception $e) {
-				$GLOBALS['Error']->handle_error($e);
-			}
-			try {
-				$a = new HtmlTemplate('templates/a.tpl');
-			} catch(Exception $e) {
-				$GLOBALS['Error']->handle_error($e);
-			}
-			try {
-				$div = new HtmlTemplate('templates/div.tpl');
-			} catch(Exception $e) {
-				$GLOBALS['Error']->handle_error($e);
-			}
+			// check cid and pid given
+			if ($this->get('cid') !== false && $this->get('pid') !== false) {
 			
-			$form = new HTML_QuickForm2(
-									'confirm',
-									'post',
-									array(
-										'name' => 'confirm',
-										'action' => 'calendar.php?id=delete&cid='.$this->get('cid')
-									)
-								);
-			
-			// add button
-			$form->addElement('submit','yes',array('value' => parent::lang('class.CalendarView#delete#form#yes')));
-			
-			// prepare cancel
-			$cancel_a = $a->parse(array(
-					'a.params' => '',
-					'a.href' => 'calendar.php?id=listall',
-					'a.title' => parent::lang('class.CalendarView#delete#title#cancel'),
-					'a.content' => parent::lang('class.CalendarView#delete#form#cancel')
-				));
-			$cancel = $div->parse(array(
-					'div.params' => ' id="cancel"',
-					'div.content' => $cancel_a
-			));
-			
-			// set output
-			$output = $confirmation->parse(array(
-					'p.message' => parent::lang('class.CalendarView#delete#message#confirm'),
-					'p.form' => $form."\n".$cancel
-				));
-			
-			// validate
-			if($form->validate()) {
-			
-				// get calendar-object
-				$calendar = new Calendar($cid);
-				
-				// disable entry
-				$calendar->update(array('valid' => 0));
-				
-				// set output
-				$output = $confirmation->parse(array(
-						'p.message' => parent::lang('class.CalendarView#delete#message#done'),
-						'p.form' => ''
+				// check cid and pid exists
+				if(Calendar::check_id($this->get('cid')) && Preset::check_preset($this->get('pid'),'calendar')) {
+					
+					// prepare return
+					$return = '';
+					
+					// get templates
+					try {
+						$confirmation = new HtmlTemplate('templates/div.confirmation.tpl');
+						$a = new HtmlTemplate('templates/a.tpl');
+						$div = new HtmlTemplate('templates/div.tpl');
+					} catch(Exception $e) {
+						$GLOBALS['Error']->handle_error($e);
+					}
+					
+					$form = new HTML_QuickForm2(
+											'confirm',
+											'post',
+											array(
+												'name' => 'confirm',
+												'action' => 'announcement.php?id=delete&cid='.$this->get('cid').'&pid='.$this->get('pid')
+											)
+										);
+					
+					// add button
+					$form->addElement('submit','yes',array('value' => parent::lang('class.AnnouncementView#delete#form#yes')));
+					
+					// prepare cancel
+					$cancel_a = $a->parse(array(
+							'a.params' => '',
+							'a.href' => 'calendar.php?id=listall',
+							'a.title' => parent::lang('class.AnnouncementView#delete#title#cancel'),
+							'a.content' => parent::lang('class.AnnouncementView#delete#form#cancel')
+						));
+					$cancel = $div->parse(array(
+							'div.params' => ' id="cancel"',
+							'div.content' => $cancel_a
 					));
-				
-				// write entry
-				try {
-					$calendar->write_db('update');
-				} catch(Exception $e) {
-					$GLOBALS['Error']->handle_error($e);
-					$output = $GLOBALS['Error']->to_html($e);
+					
+					// set output
+					$return = $confirmation->parse(array(
+							'p.message' => parent::lang('class.AnnouncementView#delete#message#confirm'),
+							'p.form' => $form."\n".$cancel
+						));
+					
+					// validate
+					if($form->validate()) {
+					
+						
+						// get calendar-object
+						$calendar = new Calendar($this->get('cid'));
+						
+						// get preset
+						$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'));
+						
+						// get fields
+						$fields = $preset->return_fields();
+						
+						// delete values of the fields
+						if(Calendar::check_ann_value($calendar->return_id(),$calendar->return_preset_id()) === true) {
+							
+							foreach($fields as $field) {
+								
+								// delete value
+								$field->delete_value($this->get('cid'));
+							}
+						}
+						
+						// set preset to 0
+						$calendar->update(array('preset_id' => 0));
+						
+						// set output
+						$return = $confirmation->parse(array(
+								'p.message' => parent::lang('class.AnnouncementView#delete#message#done'),
+								'p.form' => ''
+							));
+						
+						// write entry
+						try {
+							$calendar->write_db('update');
+						} catch(Exception $e) {
+							$GLOBALS['Error']->handle_error($e);
+							$output = $GLOBALS['Error']->to_html($e);
+						}
+					}
+					
+					// return
+					return $return;
+				} else {
+					
+					// error
+					$errno = $GLOBALS['Error']->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
+					$GLOBALS['Error']->handle_error($errno);
+					return $GLOBALS['Error']->to_html($errno);
 				}
+			} else {
+				
+				// error
+				$errno = $GLOBALS['Error']->error_raised('MissingParams','entry:cid_or_pid','cid_or_pid');
+				$GLOBALS['Error']->handle_error($errno);
+				return $GLOBALS['Error']->to_html($errno);
 			}
-			
-			// return
-			return $output;
 		} else {
 			
 			// error
