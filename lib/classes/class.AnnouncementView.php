@@ -291,7 +291,7 @@ class AnnouncementView extends PageView {
 					foreach($fields as $field) {
 						
 						// generate quickform
-						$field->read_quickform();
+						$field->read_quickform(array(),true);
 						
 						// add to form
 						$form->appendChild($field->return_quickform());
@@ -310,7 +310,8 @@ class AnnouncementView extends PageView {
 						foreach($fields as $field) {
 							
 							// values to db
-							$field->value_to_db($this->get('cid'),$data[$field->return_table().'-'.$field->return_id()]);
+							$field->value($data[$field->return_table().'-'.$field->return_id()]);
+							$field->write_db('insert');
 							
 							// return field and value as HTML
 							$return .= $field->value_to_html($p,$data[$field->return_table().'-'.$field->return_id()]);
@@ -406,8 +407,16 @@ class AnnouncementView extends PageView {
 							$datasource['calendar-'.$field->return_id()]['day'] = (int) date('d',strtotime($field->return_value()));
 							$datasource['calendar-'.$field->return_id()]['month'] = (int) date('m',strtotime($field->return_value()));
 							$datasource['calendar-'.$field->return_id()]['year'] = (int) date('Y',strtotime($field->return_value()));
-						} else {
-							$datasource['calendar-'.$field->return_id()] = $field->return_value();
+						} elseif($field->return_type() == 'text') {
+							
+							// check defaults
+							$datasource['calendar-'.$field->return_id()]['manual'] = '';
+							$datasource['calendar-'.$field->return_id()]['defaults'] = 0;
+							if($field->return_value() == '') {
+								$datasource['calendar-'.$field->return_id()]['defaults'] = 'd'.$field->get_defaults();
+							} else {
+								$datasource['calendar-'.$field->return_id()]['manual'] = $field->return_value();
+							}
 						}
 					}
 					
@@ -421,7 +430,7 @@ class AnnouncementView extends PageView {
 					foreach($fields as $field) {
 						
 						// generate quickform
-						$field->read_quickform();
+						$field->read_quickform(array(),true);
 						
 						// add to form
 						$form->appendChild($field->return_quickform());
@@ -440,7 +449,8 @@ class AnnouncementView extends PageView {
 						foreach($fields as $field) {
 							
 							// values to db
-							$field->value_update_db($this->get('cid'),$data[$field->return_table().'-'.$field->return_id()]);
+							$field->value($data[$field->return_table().'-'.$field->return_id()]);
+							$field->write_db('update');
 							
 							// return field and value as HTML
 							$return .= $field->value_to_html($p,$data[$field->return_table().'-'.$field->return_id()]);
@@ -559,6 +569,7 @@ class AnnouncementView extends PageView {
 							foreach($fields as $field) {
 								
 								// delete value
+// REMOVE PARAM
 								$field->delete_value($this->get('cid'));
 							}
 						}

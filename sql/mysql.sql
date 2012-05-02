@@ -56,6 +56,21 @@ CREATE TABLE IF NOT EXISTS `config` (
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `defaults`
+--
+
+DROP TABLE IF EXISTS `defaults`;
+CREATE TABLE IF NOT EXISTS `defaults` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR( 50 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `category` int(11) NOT NULL,
+  `value` text COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `field`
 --
 
@@ -268,6 +283,13 @@ CREATE TABLE IF NOT EXISTS `value` (
   `value` text COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+
+--
+-- Spalte zufuegen
+---
+
+ALTER TABLE `value` ADD `defaults` INT( 11 ) NULL DEFAULT NULL 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

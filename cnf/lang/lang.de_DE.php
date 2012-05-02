@@ -348,12 +348,24 @@ $lang = array(
 				'required.text' => 'Feld muss ausgef&uuml;llt werden!',
 				'regexp.allowedChars' => 'Es k&ouml;nnen nur folgende Zeichen eingegeben werden!',
 				'required.checkbox' => 'Auswahlfeld muss angehakt werden!'
+			),
+			'label' => array(
+				'textarea.manual' => 'eintragen...',
+				'textarea.defaults' => '...oder ausw&auml;hlen'
 			)
 		),
 		'value_to_html' => array(
 			'checkbox.value' => array(
 				'checked' => 'Ja',
 				'unchecked' => 'Nein'
+			)
+		),
+		'read_defaults' => array(
+			'defaults' => array(
+				'separator' => 'Vorgaben'
+			),
+			'lastUsed' => array(
+				'separator' => 'zuletzt verwendet'
 			)
 		)
 	),

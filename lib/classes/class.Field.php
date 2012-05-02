@@ -17,6 +17,8 @@ class Field extends Object {
 	private $table;
 	private $table_id;
 	private $required;
+	private $category;
+	private $defaults;
 	
 	/*
 	 * getter/setter
@@ -69,6 +71,18 @@ class Field extends Object {
 	private function set_required($required) {
 		$this->required = $required;
 	}
+	public function get_category(){
+		return $this->category;
+	}
+	public function set_category($category) {
+		$this->category = $category;
+	}
+	public function get_defaults(){
+		return $this->defaults;
+	}
+	public function set_defaults($defaults) {
+		$this->defaults = $defaults;
+	}
 	
 	/*
 	 * constructor/destructor
@@ -102,7 +116,7 @@ class Field extends Object {
 		$db = Db::newDb();
 		
 		// prepare sql-statement
-		$sql = "SELECT f.name,f.type,f2p.required
+		$sql = "SELECT f.name,f.type,f2p.required,f.category
 				FROM field AS f,fields2presets AS f2p
 				WHERE f.id = $id
 				AND f2p.field_id = $id
@@ -112,13 +126,14 @@ class Field extends Object {
 		$result = $db->query($sql);
 		
 		// fetch result
-		list($name,$type,$required) = $result->fetch_array(MYSQL_NUM);
+		list($name,$type,$required,$category) = $result->fetch_array(MYSQL_NUM);
 		
 		// set variables to object
 		$this->set_id($id);
 		$this->set_name($name);
 		$this->set_type($type);
 		$this->set_required($required);
+		$this->set_category($category);
 		
 		// close db
 		$db->close();
@@ -133,9 +148,11 @@ class Field extends Object {
 	 * read_quickform set a HTML_Quickform2_Element-object to $quickform according
 	 * to the $type
 	 * 
+	 * @param array $options array containing parameters for the input-tag
+	 * @param bool $defaults text-fields with default-values if true
 	 * @return void
 	 */
-	public function read_quickform($options = array()) {
+	public function read_quickform($options = array(),$defaults = false) {
 		
 		// prepare return
 		$element = null;
@@ -143,18 +160,44 @@ class Field extends Object {
 		// check type
 		if($this->get_type() == 'text') {
 			
-			// textarea
-			$element = HTML_QuickForm2_Factory::createElement('textarea', $this->get_table().'-'.$this->get_id(),$options);
-			$element->setLabel($this->get_name().':');
-			
-			// add rules
-			if($this->get_required() == 1) {
-				$element->addRule('required',parent::lang('class.Field#element#rule#required.text'));
+			// check defaults
+			if($defaults === true) {
+				
+				// field-group
+				$element = HTML_QuickForm2_Factory::createElement('group', $this->get_table().'-'.$this->get_id(),$options);
+				$element->setLabel($this->get_name().':');
+				
+				// add select
+				$select = $element->addElement('select','defaults',array());
+				$select->setLabel(parent::lang('class.Field#element#label#textarea.defaults'));
+				
+				// add textarea
+				$textarea = $element->addElement('textarea','manual',array());
+				$textarea->setLabel(parent::lang('class.Field#element#label#textarea.manual'));
+				
+				// prepare options
+				$options = array('--');
+				
+				// get defaults
+				$this->read_defaults($options);
+				
+				// load options
+				$select->loadOptions($options);
+			} else {
+				
+				// textarea
+				$element = HTML_QuickForm2_Factory::createElement('textarea', $this->get_table().'-'.$this->get_id(),$options);
+				$element->setLabel($this->get_name().':');
+				
+				// add rules
+				if($this->get_required() == 1) {
+					$element->addRule('required',parent::lang('class.Field#element#rule#required.text'));
+				}
+				$element->addRule(
+					'regex',
+					parent::lang('class.Field#element#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('textarea.desc').']',
+					$_SESSION['GC']->return_config('textarea.regexp'));
 			}
-			$element->addRule(
-				'regex',
-				parent::lang('class.Field#element#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('textarea.desc').']',
-				$_SESSION['GC']->return_config('textarea.regexp'));
 		} elseif($this->get_type() == 'date') {
 			
 			// date-group
@@ -256,7 +299,7 @@ class Field extends Object {
 		}
 		
 		// prepare sql-statement
-		$sql = "SELECT v.value
+		$sql = "SELECT v.value,v.defaults
 				FROM value AS v
 				WHERE v.table_name = '$table'
 				AND v.table_id = $table_id
@@ -266,10 +309,9 @@ class Field extends Object {
 		$result = $db->query($sql);
 		
 		// check if value is set
-		$value = '';
 		if($result->num_rows != 0) {
 			// fetch result
-			list($value) = $result->fetch_array(MYSQL_NUM);
+			list($value,$defaults) = $result->fetch_array(MYSQL_NUM);
 		}
 		
 		// close db
@@ -277,6 +319,7 @@ class Field extends Object {
 		
 		// set
 		$this->set_value($value);
+		$this->set_defaults($defaults);
 	}
 	
 	
@@ -360,6 +403,57 @@ class Field extends Object {
 	
 	
 	/**
+	 * value sets the given value
+	 * 
+	 * @param mixed $value the value of the field
+	 * @return void
+	 */
+	public function value($value) {
+		
+		// get db-object
+		$db = Db::newDb();
+		
+		// check type
+		$checked_value = '';
+		$checked_default = 'NULL';
+		if($this->get_type() == 'date') {
+			$checked_value = date('Y-m-d',strtotime($value['year'].'-'.$value['month'].'-'.$value['day']));
+		} elseif($this->get_type() == 'text') {
+			
+			// check manual or default
+			if($value['manual'] == '') {
+				
+				// get id and last-used or defaults
+				$vtype = substr($value['defaults'],0,1);
+				$vid = (int) substr($value['defaults'],1,strlen($value['defaults'])-1);
+				
+				if($vtype == 'd') {
+					$checked_default = $vid;
+				} else {
+					
+					// get last-used-value
+					$result = $db->query("SELECT value FROM value WHERE id=$vid");
+					list($lvalue) = $result->fetch_array(MYSQL_NUM);
+					$checked_value = $lvalue;
+				}
+			} else {
+				$checked_value = $value['manual'];
+			}
+		} else {
+			$checked_value = $value;
+		}
+		
+		// set classvariables
+		$this->set_defaults($checked_default);
+		$this->set_value($checked_value);
+	}
+	
+	
+	
+	
+	
+// REMOVE PARAMS	
+	/**
 	 * value_to_html returns the field and its $value as html embedded in $template
 	 * 
 	 * @param object $template the HtmlTemplate-object to embed the field
@@ -367,6 +461,10 @@ class Field extends Object {
 	 * @return string the html-representation
 	 */
 	public function value_to_html($template,$value) {
+		
+		// get values
+		$value = $this->get_value();
+		$defaults = $this->get_defaults();
 		
 		// get templates
 		// b
@@ -387,9 +485,21 @@ class Field extends Object {
 				$checked_value = parent::lang('class.Field#value_to_html#checkbox.value#unchecked');
 			}
 		} elseif($this->get_type() == 'date') {
-			$checked_value = date('d.m.Y',strtotime($value['year'].'-'.$value['month'].'-'.$value['day']));
-		} else {
-			$checked_value = $value;
+			$checked_value = date('d.m.Y',strtotime($value));
+		} elseif($this->get_type() == 'text') {
+			
+			// check defaults
+			if($value == '') {
+				
+				// get default-value
+				// get db-object
+				$db = Db::newDb();
+				
+				$result = $db->query("SELECT value FROM defaults WHERE id=$defaults");
+				list($checked_value) = $result->fetch_array(MYSQL_NUM);
+			} else {
+				$checked_value = $value;
+			}
 		}
 		
 		// get fieldname bold
@@ -421,27 +531,32 @@ class Field extends Object {
 	
 	
 	/**
-	 * value_to_db sets the table_id and value and stores it in db
+	 * write_db writes the actual objectdata to the db
 	 * 
-	 * @param int $table_id id of the value in $table
-	 * @param mixed $value the value of the field
+	 * @param string $action insert inserts new values, update updates existing
+	 * @return void
 	 */
-	public function value_to_db($table_id,$value) {
-		
-		// check type
-		$checked_value = '';
-		if($this->get_type() == 'date') {
-			$checked_value = date('Y-m-d',strtotime($value['year'].'-'.$value['month'].'-'.$value['day']));
-		} else {
-			$checked_value = $value;
-		}
+	public function write_db($action) {
 		
 		// get db-object
 		$db = Db::newDb();
 		
 		// prepare sql
-		$sql = "INSERT INTO value (id,table_name,table_id,field_id,value)
-				VALUES (NULL,'".$this->get_table()."',$table_id,".$this->get_id().",'$checked_value')";
+		if($action == 'insert') {
+			
+			// insert
+			$sql = "INSERT INTO value (id,table_name,table_id,field_id,value,defaults)
+					VALUES (NULL,'".$this->get_table()."',".$this->get_table_id().",".$this->get_id().",'".$this->get_value()."',".$this->get_defaults().")";
+		} else {
+			
+			// update
+			$sql = "UPDATE value SET
+					value='".$this->get_value()."',
+					defaults=".$this->get_defaults()."
+					WHERE field_id = ".$this->get_id()."
+					AND table_id = ".$this->table_id."
+					AND table_name = '".$this->get_table()."'";
+		}
 		
 		// execute
 		$db->query($sql);
@@ -451,7 +566,65 @@ class Field extends Object {
 	
 	
 	
+// TO BE REMOVED	
+	/**
+	 * value_to_db sets the table_id and value and stores it in db
+	 * 
+	 * @param int $table_id id of the value in $table
+	 * @param mixed $value the value of the field
+	 */
+	public function value_to_db($table_id,$value) {
+		
+		// get db-object
+		$db = Db::newDb();
+		
+		// check type
+		$checked_value = '';
+		$checked_default = 'NULL';
+		if($this->get_type() == 'date') {
+			$checked_value = date('Y-m-d',strtotime($value['year'].'-'.$value['month'].'-'.$value['day']));
+		} elseif($this->get_type() == 'text') {
+			
+			// check manual or default
+			if($value['manual'] == '') {
+				
+				// get id and last-used or defaults
+				$vtype = substr($value['defaults'],0,1);
+				$vid = (int) substr($value['defaults'],1,strlen($value['defaults'])-1);
+				
+				if($vtype == 'd') {
+					$checked_default = $vid;
+				} else {
+					
+					// get last-used-value
+					$result = $db->query("SELECT value FROM value WHERE id=$vid");
+					list($lvalue) = $result->fetch_array(MYSQL_NUM);
+					$checked_value = $lvalue;
+				}
+			} else {
+				$checked_value = $value['manual'];
+			}
+		} else {
+			$checked_value = $value;
+		}
+		
+		// set classvariables
+		$this->set_defaults($checked_default);
+		$this->set_value($checked_value);
+		
+		// prepare sql
+		$sql = "INSERT INTO value (id,table_name,table_id,field_id,value,defaults)
+				VALUES (NULL,'".$this->get_table()."',".$this->get_table_id().",".$this->get_id().",'".$this->get_value()."',".$this->get_defaults();
+		
+		// execute
+//		$db->query($sql);
+	}
 	
+	
+	
+	
+	
+// TO BE REMOVED	
 	/**
 	 * value_update_db sets the table_id and value and stores it in db
 	 * 
@@ -486,7 +659,7 @@ class Field extends Object {
 	
 	
 	
-	
+// REMOVE PARAM	
 	/**
 	 * delete_value deletes the value in db
 	 * 
@@ -500,11 +673,98 @@ class Field extends Object {
 		// prepare sql
 		$sql = "DELETE FROM value
 				WHERE field_id = ".$this->get_id()."
-				AND table_id = $table_id
+				AND table_id = ".$this->get_table_id()."
 				AND table_name = '".$this->get_table()."'";
 		
 		// execute
 		$db->query($sql);
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * read_defaults adds the default-values and last-used-value to the
+	 * given array
+	 * 
+	 * @param array $options array to add default- and last-used-values
+	 */
+	public function read_defaults(&$options) {
+		
+		// get db-object
+		$db = Db::newDb();
+		
+		// get defaults
+		// prepare sql
+		$sql = "SELECT d.id,d.name,d.value
+				FROM defaults AS d
+				WHERE category='".$this->get_category()."'
+				ORDER BY d.name ASC";
+		
+		// execute
+		$result = $db->query($sql);
+		
+		// fetch defaults
+		$defaults = array();
+		while(list($id,$name,$value) = $result->fetch_array(MYSQL_NUM)) {
+			
+			// replace linebreak
+			$value = str_replace(array("\r\n","\r","\n")," ",$value);
+			
+			// check value length
+			if(strlen($value) > 30) {
+				$value = substr($value,0,27).'...';
+			}
+			
+			$defaults['d'.$id] = $value;
+		}
+		
+		// add separator and options
+		$options[parent::lang('class.Field#read_defaults#defaults#separator')] = $defaults;
+		
+		// get last-used
+		// get authorized calendar-ids
+		$ids = Rights::get_authorized_entries($this->get_table());
+		
+		// prepare sql
+		$sql = "SELECT v.id,v.table_id,v.value
+				FROM value AS v,field AS f
+				WHERE v.table_name='".$this->get_table()."'
+				AND f.type='".$this->get_type()."'
+				AND f.id=v.field_id
+				ORDER BY v.id DESC
+				LIMIT 30";
+		
+		// execute
+		$result = $db->query($sql);
+		
+		// fetch last-used
+		$last = array();
+		while(list($id,$table_id,$value) = $result->fetch_array(MYSQL_NUM)) {
+			
+			// check rights
+			if(in_array((int) $table_id,$ids)) {
+				
+				// replace linebreak
+				$value = str_replace(array("\r\n","\r","\n")," ",$value);
+				
+				// check value length
+				if(strlen($value) > 30) {
+					$value = substr($value,0,27).'...';
+				}
+				
+				$last['l'.$id] = $value;
+			}
+		}
+		
+		// reverse array
+		array_reverse($last,true);
+		
+		
+		// add separator and options
+		$options[parent::lang('class.Field#read_defaults#lastUsed#separator')] = $last;
 	}
 }
 

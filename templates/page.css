@@ -114,6 +114,7 @@ td.date {
 div#sortlinks {
 	max-height: 120px;
 	overflow: scroll;
+	overflow: -moz-scrollbars-vertical;
 	margin-bottom: 20px;
 }
 
