@@ -727,46 +727,19 @@ class CalendarView extends PageView {
 		$year_min = $now_year;
 		$year_max = $now_year + 3;
 		$form->addDataSource(new HTML_QuickForm2_DataSource_Array(array('rights' => '0',
-																		'dateGroup' => array(
-																			'day' => $now_day,
-																			'month' => $now_month,
-																			'year' => $now_year))));
+																		'date' => date('Y-m-d'))));
 		
 		// renderer
 		$renderer = HTML_QuickForm2_Renderer::factory('default');
 		$renderer->setOption('required_note',parent::lang('class.CalendarView#entry#form#requiredNote'));
 		
 		// elements
-		// date - group
-		$date_group = $form->addGroup('dateGroup');
-		$date_group->setLabel(parent::lang('class.CalendarView#entry#form#date').':');
+		// date
+		$date = $form->addElement('text','date',array());
+		$date->setLabel(parent::lang('class.CalendarView#entry#form#date').':');
 		// rule
-		$date_group->addRule('required',parent::lang('class.CalendarView#entry#rule#required.date'));
-		$date_group->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.date'),array($this,'callback_check_date'));
-		
-		// select day
-		$options = array('--');
-		for($i=1;$i<=31;$i++) {
-			$options[$i] = $i;
-		}
-		$select_day = $date_group->addElement('select','day',array());
-		$select_day->loadOptions($options);
-		
-		// select month
-		$options = array('--');
-		for($i=1;$i<=12;$i++) {
-			$options[$i] = parent::lang('class.CalendarView#entry#date#month.'.$i);
-		}
-		$select_month = $date_group->addElement('select','month',array());
-		$select_month->loadOptions($options);
-		
-		// select year
-		$options = array('--');
-		for($i=$year_min;$i<=$year_max;$i++) {
-			$options[$i] = $i;
-		}
-		$select_year = $date_group->addElement('select','year',array());
-		$select_year->loadOptions($options);
+		$date->addRule('required',parent::lang('class.CalendarView#entry#rule#required.date'));
+		$date->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.date'),array($this,'callback_check_date'));
 		
 		
 		// name
@@ -827,7 +800,7 @@ class CalendarView extends PageView {
 								'new' => $data['rights']);
 			
 			$calendar = new Calendar(array(
-								'date' => $data['dateGroup']['day'].'.'.$data['dateGroup']['month'].'.'.$data['dateGroup']['year'],
+								'date' => $data['date'],
 								'name' => $data['name'],
 								'shortname' => $data['shortname'],
 								'type' => $data['type'],
@@ -1001,11 +974,7 @@ class CalendarView extends PageView {
 			$year_min = $now_year;
 			$year_max = $now_year + 3;
 			$form->addDataSource(new HTML_QuickForm2_DataSource_Array(array(
-					'dateGroup' => array(
-						'day' => (int) $calendar->get_date('d'),
-						'month' => (int) $calendar->get_date('m'),
-						'year' => (int) $calendar->get_date('Y')
-					),
+					'date' => $calendar->get_date(),
 					'name' => $calendar->get_name(),
 					'shortname' => $calendar->get_shortname(),
 					'type' => $calendar->return_type(),
@@ -1018,36 +987,12 @@ class CalendarView extends PageView {
 			$renderer->setOption('required_note',parent::lang('class.CalendarView#entry#form#requiredNote'));
 			
 			// elements
-			// date - group
-			$date_group = $form->addGroup('dateGroup');
-			$date_group->setLabel(parent::lang('class.CalendarView#entry#form#date').':');
+			// date
+			$date = $form->addElement('text','date',array());
+			$date->setLabel(parent::lang('class.CalendarView#entry#form#date').':');
 			// rule
-			$date_group->addRule('required',parent::lang('class.CalendarView#entry#rule#required.date'));
-			$date_group->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.date'),array($this,'callback_check_date'));
-			
-			// select day
-			$options = array('--');
-			for($i=1;$i<=31;$i++) {
-				$options[$i] = $i;
-			}
-			$select_day = $date_group->addElement('select','day',array());
-			$select_day->loadOptions($options);
-			
-			// select month
-			$options = array('--');
-			for($i=1;$i<=12;$i++) {
-				$options[$i] = parent::lang('class.CalendarView#entry#date#month.'.$i);
-			}
-			$select_month = $date_group->addElement('select','month',array());
-			$select_month->loadOptions($options);
-			
-			// select year
-			$options = array('--');
-			for($i=$year_min;$i<=$year_max;$i++) {
-				$options[$i] = $i;
-			}
-			$select_year = $date_group->addElement('select','year',array());
-			$select_year->loadOptions($options);
+			$date->addRule('required',parent::lang('class.CalendarView#entry#rule#required.date'));
+			$date->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.date'),array($this,'callback_check_date'));
 			
 			
 			// name
@@ -1104,7 +1049,7 @@ class CalendarView extends PageView {
 				$data = $form->getValue();
 				
 				$calendar_new = array(
-						'date' => $data['dateGroup']['day'].'.'.$data['dateGroup']['month'].'.'.$data['dateGroup']['year'],
+						'date' => $data['date'],
 						'name' => $data['name'],
 						'shortname' => $data['shortname'],
 						'type' => $data['type'],

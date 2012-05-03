@@ -200,37 +200,9 @@ class Field extends Object {
 			}
 		} elseif($this->get_type() == 'date') {
 			
-			// date-group
-			$element = HTML_QuickForm2_Factory::createElement('group', $this->get_table().'-'.$this->get_id(),$options);
+			// date in input-text for use with jquery
+			$element = HTML_QuickForm2_Factory::createElement('text', $this->get_table().'-'.$this->get_id(),$options);
 			$element->setLabel($this->get_name().':');
-			
-			$now_year = (int) date('Y');
-			$year_min = $now_year;
-			$year_max = $now_year + 3;
-			
-			// select day
-			$options = array('--');
-			for($i=1;$i<=31;$i++) {
-				$options[$i] = $i;
-			}
-			$select_day = $element->addElement('select','day',array());
-			$select_day->loadOptions($options);
-			
-			// select month
-			$options = array('--');
-			for($i=1;$i<=12;$i++) {
-				$options[$i] = parent::lang('class.Field#read_quickform#date#month.'.$i);
-			}
-			$select_month = $element->addElement('select','month',array());
-			$select_month->loadOptions($options);
-			
-			// select year
-			$options = array('--');
-			for($i=$year_min;$i<=$year_max;$i++) {
-				$options[$i] = $i;
-			}
-			$select_year = $element->addElement('select','year',array());
-			$select_year->loadOptions($options);
 			
 			// add rules
 			if($this->get_required() == 1) {
@@ -325,10 +297,8 @@ class Field extends Object {
 		
 		// check type
 		$checked_value = '';
-		$checked_default = 'NULL';
-		if($this->get_type() == 'date') {
-			$checked_value = date('Y-m-d',strtotime($value['year'].'-'.$value['month'].'-'.$value['day']));
-		} elseif($this->get_type() == 'text') {
+		$checked_default = 0;
+		if($this->get_type() == 'text') {
 			
 			// check manual or default
 			if($value['manual'] == '') {
@@ -362,15 +332,14 @@ class Field extends Object {
 	
 	
 	
-// REMOVE PARAMS	
+	
 	/**
 	 * value_to_html returns the field and its $value as html embedded in $template
 	 * 
 	 * @param object $template the HtmlTemplate-object to embed the field
-	 * @param mixed $value the value of the field
 	 * @return string the html-representation
 	 */
-	public function value_to_html($template,$value) {
+	public function value_to_html($template) {
 		
 		// get values
 		$value = $this->get_value();
@@ -408,7 +377,7 @@ class Field extends Object {
 				$result = $db->query("SELECT value FROM defaults WHERE id=$defaults");
 				list($checked_value) = $result->fetch_array(MYSQL_NUM);
 			} else {
-				$checked_value = $value;
+				$checked_value = nl2br($value);
 			}
 		}
 		

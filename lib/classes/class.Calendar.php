@@ -254,7 +254,7 @@ class Calendar extends Page {
 					'shortname' => parent::lang('class.Calendar#details_to_html#data#shortname').$this->get_shortname(),
 					'date' => parent::lang('class.Calendar#details_to_html#data#date').$this->get_date('d.m.Y'),
 					'type' => parent::lang('class.Calendar#details_to_html#data#type').$this->return_type('translated'),
-					'content' => parent::lang('class.Calendar#details_to_html#data#content').$this->get_content(),
+					'content' => parent::lang('class.Calendar#details_to_html#data#content').nl2br($this->get_content()),
 					'rights' => parent::lang('class.Calendar#details_to_html#data#rights').$rights_string
 		);
 		

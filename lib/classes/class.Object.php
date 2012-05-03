@@ -115,10 +115,15 @@ class Object {
 	public function callback_check_date($args) {
 		
 		// check values
-		if($args['day'] == 0 || $args['month'] == 0 || $args['year'] == 0) {
+		if(!preg_match('/^\d\d\d\d-\d\d-\d\d$/',$args)) {
 			return false;
 		} else {
-			return checkdate($args['month'],$args['day'],$args['year']);
+			
+			// get date-parts
+			$day = date('d',strtotime($args));
+			$month = date('m',strtotime($args));
+			$year = date('Y',strtotime($args));
+			return checkdate($month,$day,$year);
 		}
 	}
 	

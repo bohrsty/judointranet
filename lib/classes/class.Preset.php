@@ -139,23 +139,6 @@ class Preset extends Object {
 	
 	
 	/**
-	 * return_fields returns the value of $fields
-	 * 
-	 * @return array array containing the field-objects
-	 */
-	public function return_fields() {
-		
-		// return
-		return $this->get_fields();
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
 	 * read_field_values reads the value of each attached field
 	 */
 	public function read_field_values() {

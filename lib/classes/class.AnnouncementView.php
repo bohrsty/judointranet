@@ -252,7 +252,7 @@ class AnnouncementView extends PageView {
 					$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'));
 					
 					// get fields
-					$fields = $preset->return_fields();
+					$fields = $preset->get_fields();
 					
 					// formular
 					$form = new HTML_QuickForm2(
@@ -264,24 +264,17 @@ class AnnouncementView extends PageView {
 											)
 										);
 					
-					// get dates (now)
-					$now_year = (int) date('Y');
-					$now_month = (int) date('m');
-					$now_day = (int) date('d');
-					
 					// get fieldtype "date" for values
-					$datevalues = array();
+					$datevalue = array();
 					foreach($fields as $field) {
 						
 						// check type
 						if($field->get_type() == 'date') {
-							$datevalues['calendar-'.$field->get_id()]['day'] = $now_day;
-							$datevalues['calendar-'.$field->get_id()]['month'] = $now_month;
-							$datevalues['calendar-'.$field->get_id()]['year'] = $now_year; 
+							$datevalue['calendar-'.$field->get_id()] = date('Y-m-d'); 
 						}
 					}
 					
-					$form->addDataSource(new HTML_QuickForm2_DataSource_Array($datevalues));
+					$form->addDataSource(new HTML_QuickForm2_DataSource_Array($datevalue));
 					
 					// renderer
 					$renderer = HTML_QuickForm2_Renderer::factory('default');
@@ -314,7 +307,7 @@ class AnnouncementView extends PageView {
 							$field->write_db('insert');
 							
 							// return field and value as HTML
-							$return .= $field->value_to_html($p,$data[$field->get_table().'-'.$field->get_id()]);
+							$return .= $field->value_to_html($p);
 						}
 						
 					} else {
@@ -383,7 +376,7 @@ class AnnouncementView extends PageView {
 					$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'));
 					
 					// get fields
-					$fields = $preset->return_fields();
+					$fields = $preset->get_fields();
 					
 					// formular
 					$form = new HTML_QuickForm2(
@@ -404,9 +397,7 @@ class AnnouncementView extends PageView {
 						
 						// check type
 						if($field->get_type() == 'date') {
-							$datasource['calendar-'.$field->get_id()]['day'] = (int) date('d',strtotime($field->get_value()));
-							$datasource['calendar-'.$field->get_id()]['month'] = (int) date('m',strtotime($field->get_value()));
-							$datasource['calendar-'.$field->get_id()]['year'] = (int) date('Y',strtotime($field->get_value()));
+							$datasource['calendar-'.$field->get_id()]= $field->get_value();
 						} elseif($field->get_type() == 'text') {
 							
 							// check defaults
@@ -453,7 +444,7 @@ class AnnouncementView extends PageView {
 							$field->write_db('update');
 							
 							// return field and value as HTML
-							$return .= $field->value_to_html($p,$data[$field->get_table().'-'.$field->get_id()]);
+							$return .= $field->value_to_html($p);
 						}
 						
 					} else {
@@ -561,7 +552,7 @@ class AnnouncementView extends PageView {
 						$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'));
 						
 						// get fields
-						$fields = $preset->return_fields();
+						$fields = $preset->get_fields();
 						
 						// delete values of the fields
 						if(Calendar::check_ann_value($calendar->get_id(),$calendar->get_preset_id()) === true) {

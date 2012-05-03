@@ -734,7 +734,7 @@ class InventoryView extends PageView {
 				$preset = $inventory->get_preset();
 				
 				// get fields
-				$fields = $preset->return_fields();
+				$fields = $preset->get_fields();
 				
 				// add headline
 				$return .= $hx->parse(array(
@@ -827,7 +827,8 @@ class InventoryView extends PageView {
 							$field_value = 0;
 						}
 						// return field and value as HTML
-						$return .= $field->value_to_html($p,$field_value);
+						$field->value($field_value);
+						$return .= $field->value_to_html($p);
 					}
 				} else {
 					$return .= $form->render($renderer);
@@ -898,7 +899,7 @@ class InventoryView extends PageView {
 				$preset = $inventory->get_preset();
 				
 				// get fields
-				$fields = $preset->return_fields();
+				$fields = $preset->get_fields();
 				
 				// add headline
 				$return .= $hx->parse(array(
@@ -989,7 +990,8 @@ class InventoryView extends PageView {
 							$field_value = 0;
 						}
 						// return field and value as HTML
-						$return .= $field->value_to_html($p,$field_value);
+						$field->value($field_value);
+						$return .= $field->value_to_html($p);
 					}
 				} else {
 					$return .= $form->render($renderer);
@@ -1037,7 +1039,7 @@ class InventoryView extends PageView {
 			$preset = $inventory->get_preset();
 			
 			// get fields
-			$fields = $preset->return_fields();
+			$fields = $preset->get_fields();
 			
 			// check owned
 			if($inventory->get_owned() == 'givento') {
@@ -1161,7 +1163,7 @@ class InventoryView extends PageView {
 			$preset = $inventory->get_preset();
 			
 			// get fields
-			$fields = $preset->return_fields();
+			$fields = $preset->get_fields();
 			
 			// get templates
 			// hx
@@ -1269,7 +1271,7 @@ class InventoryView extends PageView {
 		$preset = $inventory->get_preset();
 		
 		// get fields
-		$fields = $preset->return_fields();
+		$fields = $preset->get_fields();
 		
 		// check rights
 		if(Rights::check_rights($inventory->get_id(),'inventory')) {
@@ -1371,7 +1373,7 @@ class InventoryView extends PageView {
 							'table_id' => $movement['id'],
 							'field_id' => $field->get_id());
 					$field->read_value($data);
-					$fields_out .= $field->value_to_html($p,$field->get_value());
+					$fields_out .= $field->value_to_html($p);
 				}
 				$movement_out .= $hx->parse(array(
 							'hx.x' => 4,
@@ -1497,7 +1499,7 @@ class InventoryView extends PageView {
 		$preset = $inventory->get_preset();
 		
 		// get fields
-		$fields = $preset->return_fields();
+		$fields = $preset->get_fields();
 		
 		// table
 		try {
