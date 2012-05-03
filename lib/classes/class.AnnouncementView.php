@@ -294,7 +294,7 @@ class AnnouncementView extends PageView {
 						$field->read_quickform(array(),true);
 						
 						// add to form
-						$form->appendChild($field->return_quickform());
+						$form->appendChild($field->get_quickform());
 					}
 					
 					// submit-button
@@ -433,7 +433,7 @@ class AnnouncementView extends PageView {
 						$field->read_quickform(array(),true);
 						
 						// add to form
-						$form->appendChild($field->return_quickform());
+						$form->appendChild($field->get_quickform());
 					}
 					
 					// submit-button

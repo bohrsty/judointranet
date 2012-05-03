@@ -783,7 +783,7 @@ class InventoryView extends PageView {
 					$field->read_quickform();
 					
 					// add to form
-					$form->appendChild($field->return_quickform());
+					$form->appendChild($field->get_quickform());
 				}
 				
 				// submit-button
@@ -949,7 +949,7 @@ class InventoryView extends PageView {
 					}
 					
 					// add to form
-					$form->appendChild($field->return_quickform());
+					$form->appendChild($field->get_quickform());
 				}
 				
 				// submit-button

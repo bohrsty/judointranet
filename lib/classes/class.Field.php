@@ -259,21 +259,6 @@ class Field extends Object {
 	
 	
 	/**
-	 * return_quickform returns the value of $quickform
-	 * 
-	 * @return object the value of $quickform
-	 */
-	public function return_quickform() {
-		
-		return $this->get_quickform();
-	}
-	
-	
-	
-	
-	
-	
-	/**
 	 * read_value reads the actual value from the db
 	 * 
 	 * @param array $data values (table, table_id, field_id) can override the instancevariables
