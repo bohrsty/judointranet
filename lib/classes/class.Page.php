@@ -15,16 +15,16 @@
 	/*
 	 * getter/setter
 	 */
-	protected function get_id(){
+	public function get_id(){
 		return $this->id;
 	}
-	protected function set_id($id) {
+	public function set_id($id) {
 		$this->id = $id;
 	}
-	protected function get_rights(){
+	public function get_rights(){
 		return $this->rights;
 	}
-	protected function set_rights($rights) {
+	public function set_rights($rights) {
 		$this->rights = $rights;
 	}
 	
@@ -41,14 +41,6 @@
 	/*
 	 * methods
 	 */
-	/**
-	 * return_rights returns the value of $rights
-	 * 
-	 * @return object value of $rights
-	 */
-	public function return_rights() {
-		return $this->get_rights();
-	}
  	
  	
  }

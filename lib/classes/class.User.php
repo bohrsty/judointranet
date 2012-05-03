@@ -19,40 +19,59 @@ class User extends Object {
 	/*
 	 * getter/setter
 	 */
-	private function get_id(){
+	public function get_id(){
 		return $this->id;
 	}
-	private function set_id($id) {
+	public function set_id($id) {
 		$this->id = $id;
 	}
-	private function get_groups(){
+	public function get_groups(){
 		return $this->groups;
 	}
-	private function set_groups($groups) {
+	public function set_groups($groups) {
 		$this->groups = $groups;
 	}
-	private function get_loggedin(){
+	public function get_loggedin(){
 		return $this->loggedin;
 	}
-	private function set_loggedin($loggedin) {
+	public function set_loggedin($loggedin) {
 		$this->loggedin = $loggedin;
 	}
-	private function get_lang(){
+	public function get_lang(){
 		return $this->lang;
 	}
-	private function set_lang($lang) {
+	public function set_lang($lang) {
 		$this->lang = $lang;
 	}
-	private function get_login_message(){
+	public function get_login_message(){
 		return $this->login_message;
 	}
-	private function set_login_message($login_message) {
+	public function set_login_message($login_message) {
 		$this->login_message = $login_message;
 	}
-	private function get_userinfo(){
-		return $this->userinfo;
+	public function get_userinfo($name){
+		
+		// check name
+		if($name == '') {
+			return $this->userinfo;
+		} else {
+			// check if id
+			if($name == 'id') {
+				return $this->get_id();
+			} else {
+				
+				// get info
+				$info = $this->userinfo;
+				// check if index exists
+				if(isset($info[$name])) {
+					return $info[$name];
+				} else{
+					return false;
+				}
+			}
+		}
 	}
-	private function set_userinfo($userinfo) {
+	public function set_userinfo($userinfo) {
 		$this->userinfo = $userinfo;
 	}
 	
@@ -200,40 +219,6 @@ class User extends Object {
 	
 	
 	/**
-	 * return_lang sets the language of this user
-	 * 
-	 * @return sting string representing the actual language of this user
-	 */
-	public function return_lang() {
-		
-		// retur  language
-		return $this->get_lang();
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * loggedin returns the loginstatus of the user
-	 * 
-	 * @return bool returns true if loggedin, false if not
-	 */
-	public function loggedin() {
-		
-		// return status
-		return $this->get_loggedin();
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
 	 * logout logs the user out and sets all properties back to public access,
 	 * returns logout-message
 	 * 
@@ -353,67 +338,6 @@ class User extends Object {
 		// set loginstatus
 		$this->set_loggedin($loggedin);
 		
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * put_login_message sets the login message from external
-	 * 
-	 * @param string $login_message string to set as loginmessage
-	 * @return void
-	 */
-	public function put_login_message($login_message) {
-		$this->set_login_message($login_message);
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * return_login_message returns the login message to external
-	 * 
-	 * @return string actual loginmessage as string
-	 */
-	public function return_login_message() {
-		return $this->get_login_message();
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * return_userinfo returns the asked info from $userinfo
-	 * 
-	 * @param string $name name of the info to be returned
-	 * @return string asked userinfo, if exists, false otherwise
-	 */
-	public function return_userinfo($name) {
-		
-		// check if id
-		if($name == 'id') {
-			return $this->get_id();
-		} else {
-			
-			// get info
-			$info = $this->get_userinfo();
-			// check if index exists
-			if(isset($info[$name])) {
-				return $info[$name];
-			} else{
-				return false;
-			}
-		}
 	}
 	
 	

@@ -25,10 +25,10 @@ class Object {
 		}
 		
 		// set default-time-zone
-		date_default_timezone_set($_SESSION['GC']->return_config('default_time_zone'));
+		date_default_timezone_set($_SESSION['GC']->get_config('default_time_zone'));
 		
 		// set locale
-		setlocale(LC_ALL, $_SESSION['GC']->return_config('locale'));
+		setlocale(LC_ALL, $_SESSION['GC']->get_config('locale'));
 	}
 	
 	/*
@@ -86,10 +86,10 @@ class Object {
 		$i = explode('#',$string,4);
 		
 		// import lang-file
-		if(is_file('cnf/lang/lang.'.$_SESSION['user']->return_lang().'.php')) {
-			include('cnf/lang/lang.'.$_SESSION['user']->return_lang().'.php');
+		if(is_file('cnf/lang/lang.'.$_SESSION['user']->get_lang().'.php')) {
+			include('cnf/lang/lang.'.$_SESSION['user']->get_lang().'.php');
 		} else {
-			return '[language "'.$_SESSION['user']->return_lang().'" not found]';
+			return '[language "'.$_SESSION['user']->get_lang().'" not found]';
 		}
 		
 		// check if is translated

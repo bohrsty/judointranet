@@ -23,52 +23,52 @@ class Field extends Object {
 	/*
 	 * getter/setter
 	 */
-	private function get_id(){
+	public function get_id(){
 		return $this->id;
 	}
-	private function set_id($id) {
+	public function set_id($id) {
 		$this->id = $id;
 	}
-	private function get_name(){
+	public function get_name(){
 		return $this->name;
 	}
-	private function set_name($name) {
+	public function set_name($name) {
 		$this->name = $name;
 	}
-	private function get_type(){
+	public function get_type(){
 		return $this->type;
 	}
-	private function set_type($type) {
+	public function set_type($type) {
 		$this->type = $type;
 	}
-	private function get_quickform(){
+	public function get_quickform(){
 		return $this->quickform;
 	}
-	private function set_quickform($quickform) {
+	public function set_quickform($quickform) {
 		$this->quickform = $quickform;
 	}
-	private function get_value(){
+	public function get_value(){
 		return $this->value;
 	}
-	private function set_value($value) {
+	public function set_value($value) {
 		$this->value = $value;
 	}
-	private function get_table(){
+	public function get_table(){
 		return $this->table;
 	}
-	private function set_table($table) {
+	public function set_table($table) {
 		$this->table = $table;
 	}
-	private function get_table_id(){
+	public function get_table_id(){
 		return $this->table_id;
 	}
-	private function set_table_id($table_id) {
+	public function set_table_id($table_id) {
 		$this->table_id = $table_id;
 	}
-	private function get_required(){
+	public function get_required(){
 		return $this->required;
 	}
-	private function set_required($required) {
+	public function set_required($required) {
 		$this->required = $required;
 	}
 	public function get_category(){
@@ -195,8 +195,8 @@ class Field extends Object {
 				}
 				$element->addRule(
 					'regex',
-					parent::lang('class.Field#element#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('textarea.desc').']',
-					$_SESSION['GC']->return_config('textarea.regexp'));
+					parent::lang('class.Field#element#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('textarea.desc').']',
+					$_SESSION['GC']->get_config('textarea.regexp'));
 			}
 		} elseif($this->get_type() == 'date') {
 			
@@ -320,81 +320,6 @@ class Field extends Object {
 		// set
 		$this->set_value($value);
 		$this->set_defaults($defaults);
-	}
-	
-	
-	
-	
-	
-	
-	/**
-	 * return_value returns the value of $value
-	 * 
-	 * @return string the value of $value
-	 */
-	public function return_value() {
-		
-		return $this->get_value();
-	}
-	
-	
-	
-	
-	
-	
-	/**
-	 * return_name returns the value of $name
-	 * 
-	 * @return string the value of $name
-	 */
-	public function return_name() {
-		
-		return $this->get_name();
-	}
-	
-	
-	
-	
-	
-	
-	/**
-	 * return_table returns the value of $table
-	 * 
-	 * @return string the value of $table
-	 */
-	public function return_table() {
-		
-		return $this->get_table();
-	}
-	
-	
-	
-	
-	
-	
-	/**
-	 * return_id returns the value of $id
-	 * 
-	 * @return string the value of $id
-	 */
-	public function return_id() {
-		
-		return $this->get_id();
-	}
-	
-	
-	
-	
-	
-	
-	/**
-	 * return_type returns the value of $type
-	 * 
-	 * @return string the value of $type
-	 */
-	public function return_type() {
-		
-		return $this->get_type();
 	}
 	
 	
@@ -566,106 +491,13 @@ class Field extends Object {
 	
 	
 	
-// TO BE REMOVED	
-	/**
-	 * value_to_db sets the table_id and value and stores it in db
-	 * 
-	 * @param int $table_id id of the value in $table
-	 * @param mixed $value the value of the field
-	 */
-	public function value_to_db($table_id,$value) {
-		
-		// get db-object
-		$db = Db::newDb();
-		
-		// check type
-		$checked_value = '';
-		$checked_default = 'NULL';
-		if($this->get_type() == 'date') {
-			$checked_value = date('Y-m-d',strtotime($value['year'].'-'.$value['month'].'-'.$value['day']));
-		} elseif($this->get_type() == 'text') {
-			
-			// check manual or default
-			if($value['manual'] == '') {
-				
-				// get id and last-used or defaults
-				$vtype = substr($value['defaults'],0,1);
-				$vid = (int) substr($value['defaults'],1,strlen($value['defaults'])-1);
-				
-				if($vtype == 'd') {
-					$checked_default = $vid;
-				} else {
-					
-					// get last-used-value
-					$result = $db->query("SELECT value FROM value WHERE id=$vid");
-					list($lvalue) = $result->fetch_array(MYSQL_NUM);
-					$checked_value = $lvalue;
-				}
-			} else {
-				$checked_value = $value['manual'];
-			}
-		} else {
-			$checked_value = $value;
-		}
-		
-		// set classvariables
-		$this->set_defaults($checked_default);
-		$this->set_value($checked_value);
-		
-		// prepare sql
-		$sql = "INSERT INTO value (id,table_name,table_id,field_id,value,defaults)
-				VALUES (NULL,'".$this->get_table()."',".$this->get_table_id().",".$this->get_id().",'".$this->get_value()."',".$this->get_defaults();
-		
-		// execute
-//		$db->query($sql);
-	}
 	
-	
-	
-	
-	
-// TO BE REMOVED	
-	/**
-	 * value_update_db sets the table_id and value and stores it in db
-	 * 
-	 * @param int $table_id id of the value in $table
-	 * @param mixed $value the value of the field
-	 */
-	public function value_update_db($table_id,$value) {
-		
-		// check type
-		$checked_value = '';
-		if($this->get_type() == 'date') {
-			$checked_value = date('Y-m-d',strtotime($value['year'].'-'.$value['month'].'-'.$value['day']));
-		} else {
-			$checked_value = $value;
-		}
-		
-		// get db-object
-		$db = Db::newDb();
-		
-		// prepare sql
-		$sql = "UPDATE value SET
-				value='$checked_value'
-				WHERE field_id = ".$this->get_id()."
-				AND table_id = $table_id
-				AND table_name = '".$this->get_table()."'";
-		
-		// execute
-		$db->query($sql);
-	}
-	
-	
-	
-	
-	
-// REMOVE PARAM	
 	/**
 	 * delete_value deletes the value in db
 	 * 
 	 * @param int $table_id id of the value in $table
 	 */
-	public function delete_value($table_id) {
+	public function delete_value() {
 		
 		// get db-object
 		$db = Db::newDb();

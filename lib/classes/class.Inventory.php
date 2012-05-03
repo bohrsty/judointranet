@@ -20,46 +20,46 @@ class Inventory extends Object {
 	/*
 	 * getter/setter
 	 */
-	private function get_id(){
+	public function get_id(){
 		return $this->id;
 	}
-	private function set_id($id) {
+	public function set_id($id) {
 		$this->id = $id;
 	}
-	private function get_inventory_no(){
+	public function get_inventory_no(){
 		return $this->inventory_no;
 	}
-	private function set_inventory_no($inventory_no) {
+	public function set_inventory_no($inventory_no) {
 		$this->inventory_no = $inventory_no;
 	}
-	private function get_name(){
+	public function get_name(){
 		return $this->name;
 	}
-	private function set_name($name) {
+	public function set_name($name) {
 		$this->name = $name;
 	}
-	private function get_serial_no(){
+	public function get_serial_no(){
 		return $this->serial_no;
 	}
-	private function set_serial_no($serial_no) {
+	public function set_serial_no($serial_no) {
 		$this->serial_no = $serial_no;
 	}
-	private function get_preset(){
+	public function get_preset(){
 		return $this->preset;
 	}
-	private function set_preset($preset) {
+	public function set_preset($preset) {
 		$this->preset = $preset;
 	}
-	private function get_valid(){
+	public function get_valid(){
 		return $this->valid;
 	}
-	private function set_valid($valid) {
+	public function set_valid($valid) {
 		$this->valid = $valid;
 	}
-	private function get_owned(){
+	public function get_owned(){
 		return $this->owned;
 	}
-	private function set_owned($owned) {
+	public function set_owned($owned) {
 		$this->owned = $owned;
 	}
 	
@@ -141,102 +141,6 @@ class Inventory extends Object {
 		
 		// return
 		return $return;
-	}
-	
-	
-	
-	
-	
-	
-	/**
-	 * return_id returns the value of $id
-	 * 
-	 * @return int the id of this object
-	 */
-	public function return_id() {
-		
-		// return
-		return $this->get_id();
-	}
-	
-	
-	
-	
-	
-	
-	/**
-	 * return_preset returns the value of $preset
-	 * 
-	 * @return object the preset-object attached to this inventory
-	 */
-	public function return_preset() {
-		
-		// return
-		return $this->get_preset();
-	}
-	
-	
-	
-	
-	
-	
-	/**
-	 * return_name returns the value of $name
-	 * 
-	 * @return string the name of this entry
-	 */
-	public function return_name() {
-		
-		// return
-		return $this->get_name();
-	}
-	
-	
-	
-	
-	
-	
-	/**
-	 * return_valid returns the value of $valid
-	 * 
-	 * @return int the info, if this inventory is activ
-	 */
-	public function return_valid() {
-		
-		// return
-		return $this->get_valid();
-	}
-	
-	
-	
-	
-	
-	
-	/**
-	 * return_inventory_no returns the value of $inventory_no
-	 * 
-	 * @return string the inventory-no of this entry
-	 */
-	public function return_inventory_no() {
-		
-		// return
-		return $this->get_inventory_no();
-	}
-	
-	
-	
-	
-	
-	
-	/**
-	 * return_owned returns the value of $owned
-	 * 
-	 * @return int the id of the user this inventory is owned by
-	 */
-	public function return_owned() {
-		
-		// return
-		return $this->get_owned();
 	}
 	
 	
@@ -355,14 +259,14 @@ class Inventory extends Object {
 		$db = Db::newDb();
 		
 		// get last movements
-		$id = Inventory::movement_last_row($db,$this->return_id(),'id');
+		$id = Inventory::movement_last_row($db,$this->get_id(),'id');
 		
 		// prepare sql-statement
 		$sql = "SELECT v.value
 				FROM value AS v
 				WHERE table_name = 'inventory_movement'
 				AND table_id = ".$id[0]."
-				AND field_id = ".$field->return_id();
+				AND field_id = ".$field->get_id();
 		
 		// execute
 		$result = $db->query($sql);
@@ -395,7 +299,7 @@ class Inventory extends Object {
 		$db = Db::newDb();
 		
 		// get last movements
-		$id = Inventory::movement_last_row($db,$this->return_id(),'id',2);
+		$id = Inventory::movement_last_row($db,$this->get_id(),'id',2);
 		
 		// prepare sql-statement
 		$sql = "SELECT v.field_id,v.value

@@ -15,16 +15,16 @@ class HtmlTemplate extends Object {
 	/*
 	 * getter/setter
 	 */
-	private function get_template_file(){
+	public function get_template_file(){
 		return $this->template_file;
 	}
-	private function set_template_file($template_file) {
+	public function set_template_file($template_file) {
 		$this->template_file = $template_file;
 	}
-	private function get_template_html(){
+	public function get_template_html(){
 		return $this->template_html;
 	}
-	private function set_template_html($template_html) {
+	public function set_template_html($template_html) {
 		$this->template_html = $template_html;
 	}
 	

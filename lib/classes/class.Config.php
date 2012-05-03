@@ -15,16 +15,39 @@ class Config extends Object {
 	/*
 	 * getter/setter
 	 */
-	private function get_config(){
-		return $this->config;
+	public function get_config($name = ''){
+		
+		// check name
+		if($name == '') {
+			return $this->config;
+		} else {
+			
+			// prepare return
+			$value = false;
+			
+			// get config
+			$config = $this->config;
+			$sessionconfig = $this->sessionconfig;
+			
+			// check if $name exists
+			if(isset($config[$name])){
+				$value = $config[$name];
+			}
+			if(isset($sessionconfig[$name])) {
+				$value = $sessionconfig[$name];
+			}
+			
+			// return
+			return $value;
+		}
 	}
-	private function set_config($config) {
+	public function set_config($config) {
 		$this->config = $config;
 	}
-	private function get_sessionconfig(){
+	public function get_sessionconfig(){
 		return $this->sessionconfig;
 	}
-	private function set_sessionconfig($sessionconfig) {
+	public function set_sessionconfig($sessionconfig) {
 		$this->sessionconfig = $sessionconfig;
 	}
 	
@@ -69,40 +92,6 @@ class Config extends Object {
 		
 		// set config
 		$this->set_config($config);
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * return_config returns the configvalue for the given name
-	 * 
-	 * @param string $name name of the ask configvalue
-	 * @return mixed value for the given name or false if not set
-	 */
-	public function return_config($name) {
-		
-		// prepare return
-		$value = false;
-		
-		// get config
-		$config = $this->get_config();
-		$sessionconfig = $this->get_sessionconfig();
-		
-		// check if $name exists
-		if(isset($config[$name])){
-			$value = $config[$name];
-		}
-		if(isset($sessionconfig[$name])) {
-			$value = $sessionconfig[$name];
-		}
-		
-		// return
-		return $value;
 	}
 	
 	

@@ -274,10 +274,10 @@ class AnnouncementView extends PageView {
 					foreach($fields as $field) {
 						
 						// check type
-						if($field->return_type() == 'date') {
-							$datevalues['calendar-'.$field->return_id()]['day'] = $now_day;
-							$datevalues['calendar-'.$field->return_id()]['month'] = $now_month;
-							$datevalues['calendar-'.$field->return_id()]['year'] = $now_year; 
+						if($field->get_type() == 'date') {
+							$datevalues['calendar-'.$field->get_id()]['day'] = $now_day;
+							$datevalues['calendar-'.$field->get_id()]['month'] = $now_month;
+							$datevalues['calendar-'.$field->get_id()]['year'] = $now_year; 
 						}
 					}
 					
@@ -310,11 +310,11 @@ class AnnouncementView extends PageView {
 						foreach($fields as $field) {
 							
 							// values to db
-							$field->value($data[$field->return_table().'-'.$field->return_id()]);
+							$field->value($data[$field->get_table().'-'.$field->get_id()]);
 							$field->write_db('insert');
 							
 							// return field and value as HTML
-							$return .= $field->value_to_html($p,$data[$field->return_table().'-'.$field->return_id()]);
+							$return .= $field->value_to_html($p,$data[$field->get_table().'-'.$field->get_id()]);
 						}
 						
 					} else {
@@ -403,19 +403,19 @@ class AnnouncementView extends PageView {
 						$field->read_value();
 						
 						// check type
-						if($field->return_type() == 'date') {
-							$datasource['calendar-'.$field->return_id()]['day'] = (int) date('d',strtotime($field->return_value()));
-							$datasource['calendar-'.$field->return_id()]['month'] = (int) date('m',strtotime($field->return_value()));
-							$datasource['calendar-'.$field->return_id()]['year'] = (int) date('Y',strtotime($field->return_value()));
-						} elseif($field->return_type() == 'text') {
+						if($field->get_type() == 'date') {
+							$datasource['calendar-'.$field->get_id()]['day'] = (int) date('d',strtotime($field->get_value()));
+							$datasource['calendar-'.$field->get_id()]['month'] = (int) date('m',strtotime($field->get_value()));
+							$datasource['calendar-'.$field->get_id()]['year'] = (int) date('Y',strtotime($field->get_value()));
+						} elseif($field->get_type() == 'text') {
 							
 							// check defaults
-							$datasource['calendar-'.$field->return_id()]['manual'] = '';
-							$datasource['calendar-'.$field->return_id()]['defaults'] = 0;
-							if($field->return_value() == '') {
-								$datasource['calendar-'.$field->return_id()]['defaults'] = 'd'.$field->get_defaults();
+							$datasource['calendar-'.$field->get_id()]['manual'] = '';
+							$datasource['calendar-'.$field->get_id()]['defaults'] = 0;
+							if($field->get_value() == '') {
+								$datasource['calendar-'.$field->get_id()]['defaults'] = 'd'.$field->get_defaults();
 							} else {
-								$datasource['calendar-'.$field->return_id()]['manual'] = $field->return_value();
+								$datasource['calendar-'.$field->get_id()]['manual'] = $field->get_value();
 							}
 						}
 					}
@@ -449,11 +449,11 @@ class AnnouncementView extends PageView {
 						foreach($fields as $field) {
 							
 							// values to db
-							$field->value($data[$field->return_table().'-'.$field->return_id()]);
+							$field->value($data[$field->get_table().'-'.$field->get_id()]);
 							$field->write_db('update');
 							
 							// return field and value as HTML
-							$return .= $field->value_to_html($p,$data[$field->return_table().'-'.$field->return_id()]);
+							$return .= $field->value_to_html($p,$data[$field->get_table().'-'.$field->get_id()]);
 						}
 						
 					} else {
@@ -564,13 +564,12 @@ class AnnouncementView extends PageView {
 						$fields = $preset->return_fields();
 						
 						// delete values of the fields
-						if(Calendar::check_ann_value($calendar->return_id(),$calendar->return_preset_id()) === true) {
+						if(Calendar::check_ann_value($calendar->get_id(),$calendar->get_preset_id()) === true) {
 							
 							foreach($fields as $field) {
 								
 								// delete value
-// REMOVE PARAM
-								$field->delete_value($this->get('cid'));
+								$field->delete_value();
 							}
 						}
 						

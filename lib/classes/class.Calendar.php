@@ -20,46 +20,52 @@ class Calendar extends Page {
 	/*
 	 * getter/setter
 	 */
-	private function get_name(){
+	public function get_name(){
 		return $this->name;
 	}
-	private function set_name($name) {
+	public function set_name($name) {
 		$this->name = $name;
 	}
-	private function get_shortname(){
+	public function get_shortname(){
 		return $this->shortname;
 	}
-	private function set_shortname($shortname) {
+	public function set_shortname($shortname) {
 		$this->shortname = $shortname;
 	}
-	private function get_date(){
-		return $this->date;
+	public function get_date($format = ''){
+		
+		// check if format given
+		if($format != '') {
+			return date($format,strtotime($this->date));
+		} else {
+			return $this->date;
+		}
 	}
-	private function set_date($date) {
+	public function set_date($date) {
 		$this->date = $date;
 	}
-	private function get_type(){
+	public function get_type(){
 		return $this->type;
 	}
-	private function set_type($type) {
+	public function set_type($type) {
 		$this->type = $type;
 	}
-	private function get_content(){
+	public function get_content(){
 		return $this->content;
 	}
-	private function set_content($content) {
+	public function set_content($content) {
 		$this->content = $content;
 	}
-	private function get_preset_id(){
+	public function get_preset_id(){
 		return $this->preset_id;
 	}
-	private function set_preset_id($preset_id) {
+	public function set_preset_id($preset_id) {
 		$this->preset_id = $preset_id;
 	}
-	private function get_valid(){
+	public function get_valid(){
 		return $this->valid;
 	}
-	private function set_valid($valid) {
+	public function set_valid($valid) {
 		$this->valid = $valid;
 	}
 	
@@ -137,97 +143,6 @@ class Calendar extends Page {
 		
 		// close db
 		$db->close();
-	}
-	
-	
-	
-	
-	/**
-	 * return_date returns the value of $date formatted with $format if given
-	 * 
-	 * @param string $format format to use with date()
-	 * @return string value of $date
-	 */
-	public function return_date($format='') {
-		
-		// check if format given
-		if($format != '') {
-			return date($format,strtotime($this->get_date()));
-		} else {
-			return $this->get_date();
-		}
-	}
-	
-	
-	
-	
-	/**
-	 * return_id returns the calendar-id
-	 * 
-	 * @return int value of $id
-	 */
-	public function return_id() {
-		return $this->get_id();
-	}
-	
-	
-	
-	
-	/**
-	 * return_name returns the value of $name
-	 * 
-	 * @return string value of $name
-	 */
-	public function return_name() {
-		return $this->get_name();
-	}
-	
-	
-	
-	
-	/**
-	 * return_shortname returns the value of $shortname
-	 * 
-	 * @return string value of $shortname
-	 */
-	public function return_shortname() {
-		return $this->get_shortname();
-	}
-	
-	
-	
-	
-	/**
-	 * return_content returns the value of $content
-	 * 
-	 * @return string value of $content
-	 */
-	public function return_content() {
-		return $this->get_content();
-	}
-	
-	
-	
-	
-	/**
-	 * return_valid returns the value of $valid
-	 * 
-	 * @return int value of $valid
-	 */
-	public function return_valid() {
-		return $this->get_valid();
-	}
-	
-	
-	
-	
-	/**
-	 * return_preset_id returns the value of $preset_id
-	 * 
-	 * @return int value of $preset_id
-	 */
-	public function return_preset_id() {
-		return $this->get_preset_id();
 	}
 	
 	
@@ -325,7 +240,7 @@ class Calendar extends Page {
 		
 		// prepare rights
 		$groups = $_SESSION['user']->return_all_groups('admin');
-		$rights = $this->get_rights()->return_rights();
+		$rights = $this->get_rights()->get_rights();
 		$rights_string = '';
 
 		foreach($rights as $right) {
@@ -337,7 +252,7 @@ class Calendar extends Page {
 		$data = array(
 					'name' => parent::lang('class.Calendar#details_to_html#data#name').$this->get_name(),
 					'shortname' => parent::lang('class.Calendar#details_to_html#data#shortname').$this->get_shortname(),
-					'date' => parent::lang('class.Calendar#details_to_html#data#date').$this->return_date('d.m.Y'),
+					'date' => parent::lang('class.Calendar#details_to_html#data#date').$this->get_date('d.m.Y'),
 					'type' => parent::lang('class.Calendar#details_to_html#data#type').$this->return_type('translated'),
 					'content' => parent::lang('class.Calendar#details_to_html#data#content').$this->get_content(),
 					'rights' => parent::lang('class.Calendar#details_to_html#data#rights').$rights_string

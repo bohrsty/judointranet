@@ -57,7 +57,7 @@ class MainView extends PageView {
 					);
 		
 		// login or logout
-		if($_SESSION['user']->loggedin()) {
+		if($_SESSION['user']->get_loggedin()) {
 			
 			// add logout
 			array_unshift($navi['secondlevel'],
@@ -259,7 +259,7 @@ class MainView extends PageView {
 		} else {
 			
 			// set message and form
-			$contents['p.message'] = parent::lang($_SESSION['user']->return_login_message());
+			$contents['p.message'] = parent::lang($_SESSION['user']->get_login_message());
 			$contents['p.form'] = $form->render($renderer);
 		}
 		
@@ -283,12 +283,12 @@ class MainView extends PageView {
 			if($user['active'] == 0) {
 				
 				// set message and return false
-				$_SESSION['user']->put_login_message('class.MainView#callback_check_login#message#UserNotActive');
+				$_SESSION['user']->set_login_message('class.MainView#callback_check_login#message#UserNotActive');
 				return false;
 			} elseif($user['password'] != md5($args['password'])) {
 				
 				// set message and return false
-				$_SESSION['user']->put_login_message('class.MainView#callback_check_login#message#WrongPassword');
+				$_SESSION['user']->set_login_message('class.MainView#callback_check_login#message#WrongPassword');
 				return false;
 			} else {
 				
@@ -298,7 +298,7 @@ class MainView extends PageView {
 		} else {
 			
 			// set message and return false
-			$_SESSION['user']->put_login_message('class.MainView#callback_check_login#message#UserNotExist');
+			$_SESSION['user']->set_login_message('class.MainView#callback_check_login#message#UserNotExist');
 			return false;
 		}
 	}

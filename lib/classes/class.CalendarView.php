@@ -286,7 +286,7 @@ class CalendarView extends PageView {
 			// check if entry is in sort
 			foreach($calendars as $id => $entry) {
 				
-				if(in_array($this->get('sort'),$entry->return_rights()->return_rights())) {
+				if(in_array($this->get('sort'),$entry->get_rights()->get_rights())) {
 					$entries[$id] = $entry;
 				}
 			}
@@ -348,7 +348,7 @@ class CalendarView extends PageView {
 				'th.content' => parent::lang('class.CalendarView#listall#TH#name')
 			));
 		// if loggedin show admin links
-		if($_SESSION['user']->loggedin() === true) {
+		if($_SESSION['user']->get_loggedin() === true) {
 			$th_out .= $th->parse(array( // admin
 					'th.params' => ' class="admin"',
 					'th.content' => parent::lang('class.CalendarView#listall#TH#admin')
@@ -366,10 +366,10 @@ class CalendarView extends PageView {
 		foreach($entries as $no => $entry) {
 			
 			// check if valid
-			if($entry->return_valid() == 1) {
+			if($entry->get_valid() == 1) {
 					
 				// check timefrom and timeto
-				if($entry->return_date('U') > $timefrom && $entry->return_date('U') <= $timeto) {
+				if($entry->get_date('U') > $timefrom && $entry->get_date('U') <= $timeto) {
 					
 					// odd or even
 					if($counter%2 == 0) {
@@ -383,15 +383,15 @@ class CalendarView extends PageView {
 					// prepare name-link
 					$a_out = $a->parse(array(
 							'a.params' => '',
-							'a.href' => 'calendar.php?id=details&cid='.$entry->return_id(),
-							'a.title' => $entry->return_name(),
-							'a.content' => $entry->return_name()
+							'a.href' => 'calendar.php?id=details&cid='.$entry->get_id(),
+							'a.title' => $entry->get_name(),
+							'a.content' => $entry->get_name()
 						));
 					
 					// prepare td
 					$td_out = $td->parse(array( // date
 							'td.params' => ' class="date"',
-							'td.content' => $entry->return_date('d.m.Y')
+							'td.content' => $entry->get_date('d.m.Y')
 						));
 					$td_out .= $td->parse(array( // name
 							'td.params' => '',
@@ -400,7 +400,7 @@ class CalendarView extends PageView {
 						
 					// add admin
 					// get intersection of user-groups and rights
-					$intersect = array_intersect(array_keys($_SESSION['user']->return_all_groups()),$entry->return_rights()->return_rights());
+					$intersect = array_intersect(array_keys($_SESSION['user']->return_all_groups()),$entry->get_rights()->get_rights());
 					$admin = false;
 					// check if $intersect has values other than 0
 					foreach($intersect as $num => $igroup) {
@@ -424,7 +424,7 @@ class CalendarView extends PageView {
 						// prepare edit-link
 						$a_out = $a->parse(array(
 								'a.params' => '',
-								'a.href' => 'calendar.php?id=edit&cid='.$entry->return_id(),
+								'a.href' => 'calendar.php?id=edit&cid='.$entry->get_id(),
 								'a.title' => parent::lang('class.CalendarView#listall#title#edit'),
 								'a.content' => $img_out
 							));
@@ -440,7 +440,7 @@ class CalendarView extends PageView {
 						// prepare delete-link
 						$a_out .= $a->parse(array(
 								'a.params' => '',
-								'a.href' => 'calendar.php?id=delete&cid='.$entry->return_id(),
+								'a.href' => 'calendar.php?id=delete&cid='.$entry->get_id(),
 								'a.title' => parent::lang('class.CalendarView#listall#title#delete'),
 								'a.content' => $img_out
 							));
@@ -450,17 +450,17 @@ class CalendarView extends PageView {
 								'div.params' => ' class="admin-links"',
 								'div.content' => $a_out
 							));
-						if($entry->return_preset_id() == 0) {
+						if($entry->get_preset_id() == 0) {
 							// create form
 							$div_out .= $this->read_preset_form($entry);
 						} 
 						
 						// if announcement != 0 edit announcement
-						if($entry->return_preset_id() != 0) {
+						if($entry->get_preset_id() != 0) {
 							
 							// get new or edit
 							$action = '';
-							if(Calendar::check_ann_value($entry->return_id(),$entry->return_preset_id()) === true) {
+							if(Calendar::check_ann_value($entry->get_id(),$entry->get_preset_id()) === true) {
 								$action = 'edit';
 							} else {
 								$action = 'new';
@@ -477,7 +477,7 @@ class CalendarView extends PageView {
 							// prepare announcement-edit-link
 							$a_out = $a->parse(array(
 									'a.params' => '',
-									'a.href' => 'announcement.php?id='.$action.'&cid='.$entry->return_id().'&pid='.$entry->return_preset_id(),
+									'a.href' => 'announcement.php?id='.$action.'&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
 									'a.title' => parent::lang('class.CalendarView#listall#title#AnnEdit'),
 									'a.content' => $img_out
 								));
@@ -492,7 +492,7 @@ class CalendarView extends PageView {
 							// prepare announcement-delete-link
 							$a_out .= $a->parse(array(
 									'a.params' => '',
-									'a.href' => 'announcement.php?id=delete&cid='.$entry->return_id().'&pid='.$entry->return_preset_id(),
+									'a.href' => 'announcement.php?id=delete&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
 									'a.title' => parent::lang('class.CalendarView#listall#title#AnnDelete'),
 									'a.content' => $img_out
 								));
@@ -775,8 +775,8 @@ class CalendarView extends PageView {
 		$name->addRule('required',parent::lang('class.CalendarView#entry#rule#required.name'));
 		$name->addRule(
 					'regex',
-					parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('name.desc').']',
-					$_SESSION['GC']->return_config('name.regexp'));
+					parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('name.desc').']',
+					$_SESSION['GC']->get_config('name.regexp'));
 		
 		
 		// shortname
@@ -784,8 +784,8 @@ class CalendarView extends PageView {
 		$shortname->setLabel(parent::lang('class.CalendarView#entry#form#shortname').':');
 		$shortname->addRule(
 						'regex',
-						parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('name.desc').']',
-						$_SESSION['GC']->return_config('name.regexp'));
+						parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('name.desc').']',
+						$_SESSION['GC']->get_config('name.regexp'));
 	
 	
 		// type
@@ -802,8 +802,8 @@ class CalendarView extends PageView {
 		$content->setLabel(parent::lang('class.CalendarView#entry#form#entry_content').':');
 		$content->addRule(
 						'regex',
-						parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('textarea.desc').']',
-						$_SESSION['GC']->return_config('textarea.regexp'));
+						parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('textarea.desc').']',
+						$_SESSION['GC']->get_config('textarea.regexp'));
 		
 		
 		// select rights
@@ -916,13 +916,13 @@ class CalendarView extends PageView {
 	public function callback_compare_calendars($first,$second) {
 	
 		// compare dates
-		if($first->return_date() < $second->return_date()) {
+		if($first->get_date() < $second->get_date()) {
 			return -1;
 		}
-		if($first->return_date() == $second->return_date()) {
+		if($first->get_date() == $second->get_date()) {
 			return 0;
 		}
-		if($first->return_date() > $second->return_date()) {
+		if($first->get_date() > $second->get_date()) {
 			return 1;
 		}
 	}
@@ -1002,15 +1002,15 @@ class CalendarView extends PageView {
 			$year_max = $now_year + 3;
 			$form->addDataSource(new HTML_QuickForm2_DataSource_Array(array(
 					'dateGroup' => array(
-						'day' => (int) $calendar->return_date('d'),
-						'month' => (int) $calendar->return_date('m'),
-						'year' => (int) $calendar->return_date('Y')
+						'day' => (int) $calendar->get_date('d'),
+						'month' => (int) $calendar->get_date('m'),
+						'year' => (int) $calendar->get_date('Y')
 					),
-					'name' => $calendar->return_name(),
-					'shortname' => $calendar->return_shortname(),
+					'name' => $calendar->get_name(),
+					'shortname' => $calendar->get_shortname(),
 					'type' => $calendar->return_type(),
-					'entry_content' => $calendar->return_content(),
-					'rights' => $calendar->return_rights()->return_rights()
+					'entry_content' => $calendar->get_content(),
+					'rights' => $calendar->get_rights()->get_rights()
 				)));
 			
 			// renderer
@@ -1056,8 +1056,8 @@ class CalendarView extends PageView {
 			$name->addRule('required',parent::lang('class.CalendarView#entry#rule#required.name'));
 			$name->addRule(
 						'regex',
-						parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('name.desc').']',
-						$_SESSION['GC']->return_config('name.regexp'));
+						parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('name.desc').']',
+						$_SESSION['GC']->get_config('name.regexp'));
 			
 			
 			// shortname
@@ -1065,8 +1065,8 @@ class CalendarView extends PageView {
 			$shortname->setLabel(parent::lang('class.CalendarView#entry#form#shortname').':');
 			$shortname->addRule(
 							'regex',
-							parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('name.desc').']',
-							$_SESSION['GC']->return_config('name.regexp'));
+							parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('name.desc').']',
+							$_SESSION['GC']->get_config('name.regexp'));
 		
 		
 			// type
@@ -1083,8 +1083,8 @@ class CalendarView extends PageView {
 			$content->setLabel(parent::lang('class.CalendarView#entry#form#entry_content').':');
 			$content->addRule(
 							'regex',
-							parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->return_config('textarea.desc').']',
-							$_SESSION['GC']->return_config('textarea.regexp'));
+							parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('textarea.desc').']',
+							$_SESSION['GC']->get_config('textarea.regexp'));
 			
 			
 			// select rights
@@ -1267,10 +1267,10 @@ class CalendarView extends PageView {
 		
 		// form-object
 		$form = new HTML_QuickForm2(
-									'choose_preset_'.$calendar->return_id(),
+									'choose_preset_'.$calendar->get_id(),
 									'post',
 									array(
-										'name' => 'choose_preset_'.$calendar->return_id(),
+										'name' => 'choose_preset_'.$calendar->get_id(),
 										'action' => 'calendar.php?id=listall'
 									)
 								);

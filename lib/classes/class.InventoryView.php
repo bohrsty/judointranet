@@ -406,7 +406,7 @@ class InventoryView extends PageView {
 		foreach($entries as $no => $entry) {
 			
 			// check if valid
-			if($entry->return_valid() == 1) {
+			if($entry->get_valid() == 1) {
 			
 				// odd or even
 				if($counter%2 == 0) {
@@ -419,7 +419,7 @@ class InventoryView extends PageView {
 				
 				// get owner and status
 				$user = new User();
-				$id = $entry->return_id();
+				$id = $entry->get_id();
 				$owner = '';
 				$status = '';
 				$owned_action = Inventory::movement_last_row($db,$id,'action');
@@ -428,23 +428,23 @@ class InventoryView extends PageView {
 					
 					// taken
 					$user->change_user($owned_user[0],false,'id');
-					$owner = $user->return_userinfo('name');
+					$owner = $user->get_userinfo('name');
 					$status = '';
 				} else {
 					
 					// given to
 					$user->change_user($owned_user[1],false,'id');
-					$owner = $user->return_userinfo('name');
+					$owner = $user->get_userinfo('name');
 					$user->change_user($owned_user[0],false,'id');
-					$status = parent::lang('class.InventoryView#listall#status#givento').' '.$user->return_userinfo('name');;
+					$status = parent::lang('class.InventoryView#listall#status#givento').' '.$user->get_userinfo('name');;
 				}
 				
 				// prepare details
 				$detail_a = $a->parse(array(
 						'a.params' => '',
-						'a.href' => 'inventory.php?id=details&did='.$entry->return_id(),
+						'a.href' => 'inventory.php?id=details&did='.$entry->get_id(),
 						'a.title' => parent::lang('class.InventoryView#listall#title#details'),
-						'a.content' => $entry->return_name()
+						'a.content' => $entry->get_name()
 					));
 				
 				// prepare td
@@ -454,7 +454,7 @@ class InventoryView extends PageView {
 					));
 				$td_out .= $td->parse(array( // number
 						'td.params' => '',
-						'td.content' => $entry->return_inventory_no()
+						'td.content' => $entry->get_inventory_no()
 					));
 				$td_out .= $td->parse(array( // owner
 						'td.params' => '',
@@ -588,7 +588,7 @@ class InventoryView extends PageView {
 				'th.content' => parent::lang('class.InventoryView#my#TH#number')
 			));
 		// if loggedin show admin links
-		if($_SESSION['user']->loggedin() === true) {
+		if($_SESSION['user']->get_loggedin() === true) {
 			$th_out .= $th->parse(array( // admin
 					'th.params' => ' class="admin"',
 					'th.content' => parent::lang('class.InventoryView#my#TH#admin')
@@ -606,7 +606,7 @@ class InventoryView extends PageView {
 		foreach($entries as $no => $entry) {
 			
 			// check if valid
-			if($entry->return_valid() == 1) {
+			if($entry->get_valid() == 1) {
 			
 				// odd or even
 				if($counter%2 == 0) {
@@ -620,9 +620,9 @@ class InventoryView extends PageView {
 				// prepare details
 				$detail_a = $a->parse(array(
 						'a.params' => '',
-						'a.href' => 'inventory.php?id=details&did='.$entry->return_id(),
+						'a.href' => 'inventory.php?id=details&did='.$entry->get_id(),
 						'a.title' => parent::lang('class.InventoryView#my#title#details'),
-						'a.content' => $entry->return_name()
+						'a.content' => $entry->get_name()
 					));
 				
 				// prepare td
@@ -632,31 +632,31 @@ class InventoryView extends PageView {
 					));
 				$td_out .= $td->parse(array( // number
 						'td.params' => '',
-						'td.content' => $entry->return_inventory_no()
+						'td.content' => $entry->get_inventory_no()
 					));
 					
 				// add admin
 				// prepare exchange-link
-				if($entry->return_owned() == 'taken') {
+				if($entry->get_owned() == 'taken') {
 					
 					$a_out = $a->parse(array(
 						'a.params' => '',
-						'a.href' => 'inventory.php?id=give&did='.$entry->return_id(),
+						'a.href' => 'inventory.php?id=give&did='.$entry->get_id(),
 						'a.title' => parent::lang('class.InventoryView#my#title#give'),
 						'a.content' => parent::lang('class.InventoryView#my#content#give')
 					));
-				} elseif($entry->return_owned() == 'givento') {
+				} elseif($entry->get_owned() == 'givento') {
 				
 					$a_out = $a->parse(array(
 						'a.params' => '',
-						'a.href' => 'inventory.php?id=cancel&did='.$entry->return_id(),
+						'a.href' => 'inventory.php?id=cancel&did='.$entry->get_id(),
 						'a.title' => parent::lang('class.InventoryView#my#title#cancel'),
 						'a.content' => parent::lang('class.InventoryView#my#content#cancel')
 					));
 				} else {
 					$a_out = $a->parse(array(
 						'a.params' => '',
-						'a.href' => 'inventory.php?id=take&did='.$entry->return_id(),
+						'a.href' => 'inventory.php?id=take&did='.$entry->get_id(),
 						'a.title' => parent::lang('class.InventoryView#my#title#take'),
 						'a.content' => parent::lang('class.InventoryView#my#content#take')
 					));
@@ -711,7 +711,7 @@ class InventoryView extends PageView {
 			$inventory = new Inventory($did);
 			
 			// check owned
-			if($inventory->return_owned() == 'taken') {
+			if($inventory->get_owned() == 'taken') {
 				
 				// get templates
 				// hx
@@ -731,7 +731,7 @@ class InventoryView extends PageView {
 				$return = '';
 				
 				// get preset
-				$preset = $inventory->return_preset();
+				$preset = $inventory->get_preset();
 				
 				// get fields
 				$fields = $preset->return_fields();
@@ -740,7 +740,7 @@ class InventoryView extends PageView {
 				$return .= $hx->parse(array(
 								'hx.x' => '2',
 								'hx.parameters' => '',
-								'hx.content' => parent::lang('class.InventoryView#give#page#headline').': '.$inventory->return_name().' ('.$inventory->return_inventory_no().')'
+								'hx.content' => parent::lang('class.InventoryView#give#page#headline').': '.$inventory->get_name().' ('.$inventory->get_inventory_no().')'
 							));
 				// add accessory info
 				$return .= $p->parse(array(
@@ -764,14 +764,14 @@ class InventoryView extends PageView {
 				// add user-selection
 				// get users
 				$users_options = array('--');
-				$users = $_SESSION['user']->return_all_users(array($_SESSION['user']->return_userinfo('username')));
+				$users = $_SESSION['user']->return_all_users(array($_SESSION['user']->get_userinfo('username')));
 				foreach($users as $user) {
 					
 					// put id and name in options-array
-					$users_options[$user->return_userinfo('username')] = $user->return_userinfo('name');
+					$users_options[$user->get_userinfo('username')] = $user->get_userinfo('name');
 				}
 				$give_to = $form->addElement('select','give_to',array());
-				$give_to->setLabel(parent::lang('class.InventoryView#give#page#objectinfo.head').$inventory->return_name().' ('.$inventory->return_inventory_no().')'.parent::lang('class.InventoryView#give#page#objectinfo.tail').':');
+				$give_to->setLabel(parent::lang('class.InventoryView#give#page#objectinfo.head').$inventory->get_name().' ('.$inventory->get_inventory_no().')'.parent::lang('class.InventoryView#give#page#objectinfo.tail').':');
 				$give_to->loadOptions($users_options);
 				$give_to->addRule('required',parent::lang('class.InventoryView#entry#rule#required.give_to'));
 				$give_to->addRule('callback',parent::lang('class.InventoryView#entry#rule#check.give_to'),array($this,'callback_check_select'));
@@ -800,7 +800,7 @@ class InventoryView extends PageView {
 					$givento_user->change_user($values['give_to'],false);
 					
 					// write to db
-					$insert_id = $this->movement_to_db('given',$inventory->return_id(),$givento_user->userid());
+					$insert_id = $this->movement_to_db('given',$inventory->get_id(),$givento_user->userid());
 					// accessory to db
 					$this->values_to_db($insert_id,$fields,$values);
 					
@@ -808,7 +808,7 @@ class InventoryView extends PageView {
 					$return = $hx->parse(array(
 								'hx.x' => '3',
 								'hx.parameters' => '',
-								'hx.content' => $inventory->return_name().' ('.$inventory->return_inventory_no().')'.parent::lang('class.InventoryView#give#page#headline.givento').$givento_user->return_userinfo('name')
+								'hx.content' => $inventory->get_name().' ('.$inventory->get_inventory_no().')'.parent::lang('class.InventoryView#give#page#headline.givento').$givento_user->get_userinfo('name')
 							));
 					
 					// accessory
@@ -821,8 +821,8 @@ class InventoryView extends PageView {
 					foreach($fields as $field) {
 						
 						// check value
-						if(isset($values['inventory-'.$field->return_id()])) {
-							$field_value = $values['inventory-'.$field->return_id()];
+						if(isset($values['inventory-'.$field->get_id()])) {
+							$field_value = $values['inventory-'.$field->get_id()];
 						} else {
 							$field_value = 0;
 						}
@@ -875,7 +875,7 @@ class InventoryView extends PageView {
 			$inventory = new Inventory($did);
 			
 			// check owned
-			if($inventory->return_owned() == 'given') {
+			if($inventory->get_owned() == 'given') {
 				
 				// get templates
 				// hx
@@ -895,7 +895,7 @@ class InventoryView extends PageView {
 				$return = '';
 				
 				// get preset
-				$preset = $inventory->return_preset();
+				$preset = $inventory->get_preset();
 				
 				// get fields
 				$fields = $preset->return_fields();
@@ -904,16 +904,16 @@ class InventoryView extends PageView {
 				$return .= $hx->parse(array(
 								'hx.x' => '2',
 								'hx.parameters' => '',
-								'hx.content' => parent::lang('class.InventoryView#take#page#headline').': '.$inventory->return_name().' ('.$inventory->return_inventory_no().')'
+								'hx.content' => parent::lang('class.InventoryView#take#page#headline').': '.$inventory->get_name().' ('.$inventory->get_inventory_no().')'
 							));
 				
 				// add take from
-				$movements = Inventory::movement_last_row($db,$inventory->return_id(),'user_id',2);
+				$movements = Inventory::movement_last_row($db,$inventory->get_id(),'user_id',2);
 				$user = new User();
 				$user->change_user($movements[1],false,'id');
 				$return .= $p->parse(array(
 								'parameters' => '',
-								'text' => parent::lang('class.InventoryView#take#page#TakeFrom').': '.$user->return_userinfo('name')
+								'text' => parent::lang('class.InventoryView#take#page#TakeFrom').': '.$user->get_userinfo('name')
 							));
 				// add accessory info
 				$return .= $p->parse(array(
@@ -938,7 +938,7 @@ class InventoryView extends PageView {
 				foreach($fields as $field) {
 					
 					// check if given
-					if($inventory->movement_last_accessories($field) === true || $field->return_type() == 'text') {
+					if($inventory->movement_last_accessories($field) === true || $field->get_type() == 'text') {
 					
 						// generate quickform
 						$field->read_quickform();
@@ -962,7 +962,7 @@ class InventoryView extends PageView {
 					$values = $form->getValue();
 					
 					// write to db
-					$insert_id = $this->movement_to_db('taken',$inventory->return_id(),$_SESSION['user']->userid());
+					$insert_id = $this->movement_to_db('taken',$inventory->get_id(),$_SESSION['user']->userid());
 					// accessory to db
 					$this->values_to_db($insert_id,$fields,$values);
 					
@@ -970,7 +970,7 @@ class InventoryView extends PageView {
 					$return = $hx->parse(array(
 								'hx.x' => '3',
 								'hx.parameters' => '',
-								'hx.content' => $inventory->return_name().' ('.$inventory->return_inventory_no().') '.parent::lang('class.InventoryView#take#page#headline.taken')
+								'hx.content' => $inventory->get_name().' ('.$inventory->get_inventory_no().') '.parent::lang('class.InventoryView#take#page#headline.taken')
 							));
 					
 					// accessory
@@ -983,8 +983,8 @@ class InventoryView extends PageView {
 					foreach($fields as $field) {
 						
 						// check value
-						if(isset($values['inventory-'.$field->return_id()])) {
-							$field_value = $values['inventory-'.$field->return_id()];
+						if(isset($values['inventory-'.$field->get_id()])) {
+							$field_value = $values['inventory-'.$field->get_id()];
 						} else {
 							$field_value = 0;
 						}
@@ -1034,13 +1034,13 @@ class InventoryView extends PageView {
 			$inventory = new Inventory($did);
 			
 			// get preset
-			$preset = $inventory->return_preset();
+			$preset = $inventory->get_preset();
 			
 			// get fields
 			$fields = $preset->return_fields();
 			
 			// check owned
-			if($inventory->return_owned() == 'givento') {
+			if($inventory->get_owned() == 'givento') {
 				
 				// get templates
 				// hx
@@ -1112,7 +1112,7 @@ class InventoryView extends PageView {
 						));
 					
 					// movement to db
-					$insert_id = $this->movement_to_db('taken',$inventory->return_id());
+					$insert_id = $this->movement_to_db('taken',$inventory->get_id());
 					// get values of last movement and values to db
 					$last_values = $inventory->movement_last_values();
 					$this->values_to_db($insert_id,$fields,$last_values);
@@ -1158,7 +1158,7 @@ class InventoryView extends PageView {
 			$inventory = new Inventory($did);
 			
 			// get preset
-			$preset = $inventory->return_preset();
+			$preset = $inventory->get_preset();
 			
 			// get fields
 			$fields = $preset->return_fields();
@@ -1200,8 +1200,8 @@ class InventoryView extends PageView {
 			foreach($fields as $field) {
 				
 				// check type
-				if($field->return_type() != 'text') {
-					$accessories .= $field->return_name().', ';
+				if($field->get_type() != 'text') {
+					$accessories .= $field->get_name().', ';
 				}
 			}
 			$accessories = substr($accessories,0,-2);
@@ -1215,7 +1215,7 @@ class InventoryView extends PageView {
 			
 			// put in template
 			$return .= $inventory_detail->parse(array(
-									'h3.content' => $inventory->return_name().' ('.$inventory->return_inventory_no().')',
+									'h3.content' => $inventory->get_name().' ('.$inventory->get_inventory_no().')',
 									'div.fields.parameters' => '',
 									'div.movements.parameters' => '',
 									'div.fields.content' => $accessories_p,
@@ -1266,13 +1266,13 @@ class InventoryView extends PageView {
 		$inventory = new Inventory($inventory_id);
 		
 		// get preset
-		$preset = $inventory->return_preset();
+		$preset = $inventory->get_preset();
 		
 		// get fields
 		$fields = $preset->return_fields();
 		
 		// check rights
-		if(Rights::check_rights($inventory->return_id(),'inventory')) {
+		if(Rights::check_rights($inventory->get_id(),'inventory')) {
 			
 			// get templates
 			// hx
@@ -1297,7 +1297,7 @@ class InventoryView extends PageView {
 			// prepare sql
 			$sql = "SELECT m.id,m.user_id,m.action,m.date_time
 					FROM inventory_movement AS m
-					WHERE m.inventory_id=".$inventory->return_id()."
+					WHERE m.inventory_id=".$inventory->get_id()."
 					ORDER BY m.date_time ASC";
 			
 			// execute
@@ -1338,7 +1338,7 @@ class InventoryView extends PageView {
 			$movement_out = $hx->parse(array(
 							'hx.x' => 3,
 							'hx.parameters' => '',
-							'hx.content' => parent::lang('class.InventoryView#movement#hx#movement').$inventory->return_name().' ('.$inventory->return_inventory_no().')'
+							'hx.content' => parent::lang('class.InventoryView#movement#hx#movement').$inventory->get_name().' ('.$inventory->get_inventory_no().')'
 						));
 			$movement_out .= $hx->parse(array(
 							'hx.x' => 4,
@@ -1369,14 +1369,14 @@ class InventoryView extends PageView {
 					$data = array(
 							'table' => 'inventory_movement',
 							'table_id' => $movement['id'],
-							'field_id' => $field->return_id());
+							'field_id' => $field->get_id());
 					$field->read_value($data);
-					$fields_out .= $field->value_to_html($p,$field->return_value());
+					$fields_out .= $field->value_to_html($p,$field->get_value());
 				}
 				$movement_out .= $hx->parse(array(
 							'hx.x' => 4,
 							'hx.parameters' => '',
-							'hx.content' => parent::lang('class.InventoryView#movement#fields#'.$movement['action']).' '.$user->return_userinfo('name')
+							'hx.content' => parent::lang('class.InventoryView#movement#fields#'.$movement['action']).' '.$user->get_userinfo('name')
 						));
 				$movement_out .= $fields_out;
 			}
@@ -1459,7 +1459,7 @@ class InventoryView extends PageView {
 		foreach($fields as $field) {
 			
 			// get fieldid and according value
-			$fieldid = $field->return_id();
+			$fieldid = $field->get_id();
 			// if set
 			if(isset($values['inventory-'.$fieldid])) {
 				$value = $values['inventory-'.$fieldid];
@@ -1491,10 +1491,10 @@ class InventoryView extends PageView {
 	private function get_movements($inventory) {
 		
 		// get id
-		$id = $inventory->return_id();
+		$id = $inventory->get_id();
 		
 		// get preset
-		$preset = $inventory->return_preset();
+		$preset = $inventory->get_preset();
 		
 		// get fields
 		$fields = $preset->return_fields();
@@ -1569,25 +1569,6 @@ class InventoryView extends PageView {
 						'td.params' => '',
 						'td.content' => $name
 					));
-			
-//			// prepare fields
-//			$fields_out = '';
-//			foreach($fields as $field) {
-//				
-//				// get values
-//				$data = array(
-//						'table' => 'inventory_movement',
-//						'table_id' => $movement_id,
-//						'field_id' => $field->return_id());
-//				$field->read_value($data);
-//				$fields_out .= $field->value_to_html(null,$field->return_value()).', ';
-//			}
-//			$fields_out = substr($fields_out,0,-2);
-//			
-//			$td_out .= $td->parse(array(
-//						'td.params' => '',
-//						'td.content' => $fields_out
-//					));
 			
 			// prepare tr
 			$tr_out .= $tr->parse(array(

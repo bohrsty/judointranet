@@ -17,28 +17,28 @@ class Preset extends Object {
 	/*
 	 * getter/setter
 	 */
-	private function get_id(){
+	public function get_id(){
 		return $this->id;
 	}
-	private function set_id($id) {
+	public function set_id($id) {
 		$this->id = $id;
 	}
-	private function get_name(){
+	public function get_name(){
 		return $this->name;
 	}
-	private function set_name($name) {
+	public function set_name($name) {
 		$this->name = $name;
 	}
-	private function get_desc(){
+	public function get_desc(){
 		return $this->desc;
 	}
-	private function set_desc($desc) {
+	public function set_desc($desc) {
 		$this->desc = $desc;
 	}
-	private function get_fields(){
+	public function get_fields(){
 		return $this->fields;
 	}
-	private function set_fields($fields) {
+	public function set_fields($fields) {
 		$this->fields = $fields;
 	}
 	

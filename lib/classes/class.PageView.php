@@ -15,16 +15,16 @@ class PageView extends Object {
 	/*
 	 * getter/setter
 	 */
-	private function get_get(){
+	public function get_get(){
 		return $this->get;
 	}
-	private function set_get($get) {
+	public function set_get($get) {
 		$this->get = $get;
 	}
-	private function get_output(){
+	public function get_output(){
 		return $this->output;
 	}
-	private function set_output($output) {
+	public function set_output($output) {
 		$this->output = $output;
 	}
 	
@@ -201,12 +201,12 @@ class PageView extends Object {
 		
 		// read php-files from /
 		$filenames = array();
-		$dh = opendir($_SERVER['DOCUMENT_ROOT'].'/'.$_SESSION['GC']->return_config('relative_path'));
+		$dh = opendir($_SERVER['DOCUMENT_ROOT'].'/'.$_SESSION['GC']->get_config('relative_path'));
 
 		while($entry = readdir($dh)) {
 
 			// check if file, .php-extension and !test.php
-			if(is_file($_SERVER['DOCUMENT_ROOT'].'/'.$_SESSION['GC']->return_config('relative_path').$entry) 
+			if(is_file($_SERVER['DOCUMENT_ROOT'].'/'.$_SESSION['GC']->get_config('relative_path').$entry) 
 					&& substr($entry,-4) == '.php' 
 					&& $entry != 'test.php') {
 				$filenames[] = $entry;
@@ -388,11 +388,11 @@ class PageView extends Object {
 	protected function put_userinfo() {
 		
 		// check if userinfo exists and set to output
-		$name = $_SESSION['user']->return_userinfo('name');
+		$name = $_SESSION['user']->get_userinfo('name');
 		if($name !== false) {
 			
 			// add userinfos
-			$name = parent::lang('class.PageView#put_userinfo#logininfo#LoggedinAs').' '.$name.' ('.$_SESSION['user']->return_userinfo('username').')';
+			$name = parent::lang('class.PageView#put_userinfo#logininfo#LoggedinAs').' '.$name.' ('.$_SESSION['user']->get_userinfo('username').')';
 			$this->add_output(array('logininfo' => $name),true);
 		} else {
 			$this->add_output(array('logininfo' => parent::lang('class.PageView#put_userinfo#logininfo#NotLoggedin')),true);

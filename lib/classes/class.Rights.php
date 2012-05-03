@@ -16,22 +16,22 @@ class Rights extends Object {
 	/*
 	 * getter/setter
 	 */
-	private function get_rights(){
+	public function get_rights(){
 		return $this->rights;
 	}
-	private function set_rights($rights) {
+	public function set_rights($rights) {
 		$this->rights = $rights;
 	}
-	private function get_new_rights(){
+	public function get_new_rights(){
 		return $this->new_rights;
 	}
-	private function set_new_rights($new_rights) {
+	public function set_new_rights($new_rights) {
 		$this->new_rights = $new_rights;
 	}
-	private function get_table(){
+	public function get_table(){
 		return $this->table;
 	}
-	private function set_table($table) {
+	public function set_table($table) {
 		$this->table = $table;
 	}
 	
@@ -245,19 +245,6 @@ class Rights extends Object {
 			$set_rights = array_diff($merge_rights,$new_rights['remove']);
 		}
 		$this->set_rights($set_rights);
-	}
-	
-	
-	
-	
-	
-	/**
-	 * return_rights returns the actual group-ids from $rights
-	 * 
-	 * @return array group_ids from $rights
-	 */
-	public function return_rights() {
-		return $this->get_rights();
 	}
 	
 	
