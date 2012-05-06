@@ -270,6 +270,21 @@ class Error extends Object {
 				$this->set_errors($errors);
 			break;
 			
+			case 'AnnNotExists':
+				
+				// non-fatal error, message
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
+				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#AnnNotExists#ERROR.caption').'</h3>';
+				$message .= '<p>'.parent::lang('class.Error#handle_error#AnnNotExists#ERROR.message').'</p>';
+				$message .= '[AnnNotExists: "'.$this->return_entry($errno).']';
+				$message .= '</div>';
+				
+				// set output
+				$errors = $this->get_errors();
+				$errors[$errno]['output'] = $message;
+				$this->set_errors($errors);
+			break;
+			
 			default:
 				
 			break;

@@ -150,12 +150,15 @@ class Field extends Object {
 	 * 
 	 * @param array $options array containing parameters for the input-tag
 	 * @param bool $defaults text-fields with default-values if true
-	 * @return void
+	 * @return string the value of the "id"-parameter of the input-tag
 	 */
 	public function read_quickform($options = array(),$defaults = false) {
 		
 		// prepare return
 		$element = null;
+		
+		// prepare ids
+		$element_ids = '';
 		
 		// check type
 		if($this->get_type() == 'text') {
@@ -198,6 +201,9 @@ class Field extends Object {
 					parent::lang('class.Field#element#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('textarea.desc').']',
 					$_SESSION['GC']->get_config('textarea.regexp'));
 			}
+			
+			// add id to return
+			$element_ids = $this->get_table().'-'.$this->get_id();
 		} elseif($this->get_type() == 'date') {
 			
 			// date in input-text for use with jquery
@@ -209,6 +215,9 @@ class Field extends Object {
 				$element->addRule('required',parent::lang('class.Field#element#rule#required.date'));
 			}
 			$element->addRule('callback',parent::lang('class.Field#element#rule#check.date'),array($this,'callback_check_date'));
+			
+			// add id to return
+			$element_ids = $this->get_table().'-'.$this->get_id();
 		} elseif($this->get_type() == 'checkbox') {
 			
 			// checkbox
@@ -219,10 +228,16 @@ class Field extends Object {
 			if($this->get_required() == 1) {
 				$element->addRule('required',parent::lang('class.Field#element#rule#required.checkbox'));
 			}
+			
+			// add id to return
+			$element_ids = $this->get_table().'-'.$this->get_id();
 		}
 		
 		// set
 		$this->set_quickform($element);
+		
+		// return
+		return $element_ids;
 	}
 	
 	
@@ -371,11 +386,8 @@ class Field extends Object {
 			if($value == '') {
 				
 				// get default-value
-				// get db-object
-				$db = Db::newDb();
+				$checked_value = $this->return_defaults_value($defaults);
 				
-				$result = $db->query("SELECT value FROM defaults WHERE id=$defaults");
-				list($checked_value) = $result->fetch_array(MYSQL_NUM);
 			} else {
 				$checked_value = nl2br($value);
 			}
@@ -484,7 +496,7 @@ class Field extends Object {
 		
 		// get defaults
 		// prepare sql
-		$sql = "SELECT d.id,d.name,d.value
+		$sql = "SELECT d.id,d.name
 				FROM defaults AS d
 				WHERE category='".$this->get_category()."'
 				ORDER BY d.name ASC";
@@ -494,17 +506,14 @@ class Field extends Object {
 		
 		// fetch defaults
 		$defaults = array();
-		while(list($id,$name,$value) = $result->fetch_array(MYSQL_NUM)) {
+		while(list($id,$name) = $result->fetch_array(MYSQL_NUM)) {
 			
-			// replace linebreak
-			$value = str_replace(array("\r\n","\r","\n")," ",$value);
-			
-			// check value length
-			if(strlen($value) > 30) {
-				$value = substr($value,0,27).'...';
+			// check name length
+			if(strlen($name) > 30) {
+				$name = substr($name,0,27).'...';
 			}
 			
-			$defaults['d'.$id] = $value;
+			$defaults['d'.$id] = $name;
 		}
 		
 		// add separator and options
@@ -552,6 +561,29 @@ class Field extends Object {
 		// add separator and options
 		$options[parent::lang('class.Field#read_defaults#lastUsed#separator')] = $last;
 	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * return_defaults_value reads the value of the given defaults-id
+	 * from db and returns it
+	 * 
+	 * @param int $defaults id of the defaults to get the value from
+	 */
+	public function return_defaults_value($defaults) {
+		
+		// get db-object
+		$db = Db::newDb();
+		
+		$result = $db->query("SELECT value FROM defaults WHERE id=$defaults");
+		list($value) = $result->fetch_array(MYSQL_NUM);
+		
+		// return
+		return $value;
+	} 
 }
 
 

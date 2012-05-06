@@ -179,6 +179,7 @@ CREATE TABLE IF NOT EXISTS `preset` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
+ALTER TABLE `preset` ADD `path` VARCHAR( 75 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `table` 
 -- --------------------------------------------------------
 
 --
@@ -222,7 +223,9 @@ INSERT INTO `rights` (`id`, `g_id`, `table_name`, `table_id`, `comment`) VALUES
 (20, 1, 'navi', 171651729, 'InventoryView|take'),
 (21, 1, 'navi', 2421882413, 'InventoryView|cancel'),
 (22, 1, 'navi', 2301889492, 'InventoryView|details'),
-(23, 1, 'navi', 2029386500, 'InventoryView|movement');
+(23, 1, 'navi', 2029386500, 'InventoryView|movement'),
+(24, 1, 'navi', 3931860135, 'AnnouncementView|details'),
+(25, 1, 'navi', 353262192, 'AnnouncementView|topdf');
 
 -- --------------------------------------------------------
 

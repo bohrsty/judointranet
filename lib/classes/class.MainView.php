@@ -133,6 +133,8 @@ class MainView extends PageView {
 						$this->add_output(array('main' => $this->login()));
 						// navi
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 						
 					break;
 					
@@ -146,6 +148,8 @@ class MainView extends PageView {
 						$this->put_userinfo();
 						// navi
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 						
 					break;
 					
@@ -155,6 +159,8 @@ class MainView extends PageView {
 						$errno = $GLOBALS['Error']->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
 						$GLOBALS['Error']->handle_error($errno);
 						$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 				}
 			} else {
@@ -169,6 +175,8 @@ class MainView extends PageView {
 				$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
 				$GLOBALS['Error']->handle_error($errno);
 				$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
+				// jquery
+				$this->add_output(array('jquery' => $this->get_jquery()));
 			}
 		} else {
 			
@@ -179,6 +187,8 @@ class MainView extends PageView {
 			$this->add_output(array('main' => '<h2>default content</h2>'));
 			// navi
 			$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
+			// jquery
+			$this->add_output(array('jquery' => $this->get_jquery()));
 		}
 	}
 	

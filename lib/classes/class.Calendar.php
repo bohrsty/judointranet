@@ -412,6 +412,27 @@ class Calendar extends Page {
 			return false;
 		}
 	}
+	
+	
+	
+	
+	/**
+	 * add_marks adds the marks and values to the given array
+	 * 
+	 * @param array $announcement array to fill with marks and values
+	 * @return void
+	 */
+	public function add_marks(&$announcement) {
+		
+		// add fields
+		$announcement['calendar-name'] = $this->get_name();
+		$announcement['calendar-shortname'] = $this->get_shortname();
+		$announcement['calendar-date'] = $this->get_date();
+		$announcement['calendar-date-d.m.Y'] = $this->get_date('d.m.Y');
+		$announcement['calendar-date-j.F.Y'] = strftime('%e. %B %Y',$this->get_date('U'));
+		$announcement['calendar-type'] = $this->get_type();
+		$announcement['calendar-content'] = $this->get_content();
+	}
 }
 
 

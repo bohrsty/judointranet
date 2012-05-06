@@ -139,6 +139,8 @@ class CalendarView extends PageView {
 						// main-content
 						// date-links
 						$this->add_output(array('main' => $this->get_sort_links($this->get('id'))));
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 						
 						// prepare dates
 						$from = strtotime('yesterday');
@@ -163,6 +165,8 @@ class CalendarView extends PageView {
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 						// main-content
 						$this->add_output(array('main' => $this->new_entry()));
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 					
 					case 'details':
@@ -183,6 +187,8 @@ class CalendarView extends PageView {
 							$GLOBALS['Error']->handle_error($errno);
 							$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
 						}
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 					
 					case 'edit':
@@ -203,6 +209,8 @@ class CalendarView extends PageView {
 							$GLOBALS['Error']->handle_error($errno);
 							$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
 						}
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 					
 					case 'delete':
@@ -223,6 +231,8 @@ class CalendarView extends PageView {
 							$GLOBALS['Error']->handle_error($errno);
 							$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
 						}
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 					
 					default:
@@ -231,6 +241,8 @@ class CalendarView extends PageView {
 						$errno = $GLOBALS['Error']->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
 						$GLOBALS['Error']->handle_error($errno);
 						$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 				}
 			} else {
@@ -245,6 +257,8 @@ class CalendarView extends PageView {
 				$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
 				$GLOBALS['Error']->handle_error($errno);
 				$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
+				// jquery
+				$this->add_output(array('jquery' => $this->get_jquery()));
 			}
 		} else {
 			
@@ -255,6 +269,8 @@ class CalendarView extends PageView {
 			$this->add_output(array('main' => '<h2>default content</h2>'));
 			// navi
 			$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
+			// jquery
+			$this->add_output(array('jquery' => $this->get_jquery()));
 		}
 	}
 	
@@ -295,44 +311,13 @@ class CalendarView extends PageView {
 		}
 		
 		// get templates
-		// a
 		try {
 			$a = new HtmlTemplate('templates/a.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// table
-		try {
 			$table = new HtmlTemplate('templates/table.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// tr
-		try {
 			$tr = new HtmlTemplate('templates/tr.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// th
-		try {
 			$th = new HtmlTemplate('templates/th.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// td
-		try {
 			$td = new HtmlTemplate('templates/td.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// img
-		try {
 			$img = new HtmlTemplate('templates/img.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// div
-		try {
 			$div = new HtmlTemplate('templates/div.tpl');
 		} catch(Exception $e) {
 			$GLOBALS['Error']->handle_error($e);
@@ -346,6 +331,10 @@ class CalendarView extends PageView {
 		$th_out .= $th->parse(array( // name
 				'th.params' => ' class="name"',
 				'th.content' => parent::lang('class.CalendarView#listall#TH#name')
+			));
+		$th_out .= $th->parse(array( // show
+				'th.params' => ' class="show"',
+				'th.content' => parent::lang('class.CalendarView#listall#TH#show')
 			));
 		// if loggedin show admin links
 		if($_SESSION['user']->get_loggedin() === true) {
@@ -397,6 +386,47 @@ class CalendarView extends PageView {
 							'td.params' => '',
 							'td.content' => $a_out
 						));
+					
+					// details and pdf if announcement
+					if($entry->get_preset_id() != 0) {
+						
+						// announcement details
+						// prepare img
+						$img_out = $img->parse(array(
+								'img.src' => 'img/ann_details.png',
+								'img.alt' => parent::lang('class.CalendarView#listall#alt#AnnDetails'),
+								'img.params' => ' class="icon" title="'.parent::lang('class.CalendarView#listall#title#AnnDetails').'"'
+							));
+						// prepare details-link
+						$a_out = $a->parse(array(
+								'a.params' => '',
+								'a.href' => 'announcement.php?id=details&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
+								'a.title' => parent::lang('class.CalendarView#listall#title#AnnDetails'),
+								'a.content' => $img_out
+							));
+						// announcement to pdf
+						// prepare img
+						$img_out = $img->parse(array(
+								'img.src' => 'img/ann_pdf.png',
+								'img.alt' => parent::lang('class.CalendarView#listall#alt#AnnPDF'),
+								'img.params' => ' class="icon" title="'.parent::lang('class.CalendarView#listall#title#AnnPDF').'"'
+							));
+						// prepare to_pdf-link
+						$a_out .= $a->parse(array(
+								'a.params' => '',
+								'a.href' => 'announcement.php?id=topdf&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
+								'a.title' => parent::lang('class.CalendarView#listall#title#AnnPDF'),
+								'a.content' => $img_out
+							));
+					} else {
+						$a_out = '';
+					}
+					
+					// prepare show-td
+					$td_out .= $td->parse(array( // show
+							'td.params' => '',
+							'td.content' => $a_out
+						));
 						
 					// add admin
 					// get intersection of user-groups and rights
@@ -418,7 +448,7 @@ class CalendarView extends PageView {
 						$img_out = $img->parse(array(
 								'img.src' => 'img/edit.png',
 								'img.alt' => parent::lang('class.CalendarView#listall#alt#edit'),
-								'img.params' => 'title="'.parent::lang('class.CalendarView#listall#title#edit').'"'
+								'img.params' => ' class="icon" title="'.parent::lang('class.CalendarView#listall#title#edit').'"'
 							));
 						
 						// prepare edit-link
@@ -434,7 +464,7 @@ class CalendarView extends PageView {
 						$img_out = $img->parse(array(
 								'img.src' => 'img/delete.png',
 								'img.alt' => parent::lang('class.CalendarView#listall#alt#delete'),
-								'img.params' => 'title="'.parent::lang('class.CalendarView#listall#title#delete').'"'
+								'img.params' => ' class="icon" title="'.parent::lang('class.CalendarView#listall#title#delete').'"'
 							));
 						
 						// prepare delete-link
@@ -471,7 +501,7 @@ class CalendarView extends PageView {
 							$img_out = $img->parse(array(
 									'img.src' => 'img/ann_edit.png',
 									'img.alt' => parent::lang('class.CalendarView#listall#alt#AnnEdit'),
-									'img.params' => 'title="'.parent::lang('class.CalendarView#listall#title#AnnEdit').'"'
+									'img.params' => ' class="icon" title="'.parent::lang('class.CalendarView#listall#title#AnnEdit').'"'
 								));
 							
 							// prepare announcement-edit-link
@@ -486,7 +516,7 @@ class CalendarView extends PageView {
 							$img_out = $img->parse(array(
 									'img.src' => 'img/ann_delete.png',
 									'img.alt' => parent::lang('class.CalendarView#listall#alt#AnnDelete'),
-									'img.params' => 'title="'.parent::lang('class.CalendarView#listall#title#AnnDelete').'"'
+									'img.params' => ' class="icon" title="'.parent::lang('class.CalendarView#listall#title#AnnDelete').'"'
 								));
 							
 							// prepare announcement-delete-link
@@ -586,11 +616,8 @@ class CalendarView extends PageView {
 		// read templates
 		try {
 			$a = new HtmlTemplate('templates/a.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		try {
 			$div = new HtmlTemplate('templates/div.tpl');
+			$js_toggleSlide_div = new HtmlTemplate('templates/js-toggleSlide-div.tpl');
 		} catch(Exception $e) {
 			$GLOBALS['Error']->handle_error($e);
 		}
@@ -688,8 +715,26 @@ class CalendarView extends PageView {
 		// add <p>
 		$output .= $this->p('',$group_links);
 		
+		// add slider-link
+		$link = $a->parse(array(
+				'a.params' => ' id="toggleFilter"',
+				'a.href' => '#',
+				'a.title' => parent::lang('class.CalendarView#get_sort_links#toggleFilter#title'),
+				'a.content' => parent::lang('class.CalendarView#get_sort_links#toggleFilter#name')
+			));
+		
+		// add <p>
+		$link_out = $this->p('',$link);
+		
+		// add jquery
+		$this->add_jquery($js_toggleSlide_div->parse(array(
+						'id' => '#toggleFilter',
+						'toToggle' => '#sortlinks',
+						'time' => ''
+				)));
+		
 		// return
-		return $div->parse(array(
+		return $link_out."\n".$div->parse(array(
 				'div.params' => ' id="sortlinks"',
 				'div.content' => $output
 			));
@@ -707,6 +752,13 @@ class CalendarView extends PageView {
 	 * @return string html-string with the "new-entry"-form
 	 */
 	private function new_entry() {
+		
+		// get templates
+		try {
+			$js_datepicker = new HtmlTemplate('templates/js-datepicker.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
 		
 		// prepare return
 		$return = '';
@@ -740,7 +792,11 @@ class CalendarView extends PageView {
 		// rule
 		$date->addRule('required',parent::lang('class.CalendarView#entry#rule#required.date'));
 		$date->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.date'),array($this,'callback_check_date'));
-		
+		// add jquery-datepicker
+		$this->add_jquery($js_datepicker->parse(array(
+						'elementid' => 'date-0',
+						'addFunctions' => ''
+					)));
 		
 		// name
 		$name = $form->addElement('text','name');
@@ -829,49 +885,6 @@ class CalendarView extends PageView {
 		// return
 		return $return;
 	}
-//	
-//	
-//	
-//	
-//	
-//	
-//	
-//	/**
-//	 * callback_check_date checks if a correct date is selected
-//	 * 
-//	 * @param array $args arguments to check
-//	 * @return bool true, if ok, false otherwise
-//	 */
-//	public function callback_check_date($args) {
-//		
-//		// check values
-//		if($args['day'] == 0 || $args['month'] == 0 || $args['year'] == 0) {
-//			return false;
-//		} else {
-//			return checkdate($args['month'],$args['day'],$args['year']);
-//		}
-//	}
-//	
-//	
-//	
-//	
-//	
-//	
-//	
-//	/**
-//	 * callback_check_select checks if a value other than 0 is selected
-//	 * 
-//	 * @param array $args arguments to check
-//	 * @return bool true, if ok, false otherwise
-//	 */
-//	public function callback_check_select($args) {
-//		
-//		// check values
-//		if($args == '0') {
-//			return false;
-//		}
-//		return true;
-//	}
 	
 	
 	
@@ -954,6 +967,14 @@ class CalendarView extends PageView {
 		
 		// check rights
 		if(Rights::check_rights($cid,'calendar')) {
+			
+			// get templates
+			try {
+				$js_datepicker = new HtmlTemplate('templates/js-datepicker.tpl');
+				$js_datepicker_parse = new HtmlTemplate('templates/js-datepicker-parse.tpl');
+			} catch(Exception $e) {
+				$GLOBALS['Error']->handle_error($e);
+			}
 				
 			// get calendar-object
 			$calendar = new Calendar($cid);
@@ -993,7 +1014,16 @@ class CalendarView extends PageView {
 			// rule
 			$date->addRule('required',parent::lang('class.CalendarView#entry#rule#required.date'));
 			$date->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.date'),array($this,'callback_check_date'));
-			
+			// add jquery-datepicker
+			$js_datepicker_parse_out = $js_datepicker_parse->parse(array(
+							'elementid' => 'date-0',
+							'format' => 'yy-mm-dd',
+							'value' => $calendar->get_date()
+						));
+			$this->add_jquery($js_datepicker->parse(array(
+							'elementid' => 'date-0',
+							'addFunctions' => $js_datepicker_parse_out
+						)));
 			
 			// name
 			$name = $form->addElement('text','name');
@@ -1223,7 +1253,7 @@ class CalendarView extends PageView {
 		// add selectfield
 		$select = $form->addSelect('preset',array());
 		$options = array(0 => parent::lang('class.CalendarView#read_preset_form#select#choosePreset'));
-		$options = array_merge($options,Preset::read_all_presets('calendar'));
+		$options = $options + Preset::read_all_presets('calendar');
 		$select->loadOptions($options);
 		$select->addRule('callback',parent::lang('class.CalendarView#read_preset_form#rule#select'),array($this,'callback_check_select'));
 		

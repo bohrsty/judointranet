@@ -70,6 +70,18 @@ class AnnouncementView extends PageView {
 								'name' => 'class.AnnouncementView#connectnavi#secondlevel#delete',
 								'id' => crc32('AnnouncementView|delete'), // 2505436613 
 								'show' => false
+							),
+							3 => array(
+								'getid' => 'details', 
+								'name' => 'class.AnnouncementView#connectnavi#secondlevel#details',
+								'id' => crc32('AnnouncementView|details'), // 3931860135 
+								'show' => false
+							),
+							4 => array(
+								'getid' => 'topdf', 
+								'name' => 'class.AnnouncementView#connectnavi#secondlevel#topdf',
+								'id' => crc32('AnnouncementView|topdf'), // 353262192
+								'show' => false
 							)
 						)
 					);
@@ -126,6 +138,8 @@ class AnnouncementView extends PageView {
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 						// main-content
 						$this->add_output(array('main' => $this->new_entry()));
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 					
 					case 'edit':
@@ -137,6 +151,8 @@ class AnnouncementView extends PageView {
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 						// main-content
 						$this->add_output(array('main' => $this->edit()));
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 					
 					case 'delete':
@@ -148,6 +164,34 @@ class AnnouncementView extends PageView {
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 						// main-content
 						$this->add_output(array('main' => $this->delete()));
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
+					break;
+					
+					case 'details':
+						
+						// set contents
+						// title
+						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#details#title'))));
+						// navi
+						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
+						// main-content
+						$this->add_output(array('main' => $this->details()));
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
+					break;
+					
+					case 'topdf':
+						
+						// set contents
+						// title
+						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#topdf#title'))));
+						// navi
+						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
+						// main-content
+						$this->add_output(array('main' => $this->topdf()));
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 					
 					default:
@@ -156,6 +200,8 @@ class AnnouncementView extends PageView {
 						$errno = $GLOBALS['Error']->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
 						$GLOBALS['Error']->handle_error($errno);
 						$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 				}
 			} else {
@@ -170,6 +216,8 @@ class AnnouncementView extends PageView {
 				$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
 				$GLOBALS['Error']->handle_error($errno);
 				$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
+				// jquery
+				$this->add_output(array('jquery' => $this->get_jquery()));
 			}
 		} else {
 			
@@ -180,6 +228,8 @@ class AnnouncementView extends PageView {
 			$this->add_output(array('main' => '<h2>default content</h2>'));
 			// navi
 			$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
+			// jquery
+			$this->add_output(array('jquery' => $this->get_jquery()));
 		}
 	}
 	
@@ -232,6 +282,7 @@ class AnnouncementView extends PageView {
 		// p
 		try {
 			$p = new HtmlTemplate('templates/p.tpl');
+			$js_datepicker = new HtmlTemplate('templates/js-datepicker.tpl');
 		} catch(Exception $e) {
 			$GLOBALS['Error']->handle_error($e);
 		}
@@ -284,7 +335,15 @@ class AnnouncementView extends PageView {
 					foreach($fields as $field) {
 						
 						// generate quickform
-						$field->read_quickform(array(),true);
+						$field_id = $field->read_quickform(array(),true);
+						
+						// check $field_id
+						if($field_id != '' && $field->get_type() == 'date') {
+							$this->add_jquery($js_datepicker->parse(array(
+										'elementid' => $field_id.'-0',
+										'addFunctions' => ''
+									)));
+						}
 						
 						// add to form
 						$form->appendChild($field->get_quickform());
@@ -353,9 +412,10 @@ class AnnouncementView extends PageView {
 	private function edit() {
 		
 		// get templates
-		// p
 		try {
 			$p = new HtmlTemplate('templates/p.tpl');
+			$js_datepicker = new HtmlTemplate('templates/js-datepicker.tpl');
+			$js_datepicker_parse = new HtmlTemplate('templates/js-datepicker-parse.tpl');
 		} catch(Exception $e) {
 			$GLOBALS['Error']->handle_error($e);
 		}
@@ -421,7 +481,20 @@ class AnnouncementView extends PageView {
 					foreach($fields as $field) {
 						
 						// generate quickform
-						$field->read_quickform(array(),true);
+						$field_id = $field->read_quickform(array(),true);
+						
+						// check $field_id
+						if($field_id != '' && $field->get_type() == 'date') {
+							$js_datepicker_parse_out = $js_datepicker_parse->parse(array(
+										'elementid' => $field_id.'-0',
+										'format' => 'yy-mm-dd',
+										'value' => $field->get_value()
+									));
+							$this->add_jquery($js_datepicker->parse(array(
+										'elementid' => $field_id.'-0',
+										'addFunctions' => $js_datepicker_parse_out
+									)));
+						}
 						
 						// add to form
 						$form->appendChild($field->get_quickform());
@@ -602,6 +675,157 @@ class AnnouncementView extends PageView {
 			
 			// error
 			$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+			$GLOBALS['Error']->handle_error($errno);
+			return $GLOBALS['Error']->to_html($errno);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * shows the details of the entry
+	 * 
+	 * @return string html-string
+	 */
+	private function details() {
+		
+		// get templates
+		try {
+			$p = new HtmlTemplate('templates/p.tpl');
+			$template = new HtmlTemplate('templates/announcements/1-std/1-std.tpl');
+			$div = new HtmlTemplate('templates/div.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
+		
+		// check cid and pid given
+		if ($this->get('cid') !== false && $this->get('pid') !== false) {
+		
+			// check cid and pid exists
+			if(Calendar::check_id($this->get('cid')) && Preset::check_preset($this->get('pid'),'calendar')) {
+				
+				// check if announcement has values
+				if(Calendar::check_ann_value($this->get('cid'))) {
+					
+					// prepare return
+					$return = '';
+					
+					// get preset
+					$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'));
+					
+					// get calendar
+					$calendar = new Calendar($this->get('cid'));
+					
+					// prepare marker-array
+					$announcement = array(
+							'version' => date('dmy')
+						);
+					
+					// add calendar-fields to array
+					$calendar->add_marks($announcement);
+					
+					// add field-names and -values to array
+					$preset->add_marks($announcement);
+					
+					// template
+					$div_out = $template->parse($announcement);
+					
+					// surrounding div
+					$return = $div->parse(array(
+								'div.params' => ' class="announcement-page"',
+								'div.content' => $div_out
+							));				
+					
+					// return
+					return $return;
+				} else {
+					
+					// error
+					$errno = $GLOBALS['Error']->error_raised('AnnNotExists','entry:'.$this->get('cid').'|'.$this->get('pid'),$this->get('cid').'|'.$this->get('pid'));
+					$GLOBALS['Error']->handle_error($errno);
+					return $GLOBALS['Error']->to_html($errno);
+				}
+			} else {
+				
+				// error
+				$errno = $GLOBALS['Error']->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
+				$GLOBALS['Error']->handle_error($errno);
+				return $GLOBALS['Error']->to_html($errno);
+			}
+		} else {
+			
+			// error
+			$errno = $GLOBALS['Error']->error_raised('MissingParams','entry:cid_or_pid','cid_or_pid');
+			$GLOBALS['Error']->handle_error($errno);
+			return $GLOBALS['Error']->to_html($errno);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * shows the details of the entry as pdf
+	 * 
+	 * @return string pdf-string
+	 */
+	private function topdf() {
+		
+		// get templates
+		// p
+		try {
+			$p = new HtmlTemplate('templates/p.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
+		
+		// check cid and pid given
+		if ($this->get('cid') !== false && $this->get('pid') !== false) {
+		
+			// check cid and pid exists
+			if(Calendar::check_id($this->get('cid')) && Preset::check_preset($this->get('pid'),'calendar')) {
+				
+				// check if announcement has values
+				if(Calendar::check_ann_value($this->get('cid'))) {
+					
+					// prepare return
+					$return = '';
+					
+					// get preset
+					$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'));
+					
+					// get fields
+					$fields = $preset->get_fields();
+					
+	$return .= 'topdf';					
+					
+					// return
+					return $return;
+				} else {
+					
+					// error
+					$errno = $GLOBALS['Error']->error_raised('AnnNotExists','entry:'.$this->get('cid').'|'.$this->get('pid'),$this->get('cid').'|'.$this->get('pid'));
+					$GLOBALS['Error']->handle_error($errno);
+					return $GLOBALS['Error']->to_html($errno);
+				}
+			} else {
+				
+				// error
+				$errno = $GLOBALS['Error']->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
+				$GLOBALS['Error']->handle_error($errno);
+				return $GLOBALS['Error']->to_html($errno);
+			}
+		} else {
+			
+			// error
+			$errno = $GLOBALS['Error']->error_raised('MissingParams','entry:cid_or_pid','cid_or_pid');
 			$GLOBALS['Error']->handle_error($errno);
 			return $GLOBALS['Error']->to_html($errno);
 		}

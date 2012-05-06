@@ -11,6 +11,7 @@ class PageView extends Object {
 	 */
 	private $get;
 	private $output;
+	private $jquery;
 	
 	/*
 	 * getter/setter
@@ -26,6 +27,12 @@ class PageView extends Object {
 	}
 	public function set_output($output) {
 		$this->output = $output;
+	}
+	public function get_jquery(){
+		return $this->jquery;
+	}
+	public function set_jquery($jquery) {
+		$this->jquery = $jquery;
 	}
 	
 	/*
@@ -47,6 +54,7 @@ class PageView extends Object {
 		// set class-variables
 		$this->read_globals();
 		$this->set_output(array());
+		$this->set_jquery('');
 		
 		// set userinfos if logged in
 		$this->put_userinfo();		
@@ -172,6 +180,37 @@ class PageView extends Object {
 		
 		// set output
 		$this->set_output($output);
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * add_jquery adds the given string to $output
+	 * 
+	 * @param string $content content to be added to $jquery
+	 * @param bool $reset replaces the output if true, adds if false
+	 */
+	public function add_jquery($content,$reset=false) {
+		
+		// get jquery
+		$jquery = $this->get_jquery();
+		
+		// add or replace
+		if($reset === true) {
+			
+			// replace
+			$jquery = $content."\n";
+		} else {
+			
+			// add
+			$jquery .= $content."\n";
+		}
+		
+		// set jquery
+		$this->set_jquery($jquery);
 	}
 	
 	

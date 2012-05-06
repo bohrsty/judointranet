@@ -150,6 +150,8 @@ class InventoryView extends PageView {
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 						// main-content
 						$this->add_output(array('main' => $this->listall()));
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 					
 					case 'my':
@@ -161,6 +163,8 @@ class InventoryView extends PageView {
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 						// main-content
 						$this->add_output(array('main' => $this->my()));
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 					
 					case 'give':
@@ -172,6 +176,8 @@ class InventoryView extends PageView {
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 						// main-content
 						$this->add_output(array('main' => $this->give($this->get('did'))));
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 					
 					
@@ -184,6 +190,8 @@ class InventoryView extends PageView {
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 						// main-content
 						$this->add_output(array('main' => $this->take($this->get('did'))));
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 					
 					case 'cancel':
@@ -195,6 +203,8 @@ class InventoryView extends PageView {
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 						// main-content
 						$this->add_output(array('main' => $this->cancel($this->get('did'))));
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 					
 					case 'details':
@@ -206,6 +216,8 @@ class InventoryView extends PageView {
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 						// main-content
 						$this->add_output(array('main' => $this->details($this->get('did'))));
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 					
 					case 'movement':
@@ -217,6 +229,8 @@ class InventoryView extends PageView {
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 						// main-content
 						$this->add_output(array('main' => $this->movement($this->get('mid'))));
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 					
 					default:
@@ -225,6 +239,8 @@ class InventoryView extends PageView {
 						$errno = $GLOBALS['Error']->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
 						$GLOBALS['Error']->handle_error($errno);
 						$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 				}
 			} else {
@@ -239,6 +255,8 @@ class InventoryView extends PageView {
 				$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
 				$GLOBALS['Error']->handle_error($errno);
 				$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
+				// jquery
+				$this->add_output(array('jquery' => $this->get_jquery()));
 			}
 		} else {
 			
@@ -249,6 +267,8 @@ class InventoryView extends PageView {
 			$this->add_output(array('main' => $this->default_content()));
 			// navi
 			$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
+			// jquery
+			$this->add_output(array('jquery' => $this->get_jquery()));
 		}
 	}
 	

@@ -116,6 +116,7 @@ div#sortlinks {
 	overflow: scroll;
 	overflow: -moz-scrollbars-vertical;
 	margin-bottom: 20px;
+	display: none;
 }
 
 td.admin div.row {
@@ -142,6 +143,18 @@ form#inventory_give textarea {
 form#inventory_take textarea {
 	width: 350px;
 	height: 150px;
+}
+
+img.icon {
+	margin: 2px;
+}
+
+div.announcement-page {
+	position: relative;
+	left: 25mm;
+	border: solid 5mm #ccf;
+	width: 161mm;
+	min-height: 700px;
 }
 
 /* navi */

@@ -218,6 +218,36 @@ class Preset extends Object {
 			return true;
 		}
 	}
+	
+	
+	
+	
+	/**
+	 * add_marks adds the marks and values to the given array
+	 * 
+	 * @param array $announcement array to fill with marks and values
+	 * @return void
+	 */
+	public function add_marks(&$announcement) {
+		
+		// add fields
+		$fields = $this->get_fields();
+		
+		// walk through fields
+		foreach($fields as $field) {
+			
+			// read value
+			$field->read_value();
+			$announcement['field-'.$field->get_id().'-name'] = $field->get_name();
+			
+			// check defaults
+			if($field->get_value() == '' && $field->get_defaults() != 0) {
+				$announcement['field-'.$field->get_id().'-value'] = $field->return_defaults_value($field->get_defaults());
+			} else {
+				$announcement['field-'.$field->get_id().'-value'] = $field->get_value();
+			}
+		}
+	}
 }
 
 

@@ -83,6 +83,12 @@ $lang = array(
 				'ERROR.message' => 'Es wurden falsche Parameter &uuml;bergeben, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
 									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
 									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
+			),
+			'AnnNotExists' => array(
+				'ERROR.caption' => 'FEHLER',
+				'ERROR.message' => 'F&uuml;r diesen Termin wurde keine Ausschreibung angelegt, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
 			)
 		
 		)
@@ -93,19 +99,24 @@ $lang = array(
 			'TH' => array(
 				'date' => 'Datum',
 				'name' => 'Veranstaltung',
+				'show' => 'Ansehen',
 				'admin' => 'Aufgaben'
 			),
 			'alt' => array(
 				'edit' => 'bearbeiten',
 				'delete' => 'l&ouml;schen',
 				'AnnEdit' => 'Ausschreibung bearbeiten',
-				'AnnDelete' => 'Ausschreibung l&ouml;schen'
+				'AnnDelete' => 'Ausschreibung l&ouml;schen',
+				'AnnDetails' => 'Ausschreibung anzeigen',
+				'AnnPDF' => 'Ausschreibung als PDF anzeigen'
 			),
 			'title' => array(
 				'edit' => 'bearbeitet diesen Eintrag',
 				'delete' => 'l&ouml;scht diesen Eintrag',
 				'AnnEdit' => 'bearbeitet die Ausschreibung',
-				'AnnDelete' => 'l&ouml;scht die Ausschreibung'
+				'AnnDelete' => 'l&ouml;scht die Ausschreibung',
+				'AnnDetails' => 'Ausschreibung anzeigen',
+				'AnnPDF' => 'Ausschreibung als PDF anzeigen'
 			)
 		),
 		'init' => array(
@@ -164,6 +175,10 @@ $lang = array(
 				'resetAll' => 'Alle Filter zur&uuml;cksetzen',
 				'resetDate' => 'Datumsfilter zur&uuml;cksetzen',
 				'resetGroups' => 'Gruppenfilter zur&uuml;cksetzen'
+			),
+			'toggleFilter' => array(
+				'title' => 'Filter ein- oder ausblenden',
+				'name' => 'Filter ein- oder ausblenden'
 			)
 		),
 		'entry' => array(
@@ -185,20 +200,6 @@ $lang = array(
 				'required.type' => 'Typ muss ausgew&auml;hlt werden!',
 				'check.select' => 'Feld muss ausgew&auml;ht werden!',
 				'regexp.allowedChars' => 'Es k&ouml;nnen nur folgende Zeichen eingegeben werden!'
-			),
-			'date' => array(
-				'month.1' => 'Jan',
-				'month.2' => 'Feb',
-				'month.3' => 'M&auml;r',
-				'month.4' => 'Apr',
-				'month.5' => 'Mai',
-				'month.6' => 'Jun',
-				'month.7' => 'Jul',
-				'month.8' => 'Aug',
-				'month.9' => 'Sep',
-				'month.10' => 'Okt',
-				'month.11' => 'Nov',
-				'month.12' => 'Dez'
 			)
 		),
 		'delete' => array(
@@ -325,22 +326,6 @@ $lang = array(
 		)
 	),
 	'class.Field' => array(
-		'read_quickform' => array(
-			'date' => array(
-				'month.1' => 'Jan',
-				'month.2' => 'Feb',
-				'month.3' => 'M&auml;r',
-				'month.4' => 'Apr',
-				'month.5' => 'Mai',
-				'month.6' => 'Jun',
-				'month.7' => 'Jul',
-				'month.8' => 'Aug',
-				'month.9' => 'Sep',
-				'month.10' => 'Okt',
-				'month.11' => 'Nov',
-				'month.12' => 'Dez'
-			)
-		),
 		'element' => array(
 			'rule' => array(
 				'required.date' => 'Datum muss ausgew&auml;hlt werden!',
@@ -376,7 +361,10 @@ $lang = array(
 			),
 			'secondlevel' => array(
 				'listall' => 'Listenansicht',
-				'new' => 'Neuen Eintrag erstellen'
+				'new' => 'Neuen Eintrag erstellen',
+				'delete' => 'Eintrag l&ouml;schen',
+				'details' => 'Details',
+				'topdf' => 'Eintrag als PDF'
 			)
 		),
 		'init' => array(
