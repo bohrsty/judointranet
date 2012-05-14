@@ -151,10 +151,18 @@ img.icon {
 
 div.announcement-page {
 	position: relative;
+	left: 20mm;
+	top: 10mm;
+	width: 180mm;
+	height: 277mm;
+}
+
+div.announcement-page-line {
+	position: relative;
 	left: 25mm;
-	border: solid 5mm #ccf;
-	width: 161mm;
-	min-height: 700px;
+	border: solid 1px black;
+	width: 210mm;
+	height: 297mm;
 }
 
 /* navi */

@@ -127,6 +127,9 @@ class HtmlTemplate extends Object {
 			}
 		}
 		
+		// replace all unused marks
+		$template = preg_replace('/###(.+)###/U','',$template);
+		
 		// return parsed template
 		return $template;
 	}

@@ -355,6 +355,20 @@ class AnnouncementView extends PageView {
 					// validate
 					if($form->validate()) {
 						
+						// get calendar
+						$calendar = new Calendar($this->get('cid'));
+						
+						// prepare marker-array
+						$announcement = array(
+								'version' => date('dmy')
+							);
+						
+						// add calendar-fields to array
+						$calendar->add_marks($announcement);
+						
+						// add field-names and -values to array
+						$preset->add_marks($announcement);
+						
 						// get data
 						$data = $form->getValue();
 						
@@ -366,7 +380,7 @@ class AnnouncementView extends PageView {
 							$field->write_db('insert');
 							
 							// return field and value as HTML
-							$return .= $field->value_to_html($p);
+							$return .= $field->value_to_html($p,$announcement);
 						}
 						
 					} else {
@@ -456,9 +470,7 @@ class AnnouncementView extends PageView {
 						$field->read_value();
 						
 						// check type
-						if($field->get_type() == 'date') {
-							$datasource['calendar-'.$field->get_id()]= $field->get_value();
-						} elseif($field->get_type() == 'text') {
+						if($field->get_type() == 'text') {
 							
 							// check defaults
 							$datasource['calendar-'.$field->get_id()]['manual'] = '';
@@ -468,6 +480,28 @@ class AnnouncementView extends PageView {
 							} else {
 								$datasource['calendar-'.$field->get_id()]['manual'] = $field->get_value();
 							}
+						} elseif($field->get_type() == 'dbhierselect') {
+							
+							// explode value
+							list($v_first,$v_second) = explode('|',$field->get_value(),2);
+							
+							// set values
+							$datasource['calendar-'.$field->get_id()][0] = $v_first;
+							$datasource['calendar-'.$field->get_id()][1] = $v_second;
+						} elseif($field->get_type() == 'dbselect') {
+							
+							// check multiple
+							if(strpos($field->get_value(),'|') !== false) {
+								// separate value
+								$values = explode('|',$field->get_value());
+								foreach($values as $i => $value) {
+									$datasource['calendar-'.$field->get_id()][$i] = $value;
+								}
+							} else {
+								$datasource['calendar-'.$field->get_id()] = $field->get_value();
+							}
+						} else {
+							$datasource['calendar-'.$field->get_id()] = $field->get_value();
 						}
 					}
 					
@@ -506,6 +540,20 @@ class AnnouncementView extends PageView {
 					// validate
 					if($form->validate()) {
 						
+						// get calendar
+						$calendar = new Calendar($this->get('cid'));
+						
+						// prepare marker-array
+						$announcement = array(
+								'version' => date('dmy')
+							);
+						
+						// add calendar-fields to array
+						$calendar->add_marks($announcement);
+						
+						// add field-names and -values to array
+						$preset->add_marks($announcement);
+						
 						// get data
 						$data = $form->getValue();
 						
@@ -517,7 +565,7 @@ class AnnouncementView extends PageView {
 							$field->write_db('update');
 							
 							// return field and value as HTML
-							$return .= $field->value_to_html($p);
+							$return .= $field->value_to_html($p,$announcement);
 						}
 						
 					} else {
@@ -734,10 +782,14 @@ class AnnouncementView extends PageView {
 					// template
 					$div_out = $template->parse($announcement);
 					
-					// surrounding div
-					$return = $div->parse(array(
+					// surrounding divs
+					$page = $div->parse(array(
 								'div.params' => ' class="announcement-page"',
 								'div.content' => $div_out
+							));
+					$return = $div->parse(array(
+								'div.params' => ' class="announcement-page-line"',
+								'div.content' => $page
 							));				
 					
 					// return

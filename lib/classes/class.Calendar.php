@@ -420,18 +420,30 @@ class Calendar extends Page {
 	 * add_marks adds the marks and values to the given array
 	 * 
 	 * @param array $announcement array to fill with marks and values
+	 * @param boolean $html convert special chars for html if true, does not if false
 	 * @return void
 	 */
-	public function add_marks(&$announcement) {
+	public function add_marks(&$announcement,$html=true) {
 		
 		// add fields
-		$announcement['calendar-name'] = $this->get_name();
-		$announcement['calendar-shortname'] = $this->get_shortname();
-		$announcement['calendar-date'] = $this->get_date();
-		$announcement['calendar-date-d.m.Y'] = $this->get_date('d.m.Y');
-		$announcement['calendar-date-j.F.Y'] = strftime('%e. %B %Y',$this->get_date('U'));
-		$announcement['calendar-type'] = $this->get_type();
-		$announcement['calendar-content'] = $this->get_content();
+		// check html
+		if($html === true) {
+			$announcement['calendar-name'] = nl2br(htmlentities($this->get_name(),ENT_QUOTES,'UTF-8'));
+			$announcement['calendar-shortname'] = nl2br(htmlentities($this->get_shortname(),ENT_QUOTES,'UTF-8'));
+			$announcement['calendar-date'] = nl2br(htmlentities($this->get_date(),ENT_QUOTES,'UTF-8'));
+			$announcement['calendar-date-d.m.Y'] = nl2br(htmlentities($this->get_date('d.m.Y'),ENT_QUOTES,'UTF-8'));
+			$announcement['calendar-date-j.F.Y'] = nl2br(htmlentities(strftime('%e. %B %Y',$this->get_date('U')),ENT_QUOTES,'UTF-8'));
+			$announcement['calendar-type'] = nl2br(htmlentities($this->get_type(),ENT_QUOTES,'UTF-8'));
+			$announcement['calendar-content'] = nl2br(htmlentities($this->get_content(),ENT_QUOTES,'UTF-8'));
+		} else {
+			$announcement['calendar-name'] = $this->get_name();
+			$announcement['calendar-shortname'] = $this->get_shortname();
+			$announcement['calendar-date'] = $this->get_date();
+			$announcement['calendar-date-d.m.Y'] = $this->get_date('d.m.Y');
+			$announcement['calendar-date-j.F.Y'] = strftime('%e. %B %Y',$this->get_date('U'));
+			$announcement['calendar-type'] = $this->get_type();
+			$announcement['calendar-content'] = $this->get_content();
+		}
 	}
 }
 

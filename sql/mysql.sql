@@ -82,6 +82,8 @@ CREATE TABLE IF NOT EXISTS `field` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
+ALTER TABLE `field` ADD `config` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL  
+
 -- --------------------------------------------------------
 
 --

@@ -147,6 +147,27 @@ class Object {
 		}
 		return true;
 	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * callback_check_hierselect checks if a value other than 0 is selected
+	 * 
+	 * @param array $args arguments to check
+	 * @return bool true, if ok, false otherwise
+	 */
+	public function callback_check_hierselect($args) {
+		
+		// check values
+		if($args[0] == '0' || $args[1] == '0') {
+			return false;
+		}
+		return true;
+	}
 }
 
 

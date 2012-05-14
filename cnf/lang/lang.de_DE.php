@@ -352,6 +352,12 @@ $lang = array(
 			'lastUsed' => array(
 				'separator' => 'zuletzt verwendet'
 			)
+		),
+		'entry' => array(
+			'rule' => array(
+				'check.select' => 'Feld muss ausgew&auml;ht werden!',
+				'check.hierselect' => 'Felder m&uuml;ssen ausgew&auml;ht werden!'
+			)
 		)
 	),
 	'class.AnnouncementView' => array(

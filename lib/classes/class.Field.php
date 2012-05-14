@@ -19,6 +19,7 @@ class Field extends Object {
 	private $required;
 	private $category;
 	private $defaults;
+	private $config;
 	
 	/*
 	 * getter/setter
@@ -83,6 +84,12 @@ class Field extends Object {
 	public function set_defaults($defaults) {
 		$this->defaults = $defaults;
 	}
+	public function get_config(){
+		return $this->config;
+	}
+	public function set_config($config) {
+		$this->config = $config;
+	}
 	
 	/*
 	 * constructor/destructor
@@ -116,7 +123,7 @@ class Field extends Object {
 		$db = Db::newDb();
 		
 		// prepare sql-statement
-		$sql = "SELECT f.name,f.type,f2p.required,f.category
+		$sql = "SELECT f.name,f.type,f2p.required,f.category,f.config
 				FROM field AS f,fields2presets AS f2p
 				WHERE f.id = $id
 				AND f2p.field_id = $id
@@ -126,7 +133,7 @@ class Field extends Object {
 		$result = $db->query($sql);
 		
 		// fetch result
-		list($name,$type,$required,$category) = $result->fetch_array(MYSQL_NUM);
+		list($name,$type,$required,$category,$config) = $result->fetch_array(MYSQL_NUM);
 		
 		// set variables to object
 		$this->set_id($id);
@@ -134,6 +141,7 @@ class Field extends Object {
 		$this->set_type($type);
 		$this->set_required($required);
 		$this->set_category($category);
+		$this->set_config(unserialize(stripcslashes($config)));
 		
 		// close db
 		$db->close();
@@ -231,6 +239,55 @@ class Field extends Object {
 			
 			// add id to return
 			$element_ids = $this->get_table().'-'.$this->get_id();
+		} elseif($this->get_type() == 'dbselect') {
+			
+			// read config
+			$config = $this->get_config();
+			
+			// merge options
+			$options = array_merge($options,$config['options']);
+			
+			// select
+			$element = HTML_QuickForm2_Factory::createElement('select', $this->get_table().'-'.$this->get_id(),$options);
+			$element->setLabel($this->get_name().':');
+			
+			// add rules
+			if($this->get_required() == 1) {
+				$element->addRule('required',parent::lang('class.Field#element#rule#required.checkbox'));
+				$element->addRule('callback',parent::lang('class.Field#entry#rule#check.select'),array($this,'callback_check_select'));
+			}
+			
+			// add id to return
+			$element_ids = $this->get_table().'-'.$this->get_id();
+			
+			// get options from field-config
+			$field_options = array('--');
+			$this->dbselect_options($field_options);
+			
+			// load options
+			$element->loadOptions($field_options);
+		} elseif($this->get_type() == 'dbhierselect') {
+			
+			// select
+			$element = HTML_QuickForm2_Factory::createElement('hierselect', $this->get_table().'-'.$this->get_id(),$options);
+			$element->setLabel($this->get_name().':');
+			
+			// add rules
+			if($this->get_required() == 1) {
+				$element->addRule('required',parent::lang('class.Field#element#rule#required.checkbox'));
+				$element->addRule('callback',parent::lang('class.Field#entry#rule#check.hierselect'),array($this,'callback_check_hierselect'));
+			}
+			
+			// add id to return
+			$element_ids = $this->get_table().'-'.$this->get_id();
+			
+			// get options from field-config
+			$field_options_first[0] = '--';
+			$field_options_second[0][0] = '--';
+			$this->dbhierselect_options($field_options_first,$field_options_second);
+						
+			// load options
+			$element->loadOptions(array($field_options_first,$field_options_second));
 		}
 		
 		// set
@@ -334,6 +391,22 @@ class Field extends Object {
 			} else {
 				$checked_value = $value['manual'];
 			}
+		} elseif($this->get_type() == 'dbselect') {
+			
+			// check multiple
+			if(is_array($value)) {
+				
+				// walk throug $value
+				$checked_value = '';
+				foreach($value as $v) {
+					$checked_value .= $v.'|';
+				}
+				$checked_value = substr($checked_value,0,-1);
+			} else {
+				$checked_value = $value;
+			}
+		} elseif($this->get_type() == 'dbhierselect') {
+			$checked_value = $value[0].'|'.$value[1];
 		} else {
 			$checked_value = $value;
 		}
@@ -352,9 +425,10 @@ class Field extends Object {
 	 * value_to_html returns the field and its $value as html embedded in $template
 	 * 
 	 * @param object $template the HtmlTemplate-object to embed the field
+	 * @param array $contents array contains the marks to replace
 	 * @return string the html-representation
 	 */
-	public function value_to_html($template) {
+	public function value_to_html($template,$contents=array()) {
 		
 		// get values
 		$value = $this->get_value();
@@ -391,7 +465,44 @@ class Field extends Object {
 			} else {
 				$checked_value = nl2br($value);
 			}
+		} elseif($this->get_type() == 'dbselect') {
+			
+			// get values
+			$values = $this->dbselect_value();
+			
+			// check multiple
+			if(isset($values[0])) {
+				
+				// walk through $value
+				$checked_value = '';
+				foreach($values as $v) {
+					$checked_value .= $v['value'].', ';
+				}
+				$checked_value = substr($checked_value,0,-2);
+			} else {
+				$checked_value = $values['value'];
+			}
+		} elseif($this->get_type() == 'dbhierselect') {
+			
+			// get values
+			$values = $this->dbhierselect_value();
+			
+			$checked_value = $values['value1'].'/'.$values['value2'];
 		}
+		
+		// parse 2 times
+		for($i = 0;$i < 2;$i++) {
+			
+			// walk through content-array
+			foreach($contents as $name => $content) {
+				
+				// replace marker in template
+				$checked_value = str_replace('###'.$name.'###',$content,$checked_value);
+			}
+		}
+		
+		// replace all unused marks
+		$checked_value = preg_replace('/###(.+)###/U','',$checked_value);
 		
 		// get fieldname bold
 		$field_name = $b->parse(array(
@@ -583,6 +694,164 @@ class Field extends Object {
 		
 		// return
 		return $value;
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * dbselect_options gets the options for the quickform from
+	 * db using the field-config (select_list#select_value)
+	 * 
+	 * @param array $options array to add the options
+	 */
+	private function dbselect_options(&$options) {
+		
+		// get db-object
+		$db = Db::newDb();
+		
+		// get config
+		$config = $this->get_config();
+		
+		// execute query
+		$result = $db->query($config['sql'][0]);
+		
+		// fetch result
+		while(list($id,$name) = $result->fetch_array(MYSQL_NUM)) {
+			$options[$id] = $name;
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * dbselect_value the text value for this field from
+	 * db using the field-config (select_list#select_value)
+	 * 
+	 * @return string value from db
+	 */
+	public function dbselect_value() {
+		
+		// get db-object
+		$db = Db::newDb();
+		
+		// get config
+		$config = $this->get_config();
+		
+		// check multiple (value contains "|")
+		$field_values = array();
+		if(strpos($this->get_value(),'|') !== false) {
+			
+			// separate by |
+			$values = explode('|',$this->get_value());
+			
+			// walk through $values
+			for($i=0;$i<count($values);$i++) {
+				
+				// execute single query
+				$sql = str_replace('|',$values[$i],$config['sql'][1]);		
+				$result = $db->query($sql);
+				
+				// fetch result
+				$field_values[] = $result->fetch_array(MYSQL_ASSOC);
+			}
+		} else {
+			
+			// execute single query
+			$value = str_replace('|',$this->get_value(),$config['sql'][1]);		
+			$result = $db->query($value);
+			
+			// fetch result
+			$field_values = $result->fetch_array(MYSQL_ASSOC);
+		}
+		
+		// return
+		return $field_values;
+		
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * dbhierselect_options gets the options for the quickform from
+	 * db using the field-config (select_list#select_value)
+	 * 
+	 * @param array $options_first array to add the options for first select
+	 * @param array $options_second array to add the options for second select
+	 */
+	private function dbhierselect_options(&$options_first,&$options_second) {
+		
+		// get db-object
+		$db = Db::newDb();
+	
+		// get config
+		$config = $this->get_config();
+		
+		// execute query
+		$result = $db->query($config['sql'][0]);
+		
+		// fetch result
+		while(list($id,$second_id,$name) = $result->fetch_array(MYSQL_NUM)) {
+			
+			// set first options
+			$options_first[$id] = $name;
+			
+			// set second option 0
+			$options_second[$id][0] = '--';
+			
+			// set second options
+			$second = str_replace('|',(int) $second_id,$config['sql'][1]);
+			$result_second = $db->query($second);
+			
+			// fetch result
+			while(list($id2,$name2) = $result_second->fetch_array(MYSQL_NUM)) {
+				$options_second[$id][$id2] = $name2;				
+			}
+		}	
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * dbselect_value the text value for this field from
+	 * db using the field-config (select_list#select_value)
+	 * 
+	 * @return string value from db
+	 */
+	public function dbhierselect_value() {
+		
+		// get db-object
+		$db = Db::newDb();
+			
+		// get config
+		$config = $this->get_config();
+		$sql = explode('|',$config['sql'][2],3);
+		
+		// separate value
+		list($v_first,$v_second) = explode('|',$this->get_value(),2);
+		
+		// execute query
+		$value = $sql[0].$v_first.$sql[1].$v_second.$sql[2];
+		$result = $db->query($value);
+		
+		// fetch result
+		$field_values = $result->fetch_array(MYSQL_ASSOC);
+		
+		// return
+		return $field_values;
+		
 	} 
 }
 

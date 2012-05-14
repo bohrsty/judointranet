@@ -226,9 +226,10 @@ class Preset extends Object {
 	 * add_marks adds the marks and values to the given array
 	 * 
 	 * @param array $announcement array to fill with marks and values
+	 * @param boolean $html convert special chars for html if true, does not if false
 	 * @return void
 	 */
-	public function add_marks(&$announcement) {
+	public function add_marks(&$announcement,$html=true) {
 		
 		// add fields
 		$fields = $this->get_fields();
@@ -238,13 +239,128 @@ class Preset extends Object {
 			
 			// read value
 			$field->read_value();
-			$announcement['field-'.$field->get_id().'-name'] = $field->get_name();
+			// check html
+			if($html === true) {
+				$announcement['field-'.$field->get_id().'-name'] = nl2br(htmlentities($field->get_name(),ENT_QUOTES,'UTF-8'));
+			} else {
+				$announcement['field-'.$field->get_id().'-name'] = $field->get_name();
+			}
 			
 			// check defaults
 			if($field->get_value() == '' && $field->get_defaults() != 0) {
-				$announcement['field-'.$field->get_id().'-value'] = $field->return_defaults_value($field->get_defaults());
+				// check html
+				if($html === true) {
+					$announcement['field-'.$field->get_id().'-value'] = nl2br(htmlentities($field->return_defaults_value($field->get_defaults()),ENT_QUOTES,'UTF-8'));
+				} else {
+					$announcement['field-'.$field->get_id().'-value'] = $field->return_defaults_value($field->get_defaults());
+				}
 			} else {
-				$announcement['field-'.$field->get_id().'-value'] = $field->get_value();
+				
+				// check type
+				if($field->get_type() == 'dbselect') {
+					
+					// get separator from config
+					$config = $field->get_config();
+					
+					// get value
+					$values = $field->dbselect_value();
+					// check multiple
+					$all = array();
+					if(isset($values[0])) {
+						
+						// walk through multiple
+						foreach($values as $i => $multiple) {
+							
+							// walk through values
+							foreach($multiple as $name => $value) {
+								// check html
+								if($html === true) {
+									$announcement['field-'.$field->get_id().'-value.'.$i.'.'.$name] = nl2br(htmlentities($value,ENT_QUOTES,'UTF-8'));
+								} else {
+									$announcement['field-'.$field->get_id().'-value.'.$i.'.'.$name] = $value;
+								}
+								
+								// add to all
+								if(!isset($all[$name])) {
+									$all[$name] = $value.$config['separators'][$name];
+								} else {
+									$all[$name] .= $value.$config['separators'][$name];
+								}
+							}
+						}
+						
+						foreach($all as $all_name => $all_value) {
+							$all_value = substr($all_value,0,-strlen($config['separators'][$all_name]));
+							
+							// add to announcement
+							// check html
+							if($html === true) {
+								$announcement['field-'.$field->get_id().'-value.all.'.$all_name] = nl2br(htmlentities($all_value,ENT_QUOTES,'UTF-8'));
+							} else {
+								$announcement['field-'.$field->get_id().'-value.all.'.$all_name] = $all_value;
+							}
+						}
+					} else {
+						
+						// walk through values
+						foreach($values as $name => $value) {
+							// check html
+							if($html === true) {
+								$announcement['field-'.$field->get_id().'-value.0.'.$name] = nl2br(htmlentities($value,ENT_QUOTES,'UTF-8'));
+							} else {
+								$announcement['field-'.$field->get_id().'-value.0.'.$name] = $value;
+							}
+							
+							// add to all
+							if(!isset($all[$name])) {
+								$all[$name] = $value.$config['separators'][$name];
+							} else {
+								$all[$name] .= $value.$config['separators'][$name];
+							}
+						}
+						
+						foreach($all as $all_name => $all_value) {
+							$all_value = substr($all_value,0,-strlen($config['separators'][$all_name]));
+							
+							// add to announcement
+							// check html
+							if($html === true) {
+								$announcement['field-'.$field->get_id().'-value.all.'.$all_name] = nl2br(htmlentities($all_value,ENT_QUOTES,'UTF-8'));
+							} else {
+								$announcement['field-'.$field->get_id().'-value.all.'.$all_name] = $all_value;
+							}
+						}
+					}
+				} elseif($field->get_type() == 'dbhierselect') {
+					
+					// walk through values
+					foreach($field->dbhierselect_value() as $name => $value) {
+						// check html
+						if($html === true) {
+							$announcement['field-'.$field->get_id().'-value.'.$name] = nl2br(htmlentities($value,ENT_QUOTES,'UTF-8'));
+						} else {
+							$announcement['field-'.$field->get_id().'-value.'.$name] = $value;
+						}
+					}
+				} elseif($field->get_type() == 'date') {
+					// check html
+					if($html === true) {
+						$announcement['field-'.$field->get_id().'-value'] = nl2br(htmlentities($field->get_value()));
+						$announcement['field-'.$field->get_id().'-value-d.m.Y'] = nl2br(htmlentities(date('d.m.Y',strtotime($field->get_value())),ENT_QUOTES,'UTF-8'));
+						$announcement['field-'.$field->get_id().'-value-j.F.Y'] = nl2br(htmlentities(strftime('%e. %B %Y',strtotime($field->get_value())),ENT_QUOTES,'UTF-8'));
+					} else {
+						$announcement['field-'.$field->get_id().'-value'] = $field->get_value();
+						$announcement['field-'.$field->get_id().'-value-d.m.Y'] = date('d.m.Y',strtotime($field->get_value()));
+						$announcement['field-'.$field->get_id().'-value-j.F.Y'] = strftime('%e. %B %Y',strtotime($field->get_value()));
+					}
+				} else {
+					// check html
+					if($html === true) {
+						$announcement['field-'.$field->get_id().'-value'] = nl2br(htmlentities($field->get_value(),ENT_QUOTES,'UTF-8'));
+					} else {
+						$announcement['field-'.$field->get_id().'-value'] = $field->get_value();
+					}
+				}
 			}
 		}
 	}
