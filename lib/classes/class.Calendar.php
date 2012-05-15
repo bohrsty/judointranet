@@ -432,6 +432,7 @@ class Calendar extends Page {
 			$announcement['calendar-shortname'] = nl2br(htmlentities($this->get_shortname(),ENT_QUOTES,'UTF-8'));
 			$announcement['calendar-date'] = nl2br(htmlentities($this->get_date(),ENT_QUOTES,'UTF-8'));
 			$announcement['calendar-date-d.m.Y'] = nl2br(htmlentities($this->get_date('d.m.Y'),ENT_QUOTES,'UTF-8'));
+			$announcement['calendar-date-dmY'] = nl2br(htmlentities($this->get_date('dmY'),ENT_QUOTES,'UTF-8'));
 			$announcement['calendar-date-j.F.Y'] = nl2br(htmlentities(strftime('%e. %B %Y',$this->get_date('U')),ENT_QUOTES,'UTF-8'));
 			$announcement['calendar-type'] = nl2br(htmlentities($this->get_type(),ENT_QUOTES,'UTF-8'));
 			$announcement['calendar-content'] = nl2br(htmlentities($this->get_content(),ENT_QUOTES,'UTF-8'));
@@ -440,6 +441,7 @@ class Calendar extends Page {
 			$announcement['calendar-shortname'] = $this->get_shortname();
 			$announcement['calendar-date'] = $this->get_date();
 			$announcement['calendar-date-d.m.Y'] = $this->get_date('d.m.Y');
+			$announcement['calendar-date-dmY'] = $this->get_date('dmY');
 			$announcement['calendar-date-j.F.Y'] = strftime('%e. %B %Y',$this->get_date('U'));
 			$announcement['calendar-type'] = $this->get_type();
 			$announcement['calendar-content'] = $this->get_content();

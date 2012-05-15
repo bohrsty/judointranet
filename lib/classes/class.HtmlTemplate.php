@@ -135,6 +135,26 @@ class HtmlTemplate extends Object {
 	}
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * dummy_string sets $string to $this->template_html to be
+	 * parsed
+	 * 
+	 * @param string $string string to be parsed
+	 */
+	public function dummy_string($string) {
+		
+		// set $string to $template_html
+		$this->set_template_html($string);
+	}
+	
+	
 }
 
 

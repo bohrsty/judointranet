@@ -13,6 +13,8 @@ class Preset extends Object {
 	private $name;
 	private $desc;
 	private $fields;
+	private $path;
+	private $filename;
 	
 	/*
 	 * getter/setter
@@ -41,6 +43,19 @@ class Preset extends Object {
 	public function set_fields($fields) {
 		$this->fields = $fields;
 	}
+	public function get_path(){
+		return $this->path;
+	}
+	public function set_path($path) {
+		$this->path = $path;
+	}
+	public function get_filename(){
+		return $this->filename;
+	}
+	public function set_filename($filename) {
+		$this->filename = $filename;
+	}
+	
 	
 	/*
 	 * constructor/destructor
@@ -70,7 +85,7 @@ class Preset extends Object {
 		$db = Db::newDb();
 		
 		// prepare sql-statement
-		$sql = "SELECT p.name,p.desc
+		$sql = "SELECT p.name,p.desc,p.path,p.filename
 				FROM preset AS p
 				WHERE p.id = $id";
 		
@@ -78,12 +93,14 @@ class Preset extends Object {
 		$result = $db->query($sql);
 		
 		// fetch result
-		list($name,$desc) = $result->fetch_array(MYSQL_NUM);
+		list($name,$desc,$path,$filename) = $result->fetch_array(MYSQL_NUM);
 		
 		// set variables to object
 		$this->set_id($id);
 		$this->set_name($name);
 		$this->set_desc($desc);
+		$this->set_path($path);
+		$this->set_filename($filename);
 		
 		// close db
 		$db->close();

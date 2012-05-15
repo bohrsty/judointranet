@@ -741,15 +741,6 @@ class AnnouncementView extends PageView {
 	 */
 	private function details() {
 		
-		// get templates
-		try {
-			$p = new HtmlTemplate('templates/p.tpl');
-			$template = new HtmlTemplate('templates/announcements/1-std/1-std.tpl');
-			$div = new HtmlTemplate('templates/div.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		
 		// check cid and pid given
 		if ($this->get('cid') !== false && $this->get('pid') !== false) {
 		
@@ -765,6 +756,14 @@ class AnnouncementView extends PageView {
 					// get preset
 					$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'));
 					
+					// get templates
+					try {
+						$p = new HtmlTemplate('templates/p.tpl');
+						$template = new HtmlTemplate($preset->get_path());
+						$div = new HtmlTemplate('templates/div.tpl');
+					} catch(Exception $e) {
+						$GLOBALS['Error']->handle_error($e);
+					}
 					// get calendar
 					$calendar = new Calendar($this->get('cid'));
 					
@@ -830,14 +829,6 @@ class AnnouncementView extends PageView {
 	 */
 	private function topdf() {
 		
-		// get templates
-		// p
-		try {
-			$p = new HtmlTemplate('templates/p.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		
 		// check cid and pid given
 		if ($this->get('cid') !== false && $this->get('pid') !== false) {
 		
@@ -853,10 +844,42 @@ class AnnouncementView extends PageView {
 					// get preset
 					$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'));
 					
-					// get fields
-					$fields = $preset->get_fields();
+					// get templates
+					try {
+						$p = new HtmlTemplate('templates/p.tpl');
+						$template = new HtmlTemplate($preset->get_path());
+						$dummy = new HtmlTemplate('templates/dummy.tpl');
+					} catch(Exception $e) {
+						$GLOBALS['Error']->handle_error($e);
+					}
 					
-	$return .= 'topdf';					
+					// get calendar
+					$calendar = new Calendar($this->get('cid'));
+					
+					// prepare marker-array
+					$announcement = array(
+							'version' => date('dmy')
+						);
+					
+					// add calendar-fields to array
+					$calendar->add_marks($announcement);
+					
+					// add field-names and -values to array
+					$preset->add_marks($announcement);
+					
+					// template
+					$pdf_out = $template->parse($announcement);				
+					
+					// get HTML2PDF-object
+					$pdf = new HTML2PDF('P', 'A4', 'de', true, 'UTF-8', array(0, 0, 0, 0));
+					
+					// convert
+					$pdf->writeHTML($pdf_out, false);
+					
+					// output
+					$dummy->dummy_string($preset->get_filename());
+					$pdf_filename = strtolower($this->replace_umlaute(html_entity_decode($dummy->parse($announcement))));
+					$pdf->Output($pdf_filename,'D');
 					
 					// return
 					return $return;

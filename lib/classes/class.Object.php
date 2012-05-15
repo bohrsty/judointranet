@@ -168,6 +168,45 @@ class Object {
 		}
 		return true;
 	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * replace_umlaute replaces german umlaute in $string
+	 * 
+	 * @param string $string string containing umlaute to be replaced
+	 * @return string string where the umlaute are replaced
+	 */
+	public function replace_umlaute($string) {
+		
+		// replacement table
+		$table = array(
+			'ä' => 'ae',
+			'ö' => 'oe',
+			'ü' => 'ue',
+			'Ä' => 'Ae',
+			'Ö' => 'Oe',
+			'Ü' => 'Ue',
+			'ß' => 'ss'
+		);
+		
+		// convert to utf8
+		$string = utf8_encode($string);		
+		
+		// replace
+		foreach($table as $char => $replacement) {
+//			echo "$char => $replacement";
+			$string = str_replace($char,$replacement,$string);
+//			$string = preg_replace('/ü/',$replacement,$string);
+		}
+		
+		// return
+		return $string;
+	}
 }
 
 

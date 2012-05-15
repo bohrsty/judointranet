@@ -181,7 +181,8 @@ CREATE TABLE IF NOT EXISTS `preset` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
-ALTER TABLE `preset` ADD `path` VARCHAR( 75 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `table` 
+ALTER TABLE `preset` ADD `path` VARCHAR( 75 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `table`;
+ALTER TABLE `preset` ADD `filename` VARCHAR( 50 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `path`; 
 -- --------------------------------------------------------
 
 --

@@ -5,9 +5,12 @@
  */
 function __autoload($class) {
 
-	// load quickform
-	if(substr($class,0,4) == 'HTML') {
+	// load HTML2PDF
+	if($class == 'HTML2PDF') {
+		include_once('lib/html2pdf/html2pdf.class.php');
+	} elseif(substr($class,0,4) == 'HTML') {
 		
+		// load quickform
 		// explode _
 		$parts = explode('_',$class);
 		$path = '';
@@ -23,7 +26,7 @@ function __autoload($class) {
 		include_once($path);
 	} else {
 	
-		// load new classes
+		// load classes
 		include_once('lib/classes/class.'.$class.'.php');
 	}
 }
