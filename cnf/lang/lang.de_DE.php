@@ -89,6 +89,18 @@ $lang = array(
 				'ERROR.message' => 'F&uuml;r diesen Termin wurde keine Ausschreibung angelegt, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
 									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
 									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
+			),
+			'UsertableNotExists' => array(
+				'ERROR.caption' => 'FEHLER',
+				'ERROR.message' => 'Diese Tabelle existiert nicht, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
+			),
+			'RowNotExists' => array(
+				'ERROR.caption' => 'FEHLER',
+				'ERROR.message' => 'Diese Tabellenzeile existiert nicht, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
 			)
 		
 		)
@@ -567,6 +579,109 @@ $lang = array(
 				'listall.hx' => 'Listenansicht',
 				'listall.p' =>	'Die Listenansicht bietet einen &Uuml;berblick &uuml;ber das Inventar, die derzeitigen Besitzer und den Status eines Objekts. Die Details eines
 								Objekts zeigen die &Uuml;bergaben und Details zum &uuml;bergebenen Zubeh&ouml;r.'
+			)
+		)
+	),
+	'class.AdministrationView' => array(
+		'connectnavi' => array(
+			'firstlevel' => array(
+				'name' => 'Administration'
+			),
+			'secondlevel' => array(
+				'field' => 'Ben. Tabellen verwalten'
+			)
+		),
+		'init' => array(
+			'default' => array(
+				'title' => 'Administration'
+			),
+			'Error' => array(
+				'NotAuthorized' => 'FEHLER - Nicht berechtigt'
+			),
+			'field' => array(
+				'title' => 'Administration: benutzerdefinierte Tabellen verwalten'
+			)
+		),
+		'create_table_links' => array(
+			'title' => array(
+				'manage' => ' verwalten'
+			),
+			'name' => array(
+				'manage' => ' verwalten'
+			),
+			'toggleTable' => array(
+				'title' => 'Tabellenauswahl ein- oder ausblenden',
+				'name' => 'Tabellenauswahl ein- oder ausblenden'
+			),
+			'new' => array(
+				'title' => 'Neuen Eintrag in diese Tabelle einf&uuml;gen',
+				'name' => 'Neuer Eintrag'
+			)
+		),
+		'field' => array(
+			'caption' => array(
+				'name' => 'Benutzerdefinierte Tabellen verwalten',
+				'name.table' => 'Tabelle verwalten: '
+			),
+			'disable' => array(
+				'rowNotEnabled' => 'Diese Tabellenzeile ist nicht aktiviert und kann nicht deaktiviert werden, m&ouml;chten Sie sie stattdessen aktivieren?',
+				'rowNotEnabled.enable' => 'Zeile aktivieren'
+			),
+			'enable' => array(
+				'rowNotDisabled' => 'Diese Tabellenzeile ist nicht deaktiviert und kann nicht aktiviert werden, m&ouml;chten Sie sie stattdessen deaktivieren?',
+				'rowNotDisabled.disable' => 'Zeile deaktivieren'
+			)
+		),
+		'list_table_content' => array(
+			'pages' => array(
+				'page' => 'Seite',
+				'pages' => 'Seiten',
+				'to' => 'bis',
+				'of' => 'von'
+			),
+			'table' => array(
+				'tasks' => 'Aufgaben',
+				'edit' => 'Bearbeiten',
+				'disable' => 'Deaktivieren',
+				'enable' => 'Aktivieren',
+				'delete' => 'L&ouml;schen'
+			)
+		),
+		'delete_row' => array(
+			'form' => array(
+				'yes' => 'Ja'
+			),
+			'cancel' => array(
+				'title' => 'Abbrechen',
+				'form' => 'Abbrechen'
+			),
+			'message' => array(
+				'confirm' => 'Wollen Sie diese Zeile wirklich l&ouml;schen? Sie ist damit unwiederbringlich entfernt, Deaktivieren blendet sie f&uuml;r Benutzer aus, bestehende Verkn&uuml;pfungen bleiben aber bestehen!',
+				'done' => 'Die Zeile wurde endg&uuml;tig gel&ouml;scht!'
+			)
+		),
+		'edit_row' => array(
+			'rule' => array(
+				'regexp.allowedChars' => 'Es k&ouml;nnen nur folgende Zeichen eingegeben werden!',
+			),
+			'form' => array(
+				'submitButton' => 'Speichern'
+			),
+			'caption' => array(
+				'edit' => '&Auml;ndere Zeile',
+				'done' => 'Zeile erfolgreich ge&auml;ndert'
+			)
+		),
+		'new_row' => array(
+			'rule' => array(
+				'regexp.allowedChars' => 'Es k&ouml;nnen nur folgende Zeichen eingegeben werden!',
+			),
+			'form' => array(
+				'submitButton' => 'Speichern'
+			),
+			'caption' => array(
+				'edit' => 'Zeile einf&uuml;gen',
+				'done' => 'Zeile erfolgreich eingef&uuml;gt'
 			)
 		)
 	)

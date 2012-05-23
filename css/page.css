@@ -116,7 +116,6 @@ div#sortlinks {
 	overflow: scroll;
 	overflow: -moz-scrollbars-vertical;
 	margin-bottom: 20px;
-	display: none;
 }
 
 td.admin div.row {
@@ -163,6 +162,34 @@ div.announcement-page-line {
 	border: solid 1px black;
 	width: 210mm;
 	height: 297mm;
+}
+
+p.usertable {
+	border-bottom: 1px solid white;
+	background-color: #0000ff;
+	width: 225px;
+	padding: 0;
+	margin: 0;
+}
+
+a.usertable {
+	text-decoration: none;
+	color: white;
+	padding: 3px;
+}
+
+p.deleted {
+	color: red;
+	font-weight: bold;
+}
+
+p.edit_caption {
+	font-weight: bold;
+}
+
+a#newLink {
+	position: relative;
+	left: 20px;
 }
 
 /* navi */

@@ -53,6 +53,8 @@ CREATE TABLE IF NOT EXISTS `config` (
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+
+ALTER TABLE `config` CHANGE `value` `value` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL;
 -- --------------------------------------------------------
 
 --
@@ -228,7 +230,9 @@ INSERT INTO `rights` (`id`, `g_id`, `table_name`, `table_id`, `comment`) VALUES
 (22, 1, 'navi', 2301889492, 'InventoryView|details'),
 (23, 1, 'navi', 2029386500, 'InventoryView|movement'),
 (24, 1, 'navi', 3931860135, 'AnnouncementView|details'),
-(25, 1, 'navi', 353262192, 'AnnouncementView|topdf');
+(25, 1, 'navi', 353262192, 'AnnouncementView|topdf'),
+(26, 1, 'navi', 3403310372, 'AdministrationView'),
+(27, 1, 'navi', 1221274410, 'AdministrationView|field');
 
 -- --------------------------------------------------------
 
