@@ -66,6 +66,12 @@ class MainView extends PageView {
 						'name' => 'class.PageView#navi#secondlevel#logout',
 						'id' => crc32('MainView|logout'), // 447709445
 						'show' => true
+					),
+					array(
+						'getid' => 'user', 
+						'name' => 'class.PageView#navi#secondlevel#user',
+						'id' => crc32('MainView|user'), // 858116738
+						'show' => false
 					)
 				);
 		} else {
@@ -146,6 +152,20 @@ class MainView extends PageView {
 						// main-content
 						$this->add_output(array('main' => $_SESSION['user']->logout()));
 						$this->put_userinfo();
+						// navi
+						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
+						// jquery
+						$this->add_output(array('jquery' => $this->get_jquery()));
+						
+					break;
+					
+					case 'user':
+						
+						// set contents
+						// title
+						$this->add_output(array('title' => $this->title(parent::lang('class.MainView#init#user#title'))));
+						// main-content
+						$this->add_output(array('main' => $this->user()));
 						// navi
 						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 						// jquery
@@ -283,6 +303,11 @@ class MainView extends PageView {
 	
 	
 	
+	/**
+	 * callback_check_login checks the given infos against the user
+	 * 
+	 * @param array $args data from quickform to check
+	 */
 	public function callback_check_login($args) {
 		
 		// check if user exists
@@ -311,6 +336,132 @@ class MainView extends PageView {
 			$_SESSION['user']->set_login_message('class.MainView#callback_check_login#message#UserNotExist');
 			return false;
 		}
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * user controles the actions for usersettings
+	 * 
+	 * @return string the html-string of usersettings-page
+	 */
+	private function user() {
+		
+		// read templates
+		try {
+			$hx = new HtmlTemplate('templates/hx.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
+		
+		// prepare return
+		$return = '';
+		
+		// check login
+		if($_SESSION['user']->get_loggedin()) {
+		
+			// set caption
+			$return .= $hx->parse(array(
+					'hx.x' => 2,
+					'hx.params' => '',
+					'hx.content' => parent::lang('class.MainView#user#caption#general').' '.$_SESSION['user']->get_userinfo('name')
+				));
+				
+			// check action
+			if($this->get('action') == 'passwd') {
+				
+				// set caption
+				$return .= $hx->parse(array(
+						'hx.x' => 3,
+						'hx.params' => '',
+						'hx.content' => parent::lang('class.MainView#user#caption#passwd')
+					));
+				
+				// prepare form
+				$form = new HTML_QuickForm2(
+						'passwd',
+						'post',
+						array(
+							'name' => 'passwd',
+							'action' => 'index.php?id=user&action=passwd'
+						)
+					);
+				
+				// add elementgroup
+				$passwd = $form->addElement('group','password',array());
+				// add fields
+				$passwd1 = $passwd->addElement('password','password1',array());
+				$passwd2 = $passwd->addElement('password','password2',array());
+				// add label
+				$passwd->setLabel(parent::lang('class.MainView#user#passwd#label').':');
+				// submit-button
+				$form->addSubmit('submit',array('value' => parent::lang('class.MainView#user#passwd#submitButton')));
+				// renderer
+				$renderer = HTML_QuickForm2_Renderer::factory('default');
+				$renderer->setOption('required_note',parent::lang('class.MainView#user#form#requiredNote'));
+				// add rules
+				$passwd->addRule('required',parent::lang('class.MainView#user#rule#required'));
+				$passwd->addRule('callback',parent::lang('class.MainView#user#rule#checkPasswd'),array($this,'callback_check_passwd'));			
+				
+				// validate
+				if($form->validate()) {
+					
+					// get values
+					$data = $form->getValue();
+					
+					// get db-object
+					$db = Db::newDb();
+					
+					// prepare sql-statement
+					$sql = "UPDATE user
+							SET password='".md5($data['password']['password1'])."'
+							WHERE id=".$_SESSION['user']->get_id();
+					
+					// execute statement
+					$result = $db->query($sql);
+					
+					// set message
+					$return .= $this->p('',parent::lang('class.MainView#user#validate#passwdChanged'));
+				} else {
+					$return .= $form->render($renderer);
+				}
+			} else {
+				$return .= 'default content';
+			}
+		} else {
+			
+			// not authorized
+			$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+			$GLOBALS['Error']->handle_error($errno);
+			$return = $GLOBALS['Error']->to_html($errno);
+		}
+		
+		// return
+		return $return;
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * callback_check_passwd checks the given passwords for identity
+	 * 
+	 * @param array $args data from quickform to check
+	 */
+	public function callback_check_passwd($args) {
+		
+		// check passwords
+		if($args['password1'] === $args['password2']) {
+			return true;
+		} else {
+			return false;
+		}
+		
 	}
 }
 

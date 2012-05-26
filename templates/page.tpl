@@ -24,7 +24,9 @@
 			###navi###
 		</div>
 		<div id="content">
-			<p class="logininfo">###logininfo###</p>
+			<div class="logininfo">
+				###logininfo###
+			</div>
 			###main###
 			</div>
 	</body>

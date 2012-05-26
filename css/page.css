@@ -192,6 +192,23 @@ a#newLink {
 	left: 20px;
 }
 
+p.usersettings {
+	border-bottom: 1px solid white;
+	background-color: #0000ff;
+	width: 200px;
+	padding: 0;
+	margin: 0;
+	position: absolute;
+	right: 0;
+	text-align: left;
+}
+
+a.usersettings {
+	text-decoration: none;
+	color: white;
+	padding: 3px;
+}
+
 /* navi */
 div.navi_0 {
 	border: 1px solid blue;
@@ -292,7 +309,7 @@ div.calendar-details p.details span{
 	font-weight: bold;
 }
 
-p.logininfo {
+div.logininfo {
 	text-align: right;
 	font-size: 10pt;
 }

@@ -1057,7 +1057,6 @@ class AdministrationView extends PageView {
 		
 		// get values and fields
 		$i = 0;
-		$datasource = array();
 		$fields = array();
 		foreach($row as $col => $value) {
 			

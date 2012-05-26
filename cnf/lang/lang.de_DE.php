@@ -252,7 +252,12 @@ $lang = array(
 		'put_userinfo' => array(
 			'logininfo' => array(
 				'NotLoggedin' => 'Nicht angemeldet.',
-				'LoggedinAs' => 'Angemeldet als:'
+				'LoggedinAs' => 'Angemeldet als:',
+				'toggleUsersettings' => 'Benutzereinstellungen ein-/ausblenden'
+			),
+			'usersettings' => array(
+				'passwd' => 'Kennwort &auml;ndern',
+				'passwd.title' => 'Kennwort &auml;ndern'
 			)
 		)
 	),
@@ -274,7 +279,10 @@ $lang = array(
 			),
 			'default' => array(
 				'title' => 'Startseite'
-			)
+			),
+			'user' => array(
+				'title' => 'Benutzereinstellungen'
+			),
 		),
 		'login' => array(
 			'form' => array(
@@ -299,6 +307,26 @@ $lang = array(
 				'UserNotExist' => 'Der angegebene Benutzername existiert nicht.',
 				'UserNotActive' => 'Dieser Benutzer ist nicht aktiv.',
 				'WrongPassword' => 'Falsches Passwort.'
+			)
+		),
+		'user' => array(
+			'caption' => array(
+				'general' => 'Benutzereinstellungen f&uuml;r',
+				'passwd' => 'Kennwort &auml;ndern'
+			),
+			'passwd' => array(
+				'label' => 'Neues Kennwort und Wiederholung eingeben',
+				'submitButton' => 'Kennwort ändern'
+			),
+			'form' => array(
+				'requiredNote' => '<span class="required">*</span> erforderliches Feld'
+			),
+			'rule' => array(
+				'required' => 'Kennwort muss ausgef&uuml;llt werden!',
+				'checkPasswd' => 'Die Eingaben m&uuml;ssen identisch sein!'
+			),
+			'validate' => array(
+				'passwdChanged' => 'Das Kennwort wurde erfolgreich ge&auml;ndert.'
 			)
 		)
 	),

@@ -426,13 +426,52 @@ class PageView extends Object {
 	 */
 	protected function put_userinfo() {
 		
+		// read templates
+		try {
+			$a = new HtmlTemplate('templates/a.tpl');
+			$div = new HtmlTemplate('templates/div.tpl');
+			$js_toggleSlide_div = new HtmlTemplate('templates/js-toggleSlide-div.tpl');
+		} catch(Exception $e) {
+			$GLOBALS['Error']->handle_error($e);
+		}
+		
 		// check if userinfo exists and set to output
 		$name = $_SESSION['user']->get_userinfo('name');
 		if($name !== false) {
 			
+			// create link
+			$link = $a->parse(array(
+					'a.params' => ' id="toggleUsersettings"',
+					'a.href' => '#',
+					'a.title' => parent::lang('class.PageView#put_userinfo#logininfo#toggleUsersettings'),
+					'a.content' => $name
+				));
+			
+			// prepare usersettings
+			$a_out = $this->p(' class="usersettings"',$a->parse(array(
+					'a.params' => ' class="usersettings"',
+					'a.href' => 'index.php?id=user&amp;action=passwd',
+					'a.title' => parent::lang('class.PageView#put_userinfo#usersettings#passwd.title'),
+					'a.content' => parent::lang('class.PageView#put_userinfo#usersettings#passwd')
+				)));
+			// prepare div
+			$div_out = $div->parse(array(
+					'div.params' => ' id="usersettings"',
+					'div.content' => $a_out
+				));
+			
+			// prepare userinfos
+			$name = parent::lang('class.PageView#put_userinfo#logininfo#LoggedinAs').' '.$link.' ('.$_SESSION['user']->get_userinfo('username').')'.$div_out;
+			
 			// add userinfos
-			$name = parent::lang('class.PageView#put_userinfo#logininfo#LoggedinAs').' '.$name.' ('.$_SESSION['user']->get_userinfo('username').')';
 			$this->add_output(array('logininfo' => $name),true);
+			
+			// add jquery
+			$this->add_jquery($js_toggleSlide_div->parse(array(
+							'id' => '#toggleUsersettings',
+							'toToggle' => '#usersettings',
+							'time' => ''
+					)));
 		} else {
 			$this->add_output(array('logininfo' => parent::lang('class.PageView#put_userinfo#logininfo#NotLoggedin')),true);
 		}
