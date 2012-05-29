@@ -610,6 +610,7 @@ class Field extends Object {
 		$sql = "SELECT d.id,d.name
 				FROM defaults AS d
 				WHERE category='".$this->get_category()."'
+				AND d.valid=1		
 				ORDER BY d.name ASC";
 		
 		// execute

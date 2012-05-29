@@ -611,12 +611,35 @@ $lang = array(
 		)
 	),
 	'class.AdministrationView' => array(
+		'tableRows' => array(
+			'name' => array(
+				'name' => 'Name/Anzeigename',
+				'category' => 'Kategorie',
+				'value' => 'Wert',
+				'valid' => 'Aktiviert',
+				'number' => 'Nummer',
+				'id' => 'ID',
+				'club_id' => 'Vereins-ID',
+				'class' => 'Altersgruppe',
+				'type' => 'Typ',
+				'weightclass' => 'Gewichtsklasse',
+				'time' => 'Zeit',
+				'agegroups' => 'Jahrg&auml;nge',
+				'color' => 'Farbe',
+				'hall' => 'Halle',
+				'street' => 'Stra&szlig;e',
+				'zip' => 'PLZ',
+				'city' => 'Stadt',
+				'email' => 'Emailadresse'
+			)
+		),
 		'connectnavi' => array(
 			'firstlevel' => array(
 				'name' => 'Administration'
 			),
 			'secondlevel' => array(
-				'field' => 'Ben. Tabellen verwalten'
+				'field' => 'Ben. Tabellen verwalten',
+				'defaults' => 'Vorgaben verwalten'
 			)
 		),
 		'init' => array(
@@ -626,8 +649,9 @@ $lang = array(
 			'Error' => array(
 				'NotAuthorized' => 'FEHLER - Nicht berechtigt'
 			),
-			'field' => array(
-				'title' => 'Administration: benutzerdefinierte Tabellen verwalten'
+			'title' => array(
+				'field' => 'Administration: benutzerdefinierte Tabellen verwalten',
+				'defaults' => 'Administration: Vorgaben verwalten'
 			)
 		),
 		'create_table_links' => array(
@@ -640,10 +664,6 @@ $lang = array(
 			'toggleTable' => array(
 				'title' => 'Tabellenauswahl ein- oder ausblenden',
 				'name' => 'Tabellenauswahl ein- oder ausblenden'
-			),
-			'new' => array(
-				'title' => 'Neuen Eintrag in diese Tabelle einf&uuml;gen',
-				'name' => 'Neuer Eintrag'
 			)
 		),
 		'field' => array(
@@ -673,6 +693,10 @@ $lang = array(
 				'disable' => 'Deaktivieren',
 				'enable' => 'Aktivieren',
 				'delete' => 'L&ouml;schen'
+			),
+			'new' => array(
+				'title' => 'Neuen Eintrag in diese Tabelle einf&uuml;gen',
+				'name' => 'Neuer Eintrag'
 			)
 		),
 		'delete_row' => array(
@@ -691,9 +715,13 @@ $lang = array(
 		'edit_row' => array(
 			'rule' => array(
 				'regexp.allowedChars' => 'Es k&ouml;nnen nur folgende Zeichen eingegeben werden!',
+				'requiredSelect' => 'Feld muss ausgew&auml;hlt werden!',
+				'checkSelect' => 'Feld muss ausgew&auml;hlt werden!',
+				'required' => 'Feld muss ausgef&uuml;llt werden!'
 			),
 			'form' => array(
-				'submitButton' => 'Speichern'
+				'submitButton' => 'Speichern',
+				'requiredNote' => '<span class="required">*</span> erforderliches Feld'
 			),
 			'caption' => array(
 				'edit' => '&Auml;ndere Zeile',
@@ -703,13 +731,30 @@ $lang = array(
 		'new_row' => array(
 			'rule' => array(
 				'regexp.allowedChars' => 'Es k&ouml;nnen nur folgende Zeichen eingegeben werden!',
+				'requiredSelect' => 'Feld muss ausgew&auml;hlt werden!',
+				'checkSelect' => 'Feld muss ausgew&auml;hlt werden!',
+				'required' => 'Feld muss ausgef&uuml;llt werden!'
 			),
 			'form' => array(
-				'submitButton' => 'Speichern'
+				'submitButton' => 'Speichern',
+				'requiredNote' => '<span class="required">*</span> erforderliches Feld'
 			),
 			'caption' => array(
 				'edit' => 'Zeile einf&uuml;gen',
 				'done' => 'Zeile erfolgreich eingef&uuml;gt'
+			)
+		),
+		'defaults' => array(
+			'caption' => array(
+				'name' => 'Vorgaben verwalten'
+			),
+			'disable' => array(
+				'rowNotEnabled' => 'Diese Tabellenzeile ist nicht aktiviert und kann nicht deaktiviert werden, m&ouml;chten Sie sie stattdessen aktivieren?',
+				'rowNotEnabled.enable' => 'Zeile aktivieren'
+			),
+			'enable' => array(
+				'rowNotDisabled' => 'Diese Tabellenzeile ist nicht deaktiviert und kann nicht aktiviert werden, m&ouml;chten Sie sie stattdessen deaktivieren?',
+				'rowNotDisabled.disable' => 'Zeile deaktivieren'
 			)
 		)
 	)
