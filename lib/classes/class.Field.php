@@ -312,6 +312,7 @@ class Field extends Object {
 		
 		// prepare return
 		$value = '';
+		$defaults = '';
 		
 		// get db-object
 		$db = Db::newDb();

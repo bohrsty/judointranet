@@ -363,12 +363,6 @@ class AnnouncementView extends PageView {
 								'version' => date('dmy')
 							);
 						
-						// add calendar-fields to array
-						$calendar->add_marks($announcement);
-						
-						// add field-names and -values to array
-						$preset->add_marks($announcement);
-						
 						// get data
 						$data = $form->getValue();
 						
@@ -378,8 +372,16 @@ class AnnouncementView extends PageView {
 							// values to db
 							$field->value($data[$field->get_table().'-'.$field->get_id()]);
 							$field->write_db('insert');
-							
-							// return field and value as HTML
+						}
+						
+						// add calendar-fields to array
+						$calendar->add_marks($announcement);
+						
+						// add field-names and -values to array
+						$preset->add_marks($announcement);
+						
+						// return field and value as HTML
+						foreach($fields as $field) {
 							$return .= $field->value_to_html($p,$announcement);
 						}
 						
@@ -548,12 +550,6 @@ class AnnouncementView extends PageView {
 								'version' => date('dmy')
 							);
 						
-						// add calendar-fields to array
-						$calendar->add_marks($announcement);
-						
-						// add field-names and -values to array
-						$preset->add_marks($announcement);
-						
 						// get data
 						$data = $form->getValue();
 						
@@ -563,8 +559,16 @@ class AnnouncementView extends PageView {
 							// values to db
 							$field->value($data[$field->get_table().'-'.$field->get_id()]);
 							$field->write_db('update');
-							
-							// return field and value as HTML
+						}
+						
+						// add calendar-fields to array
+						$calendar->add_marks($announcement);
+						
+						// add field-names and -values to array
+						$preset->add_marks($announcement);
+						
+						// return field and value as HTML
+						foreach($fields as $field) {
 							$return .= $field->value_to_html($p,$announcement);
 						}
 						

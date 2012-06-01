@@ -136,8 +136,8 @@ class PageView extends Object {
 			$GLOBALS['Error']->handle_error($e);
 		}
 		
-		// parse content
-		$output = $page->parse($this->get_output());
+		// parse content w/o removing unused marks
+		$output = $page->parse($this->get_output(),1,false);
 		
 		// print output
 		print($output);

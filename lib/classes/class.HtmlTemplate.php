@@ -109,9 +109,10 @@ class HtmlTemplate extends Object {
 	 * 
 	 * @param array $contents content to be insert into the template
 	 * @param int $count parse the template $count times
+	 * @param boolean $remove if true replace unused marks, otherweise do not
 	 * @return string template parsed with content as complete html-string
 	 */
-	public function parse($contents,$count = 1) {
+	public function parse($contents,$count = 1,$remove = true) {
 		
 		// get template
 		$template = $this->get_template_html();
@@ -128,7 +129,9 @@ class HtmlTemplate extends Object {
 		}
 		
 		// replace all unused marks
-//		$template = preg_replace('/###(.+)###/U','',$template);
+		if($remove === true) {
+			$template = preg_replace('/###(.+)###/U','',$template);
+		}
 		
 		// return parsed template
 		return $template;

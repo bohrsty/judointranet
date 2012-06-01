@@ -351,7 +351,8 @@ $lang = array(
 	'class.Calendar' => array(
 		'return_types' => array(
 			'type' => array(
-				'name.event' => 'Turnier/Meisterschaft'
+				'name.event' => 'Turnier/Meisterschaft',
+				'name.training' => 'Lehrgang'
 			)
 		),
 		'details_to_html' => array(

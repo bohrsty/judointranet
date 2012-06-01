@@ -351,12 +351,15 @@ class Preset extends Object {
 				} elseif($field->get_type() == 'dbhierselect') {
 					
 					// walk through values
-					foreach($field->dbhierselect_value() as $name => $value) {
-						// check html
-						if($html === true) {
-							$announcement['field-'.$field->get_id().'-value.'.$name] = nl2br(htmlentities($value,ENT_QUOTES,'UTF-8'));
-						} else {
-							$announcement['field-'.$field->get_id().'-value.'.$name] = $value;
+					// check if value is set
+					if(!is_null($field->dbhierselect_value())) {
+						foreach($field->dbhierselect_value() as $name => $value) {
+							// check html
+							if($html === true) {
+								$announcement['field-'.$field->get_id().'-value.'.$name] = nl2br(htmlentities($value,ENT_QUOTES,'UTF-8'));
+							} else {
+								$announcement['field-'.$field->get_id().'-value.'.$name] = $value;
+							}
 						}
 					}
 				} elseif($field->get_type() == 'date') {

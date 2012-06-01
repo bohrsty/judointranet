@@ -294,7 +294,8 @@ class Calendar extends Page {
 		
 		// fill array
 		$return = array(
-					'event' => parent::lang('class.Calendar#return_types#type#name.event')
+					'event' => parent::lang('class.Calendar#return_types#type#name.event'),
+					'training' => parent::lang('class.Calendar#return_types#type#name.training')
 		);
 		
 		// return

@@ -691,7 +691,7 @@ class AdministrationView extends PageView {
 					'td.params' => '',
 					'td.content' => nl2br(htmlentities(utf8_decode($value)))
 				);
-				$td_out .= $td->parse($td_opts);
+				$td_out .= $td->parse($td_opts,1,false);
 			}
 			
 			// odd or even
@@ -707,7 +707,7 @@ class AdministrationView extends PageView {
 				'tr.params' => " class=\"$oddeven\"",
 				'tr.content' => $td_out
 			);
-			$tr_out .= $tr->parse($tr_opts);
+			$tr_out .= $tr->parse($tr_opts,1,false);
 			
 			// increment index
 			$index++;
@@ -718,14 +718,14 @@ class AdministrationView extends PageView {
 			'tr.params' => '',
 			'tr.content' => $th_out
 		);
-		$tr_out = $tr->parse($tr_opts).$tr_out;
+		$tr_out = $tr->parse($tr_opts,1,false).$tr_out;
 		
 		// embed in <table>
 		$table_opts = array(
 			'table.params' => '',
 			'table.content' => $tr_out
 		);
-		$return .= $table->parse($table_opts);
+		$return .= $table->parse($table_opts,1,false);
 		
 		// return
 		return $return;
