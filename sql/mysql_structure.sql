@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.4.9
+-- version 3.5.1
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 11. Apr 2012 um 09:18
--- Server Version: 5.5.19
--- PHP-Version: 5.3.10
+-- Erstellungszeit: 02. Jun 2012 um 18:03
+-- Server Version: 5.5.23
+-- PHP-Version: 5.3.13
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -42,19 +42,61 @@ CREATE TABLE IF NOT EXISTS `calendar` (
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `category`
+--
+
+DROP TABLE IF EXISTS `category`;
+CREATE TABLE IF NOT EXISTS `category` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `valid` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `club`
+--
+
+DROP TABLE IF EXISTS `club`;
+CREATE TABLE IF NOT EXISTS `club` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `number` int(5) NOT NULL,
+  `name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `valid` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `config`
 --
 
 DROP TABLE IF EXISTS `config`;
 CREATE TABLE IF NOT EXISTS `config` (
   `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `value` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `value` text COLLATE utf8_unicode_ci NOT NULL,
   `comment` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
 
+-- --------------------------------------------------------
 
-ALTER TABLE `config` CHANGE `value` `value` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL;
+--
+-- Tabellenstruktur für Tabelle `contact`
+--
+
+DROP TABLE IF EXISTS `contact`;
+CREATE TABLE IF NOT EXISTS `contact` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(75) COLLATE utf8_unicode_ci NOT NULL,
+  `club_id` int(11) NOT NULL,
+  `valid` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
 -- --------------------------------------------------------
 
 --
@@ -64,11 +106,12 @@ ALTER TABLE `config` CHANGE `value` `value` TEXT CHARACTER SET utf8 COLLATE utf8
 DROP TABLE IF EXISTS `defaults`;
 CREATE TABLE IF NOT EXISTS `defaults` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR( 50 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `category` int(11) NOT NULL,
   `value` text COLLATE utf8_unicode_ci NOT NULL,
+  `valid` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -81,10 +124,10 @@ CREATE TABLE IF NOT EXISTS `field` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `type` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+  `category` int(11) NOT NULL DEFAULT '0',
+  `config` text COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
-
-ALTER TABLE `field` ADD `config` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL  
 
 -- --------------------------------------------------------
 
@@ -97,7 +140,7 @@ CREATE TABLE IF NOT EXISTS `fields2presets` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `pres_id` int(11) NOT NULL,
   `field_id` int(11) NOT NULL,
-  `required` tinyint(1) NOT NULL,
+  `required` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
@@ -114,13 +157,6 @@ CREATE TABLE IF NOT EXISTS `group` (
   `sortable` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
-
---
--- Daten für Tabelle `group`
---
-
-INSERT INTO `group` (`id`, `name`, `sortable`) VALUES
-(1, 'Admins', 0);
 
 -- --------------------------------------------------------
 
@@ -171,6 +207,57 @@ CREATE TABLE IF NOT EXISTS `inventory_movement` (
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `judo`
+--
+
+DROP TABLE IF EXISTS `judo`;
+CREATE TABLE IF NOT EXISTS `judo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `class` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
+  `type` varchar(25) COLLATE utf8_unicode_ci NOT NULL,
+  `weightclass` text COLLATE utf8_unicode_ci NOT NULL,
+  `time` varchar(6) COLLATE utf8_unicode_ci NOT NULL,
+  `agegroups` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
+  `valid` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `judo_belt`
+--
+
+DROP TABLE IF EXISTS `judo_belt`;
+CREATE TABLE IF NOT EXISTS `judo_belt` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
+  `color` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
+  `valid` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `location`
+--
+
+DROP TABLE IF EXISTS `location`;
+CREATE TABLE IF NOT EXISTS `location` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `club_id` int(11) NOT NULL,
+  `hall` varchar(75) COLLATE utf8_unicode_ci NOT NULL,
+  `street` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `zip` int(5) NOT NULL,
+  `city` varchar(75) COLLATE utf8_unicode_ci NOT NULL,
+  `valid` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `preset`
 --
 
@@ -179,12 +266,12 @@ CREATE TABLE IF NOT EXISTS `preset` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `table` varchar(25) COLLATE utf8_unicode_ci NOT NULL,
+  `path` varchar(75) COLLATE utf8_unicode_ci NOT NULL,
+  `filename` text COLLATE utf8_unicode_ci NOT NULL,
   `desc` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
-ALTER TABLE `preset` ADD `path` VARCHAR( 75 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `table`;
-ALTER TABLE `preset` ADD `filename` VARCHAR( 50 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `path`; 
 -- --------------------------------------------------------
 
 --
@@ -199,40 +286,25 @@ CREATE TABLE IF NOT EXISTS `rights` (
   `table_id` bigint(15) NOT NULL,
   `comment` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=24 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=30 ;
+
+-- --------------------------------------------------------
 
 --
--- Daten für Tabelle `rights`
+-- Tabellenstruktur für Tabelle `staff`
 --
 
-INSERT INTO `rights` (`id`, `g_id`, `table_name`, `table_id`, `comment`) VALUES
-(1, 1, 'navi', 4126450689, 'CalendarView'),
-(2, 0, 'navi', 2349400854, 'MainView'),
-(3, 1, 'navi', 316626287, 'CalendarView|listall'),
-(4, 0, 'navi', 447709445, 'MainView|logout'),
-(5, 0, 'navi', 2785044012, 'MainView|login'),
-(6, 1, 'navi', 1338371484, 'CalendarView|new'),
-(7, 1, 'navi', 982147, 'CalendarView|details'),
-(8, 1, 'navi', 360902721, 'CalendarView|delete'),
-(9, 1, 'navi', 2115932867, 'CalendarView|edit'),
-(10, 1, 'navi', 3960320393, 'AnnouncementView'),
-(11, 1, 'navi', 4169844043, 'AnnouncementView|listall'),
-(12, 1, 'navi', 3704676583, 'AnnouncementView|new'),
-(13, 1, 'navi', 3931860135, 'AnnouncementView|details'),
-(14, 1, 'navi', 3109695354, 'AnnouncementView|edit'),
-(15, 1, 'navi', 2505436613, 'AnnouncementView|delete'),
-(16, 1, 'navi', 3652205019, 'InventoryView'),
-(17, 1, 'navi', 2615517752, 'InventoryView|listall'),
-(18, 1, 'navi', 521760874, 'InventoryView|my'),
-(19, 1, 'navi', 3119052612, 'InventoryView|give'),
-(20, 1, 'navi', 171651729, 'InventoryView|take'),
-(21, 1, 'navi', 2421882413, 'InventoryView|cancel'),
-(22, 1, 'navi', 2301889492, 'InventoryView|details'),
-(23, 1, 'navi', 2029386500, 'InventoryView|movement'),
-(24, 1, 'navi', 3931860135, 'AnnouncementView|details'),
-(25, 1, 'navi', 353262192, 'AnnouncementView|topdf'),
-(26, 1, 'navi', 3403310372, 'AdministrationView'),
-(27, 1, 'navi', 1221274410, 'AdministrationView|field');
+DROP TABLE IF EXISTS `staff`;
+CREATE TABLE IF NOT EXISTS `staff` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(75) COLLATE utf8_unicode_ci NOT NULL,
+  `email` varchar(75) COLLATE utf8_unicode_ci NOT NULL,
+  `street` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `zip` int(5) NOT NULL,
+  `city` varchar(75) COLLATE utf8_unicode_ci NOT NULL,
+  `valid` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -251,13 +323,6 @@ CREATE TABLE IF NOT EXISTS `user` (
   UNIQUE KEY `unique_username` (`username`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
 
---
--- Daten für Tabelle `user`
---
-
-INSERT INTO `user` (`id`, `username`, `password`, `name`, `active`) VALUES
-(1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Administrator', 1);
-
 -- --------------------------------------------------------
 
 --
@@ -270,13 +335,6 @@ CREATE TABLE IF NOT EXISTS `user2group` (
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`group_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Daten für Tabelle `user2group`
---
-
-INSERT INTO `user2group` (`group_id`, `user_id`) VALUES
-(1, 1);
 
 -- --------------------------------------------------------
 
@@ -291,15 +349,9 @@ CREATE TABLE IF NOT EXISTS `value` (
   `table_id` int(11) NOT NULL,
   `field_id` int(11) NOT NULL,
   `value` text COLLATE utf8_unicode_ci NOT NULL,
+  `defaults` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
-
-
---
--- Spalte zufuegen
----
-
-ALTER TABLE `value` ADD `defaults` INT( 11 ) NOT NULL DEFAULT '0' 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
