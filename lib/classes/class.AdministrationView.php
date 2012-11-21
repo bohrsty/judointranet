@@ -47,7 +47,7 @@ class AdministrationView extends PageView {
 						'firstlevel' => array(
 							'name' => 'class.AdministrationView#connectnavi#firstlevel#name',
 							'file' => 'administration.php',
-							'position' => 4,
+							'position' => 5,
 							'class' => get_class(),
 							'id' => crc32('AdministrationView'), // 3403310372
 							'show' => true
@@ -174,6 +174,9 @@ class AdministrationView extends PageView {
 			// jquery
 			$this->add_output(array('jquery' => $this->get_jquery()));
 		}
+		
+		// add head
+		$this->add_output(array('head' => $this->get_head()));
 	}
 	
 	

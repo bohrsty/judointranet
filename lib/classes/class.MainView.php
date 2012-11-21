@@ -210,6 +210,9 @@ class MainView extends PageView {
 			// jquery
 			$this->add_output(array('jquery' => $this->get_jquery()));
 		}
+		
+		// add head
+		$this->add_output(array('head' => $this->get_head()));
 	}
 	
 	

@@ -12,6 +12,7 @@ class PageView extends Object {
 	private $get;
 	private $output;
 	private $jquery;
+	private $head;
 	
 	/*
 	 * getter/setter
@@ -34,6 +35,12 @@ class PageView extends Object {
 	public function set_jquery($jquery) {
 		$this->jquery = $jquery;
 	}
+	public function get_head(){
+		return $this->head;
+	}
+	public function set_head($head) {
+		$this->head = $head;
+	}
 	
 	/*
 	 * constructor/destructor
@@ -55,6 +62,7 @@ class PageView extends Object {
 		$this->read_globals();
 		$this->set_output(array());
 		$this->set_jquery('');
+		$this->set_head('');
 		
 		// set userinfos if logged in
 		$this->put_userinfo();		
@@ -211,6 +219,25 @@ class PageView extends Object {
 		
 		// set jquery
 		$this->set_jquery($jquery);
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * add_heads adds the given string to $head
+	 * 
+	 * @param string $content content to be added to $head
+	 */
+	public function add_head($content) {
+		
+		// get head
+		$head = $this->get_head();
+		
+		// add and set back
+		$this->set_head($head.$content."\n");
 	}
 	
 	

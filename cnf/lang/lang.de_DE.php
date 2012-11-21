@@ -4,12 +4,15 @@
  * language-definition for de_DE
  * 
  * format is an array in format:
- * $lang = array('<filename>' => 
- * 				array('<method>' => 
- * 					array('<"bereich">' => 
- * 						array(
+ * $lang = array(
+ * 				'<filename>' => array(
+ * 					'<method>' => array(
+ * 						'<scope>' => array(
  * 							'<name>' => '<value>'
- * ))))
+ * 						)
+ * 					)
+ * 				)
+ * 			)
  */
 
 $lang = array(
@@ -756,6 +759,42 @@ $lang = array(
 			'enable' => array(
 				'rowNotDisabled' => 'Diese Tabellenzeile ist nicht deaktiviert und kann nicht aktiviert werden, m&ouml;chten Sie sie stattdessen deaktivieren?',
 				'rowNotDisabled.disable' => 'Zeile deaktivieren'
+			)
+		)
+	),
+	'class.ProtocolView' => array(
+		'init' => array(
+			'listall' => array(
+				'title' => 'Protokolle: Listenansicht'
+			),
+			'default' => array(
+				'title' => 'Protokolle'
+			),
+			'Error' => array(
+				'NotAuthorized' => 'FEHLER - Nicht berechtigt'
+			),
+			'new' => array(
+				'title' => 'Protokolle: Neues Protokoll'
+			),
+			'edit' => array(
+				'title' => 'Protokolle: Protokoll bearbeiten'
+			),
+			'delete' => array(
+				'title' => 'Protokolle: Protokoll l&ouml;schen'
+			)
+		),
+		'connectnavi' => array(
+			'firstlevel' => array(
+				'name' => 'Protokolle'
+			),
+			'secondlevel' => array(
+				'listall' => 'Listenansicht',
+				'new' => 'Neues Protokoll erstellen'
+			)
+		),
+		'default_content' => array(
+			'headline' => array(
+				'text' => 'Protokolle'
 			)
 		)
 	)
