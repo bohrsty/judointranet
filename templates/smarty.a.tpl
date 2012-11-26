@@ -1,0 +1,1 @@
+<a{if $params!=''} {$params}{/if} href="{$href}" title="{$title}">{$content}</a>

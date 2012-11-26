@@ -233,6 +233,9 @@ class User extends Object {
 			$GLOBALS['Error']->handle_error($e);
 		}
 		
+		// smarty-template
+		$sLogout = new JudoIntranetSmarty();
+		
 		// set user-properties to public access
 		$this->set_id(0);
 		$this->set_groups(array(0));
@@ -253,14 +256,20 @@ class User extends Object {
 		$_SESSION['GC'] = new Config();
 		
 		// logout-message
-		// set contents
-		$contents = array(
-						'p.caption' => parent::lang('class.User#logout#logout#caption'),
-						'p.message' => parent::lang('class.User#logout#logout#message')
-					);
+//		// set contents
+//		$contents = array(
+//						'p.caption' => parent::lang('class.User#logout#logout#caption'),
+//						'p.message' => parent::lang('class.User#logout#logout#message')
+//					);
+		// smarty
+		$sLogout->assign('caption', parent::lang('class.User#logout#logout#caption'));
+		$sLogout->assign('message', parent::lang('class.User#logout#logout#message'));
+		$sLogout->assign('form', '');
 		
-		// return html
-		return $logout_message->parse($contents);
+//		// return html
+//		return $logout_message->parse($contents);
+		// smarty
+		return $sLogout->fetch('smarty.login.tpl');
 	}
 	
 	

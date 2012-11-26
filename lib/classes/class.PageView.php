@@ -13,6 +13,8 @@ class PageView extends Object {
 	private $output;
 	private $jquery;
 	private $head;
+	// smarty
+	protected $tpl;
 	
 	/*
 	 * getter/setter
@@ -57,6 +59,9 @@ class PageView extends Object {
 		if(!isset($_SESSION['user'])) {
 			$_SESSION['user'] = new User();
 		}
+		
+		// init smarty
+		$this->tpl = new JudoIntranetSmarty();
 		
 		// set class-variables
 		$this->read_globals();
@@ -333,6 +338,9 @@ class PageView extends Object {
 		// get authorized navi-entries
 		$navi_entries = Rights::get_authorized_entries('navi');
 		
+		// prepare data for smarty
+		$data = array();
+		
 		// walk through $naviitems and build navi
 		for($i=0;$i<count($naviitems);$i++) {
 			
@@ -355,6 +363,13 @@ class PageView extends Object {
 										'navi.0.title' => parent::lang('class.'.$firstlevel['class'].'#connectnavi#firstlevel#name'),
 										'navi.0.content' => parent::lang($firstlevel['name'])));
 			
+			// smarty
+			$data[] = array('level' => 0,
+							'href' => $firstlevel['file'],
+							'title' => parent::lang('class.'.$firstlevel['class'].'#connectnavi#firstlevel#name'),
+							'content' => parent::lang($firstlevel['name'])
+						);
+			
 			// walk through secondlevel
 			$secondlevel = $naviitems[$i]['secondlevel'];
 			for($j=0;$j<count($secondlevel);$j++){
@@ -368,6 +383,14 @@ class PageView extends Object {
 				if($secondlevel[$j]['show'] === false) {
 					continue;
 				}
+				
+				// smarty
+				$data[] = array('level' => 1,
+								'href' => ($secondlevel[$j]['getid'] == 'login' && $this->get('id') != 'login' && $this->get('id') != 'logout') ? $firstlevel['file'].'?id='.$secondlevel[$j]['getid'].'&r='.base64_encode($_SERVER['REQUEST_URI']) : $firstlevel['file'].'?id='.$secondlevel[$j]['getid'],
+								'title' => parent::lang($secondlevel[$j]['name']),
+								'content' => parent::lang($secondlevel[$j]['name']),
+								'id' => $secondlevel[$j]['getid']
+							);
 				
 				// check active or inactive
 				if($file == $naviitems[$i]['firstlevel']['file'] && $this->get('id') == $secondlevel[$j]['getid']) {
@@ -399,7 +422,9 @@ class PageView extends Object {
 		}
 		
 		// return
-		return $output;
+//		return $output;
+		// return smarty
+		return $data;
 	}
 	
 	
@@ -453,54 +478,48 @@ class PageView extends Object {
 	 */
 	protected function put_userinfo() {
 		
-		// read templates
-		try {
-			$a = new HtmlTemplate('templates/a.tpl');
-			$div = new HtmlTemplate('templates/div.tpl');
-			$js_toggleSlide_div = new HtmlTemplate('templates/js-toggleSlide-div.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
+		// smarty-templates
+		$sA = new JudoIntranetSmarty();
+		$sUsersettings = new JudoIntranetSmarty();
+		$sJsToggleSlide = new JudoIntranetSmarty();
 		
 		// check if userinfo exists and set to output
 		$name = $_SESSION['user']->get_userinfo('name');
 		if($name !== false) {
 			
-			// create link
-			$link = $a->parse(array(
-					'a.params' => ' id="toggleUsersettings"',
-					'a.href' => '#',
-					'a.title' => parent::lang('class.PageView#put_userinfo#logininfo#toggleUsersettings'),
-					'a.content' => $name
+			// smarty-link
+			$sA->assign('params','id="toggleUsersettings"');
+			$sA->assign('href', '#');
+			$sA->assign('title', parent::lang('class.PageView#put_userinfo#logininfo#toggleUsersettings'));
+			$sA->assign('content', $name);
+			$link = $sA->fetch('smarty.a.tpl');
+			
+			// smarty-usersettings
+			$usersettings = array(0 => array(	
+					'params' => 'class="usersettings"',
+					'href' => 'index.php?id=user&action=passwd',
+					'title' => parent::lang('class.PageView#put_userinfo#usersettings#passwd.title'),
+					'content' => parent::lang('class.PageView#put_userinfo#usersettings#passwd')
+				),
+				1 => array(
+					'params' => 'class="usersettings"',
+					'href' => 'index.php?id=logout',
+					'title' => parent::lang('class.PageView#put_userinfo#usersettings#logout.title'),
+					'content' => parent::lang('class.PageView#put_userinfo#usersettings#logout')
 				));
+			$sUsersettings->assign('us', $usersettings);
 			
-			// prepare usersettings
-			$a_out = $this->p(' class="usersettings"',$a->parse(array(
-					'a.params' => ' class="usersettings"',
-					'a.href' => 'index.php?id=user&amp;action=passwd',
-					'a.title' => parent::lang('class.PageView#put_userinfo#usersettings#passwd.title'),
-					'a.content' => parent::lang('class.PageView#put_userinfo#usersettings#passwd')
-				)));
-			// prepare div
-			$div_out = $div->parse(array(
-					'div.params' => ' id="usersettings"',
-					'div.content' => $a_out
-				));
+			// smarty jquery
+			$sJsToggleSlide->assign('id', '#toggleUsersettings');
+			$sJsToggleSlide->assign('toToggle', '#usersettings');
+			$sJsToggleSlide->assign('time', '');
+			$this->add_jquery($sJsToggleSlide->fetch('smarty.js-toggleSlide.tpl'));
 			
-			// prepare userinfos
-			$name = parent::lang('class.PageView#put_userinfo#logininfo#LoggedinAs').' '.$link.' ('.$_SESSION['user']->get_userinfo('username').')'.$div_out;
-			
-			// add userinfos
-			$this->add_output(array('logininfo' => $name),true);
-			
-			// add jquery
-			$this->add_jquery($js_toggleSlide_div->parse(array(
-							'id' => '#toggleUsersettings',
-							'toToggle' => '#usersettings',
-							'time' => ''
-					)));
+			// smarty return
+			return parent::lang('class.PageView#put_userinfo#logininfo#LoggedinAs').' '.$link.' ('.$_SESSION['user']->get_userinfo('username').')'.$sUsersettings->fetch('smarty.usersettings.tpl');
 		} else {
-			$this->add_output(array('logininfo' => parent::lang('class.PageView#put_userinfo#logininfo#NotLoggedin')),true);
+			// smarty return
+			return parent::lang('class.PageView#put_userinfo#logininfo#NotLoggedin');
 		}
 	}
 }

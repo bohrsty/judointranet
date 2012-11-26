@@ -14,8 +14,6 @@ $main_view = new MainView();
 
 $main_view->init();
 
-$main_view->output();
-
 
 
 ?>

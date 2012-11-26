@@ -8,6 +8,10 @@ function __autoload($class) {
 	// load HTML2PDF
 	if($class == 'HTML2PDF') {
 		include_once('lib/html2pdf/html2pdf.class.php');
+	} elseif($class == 'Smarty') {
+		include_once('lib/smarty/libs/Smarty.class.php');
+	} elseif(substr($class,0,6) == 'Smarty') {
+		include_once('lib/smarty/libs/sysplugins/'.strtolower($class).'.php');
 	} elseif(substr($class,0,4) == 'HTML') {
 		
 		// load quickform

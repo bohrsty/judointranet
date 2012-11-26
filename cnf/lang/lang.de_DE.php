@@ -260,7 +260,9 @@ $lang = array(
 			),
 			'usersettings' => array(
 				'passwd' => 'Kennwort &auml;ndern',
-				'passwd.title' => 'Kennwort &auml;ndern'
+				'passwd.title' => 'Kennwort &auml;ndern',
+				'logout' => 'Logout',
+				'logout.title' => 'Logout'
 			)
 		)
 	),

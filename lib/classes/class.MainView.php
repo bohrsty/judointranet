@@ -132,44 +132,31 @@ class MainView extends PageView {
 					
 					case 'login':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.MainView#init#login#title'))));
-						// main-content
-						$this->add_output(array('main' => $this->login()));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.MainView#init#login#title')));
+						$this->tpl->assign('main', $this->login());
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', false);
 						
 					break;
 					
 					case 'logout':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.MainView#init#logout#title'))));
-						// main-content
-						$this->add_output(array('main' => $_SESSION['user']->logout()));
-						$this->put_userinfo();
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.MainView#init#logout#title')));
+						$this->tpl->assign('main', $_SESSION['user']->logout());
+						$this->tpl->assign('jquery', false);
+						$this->tpl->assign('hierselect', false);
 						
 					break;
 					
 					case 'user':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.MainView#init#user#title'))));
-						// main-content
-						$this->add_output(array('main' => $this->user()));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.MainView#init#user#title')));
+						$this->tpl->assign('main', $this->user());
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', true);
 						
 					break;
 					
@@ -179,40 +166,52 @@ class MainView extends PageView {
 						$errno = $GLOBALS['Error']->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
 						$GLOBALS['Error']->handle_error($errno);
 						$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						
+						// smarty
+						$this->tpl->assign('title', '');
+						$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', false);
 					break;
 				}
 			} else {
 				
 				// error not authorized
-				// set contents
-				// title
-				$this->add_output(array('title' => $this->title(parent::lang('class.MainView#init#Error#NotAuthorized'))));
-				// navi
-				$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-				// main content
 				$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
 				$GLOBALS['Error']->handle_error($errno);
-				$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
-				// jquery
-				$this->add_output(array('jquery' => $this->get_jquery()));
+				
+				// smarty
+				$this->tpl->assign('title', $this->title(parent::lang('class.MainView#init#Error#NotAuthorized')));
+				$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+				$this->tpl->assign('jquery', true);
+				$this->tpl->assign('hierselect', false);
 			}
 		} else {
 			
 			// id not set
-			// title
-			$this->add_output(array('title' => $this->title(parent::lang('class.MainView#init#default#title')))); 
-			// default-content
-			$this->add_output(array('main' => '<h2>default content</h2>'));
-			// navi
-			$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-			// jquery
-			$this->add_output(array('jquery' => $this->get_jquery()));
+			// smarty-title
+			$this->tpl->assign('title', $this->title(parent::lang('class.MainView#init#default#title'))); 
+			// smarty-main
+			$this->tpl->assign('main', '<h2>default content</h2>');
+			// smarty-jquery
+			$this->tpl->assign('jquery', true);
+			// smarty-hierselect
+			$this->tpl->assign('hierselect', false);
 		}
 		
-		// add head
-		$this->add_output(array('head' => $this->get_head()));
+		// global smarty
+		// head
+		$this->tpl->assign('head', $this->get_head());
+		// manualjquery
+		$this->tpl->assign('manualjquery', $this->get_jquery());
+		// navi
+		$this->tpl->assign('data', $this->navi(basename($_SERVER['SCRIPT_FILENAME'])));
+		$this->tpl->assign('active', $this->get('id'));
+		// logininfo
+		$this->tpl->assign('logininfo', $this->put_userinfo());
+		
+		// smarty-display
+		$this->tpl->display('smarty.main.tpl');
 	}
 	
 	
@@ -229,12 +228,8 @@ class MainView extends PageView {
 	 */
 	private function login() {
 		
-		// get templates
-		try {
-			$login_message = new HtmlTemplate('templates/div.login.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
+		// smarty-template
+		$sLogin = new JudoIntranetSmarty();
 		
 		// decode uri
 		$uri = 'index.php';
@@ -275,12 +270,8 @@ class MainView extends PageView {
 		// callback
 		$form->addRule('callback','Authentifizierung fehlgeschlagen',array('callback' => array($this,'callback_check_login')));
 		
-		// prepare message array
-		$contents = array(
-						'p.caption' => parent::lang('class.MainView#login#message#caption'),
-						'p.message' => '',
-						'p.form' => ''
-					);
+		// smarty-mesage
+		$sLogin->assign('caption', parent::lang('class.MainView#login#message#caption'));
 		
 		// validate
 		if($form->validate()) {
@@ -291,14 +282,14 @@ class MainView extends PageView {
 			exit();
 		} else {
 			
-			// set message and form
-			$contents['p.message'] = parent::lang($_SESSION['user']->get_login_message());
-			$contents['p.form'] = $form->render($renderer);
+			// smarty message and form
+			$sLogin->assign('message', parent::lang($_SESSION['user']->get_login_message()));
+			$sLogin->assign('form', $form->render($renderer));
 		}
 		
 		
-		// return
-		return $login_message->parse($contents);
+		// return smarty
+		return $sLogin->fetch('smarty.login.tpl');
 	}
 	
 	
@@ -353,12 +344,8 @@ class MainView extends PageView {
 	 */
 	private function user() {
 		
-		// read templates
-		try {
-			$hx = new HtmlTemplate('templates/hx.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
+		// smarty-template
+		$sUserPasswd = new JudoIntranetSmarty();
 		
 		// prepare return
 		$return = '';
@@ -366,22 +353,14 @@ class MainView extends PageView {
 		// check login
 		if($_SESSION['user']->get_loggedin()) {
 		
-			// set caption
-			$return .= $hx->parse(array(
-					'hx.x' => 2,
-					'hx.params' => '',
-					'hx.content' => parent::lang('class.MainView#user#caption#general').' '.$_SESSION['user']->get_userinfo('name')
-				));
+			// smarty
+			$sUserPasswd->assign('pagecaption', parent::lang('class.MainView#user#caption#general').' '.$_SESSION['user']->get_userinfo('name'));
 				
 			// check action
 			if($this->get('action') == 'passwd') {
 				
-				// set caption
-				$return .= $hx->parse(array(
-						'hx.x' => 3,
-						'hx.params' => '',
-						'hx.content' => parent::lang('class.MainView#user#caption#passwd')
-					));
+				// smarty
+				$sUserPasswd->assign('section', parent::lang('class.MainView#user#caption#passwd'));
 				
 				// prepare form
 				$form = new HTML_QuickForm2(
@@ -426,24 +405,24 @@ class MainView extends PageView {
 					// execute statement
 					$result = $db->query($sql);
 					
-					// set message
-					$return .= $this->p('',parent::lang('class.MainView#user#validate#passwdChanged'));
+					// smarty message
+					$sUserPasswd->assign('message', parent::lang('class.MainView#user#validate#passwdChanged'));
 				} else {
-					$return .= $form->render($renderer);
+					
+					// smarty form and return
+					$sUserPasswd->assign('form', $form->render($renderer));
+					return $sUserPasswd->fetch('smarty.user.passwd.tpl');
 				}
 			} else {
-				$return .= 'default content';
+				return 'default content';
 			}
 		} else {
 			
 			// not authorized
 			$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
 			$GLOBALS['Error']->handle_error($errno);
-			$return = $GLOBALS['Error']->to_html($errno);
+			return $GLOBALS['Error']->to_html($errno);
 		}
-		
-		// return
-		return $return;
 	}
 	
 	
