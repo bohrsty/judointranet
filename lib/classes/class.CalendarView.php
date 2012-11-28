@@ -131,16 +131,10 @@ class CalendarView extends PageView {
 					
 					case 'listall':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#listall#title'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
-						// date-links
-						$this->add_output(array('main' => $this->get_sort_links($this->get('id'))));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.CalendarView#init#listall#title')));
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', false);
 						
 						// prepare dates
 						$from = strtotime('yesterday');
@@ -153,86 +147,79 @@ class CalendarView extends PageView {
 						if($this->get('to') !== false) {
 							$to = strtotime($this->get('to'));
 						}
-						$this->add_output(array('main' => $this->listall($to,$from)));
+						$this->tpl->assign('main', $this->listall($to,$from));
 					break;
 					
 					case 'new':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#new#title'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
-						$this->add_output(array('main' => $this->new_entry()));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.CalendarView#init#new#title')));
+						$this->tpl->assign('main', $this->new_entry());
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', true);
 					break;
 					
 					case 'details':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#details#title'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.CalendarView#init#details#title')));
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', true);
+						
 						// if cid does not exist, error
 						if(Calendar::check_id($this->get('cid'))) {
-							$this->add_output(array('main' => $this->details($this->get('cid'))));
+							// smarty
+							$this->tpl->assign('main', $this->details($this->get('cid')));
 						} else {
 							
 							// error
 							$errno = $GLOBALS['Error']->error_raised('CidNotExists','details',$this->get('cid'));
-							$GLOBALS['Error']->handle_error($errno);
-							$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
+							$GLOBALS['Error']->handle_error($errno);$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
+							// smarty
+							$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
 						}
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 					
 					case 'edit':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#edit#title'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.CalendarView#init#edit#title')));
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', true);
+						
 						// if cid does not exist, error
 						if(Calendar::check_id($this->get('cid'))) {
-							$this->add_output(array('main' => $this->edit($this->get('cid'))));
+							// smarty
+							$this->tpl->assign('main', $this->edit($this->get('cid')));$this->add_output(array('main' => $this->edit($this->get('cid'))));
 						} else {
 							
 							// error
 							$errno = $GLOBALS['Error']->error_raised('CidNotExists','edit',$this->get('cid'));
 							$GLOBALS['Error']->handle_error($errno);
-							$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
+							// smarty
+							$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
 						}
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 					
 					case 'delete':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#delete#title'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.CalendarView#init#delete#title')));
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', true);
+						
 						// if cid does not exist, error
 						if(Calendar::check_id($this->get('cid'))) {
-							$this->add_output(array('main' => $this->delete($this->get('cid'))));
+							// smarty
+							$this->tpl->assign('main', $this->delete($this->get('cid')));
 						} else {
 							
 							// error
 							$errno = $GLOBALS['Error']->error_raised('CidNotExists','delete',$this->get('cid'));
 							$GLOBALS['Error']->handle_error($errno);
-							$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
+							// smarty
+							$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
 						}
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
 					break;
 					
 					default:
@@ -240,41 +227,54 @@ class CalendarView extends PageView {
 						// id set, but no functionality
 						$errno = $GLOBALS['Error']->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
 						$GLOBALS['Error']->handle_error($errno);
-						$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						
+						// smarty
+						$this->tpl->assign('title', '');
+						$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', false);
 					break;
 				}
 			} else {
 				
 				// error not authorized
-				// set contents
-				// title
-				$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#Error#NotAuthorized'))));
-				// navi
-				$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-				// main content
 				$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
 				$GLOBALS['Error']->handle_error($errno);
 				$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
-				// jquery
-				$this->add_output(array('jquery' => $this->get_jquery()));
+				
+				// smarty
+				$this->tpl->assign('title', $this->title(parent::lang('class.CalendarView#init#Error#NotAuthorized')));
+				$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+				$this->tpl->assign('jquery', true);
+				$this->tpl->assign('hierselect', false);
 			}
 		} else {
 			
 			// id not set
-			// title
-			$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#default#title')))); 
-			// default-content
-			$this->add_output(array('main' => '<h2>default content</h2>'));
-			// navi
-			$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-			// jquery
-			$this->add_output(array('jquery' => $this->get_jquery()));
+			// smarty-title
+			$this->tpl->assign('title', $this->title(parent::lang('class.CalendarView#init#default#title'))); 
+			// smarty-main
+			$this->tpl->assign('main', '<h2>default content</h2>');
+			// smarty-jquery
+			$this->tpl->assign('jquery', true);
+			// smarty-hierselect
+			$this->tpl->assign('hierselect', false);
 		}
 		
-		// add head
-		$this->add_output(array('head' => $this->get_head()));
+		// global smarty
+		// head
+		$this->tpl->assign('head', $this->get_head());
+		// manualjquery
+		$this->tpl->assign('manualjquery', $this->get_jquery());
+		// navi
+		$this->tpl->assign('data', $this->navi(basename($_SERVER['SCRIPT_FILENAME'])));
+		$this->tpl->assign('active', $this->get('id'));
+		$this->tpl->assign('file', basename($_SERVER['SCRIPT_FILENAME']));
+		// logininfo
+		$this->tpl->assign('logininfo', $this->put_userinfo());
+		
+		// smarty-display
+		$this->tpl->display('smarty.main.tpl');
 	}
 	
 	
@@ -313,48 +313,25 @@ class CalendarView extends PageView {
 			$entries = $calendars;
 		}
 		
-		// get templates
-		try {
-			$a = new HtmlTemplate('templates/a.tpl');
-			$table = new HtmlTemplate('templates/table.tpl');
-			$tr = new HtmlTemplate('templates/tr.tpl');
-			$th = new HtmlTemplate('templates/th.tpl');
-			$td = new HtmlTemplate('templates/td.tpl');
-			$img = new HtmlTemplate('templates/img.tpl');
-			$div = new HtmlTemplate('templates/div.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
+		// smarty-templates
+		$sListall = new JudoIntranetSmarty();
 		
-		// prepare th
-		$th_out .= $th->parse(array( // date
-				'th.params' => ' class="date"',
-				'th.content' => parent::lang('class.CalendarView#listall#TH#date')
-			));
-		$th_out .= $th->parse(array( // name
-				'th.params' => ' class="name"',
-				'th.content' => parent::lang('class.CalendarView#listall#TH#name')
-			));
-		$th_out .= $th->parse(array( // show
-				'th.params' => ' class="show"',
-				'th.content' => parent::lang('class.CalendarView#listall#TH#show')
-			));
-		// if loggedin show admin links
-		if($_SESSION['user']->get_loggedin() === true) {
-			$th_out .= $th->parse(array( // admin
-					'th.params' => ' class="admin"',
-					'th.content' => parent::lang('class.CalendarView#listall#TH#admin')
-				));
-		}
-		
-		// parse tr for th
-		$tr_out .= $tr->parse(array(
-				'tr.params' => '',
-				'tr.content' => $th_out)
+		// smarty
+		$sTh = array(
+				'date' => parent::lang('class.CalendarView#listall#TH#date'),
+				'name' => parent::lang('class.CalendarView#listall#TH#name'),
+				'show' => parent::lang('class.CalendarView#listall#TH#show'),
+				'admin' => parent::lang('class.CalendarView#listall#TH#admin')
 			);
+
+		$sListall->assign('th', $sTh);
+		// loggedin? admin links
+		$sListall->assign('loggedin', $_SESSION['user']->get_loggedin());
 		
 		// walk through entries
 		$counter = 0;
+		// smarty
+		$sList = array();
 		foreach($entries as $no => $entry) {
 			
 			// check if valid
@@ -363,73 +340,52 @@ class CalendarView extends PageView {
 				// check timefrom and timeto
 				if($entry->get_date('U') > $timefrom && $entry->get_date('U') <= $timeto) {
 					
-					// odd or even
-					if($counter%2 == 0) {
-						// even
-						$tr_params = ' class="calendar.listall.tr even"';
-					} else {
-						// odd
-						$tr_params = ' class="calendar.listall.tr odd"';
-					}
-					
-					// prepare name-link
-					$a_out = $a->parse(array(
-							'a.params' => '',
-							'a.href' => 'calendar.php?id=details&cid='.$entry->get_id(),
-							'a.title' => $entry->get_name(),
-							'a.content' => $entry->get_name()
-						));
-					
-					// prepare td
-					$td_out = $td->parse(array( // date
-							'td.params' => ' class="date"',
-							'td.content' => $entry->get_date('d.m.Y')
-						));
-					$td_out .= $td->parse(array( // name
-							'td.params' => '',
-							'td.content' => $a_out
-						));
+					// smarty
+					$sList[$counter] = array(
+							'name' => array(
+									'href' => 'calendar.php?id=details&cid='.$entry->get_id(),
+									'title' => $entry->get_name(),
+									'name' => $entry->get_name()
+								),
+							'date' => $entry->get_date('d.m.Y'),
+							
+						);
 					
 					// details and pdf if announcement
 					if($entry->get_preset_id() != 0) {
 						
-						// announcement details
-						// prepare img
-						$img_out = $img->parse(array(
-								'img.src' => 'img/ann_details.png',
-								'img.alt' => parent::lang('class.CalendarView#listall#alt#AnnDetails'),
-								'img.params' => ' class="icon" title="'.parent::lang('class.CalendarView#listall#title#AnnDetails').'"'
-							));
-						// prepare details-link
-						$a_out = $a->parse(array(
-								'a.params' => '',
-								'a.href' => 'announcement.php?id=details&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
-								'a.title' => parent::lang('class.CalendarView#listall#title#AnnDetails'),
-								'a.content' => $img_out
-							));
-						// announcement to pdf
-						// prepare img
-						$img_out = $img->parse(array(
-								'img.src' => 'img/ann_pdf.png',
-								'img.alt' => parent::lang('class.CalendarView#listall#alt#AnnPDF'),
-								'img.params' => ' class="icon" title="'.parent::lang('class.CalendarView#listall#title#AnnPDF').'"'
-							));
-						// prepare to_pdf-link
-						$a_out .= $a->parse(array(
-								'a.params' => '',
-								'a.href' => 'announcement.php?id=topdf&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
-								'a.title' => parent::lang('class.CalendarView#listall#title#AnnPDF'),
-								'a.content' => $img_out
-							));
+						$sList[$counter]['show'][] = array(
+								'href' => 'announcement.php?id=details&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
+								'title' => parent::lang('class.CalendarView#listall#title#AnnDetails'),
+								'src' => 'img/ann_details.png',
+								'alt' => parent::lang('class.CalendarView#listall#alt#AnnDetails'),
+								'show' => true
+							);
+						$sList[$counter]['show'][] = array(
+								'href' => 'announcement.php?id=topdf&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
+								'title' => parent::lang('class.CalendarView#listall#title#AnnPDF'),
+								'src' => 'img/ann_pdf.png',
+								'alt' => parent::lang('class.CalendarView#listall#alt#AnnPDF'),
+								'show' => true
+							);
 					} else {
-						$a_out = '';
+						
+						// smarty show
+						$sList[$counter]['show'][] = array(
+								'href' => '',
+								'title' => '',
+								'src' => '',
+								'alt' => '',
+								'show' => false
+							);
+						$sList[$counter]['show'][] = array(
+								'href' => '',
+								'title' => '',
+								'src' => '',
+								'alt' => '',
+								'show' => false
+							);
 					}
-					
-					// prepare show-td
-					$td_out .= $td->parse(array( // show
-							'td.params' => '',
-							'td.content' => $a_out
-						));
 						
 					// add admin
 					// get intersection of user-groups and rights
@@ -446,50 +402,36 @@ class CalendarView extends PageView {
 					// if $admin is true add admin-links
 					if($admin === true) {
 						
-						// prepare edit
-						// prepare img
-						$img_out = $img->parse(array(
-								'img.src' => 'img/edit.png',
-								'img.alt' => parent::lang('class.CalendarView#listall#alt#edit'),
-								'img.params' => ' class="icon" title="'.parent::lang('class.CalendarView#listall#title#edit').'"'
-							));
+						// smarty
+						// edit
+						$sList[$counter]['admin'][] = array(
+								'href' => 'calendar.php?id=edit&cid='.$entry->get_id(),
+								'title' => parent::lang('class.CalendarView#listall#title#edit'),
+								'src' => 'img/edit.png',
+								'alt' => parent::lang('class.CalendarView#listall#alt#edit'),
+								'admin' => $admin
+							);
+						// delete
+						$sList[$counter]['admin'][] = array(
+								'href' => 'calendar.php?id=delete&cid='.$entry->get_id(),
+								'title' => parent::lang('class.CalendarView#listall#title#delete'),
+								'src' => 'img/delete.png',
+								'alt' => parent::lang('class.CalendarView#listall#alt#delete'),
+								'admin' => $admin
+							);
 						
-						// prepare edit-link
-						$a_out = $a->parse(array(
-								'a.params' => '',
-								'a.href' => 'calendar.php?id=edit&cid='.$entry->get_id(),
-								'a.title' => parent::lang('class.CalendarView#listall#title#edit'),
-								'a.content' => $img_out
-							));
-							
-						// prepare delete
-						// prepare img
-						$img_out = $img->parse(array(
-								'img.src' => 'img/delete.png',
-								'img.alt' => parent::lang('class.CalendarView#listall#alt#delete'),
-								'img.params' => ' class="icon" title="'.parent::lang('class.CalendarView#listall#title#delete').'"'
-							));
-						
-						// prepare delete-link
-						$a_out .= $a->parse(array(
-								'a.params' => '',
-								'a.href' => 'calendar.php?id=delete&cid='.$entry->get_id(),
-								'a.title' => parent::lang('class.CalendarView#listall#title#delete'),
-								'a.content' => $img_out
-							));
-						// if no announcement (preset_id==0), choose preset
-						// prepare div
-						$div_out = $div->parse(array(
-								'div.params' => ' class="admin-links"',
-								'div.content' => $a_out
-							));
 						if($entry->get_preset_id() == 0) {
-							// create form
-							$div_out .= $this->read_preset_form($entry);
-						} 
-						
-						// if announcement != 0 edit announcement
-						if($entry->get_preset_id() != 0) {
+							
+							// smarty
+							$sList[$counter]['annadmin'][] = array(
+									'href' => '',
+									'title' => '',
+									'src' => '',
+									'alt' => '',
+									'preset' => $entry->get_preset_id()
+								);
+							$sListall->assign('form', $this->read_preset_form($entry));;
+						} else {
 							
 							// get new or edit
 							$action = '';
@@ -499,55 +441,35 @@ class CalendarView extends PageView {
 								$action = 'new';
 							}
 							
-							// show edit- and delete-link
-							// prepare img
-							$img_out = $img->parse(array(
-									'img.src' => 'img/ann_edit.png',
-									'img.alt' => parent::lang('class.CalendarView#listall#alt#AnnEdit'),
-									'img.params' => ' class="icon" title="'.parent::lang('class.CalendarView#listall#title#AnnEdit').'"'
-								));
-							
-							// prepare announcement-edit-link
-							$a_out = $a->parse(array(
-									'a.params' => '',
-									'a.href' => 'announcement.php?id='.$action.'&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
-									'a.title' => parent::lang('class.CalendarView#listall#title#AnnEdit'),
-									'a.content' => $img_out
-								));
-							
-							// prepare img
-							$img_out = $img->parse(array(
-									'img.src' => 'img/ann_delete.png',
-									'img.alt' => parent::lang('class.CalendarView#listall#alt#AnnDelete'),
-									'img.params' => ' class="icon" title="'.parent::lang('class.CalendarView#listall#title#AnnDelete').'"'
-								));
-							
-							// prepare announcement-delete-link
-							$a_out .= $a->parse(array(
-									'a.params' => '',
-									'a.href' => 'announcement.php?id=delete&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
-									'a.title' => parent::lang('class.CalendarView#listall#title#AnnDelete'),
-									'a.content' => $img_out
-								));
-							// prepare div
-							$div_out .= $div->parse(array(
-									'div.params' => ' class="admin-links"',
-									'div.content' => $a_out
-								));
+							// smarty
+							// edit/new
+							$sList[$counter]['annadmin'][] = array(
+									'href' => 'announcement.php?id='.$action.'&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
+									'title' => parent::lang('class.CalendarView#listall#title#AnnEdit'),
+									'src' => 'img/ann_edit.png',
+									'alt' => parent::lang('class.CalendarView#listall#alt#AnnEdit'),
+									'preset' => $entry->get_preset_id()
+								);
+							// delete
+							$sList[$counter]['annadmin'][] = array(
+									'href' => 'announcement.php?id=delete&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
+									'title' => parent::lang('class.CalendarView#listall#title#AnnDelete'),
+									'src' => 'img/ann_delete.png',
+									'alt' => parent::lang('class.CalendarView#listall#alt#AnnDelete'),
+									'preset' => $entry->get_preset_id()
+								);
 						}
-							
-						// prepare td
-						$td_out .= $td->parse(array( // admin
-								'td.params' => ' class="admin"',
-								'td.content' => $div_out
-							));
+					} else {
+						
+						// smarty
+						$sList[$counter]['admin'][] = array(
+								'href' => '',
+								'title' => '',
+								'src' => '',
+								'alt' => '',
+								'admin' => $admin
+							);
 					}
-					
-					// prepare tr
-					$tr_out .= $tr->parse(array(
-							'tr.params' => $tr_params,
-							'tr.content' => $td_out
-						));
 					
 					// increment counter
 					$counter++;
@@ -558,12 +480,11 @@ class CalendarView extends PageView {
 			}
 		}
 		
-		// complete table
-		$output = $table->parse(array(	'table.params' => ' id="calendar.listall"',
-										'table.content' => $tr_out));
+		// smarty
+		$sListall->assign('list', $sList);
 		
-		// return
-		return $output;
+		// smarty-return
+		return $sListall->fetch('smarty.calendar.listall.tpl');
 	}
 	
 	
@@ -756,12 +677,8 @@ class CalendarView extends PageView {
 	 */
 	private function new_entry() {
 		
-		// get templates
-		try {
-			$js_datepicker = new HtmlTemplate('templates/js-datepicker.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
+		// smarty-templates
+		$sD = new JudoIntranetSmarty();
 		
 		// prepare return
 		$return = '';
@@ -779,10 +696,11 @@ class CalendarView extends PageView {
 		$now_year = (int) date('Y');
 		$now_month = (int) date('m');
 		$now_day = (int) date('d');
+		$now = date('Y-m-d');
 		$year_min = $now_year;
 		$year_max = $now_year + 3;
 		$form->addDataSource(new HTML_QuickForm2_DataSource_Array(array('rights' => '0',
-																		'date' => date('Y-m-d'))));
+																		'date' => $now)));
 		
 		// renderer
 		$renderer = HTML_QuickForm2_Renderer::factory('default');
@@ -796,10 +714,11 @@ class CalendarView extends PageView {
 		$date->addRule('required',parent::lang('class.CalendarView#entry#rule#required.date'));
 		$date->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.date'),array($this,'callback_check_date'));
 		// add jquery-datepicker
-		$this->add_jquery($js_datepicker->parse(array(
-						'elementid' => 'date-0',
-						'addFunctions' => ''
-					)));
+		// smarty
+		$sD->assign('elementid', 'date-0');
+		$sD->assign('dateFormat', 'yy-mm-dd');
+		$sD->assign('dateValue', $now);
+		$this->add_jquery($sD->fetch('smarty.js-datepicker.tpl'));
 		
 		// name
 		$name = $form->addElement('text','name');
@@ -872,21 +791,13 @@ class CalendarView extends PageView {
 			// write to db
 			$calendar->write_db();
 			
-			// put entry to output
-			// read template
-			try {
-				$calendar_details = new HtmlTemplate('templates/calendar.details.tpl');
-			} catch(Exception $e) {
-				$GLOBALS['Error']->handle_error($e);
-			}
-			// set return
-			$return = $calendar->details_to_html($calendar_details);
+			// smarty
+			$sCD = new JudoIntranetSmarty();
+			$sCD->assign('data', $calendar->details_to_html());
+			return $sCD->fetch('smarty.calendar.details.tpl');
 		} else {
-			$return = $form->render($renderer);
+			return $form->render($renderer);
 		}
-		
-		// return
-		return $return;
 	}
 	
 	
@@ -936,6 +847,9 @@ class CalendarView extends PageView {
 			// get calendar-object
 			$calendar = new Calendar($cid);
 			
+			// smarty-template
+			$sCD = new JudoIntranetSmarty();
+			
 			// read template
 			try {
 				$calendar_details = new HtmlTemplate('templates/calendar.details.tpl');
@@ -943,8 +857,9 @@ class CalendarView extends PageView {
 				$GLOBALS['Error']->handle_error($e);
 			}
 			
-			// return html-string
-			return $calendar->details_to_html($calendar_details);
+			// smarty
+			$sCD->assign('data', $calendar->details_to_html());
+			return $sCD->fetch('smarty.calendar.details.tpl');
 		} else {
 			
 			// error
@@ -971,13 +886,8 @@ class CalendarView extends PageView {
 		// check rights
 		if(Rights::check_rights($cid,'calendar')) {
 			
-			// get templates
-			try {
-				$js_datepicker = new HtmlTemplate('templates/js-datepicker.tpl');
-				$js_datepicker_parse = new HtmlTemplate('templates/js-datepicker-parse.tpl');
-			} catch(Exception $e) {
-				$GLOBALS['Error']->handle_error($e);
-			}
+			// smarty-templates
+			$sD = new JudoIntranetSmarty();
 				
 			// get calendar-object
 			$calendar = new Calendar($cid);
@@ -1018,15 +928,11 @@ class CalendarView extends PageView {
 			$date->addRule('required',parent::lang('class.CalendarView#entry#rule#required.date'));
 			$date->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.date'),array($this,'callback_check_date'));
 			// add jquery-datepicker
-			$js_datepicker_parse_out = $js_datepicker_parse->parse(array(
-							'elementid' => 'date-0',
-							'format' => 'yy-mm-dd',
-							'value' => $calendar->get_date()
-						));
-			$this->add_jquery($js_datepicker->parse(array(
-							'elementid' => 'date-0',
-							'addFunctions' => $js_datepicker_parse_out
-						)));
+			// smarty
+			$sD->assign('elementid', 'date-0');
+			$sD->assign('dateFormat', 'yy-mm-dd');
+			$sD->assign('dateValue', $calendar->get_date());
+			$this->add_jquery($sD->fetch('smarty.js-datepicker.tpl'));
 			
 			// name
 			$name = $form->addElement('text','name');
@@ -1095,28 +1001,22 @@ class CalendarView extends PageView {
 				$calendar->update($calendar_new);
 				
 				// put entry to output
-				// read template
-				try {
-					$calendar_details = new HtmlTemplate('templates/calendar.details.tpl');
-				} catch(Exception $e) {
-					$GLOBALS['Error']->handle_error($e);
-				}
+				// smarty-template
+				$sCD = new JudoIntranetSmarty();
 				
 				// write entry
 				try {
 					$calendar->write_db('update');
-					// set return
-					$return = $calendar->details_to_html($calendar_details);
+					// smarty
+					$sCD->assign('data', $calendar->details_to_html());
+					return $sCD->fetch('smarty.calendar.details.tpl');
 				} catch(Exception $e) {
 					$GLOBALS['Error']->handle_error($e);
-					$return = $GLOBALS['Error']->to_html($e);
+					return $GLOBALS['Error']->to_html($e);
 				}
 			} else {
-				$return = $form->render($renderer);
+				return $form->render($renderer);
 			}
-			
-			// return
-			return $return;
 		} else {
 			
 			// error
@@ -1146,22 +1046,8 @@ class CalendarView extends PageView {
 			// prepare return
 			$output = '';
 			
-			// get templates
-			try {
-				$confirmation = new HtmlTemplate('templates/div.confirmation.tpl');
-			} catch(Exception $e) {
-				$GLOBALS['Error']->handle_error($e);
-			}
-			try {
-				$a = new HtmlTemplate('templates/a.tpl');
-			} catch(Exception $e) {
-				$GLOBALS['Error']->handle_error($e);
-			}
-			try {
-				$div = new HtmlTemplate('templates/div.tpl');
-			} catch(Exception $e) {
-				$GLOBALS['Error']->handle_error($e);
-			}
+			// smarty-templates
+			$sConfirmation = new JudoIntranetSmarty();
 			
 			$form = new HTML_QuickForm2(
 									'confirm',
@@ -1175,23 +1061,17 @@ class CalendarView extends PageView {
 			// add button
 			$form->addElement('submit','yes',array('value' => parent::lang('class.CalendarView#delete#form#yes')));
 			
-			// prepare cancel
-			$cancel_a = $a->parse(array(
-					'a.params' => '',
-					'a.href' => 'calendar.php?id=listall',
-					'a.title' => parent::lang('class.CalendarView#delete#title#cancel'),
-					'a.content' => parent::lang('class.CalendarView#delete#form#cancel')
-				));
-			$cancel = $div->parse(array(
-					'div.params' => ' id="cancel"',
-					'div.content' => $cancel_a
-			));
-			
-			// set output
-			$output = $confirmation->parse(array(
-					'p.message' => parent::lang('class.CalendarView#delete#message#confirm'),
-					'p.form' => $form."\n".$cancel
-				));
+			// smarty-link
+			$link = array(
+							'params' => '',
+							'href' => 'calendar.php?id=listall',
+							'title' => parent::lang('class.CalendarView#delete#title#cancel'),
+							'content' => parent::lang('class.CalendarView#delete#form#cancel')
+						);
+			$sConfirmation->assign('link', $link);
+			$sConfirmation->assign('spanparams', 'id="cancel"');
+			$sConfirmation->assign('message', parent::lang('class.CalendarView#delete#message#confirm'));
+			$sConfirmation->assign('form', $form);
 			
 			// validate
 			if($form->validate()) {
@@ -1202,23 +1082,21 @@ class CalendarView extends PageView {
 				// disable entry
 				$calendar->update(array('valid' => 0));
 				
-				// set output
-				$output = $confirmation->parse(array(
-						'p.message' => parent::lang('class.CalendarView#delete#message#done'),
-						'p.form' => ''
-					));
+				// smarty
+				$sConfirmation->assign('message', parent::lang('class.CalendarView#delete#message#done'));
+				$sConfirmation->assign('form', '');
 				
 				// write entry
 				try {
 					$calendar->write_db('update');
 				} catch(Exception $e) {
 					$GLOBALS['Error']->handle_error($e);
-					$output = $GLOBALS['Error']->to_html($e);
+					return $GLOBALS['Error']->to_html($e);
 				}
 			}
 			
-			// return
-			return $output;
+			// smarty return
+			return $sConfirmation->fetch('smarty.confirmation.tpl');
 		} else {
 			
 			// error

@@ -243,7 +243,7 @@ $lang = array(
 	'class.PageView' => array(
 		'title' => array(
 			'prefix' => array(
-				'title' => 'BfV-Intranet'
+				'title' => 'JudoIntranet'
 			)
 		),
 		'navi' => array(

@@ -4,3 +4,5 @@
 /templates/announcements/*
 /.project
 /templates/test.*
+*.z
+/templates/smarty/*/*.php

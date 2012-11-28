@@ -268,8 +268,9 @@ div#confirm div.quickform {
 	float: left;
 }
 
-div#cancel {
+span#cancel {
 	padding-left: 100px;
+	vertical-align: bottom;
 }
 
 /*

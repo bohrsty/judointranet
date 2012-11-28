@@ -1,11 +1,3 @@
-{function name="navi"}
-{for $i=0 to (count($data)-1)}
-			<div class="navi_{$data.$i.level}{if $data.$i.level!=0}_{if $active==$data.$i.id}a{else}i{/if}{/if}">
-				<a href="{$data.$i.href}" title="{$data.$i.title}">{$data.$i.content}</a>
-			</div>
-{/for}
-{/function}
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 	<head>
@@ -38,7 +30,11 @@
 			<div id="logo">
 				<p><img src="img/logo.png" alt="Logo" title="JudoIntranet" /></p>
 			</div>
-{call name=navi data=$data}
+{for $i=0 to (count($data)-1)}
+			<div class="navi_{$data.$i.level}{if $data.$i.level!=0}_{if $active==$data.$i.id && $file==$data.$i.file}a{else}i{/if}{/if}">
+				<a href="{$data.$i.href}" title="{$data.$i.title}">{$data.$i.content}</a>
+			</div>
+{/for}
 		</div>
 		<div id="content">
 			<div class="logininfo">

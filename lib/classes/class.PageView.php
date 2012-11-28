@@ -389,7 +389,8 @@ class PageView extends Object {
 								'href' => ($secondlevel[$j]['getid'] == 'login' && $this->get('id') != 'login' && $this->get('id') != 'logout') ? $firstlevel['file'].'?id='.$secondlevel[$j]['getid'].'&r='.base64_encode($_SERVER['REQUEST_URI']) : $firstlevel['file'].'?id='.$secondlevel[$j]['getid'],
 								'title' => parent::lang($secondlevel[$j]['name']),
 								'content' => parent::lang($secondlevel[$j]['name']),
-								'id' => $secondlevel[$j]['getid']
+								'id' => $secondlevel[$j]['getid'],
+								'file' => $firstlevel['file']
 							);
 				
 				// check active or inactive

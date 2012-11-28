@@ -236,7 +236,7 @@ class Calendar extends Page {
 	 * @param object $template HTMLTemplate-objekt to parse the data
 	 * @return string calendar-entry-details as html-string
 	 */
-	public function details_to_html($template) {
+	public function details_to_html() {
 		
 		// prepare rights
 		$groups = $_SESSION['user']->return_all_groups('admin');
@@ -259,7 +259,8 @@ class Calendar extends Page {
 		);
 		
 		// return
-		return $template->parse($data);
+//		return $template->parse($data);
+		return $data;
 	}
 	
 	

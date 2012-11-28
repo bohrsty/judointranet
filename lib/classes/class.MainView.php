@@ -207,6 +207,7 @@ class MainView extends PageView {
 		// navi
 		$this->tpl->assign('data', $this->navi(basename($_SERVER['SCRIPT_FILENAME'])));
 		$this->tpl->assign('active', $this->get('id'));
+		$this->tpl->assign('file', basename($_SERVER['SCRIPT_FILENAME']));
 		// logininfo
 		$this->tpl->assign('logininfo', $this->put_userinfo());
 		
