@@ -14,8 +14,6 @@ $calendar_view = new CalendarView();
 
 $calendar_view->init();
 
-//$calendar_view->output();
-
 
 
 

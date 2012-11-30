@@ -682,7 +682,7 @@ $lang = array(
 				'rowNotEnabled.enable' => 'Zeile aktivieren'
 			),
 			'enable' => array(
-				'rowNotDisabled' => 'Diese Tabellenzeile ist nicht deaktiviert und kann nicht aktiviert werden, m&ouml;chten Sie sie stattdessen deaktivieren?',
+				'rowNotDisabled' => 'Diese Tabellenzeile ist aktiviert und kann nicht aktiviert werden, m&ouml;chten Sie sie stattdessen deaktivieren?',
 				'rowNotDisabled.disable' => 'Zeile deaktivieren'
 			)
 		),

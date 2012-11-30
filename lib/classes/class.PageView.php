@@ -444,24 +444,32 @@ class PageView extends Object {
 	 */
 	protected function p($param,$string) {
 		
-		// get standard p-template
-		try {
-			$p = new HtmlTemplate('templates/p.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		
-		// add " " if param not empty
-		if($param != '') {
-			$param = ' '.$param;
-		}
-		
+		// smarty
+		$sP = new JudoIntranetSmarty();
+//		
+//		// get standard p-template
+//		try {
+//			$p = new HtmlTemplate('templates/p.tpl');
+//		} catch(Exception $e) {
+//			$GLOBALS['Error']->handle_error($e);
+//		}
+//		
+//		// add " " if param not empty
+//		if($param != '') {
+//			$param = ' '.$param;
+//		}
+//		
 		// prepare contents
-		$contents = array();
-		$contents['parameters'] = $param;
-		$contents['text'] = $string;
+		// smarty
+		$sP->assign('params', $param);
+		$sP->assign('content', $string);
+//		
+//		$contents = array();
+//		$contents['parameters'] = $param;
+//		$contents['text'] = $string;
 		
-		return $p->parse($contents)."\n";
+//		return $p->parse($contents)."\n";
+		return $sP->fetch('smarty.p.tpl');
 	}
 	
 	

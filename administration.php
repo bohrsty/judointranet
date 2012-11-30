@@ -14,8 +14,6 @@ $administration_view = new AdministrationView();
 
 $administration_view->init();
 
-$administration_view->output();
-
 
 
 ?>

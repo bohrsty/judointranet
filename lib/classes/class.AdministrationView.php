@@ -113,28 +113,20 @@ class AdministrationView extends PageView {
 					
 					case 'field':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.AdministrationView#init#title#field'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
-						$this->add_output(array('main' => $this->field()));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.AdministrationView#init#title#field')));
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', true);
+						$this->tpl->assign('main', $this->field());
 					break;
 					
 					case 'defaults':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.AdministrationView#init#title#defaults'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
-						$this->add_output(array('main' => $this->defaults()));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.AdministrationView#init#title#defaults')));
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', true);
+						$this->tpl->assign('main', $this->defaults());
 					break;
 					
 					default:
@@ -142,41 +134,53 @@ class AdministrationView extends PageView {
 						// id set, but no functionality
 						$errno = $GLOBALS['Error']->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
 						$GLOBALS['Error']->handle_error($errno);
-						$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						
+						// smarty
+						$this->tpl->assign('title', '');
+						$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', false);
 					break;
 				}
 			} else {
 				
 				// error not authorized
-				// set contents
-				// title
-				$this->add_output(array('title' => $this->title(parent::lang('class.AdministrationView#init#Error#NotAuthorized'))));
-				// navi
-				$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-				// main content
 				$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
 				$GLOBALS['Error']->handle_error($errno);
-				$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
-				// jquery
-				$this->add_output(array('jquery' => $this->get_jquery()));
+				
+				// smarty
+				$this->tpl->assign('title', $this->title(parent::lang('class.AdministrationView#init#Error#NotAuthorized')));
+				$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+				$this->tpl->assign('jquery', true);
+				$this->tpl->assign('hierselect', false);
 			}
 		} else {
 			
 			// id not set
-			// title
-			$this->add_output(array('title' => $this->title(parent::lang('class.AdministrationView#init#default#title')))); 
-			// default-content
-			$this->add_output(array('main' => '<h2>default content</h2>'));
-			// navi
-			$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-			// jquery
-			$this->add_output(array('jquery' => $this->get_jquery()));
+			// smarty-title
+			$this->tpl->assign('title', $this->title(parent::lang('class.AdministrationView#init#default#title'))); 
+			// smarty-main
+			$this->tpl->assign('main', '<h2>default content</h2>');
+			// smarty-jquery
+			$this->tpl->assign('jquery', true);
+			// smarty-hierselect
+			$this->tpl->assign('hierselect', false);
 		}
 		
-		// add head
-		$this->add_output(array('head' => $this->get_head()));
+		// global smarty
+		// head
+		$this->tpl->assign('head', $this->get_head());
+		// manualjquery
+		$this->tpl->assign('manualjquery', $this->get_jquery());
+		// navi
+		$this->tpl->assign('data', $this->navi(basename($_SERVER['SCRIPT_FILENAME'])));
+		$this->tpl->assign('active', $this->get('id'));
+		$this->tpl->assign('file', basename($_SERVER['SCRIPT_FILENAME']));
+		// logininfo
+		$this->tpl->assign('logininfo', $this->put_userinfo());
+		
+		// smarty-display
+		$this->tpl->display('smarty.admin.tpl');
 	}
 	
 	
@@ -199,14 +203,7 @@ class AdministrationView extends PageView {
 		} catch(Exception $e) {
 			$GLOBALS['Error']->handle_error($e);
 		}
-			
-		// prepare output
-		$output = '';
 		
-		// prepare head
-		$head = '';
-		// prepare caption
-		$caption = '';
 		// prepare content
 		$content = '';
 		
@@ -214,7 +211,7 @@ class AdministrationView extends PageView {
 		if($this->get('field') !== false) {
 			
 			// set caption
-			$caption = parent::lang('class.AdministrationView#field#caption#name.table').'"'.$this->get('field').'"';
+			$this->tpl->assign('caption', parent::lang('class.AdministrationView#field#caption#name.table').'"'.$this->get('field').'"');
 			
 			// check if 'field' exists
 			if($this->check_usertable($this->get('field')) !== false) {
@@ -236,21 +233,19 @@ class AdministrationView extends PageView {
 							// set valid 0
 							$this->set_valid($this->get('field'),$rid,0);
 							
-							// add table-links
-							$head .= $this->create_table_links();
-							
 							// list table content
 							$content .= $this->list_table_content($this->get('field'),$this->get('page'));
 						} else {
 							
 							// give link to enable
-							$content .= $this->p('',parent::lang('class.AdministrationView#field#disable#rowNotEnabled'));
-							$content .= $this->p('',$a->parse(array(
-									'a.params' => '',
-									'a.href' => 'administration.php?id='.$this->get('id').'&field='.$this->get('field').'&action=enable&rid='.$rid,
-									'a.title' => parent::lang('class.AdministrationView#field#disable#rowNotEnabled.enable'),
-									'a.content' => parent::lang('class.AdministrationView#field#disable#rowNotEnabled.enable')
-								)));
+							// smarty
+							$sE = new JudoIntranetSmarty();
+							$sE->assign('message', parent::lang('class.AdministrationView#defaults#disable#rowNotEnabled'));
+							$sE->assign('href', 'administration.php?id='.$this->get('id').'&field='.$this->get('field').'&action=enable&rid='.$rid);
+							$sE->assign('title', parent::lang('class.AdministrationView#defaults#disable#rowNotEnabled.enable'));
+							$sE->assign('content', parent::lang('class.AdministrationView#defaults#disable#rowNotEnabled.enable'));
+							
+							$content .= $sE->fetch('smarty.admin.dis-enable.tpl');
 						}
 					} elseif($this->get('action') == 'enable') {
 						
@@ -260,30 +255,25 @@ class AdministrationView extends PageView {
 							// set valid 1
 							$this->set_valid($this->get('field'),$rid,1);
 							
-							// add table-links
-							$head .= $this->create_table_links();
-							
 							// list table content
 							$content .= $this->list_table_content($this->get('field'),$this->get('page'));
 						} else {
 							
 							// give link to enable
-							$content .= $this->p('',parent::lang('class.AdministrationView#field#disable#rowNotEnabled'));
-							$content .= $this->p('',$a->parse(array(
-									'a.params' => '',
-									'a.href' => 'administration.php?id='.$this->get('id').'&field='.$this->get('field').'&action=disable&rid='.$rid,
-									'a.title' => parent::lang('class.AdministrationView#field#enable#rowNotDisabled.disable'),
-									'a.content' => parent::lang('class.AdministrationView#field#enable#rowNotDisabled.disable')
-								)));
+							// smarty
+							$sE = new JudoIntranetSmarty();
+							$sE->assign('message', parent::lang('class.AdministrationView#defaults#enable#rowNotDisabled'));
+							$sE->assign('href', 'administration.php?id='.$this->get('id').'&field='.$this->get('field').'&action=disable&rid='.$rid);
+							$sE->assign('title', parent::lang('class.AdministrationView#defaults#enable#rowNotDisabled.disable'));
+							$sE->assign('content', parent::lang('class.AdministrationView#defaults#enable#rowNotDisabled.disable'));
+							
+							$content .= $sE->fetch('smarty.admin.dis-enable.tpl');
 						}
 					} elseif($this->get('action') == 'delete') {
 						
 						// add form and message
 						$content .= $this->delete_row($this->get('field'),$rid);
 					} else {
-						
-						// add table-links
-						$head .= $this->create_table_links();
 						
 						// list table content
 						$content .= $this->list_table_content($this->get('field'),$this->get('page'));
@@ -301,32 +291,18 @@ class AdministrationView extends PageView {
 		} else {
 			
 			// set caption
-			$caption = parent::lang('class.AdministrationView#field#caption#name');
-			
-			// add table-links
-			$head .= $this->create_table_links();
+			$this->tpl->assign('caption', parent::lang('class.AdministrationView#field#caption#name'));
 			
 			// add default content
 			$content .= $this->default_content();
 		
 		}
 		
-		// add head
-		$output .= $head;
-		
-		// parse caption
-		$opts = array(
-				'hx.x' => '2',
-				'hx.parameters' => '',
-				'hx.content' => $caption
-			);
-		$output .= $hx->parse($opts);
-		
-		// add content
-		$output .= $content;
+		// smarty
+		$this->tpl->assign('tablelinks', $this->create_table_links());
 		
 		// return
-		return $output;
+		return $content;
 	}
 	
 	
@@ -342,14 +318,8 @@ class AdministrationView extends PageView {
 	 */
 	private function create_table_links() {
 		
-		// read templates
-		try {
-			$a = new HtmlTemplate('templates/a.tpl');
-			$div = new HtmlTemplate('templates/div.tpl');
-			$js_toggleSlide_div = new HtmlTemplate('templates/js-toggleSlide-div.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
+		// smarty-templates
+		$sTl = new JudoIntranetSmarty();
 		
 		// prepare return
 		$return = '';
@@ -359,52 +329,41 @@ class AdministrationView extends PageView {
 		
 		// create links
 		$a_out = '';
+		// smarty
+		$sTl->assign('class', 'class="usertable"');
 		foreach($usertables as $table) {
 			
 			// check table
 			if($this->get('field') === false || $this->get('field') != $table) {
 			
-				// prepare options
-				$opts = array(
-						'a.params' => ' class="usertable"',
-						'a.href' => 'administration.php?id='.$this->get('id').'&amp;field='.$table,
-						'a.title' => '\''.$table.'\''.parent::lang('class.AdministrationView#create_table_links#title#manage'),
-						'a.content' => '\''.$table.'\''.parent::lang('class.AdministrationView#create_table_links#name#manage')
+				// smarty
+				$data[] = array(
+						'params' => 'class="usertable"',
+						'href' => 'administration.php?id='.$this->get('id').'&field='.$table,
+						'title' => '\''.$table.'\''.parent::lang('class.AdministrationView#create_table_links#title#manage'),
+						'content' => '\''.$table.'\''.parent::lang('class.AdministrationView#create_table_links#name#manage')
 					);
-				// parse
-				$a_out .= $this->p('class="usertable"',$a->parse($opts));
 			}
 		}
 		
-		// add slider-link
-		$t_link = $a->parse(array(
-				'a.params' => ' id="toggleTable"',
-				'a.href' => '#',
-				'a.title' => parent::lang('class.AdministrationView#create_table_links#toggleTable#title'),
-				'a.content' => parent::lang('class.AdministrationView#create_table_links#toggleTable#name')
-			));
+		$sTl->assign('data', $data);
 		
-		// add <p>
-		$return .= $this->p('',$t_link);
+		// add slider-link
+		// smarty
+		$sTl->assign('title', parent::lang('class.AdministrationView#create_table_links#toggleTable#title'));
+		$sTl->assign('content', parent::lang('class.AdministrationView#create_table_links#toggleTable#name'));
+		$sTl->assign('params', 'id="toggleTable"');
+		$sTl->assign('href', '#');
 		
 		// add jquery
-		$this->add_jquery($js_toggleSlide_div->parse(array(
-						'id' => '#toggleTable',
-						'toToggle' => '#tablelinks',
-						'time' => ''
-				)));
-		
-		
-		// embed in div
-		$opts = array(
-				'div.params' => ' id="tablelinks"',
-				'div.content' => $a_out
-			);
-		// parse
-		$return .= $div->parse($opts);
+		$sToggleSlide = new JudoIntranetSmarty();
+		$sToggleSlide->assign('id', '#toggleTable');
+		$sToggleSlide->assign('toToggle', '#tablelinks');
+		$sToggleSlide->assign('time', '');
+		$this->add_jquery($sToggleSlide->fetch('smarty.js-toggleSlide.tpl'));
 		
 		// return
-		return $return;
+		return $sTl->fetch('smarty.admin.table_links.tpl');
 	}
 	
 	
@@ -485,7 +444,7 @@ class AdministrationView extends PageView {
 		$return = '';
 		
 		// content
-		$return .= 'default content';
+		$return .= $this->p('','default content');
 					
 		// return
 		return $return;
@@ -506,36 +465,28 @@ class AdministrationView extends PageView {
 	 */
 	private function list_table_content($table_name,$page) {
 		
-		// get templates
-		try {
-			$a = new HtmlTemplate('templates/a.tpl');
-			$th = new HtmlTemplate('templates/th.tpl');
-			$td = new HtmlTemplate('templates/td.tpl');
-			$tr = new HtmlTemplate('templates/tr.tpl');
-			$table = new HtmlTemplate('templates/table.tpl');
-			$img = new HtmlTemplate('templates/img.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
+		// smarty-template
+		$sTc = new JudoIntranetSmarty();
 		
 		// get url-parameters
 		$link = '';
 		if($table_name == 'defaults') {
 			$link = 'administration.php?id='.$this->get('id');
 		} else {
-			$link = 'administration.php?id='.$this->get('id').'&amp;field='.$table_name;
+			$link = 'administration.php?id='.$this->get('id').'&field='.$table_name;
 		}
 		
 		// prepare return
 		$return = '';
 		
-		// add new-link
-		$new_link = $a->parse(array(
-				'a.params' => ' id="newLink"',
-				'a.href' => $link.'&amp;action=new',
-				'a.title' => parent::lang('class.AdministrationView#list_table_content#new#title'),
-				'a.content' => parent::lang('class.AdministrationView#list_table_content#new#name')
-			));
+		// smarty
+		$newlink = array(
+				'params' => 'id="newLink"',
+				'href' => $link.'&action=new',
+				'title' => parent::lang('class.AdministrationView#list_table_content#new#title'),
+				'content' => parent::lang('class.AdministrationView#list_table_content#new#name')
+			);
+		$sTc->assign('newlink', $newlink);
 		
 		// get db-object
 		$db = Db::newDb();
@@ -555,18 +506,20 @@ class AdministrationView extends PageView {
 		$total_pages = ceil($rows / $pagesize);
 		
 		// generate page-links
-		$page_links = parent::lang('class.AdministrationView#list_table_content#pages#pages').':&nbsp;';
+		// smarty
+		$sTc->assign('pages', parent::lang('class.AdministrationView#list_table_content#pages#pages'));
+		$pagelinks = array();
 		for($i=1;$i<=$total_pages;$i++) {
 			
-			// get opts
-			$opts = array(
-					'a.params' => ' class="pagelinks"',
-					'a.href' => $link.'&amp;page='.$i,
-					'a.title' => parent::lang('class.AdministrationView#list_table_content#pages#page').' '.$i,
-					'a.content' => $i
+			// smarty
+			$pagelinks[] = array(
+					'params' => 'class="pagelinks"',
+					'href' => $link.'&page='.$i,
+					'title' => parent::lang('class.AdministrationView#list_table_content#pages#page').' '.$i,
+					'content' => $i
 				);
-			$page_links .= '&nbsp;'.$a->parse($opts).'&nbsp;';
 		}
+		$sTc->assign('pl', $pagelinks);
 		
 		// get rows from db
 		// prepare LIMIT
@@ -582,12 +535,11 @@ class AdministrationView extends PageView {
 		if(($page * $pagesize + $pagesize) > $rows) {
 			$last = $rows;
 		}
-		$page_links .= " (".($page * $pagesize + 1)." ".
+		// smarty
+		$toOf = " (".($page * $pagesize + 1)." ".
 						parent::lang('class.AdministrationView#list_table_content#pages#to')." $last ".
 						parent::lang('class.AdministrationView#list_table_content#pages#of')." $rows)";
-		
-		// add page-links
-		$return .= $this->p('id=pagelinks',$page_links.$new_link);
+		$sTc->assign('toof', $toOf);
 		
 		// prepare statement
 		$sql = "SELECT *
@@ -598,31 +550,23 @@ class AdministrationView extends PageView {
 		$result = $db->query($sql);
 		
 		// fetch result
-		$index = 0;
+		$index = $index2 = 0;
 		$th_out = '';
 		$tr_out = '';
 		
-		// add tasks
-		// head
-		$th_out .= $th->parse(array(
-			'th.params' => '',
-			'th.content' => parent::lang('class.AdministrationView#list_table_content#table#tasks')
-		));
-		
 		while($row = $result->fetch_array(MYSQL_ASSOC)) {
 			
+			$index2 = 0;
+			
 			// add edit
-			$img_out = $img->parse(array(
-				'img.params' => '',
-				'img.src' => 'img/admin_edit.png',
-				'img.alt' => parent::lang('class.AdministrationView#list_table_content#table#edit')
-			));
-			$a_out = $a->parse(array(
-				'a.params' => '',
-				'a.href' => $link.'&amp;action=edit&amp;rid='.$row['id'],
-				'a.title' => parent::lang('class.AdministrationView#list_table_content#table#edit').': '.$row['id'],
-				'a.content'=> $img_out
-			));
+			// smarty
+			$data[$index]['td'][$index2]['edit'] = array(
+					'src' => 'img/admin_edit.png',
+					'alt' => parent::lang('class.AdministrationView#list_table_content#table#edit'),
+					'href' => $link.'&action=edit&rid='.$row['id'],
+					'title' => parent::lang('class.AdministrationView#list_table_content#table#edit').': '.$row['id']
+				);
+			
 			// add disable/enable
 			// check status
 			$status = '';
@@ -631,36 +575,21 @@ class AdministrationView extends PageView {
 			} else {
 				$status = 'disable';
 			}
-			$img_out = $img->parse(array(
-				'img.params' => '',
-				'img.src' => 'img/admin_'.$status.'.png',
-				'img.alt' => parent::lang('class.AdministrationView#list_table_content#table#'.$status)
-			));
-			$a_out .= $a->parse(array(
-				'a.params' => '',
-				'a.href' => $link.'&amp;action='.$status.'&amp;rid='.$row['id'],
-				'a.title' => parent::lang('class.AdministrationView#list_table_content#table#'.$status).': '.$row['id'],
-				'a.content'=> $img_out
-			));
+			// smarty
+			$data[$index]['td'][$index2]['disenable'] = array(
+					'src' => 'img/admin_'.$status.'.png',
+					'alt' => parent::lang('class.AdministrationView#list_table_content#table#'.$status),
+					'href' => $link.'&action='.$status.'&rid='.$row['id'],
+					'title' => parent::lang('class.AdministrationView#list_table_content#table#'.$status).': '.$row['id']
+				);
 			// add delete
-			$img_out = $img->parse(array(
-				'img.params' => '',
-				'img.src' => 'img/admin_delete.png',
-				'img.alt' => parent::lang('class.AdministrationView#list_table_content#table#delete')
-			));
-			$a_out .= $a->parse(array(
-				'a.params' => '',
-				'a.href' => $link.'&amp;action=delete&amp;rid='.$row['id'],
-				'a.title' => parent::lang('class.AdministrationView#list_table_content#table#delete').': '.$row['id'],
-				'a.content'=> $img_out
-			));
-			
-			// add tasks
-			// links
-			$td_out = $td->parse(array(
-				'td.params' => '',
-				'td.content' => $a_out
-			));
+			// smarty
+			$data[$index]['td'][$index2]['delete'] = array(
+					'src' => 'img/admin_delete.png',
+					'alt' => parent::lang('class.AdministrationView#list_table_content#table#delete'),
+					'href' => $link.'&action=delete&rid='.$row['id'],
+					'title' => parent::lang('class.AdministrationView#list_table_content#table#delete').': '.$row['id']
+				);
 			
 			// walk through $row
 			foreach($row as $name => $value) {
@@ -683,55 +612,28 @@ class AdministrationView extends PageView {
 					} else {
 						$translated_name = $name;
 					}
-					$th_opts = array(
-						'th.params' => '',
-						'th.content' => $translated_name
-					);
-					$th_out .= $th->parse($th_opts);
+					// smarty
+					if($index2 == 0) {
+						$data[$index]['th'][$index2]['content'] = parent::lang('class.AdministrationView#list_table_content#table#tasks');
+					} else {
+						$data[$index]['th'][$index2]['content'] = $translated_name;
+					}
 				}
 				
-				$td_opts = array(
-					'td.params' => '',
-					'td.content' => nl2br(htmlentities(utf8_decode($value)))
-				);
-				$td_out .= $td->parse($td_opts,1,false);
+				// smarty
+				$data[$index]['td'][$index2]['content'] = $value;
+				
+				// increment index2
+				$index2++;
 			}
-			
-			// odd or even
-			$oddeven = '';
-			if($index % 2 == 0) {
-				$oddeven = 'even';
-			} else {
-				$oddeven = 'odd';
-			}
-			
-			// embed in <tr>
-			$tr_opts = array(
-				'tr.params' => " class=\"$oddeven\"",
-				'tr.content' => $td_out
-			);
-			$tr_out .= $tr->parse($tr_opts,1,false);
 			
 			// increment index
 			$index++;
 		}
-		
-		// embed th in tr
-		$tr_opts = array(
-			'tr.params' => '',
-			'tr.content' => $th_out
-		);
-		$tr_out = $tr->parse($tr_opts,1,false).$tr_out;
-		
-		// embed in <table>
-		$table_opts = array(
-			'table.params' => '',
-			'table.content' => $tr_out
-		);
-		$return .= $table->parse($table_opts,1,false);
+		$sTc->assign('data', $data);
 		
 		// return
-		return $return;
+		return $sTc->fetch('smarty.admin.table_content.tpl');
 	}
 	
 	
@@ -847,23 +749,15 @@ class AdministrationView extends PageView {
 	 */
 	private function delete_row($table,$rid) {
 		
-		// get templates
-		try {
-			$confirmation = new HtmlTemplate('templates/div.confirmation.tpl');
-			$a = new HtmlTemplate('templates/a.tpl');
-			$div = new HtmlTemplate('templates/div.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
+		// smarty-templates
+		$sConfirmation = new JudoIntranetSmarty();
 		
 		// get url-parameters
 		$link = '';
 		if($table == 'defaults') {
-			$link_form = 'administration.php?id='.$this->get('id');
 			$link = 'administration.php?id='.$this->get('id');
 		} else {
-			$link_form = 'administration.php?id='.$this->get('id').'&field='.$table;
-			$link = 'administration.php?id='.$this->get('id').'&amp;field='.$table;
+			$link = 'administration.php?id='.$this->get('id').'&field='.$table;
 		}
 		
 		// create form
@@ -872,24 +766,24 @@ class AdministrationView extends PageView {
 								'post',
 								array(
 									'name' => 'confirm',
-									'action' => $link_form.'&action=delete&rid='.$rid
+									'action' => $link.'&action=delete&rid='.$rid
 								)
 							);
 		
 		// add button
 		$form->addElement('submit','yes',array('value' => parent::lang('class.AdministrationView#delete_row#form#yes')));
 		
-		// prepare cancel
-		$cancel_a = $a->parse(array(
-				'a.params' => '',
-				'a.href' => $link,
-				'a.title' => parent::lang('class.AdministrationView#delete_row#cancel#title'),
-				'a.content' => parent::lang('class.AdministrationView#delete_row#cancel#form')
-			));
-		$cancel = $div->parse(array(
-				'div.params' => ' id="cancel"',
-				'div.content' => $cancel_a
-		));
+		// smarty-link
+			$cancellink = array(
+							'params' => '',
+							'href' => $link,
+							'title' => parent::lang('class.AdministrationView#delete_row#cancel#title'),
+							'content' => parent::lang('class.AdministrationView#delete_row#cancel#form')
+						);
+			$sConfirmation->assign('link', $cancellink);
+			$sConfirmation->assign('spanparams', 'id="cancel"');
+			$sConfirmation->assign('message', parent::lang('class.AdministrationView#delete_row#message#confirm'));
+			$sConfirmation->assign('form', $form);
 		
 		// validate
 		if($form->validate()) {
@@ -903,11 +797,12 @@ class AdministrationView extends PageView {
 			// execute
 			$result = $db->query($sql);
 			
-			// add links
-			$return = $this->create_table_links();
+			// smarty
+			$sConfirmation->assign('message', parent::lang('class.AdministrationView#delete_row#message#done'));
+			$sConfirmation->assign('form', '');
 			
-			// add message
-			$return .= $this->p(' class="deleted"',parent::lang('class.AdministrationView#delete_row#message#done'));
+			// smarty return
+			$return = $sConfirmation->fetch('smarty.confirmation.tpl');
 			
 			// add table content
 			$return .= $this->list_table_content($table,$this->get('page'));
@@ -916,11 +811,8 @@ class AdministrationView extends PageView {
 			return $return;
 		} else {
 			
-			// return form
-			return $confirmation->parse(array(
-				'p.message' => parent::lang('class.AdministrationView#delete_row#message#confirm'),
-				'p.form' => $form."\n".$cancel
-			));
+			// smarty return
+			return $sConfirmation->fetch('smarty.confirmation.tpl');
 		}
 	}
 	
@@ -940,17 +832,14 @@ class AdministrationView extends PageView {
 	private function edit_row($table,$rid) {
 		
 		// prepare return
-		$head = '';
 		$return = '';
 		
 		// get url-parameters
 		$link = '';
 		if($table == 'defaults') {
-			$link_form = 'administration.php?id='.$this->get('id');
 			$link = 'administration.php?id='.$this->get('id');
 		} else {
-			$link_form = 'administration.php?id='.$this->get('id').'&field='.$table;
-			$link = 'administration.php?id='.$this->get('id').'&amp;field='.$table;
+			$link = 'administration.php?id='.$this->get('id').'&field='.$table;
 		}
 		
 		// get db-object
@@ -971,7 +860,7 @@ class AdministrationView extends PageView {
 						'post',
 						array(
 							'name' => 'edit_field',
-							'action' => $link_form.'&action=edit&rid='.$rid
+							'action' => $link.'&action=edit&rid='.$rid
 						)
 					);
 		
@@ -1093,7 +982,6 @@ class AdministrationView extends PageView {
 		if($form->validate()) {
 			
 			// set output
-			$head .= $this->create_table_links();
 			$return .= $this->p(' class="edit_caption"',parent::lang('class.AdministrationView#edit_row#caption#done').': "'.$rid.'"');
 			
 			// get data
@@ -1135,7 +1023,7 @@ class AdministrationView extends PageView {
 		}
 		
 		// return
-		return $head.$return;
+		return $return;
 	}
 	
 	
@@ -1153,17 +1041,14 @@ class AdministrationView extends PageView {
 	private function new_row($table) {
 		
 		// prepare return
-		$head = '';
 		$return = '';
 		
 		// get url-parameters
 		$link = '';
 		if($table == 'defaults') {
-			$link_form = 'administration.php?id='.$this->get('id');
 			$link = 'administration.php?id='.$this->get('id');
 		} else {
-			$link_form = 'administration.php?id='.$this->get('id').'&field='.$table;
-			$link = 'administration.php?id='.$this->get('id').'&amp;field='.$table;
+			$link = 'administration.php?id='.$this->get('id').'&field='.$table;
 		}
 		
 		// get db-object
@@ -1184,7 +1069,7 @@ class AdministrationView extends PageView {
 						'post',
 						array(
 							'name' => 'new_'.$table,
-							'action' => $link_form.'&action=new'
+							'action' => $link.'&action=new'
 						)
 					);
 		// add datasource (valid = 1)
@@ -1293,8 +1178,7 @@ class AdministrationView extends PageView {
 		if($form->validate()) {
 			
 			// set output
-			$head .= $this->create_table_links();
-			$return .= $this->p(' class="edit_caption"',parent::lang('class.AdministrationView#new_row#caption#done'));
+			$return .= $this->p('class="edit_caption"',parent::lang('class.AdministrationView#new_row#caption#done'));
 			
 			// get data
 			$data = $form->getValue();
@@ -1339,7 +1223,7 @@ class AdministrationView extends PageView {
 		}
 		
 		// return
-		return $head.$return;
+		return $return;
 	}
 	
 	
@@ -1354,17 +1238,6 @@ class AdministrationView extends PageView {
 	 * @return string html-string with the field-administration-page
 	 */
 	private function defaults() {
-		
-		// read templates
-		try {
-			$hx = new HtmlTemplate('templates/hx.tpl');
-			$a = new HtmlTemplate('templates/a.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-			
-		// prepare output
-		$output = '';
 		
 		// prepare content
 		$content = '';
@@ -1384,46 +1257,48 @@ class AdministrationView extends PageView {
 					$content .= $this->edit_row('defaults',$rid);
 				} elseif($this->get('action') == 'disable') {
 						
-						// check if row is enabled
-						if($this->is_valid('defaults',$rid)) {
-							
-							// set valid 0
-							$this->set_valid('defaults',$rid,0);
-							
-							// list table content
-							$content .= $this->list_table_content('defaults',$this->get('page'));
-						} else {
-							
-							// give link to enable
-							$content .= $this->p('',parent::lang('class.AdministrationView#defaults#disable#rowNotEnabled'));
-							$content .= $this->p('',$a->parse(array(
-									'a.params' => '',
-									'a.href' => 'administration.php?id='.$this->get('id').'&amp;action=enable&amp;rid='.$rid,
-									'a.title' => parent::lang('class.AdministrationView#defaults#disable#rowNotEnabled.enable'),
-									'a.content' => parent::lang('class.AdministrationView#defaults#disable#rowNotEnabled.enable')
-								)));
-						}
-					} elseif($this->get('action') == 'enable') {
+					// check if row is enabled
+					if($this->is_valid('defaults',$rid)) {
 						
-						// check if row is disabled
-						if(!$this->is_valid('defaults',$rid)) {
-							
-							// set valid 1
-							$this->set_valid('defaults',$rid,1);
-							
-							// list table content
-							$content .= $this->list_table_content('defaults',$this->get('page'));
-						} else {
-							
-							// give link to enable
-							$content .= $this->p('',parent::lang('class.AdministrationView#defaults#disable#rowNotEnabled'));
-							$content .= $this->p('',$a->parse(array(
-									'a.params' => '',
-									'a.href' => 'administration.php?id='.$this->get('id').'&amp;action=disable&amp;rid='.$rid,
-									'a.title' => parent::lang('class.AdministrationView#defaults#enable#rowNotDisabled.disable'),
-									'a.content' => parent::lang('class.AdministrationView#defaults#enable#rowNotDisabled.disable')
-								)));
-						}				
+						// set valid 0
+						$this->set_valid('defaults',$rid,0);
+						
+						// list table content
+						$content .= $this->list_table_content('defaults',$this->get('page'));
+					} else {
+						
+						// give link to enable
+						// smarty
+						$sE = new JudoIntranetSmarty();
+						$sE->assign('message', parent::lang('class.AdministrationView#defaults#disable#rowNotEnabled'));
+						$sE->assign('href', 'administration.php?id='.$this->get('id').'&action=enable&rid='.$rid);
+						$sE->assign('title', parent::lang('class.AdministrationView#defaults#disable#rowNotEnabled.enable'));
+						$sE->assign('content', parent::lang('class.AdministrationView#defaults#disable#rowNotEnabled.enable'));
+						
+						$content .= $sE->fetch('smarty.admin.dis-enable.tpl');
+					}
+				} elseif($this->get('action') == 'enable') {
+					
+					// check if row is disabled
+					if(!$this->is_valid('defaults',$rid)) {
+						
+						// set valid 1
+						$this->set_valid('defaults',$rid,1);
+						
+						// list table content
+						$content .= $this->list_table_content('defaults',$this->get('page'));
+					} else {
+						
+						// give link to disable
+						// smarty
+						$sE = new JudoIntranetSmarty();
+						$sE->assign('message', parent::lang('class.AdministrationView#defaults#enable#rowNotDisabled'));
+						$sE->assign('href', 'administration.php?id='.$this->get('id').'&action=disable&rid='.$rid);
+						$sE->assign('title', parent::lang('class.AdministrationView#defaults#enable#rowNotDisabled.disable'));
+						$sE->assign('content', parent::lang('class.AdministrationView#defaults#enable#rowNotDisabled.disable'));
+						
+						$content .= $sE->fetch('smarty.admin.dis-enable.tpl');
+					}				
 				} elseif($this->get('action') == 'delete') {
 					$content .= $this->delete_row('defaults',$rid);
 				} else {
@@ -1441,19 +1316,12 @@ class AdministrationView extends PageView {
 		
 		}
 		
-		// parse caption
-		$opts = array(
-				'hx.x' => '2',
-				'hx.parameters' => '',
-				'hx.content' => parent::lang('class.AdministrationView#defaults#caption#name')
-			);
-		$output .= $hx->parse($opts);
-		
-		// add content
-		$output .= $content;
+		// smarty
+		$this->tpl->assign('caption', parent::lang('class.AdministrationView#defaults#caption#name'));
+		$this->tpl->assign('tablelinks', '');
 		
 		// return
-		return $output;
+		return $content;
 	}
 }
 
