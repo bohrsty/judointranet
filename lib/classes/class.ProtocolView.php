@@ -113,28 +113,20 @@ class ProtocolView extends PageView {
 					
 					case 'listall':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.ProtocolView#init#listall#title'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
-						$this->add_output(array('main' => $this->listall()));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.ProtocolView#init#listall#title')));
+						$this->tpl->assign('main', $this->listall());
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', true);
 					break;
 					
 					case 'new':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.ProtocolView#init#my#title'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
-						$this->add_output(array('main' => $this->my()));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.ProtocolView#init#my#title')));
+						$this->tpl->assign('main', $this->new_entry());
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', true);
 					break;
 					
 					default:
@@ -142,41 +134,53 @@ class ProtocolView extends PageView {
 						// id set, but no functionality
 						$errno = $GLOBALS['Error']->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
 						$GLOBALS['Error']->handle_error($errno);
-						$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						
+						// smarty
+						$this->tpl->assign('title', '');
+						$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', false);
 					break;
 				}
 			} else {
 				
 				// error not authorized
-				// set contents
-				// title
-				$this->add_output(array('title' => $this->title(parent::lang('class.ProtocolView#init#Error#NotAuthorized'))));
-				// navi
-				$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-				// main content
 				$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
 				$GLOBALS['Error']->handle_error($errno);
-				$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
-				// jquery
-				$this->add_output(array('jquery' => $this->get_jquery()));
+				
+				// smarty
+				$this->tpl->assign('title', $this->title(parent::lang('class.ProtocolView#init#Error#NotAuthorized')));
+				$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+				$this->tpl->assign('jquery', true);
+				$this->tpl->assign('hierselect', false);
 			}
 		} else {
 			
 			// id not set
-			// title
-			$this->add_output(array('title' => $this->title(parent::lang('class.ProtocolView#init#default#title')))); 
-			// default-content
-			$this->add_output(array('main' => $this->default_content()));
-			// navi
-			$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-			// jquery
-			$this->add_output(array('jquery' => $this->get_jquery()));
+			// smarty-title
+			$this->tpl->assign('title', $this->title(parent::lang('class.ProtocolView#init#default#title'))); 
+			// smarty-main
+			$this->tpl->assign('main', $this->default_content());
+			// smarty-jquery
+			$this->tpl->assign('jquery', true);
+			// smarty-hierselect
+			$this->tpl->assign('hierselect', false);
 		}
 		
-		// add head
-		$this->add_output(array('head' => $this->get_head()));
+		// global smarty
+		// head
+		$this->tpl->assign('head', $this->get_head());
+		// manualjquery
+		$this->tpl->assign('manualjquery', $this->get_jquery());
+		// navi
+		$this->tpl->assign('data', $this->navi(basename($_SERVER['SCRIPT_FILENAME'])));
+		$this->tpl->assign('active', $this->get('id'));
+		$this->tpl->assign('file', basename($_SERVER['SCRIPT_FILENAME']));
+		// logininfo
+		$this->tpl->assign('logininfo', $this->put_userinfo());
+		
+		// smarty-display
+		$this->tpl->display('smarty.main.tpl');
 	}
 	
 	
@@ -193,32 +197,15 @@ class ProtocolView extends PageView {
 	 */
 	private function default_content() {
 		
-		// prepare return
-		$return = '';
+		// smarty-template
+		$sD = new JudoIntranetSmarty();
 		
-		// get templates
-		// hx
-		try {
-			$hx = new HtmlTemplate('templates/hx.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// p
-		try {
-			$p = new HtmlTemplate('templates/p.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		
-		// prepare headline
-		$return .= $hx->parse(array(
-						'hx.x' => 2,
-						'hx.parameters' => '',
-						'hx.content' => parent::lang('class.ProtocolView#default_content#headline#text')
-					));
+		// smarty
+		$sD->assign('caption', parent::lang('class.ProtocolView#default_content#headline#text'));
+		$sD->assign('text', '');
 		
 		// return
-		return $return;
+		return $sD->fetch('smarty.default.content.tpl');
 	}
 	
 	
