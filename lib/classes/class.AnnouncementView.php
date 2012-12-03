@@ -131,67 +131,47 @@ class AnnouncementView extends PageView {
 					
 					case 'new':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.AnnouncementView#init#new#title'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
-						$this->add_output(array('main' => $this->new_entry()));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#new#title')));
+						$this->tpl->assign('main', $this->new_entry());
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', true);
 					break;
 					
 					case 'edit':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#edit#title'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
-						$this->add_output(array('main' => $this->edit()));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#edit#title')));
+						$this->tpl->assign('main', $this->edit());
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', true);
 					break;
 					
 					case 'delete':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#delete#title'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
-						$this->add_output(array('main' => $this->delete()));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#delete#title')));
+						$this->tpl->assign('main', $this->delete());
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', true);
 					break;
 					
 					case 'details':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#details#title'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
-						$this->add_output(array('main' => $this->details()));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#details#title')));
+						$this->tpl->assign('main', $this->details());
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', false);
 					break;
 					
 					case 'topdf':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#topdf#title'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
-						$this->add_output(array('main' => $this->topdf()));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#topdf#title')));
+						$this->tpl->assign('main', $this->topdf());
+						$this->tpl->assign('jquery', false);
+						$this->tpl->assign('hierselect', false);
 					break;
 					
 					default:
@@ -199,41 +179,54 @@ class AnnouncementView extends PageView {
 						// id set, but no functionality
 						$errno = $GLOBALS['Error']->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
 						$GLOBALS['Error']->handle_error($errno);
-						$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						
+						// smarty
+						$this->tpl->assign('title', '');
+						$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', false);
 					break;
 				}
 			} else {
 				
 				// error not authorized
-				// set contents
-				// title
-				$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#Error#NotAuthorized'))));
-				// navi
-				$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
 				// main content
 				$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
 				$GLOBALS['Error']->handle_error($errno);
-				$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
-				// jquery
-				$this->add_output(array('jquery' => $this->get_jquery()));
+
+				// smarty
+				$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#Error#NotAuthorized')));
+				$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+				$this->tpl->assign('jquery', true);
+				$this->tpl->assign('hierselect', false);
 			}
 		} else {
 			
 			// id not set
-			// title
-			$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#default#title')))); 
-			// default-content
-			$this->add_output(array('main' => '<h2>default content</h2>'));
-			// navi
-			$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-			// jquery
-			$this->add_output(array('jquery' => $this->get_jquery()));
+			// smarty-title
+			$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#default#title'))); 
+			// smarty-main
+			$this->tpl->assign('main', '<h2>default content</h2>');
+			// smarty-jquery
+			$this->tpl->assign('jquery', true);
+			// smarty-hierselect
+			$this->tpl->assign('hierselect', false);
 		}
 		
-		// add head
-		$this->add_output(array('head' => $this->get_head()));
+		// global smarty
+		// head
+		$this->tpl->assign('head', $this->get_head());
+		// manualjquery
+		$this->tpl->assign('manualjquery', $this->get_jquery());
+		// navi
+		$this->tpl->assign('data', $this->navi(basename($_SERVER['SCRIPT_FILENAME'])));
+		$this->tpl->assign('active', $this->get('id'));
+		$this->tpl->assign('file', basename($_SERVER['SCRIPT_FILENAME']));
+		// logininfo
+		$this->tpl->assign('logininfo', $this->put_userinfo());
+		
+		// smarty-display
+		$this->tpl->display('smarty.main.tpl');
 	}
 	
 	
@@ -281,14 +274,8 @@ class AnnouncementView extends PageView {
 	 */
 	private function new_entry() {
 		
-		// get templates
-		// p
-		try {
-			$p = new HtmlTemplate('templates/p.tpl');
-			$js_datepicker = new HtmlTemplate('templates/js-datepicker.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
+		// smarty-templates
+		$sD = new JudoIntranetSmarty();
 		
 		// check rights
 		if(Rights::check_rights($this->get('cid'),'calendar')) {
@@ -342,10 +329,12 @@ class AnnouncementView extends PageView {
 						
 						// check $field_id
 						if($field_id != '' && $field->get_type() == 'date') {
-							$this->add_jquery($js_datepicker->parse(array(
-										'elementid' => $field_id.'-0',
-										'addFunctions' => ''
-									)));
+							
+							// smarty
+							$sD->assign('elementid', $field_id.'-0');
+							$sD->assign('dateFormat', 'yy-mm-dd');
+							$sD->assign('dateValue', date('Y-m-d'));
+							$this->add_jquery($sD->fetch('smarty.js-datepicker.tpl'));
 						}
 						
 						// add to form
@@ -383,17 +372,25 @@ class AnnouncementView extends PageView {
 						// add field-names and -values to array
 						$preset->add_marks($announcement);
 						
-						// return field and value as HTML
+						// get field name and value
+						$values = array();
 						foreach($fields as $field) {
-							$return .= $field->value_to_html($p,$announcement);
+							$values[] = $field->value_to_html();
 						}
+						// smarty
+						$sAe = new JudoIntranetSmarty();
+						$sAe->assign('a', $announcement);
+						for($i=0;$i<count($values);$i++) {
+							if(preg_match('/\{\$a\..*\}/U', $values[$i]['value'])) {
+								$values[$i]['value'] = $sAe->fetch('string:'.$values[$i]['value']);
+							}
+						}
+						$sAe->assign('v',$values);
+						return $sAe->fetch('smarty.announcement.edit.tpl');
 						
 					} else {
-						$return = $form->render($renderer);
+						return $form->render($renderer);
 					}
-					
-					// return
-					return $return;
 				} else {
 					
 					// error
@@ -430,14 +427,8 @@ class AnnouncementView extends PageView {
 	 */
 	private function edit() {
 		
-		// get templates
-		try {
-			$p = new HtmlTemplate('templates/p.tpl');
-			$js_datepicker = new HtmlTemplate('templates/js-datepicker.tpl');
-			$js_datepicker_parse = new HtmlTemplate('templates/js-datepicker-parse.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
+		// smarty-templates
+		$sD = new JudoIntranetSmarty();
 		
 		// check rights
 		if(Rights::check_rights($this->get('cid'),'calendar')) {
@@ -524,15 +515,12 @@ class AnnouncementView extends PageView {
 						
 						// check $field_id
 						if($field_id != '' && $field->get_type() == 'date') {
-							$js_datepicker_parse_out = $js_datepicker_parse->parse(array(
-										'elementid' => $field_id.'-0',
-										'format' => 'yy-mm-dd',
-										'value' => $field->get_value()
-									));
-							$this->add_jquery($js_datepicker->parse(array(
-										'elementid' => $field_id.'-0',
-										'addFunctions' => $js_datepicker_parse_out
-									)));
+							
+							// smarty
+							$sD->assign('elementid', $field_id.'-0');
+							$sD->assign('dateFormat', 'yy-mm-dd');
+							$sD->assign('dateValue', $field->get_value());
+							$this->add_jquery($sD->fetch('smarty.js-datepicker.tpl'));
 						}
 						
 						// add to form
@@ -570,17 +558,25 @@ class AnnouncementView extends PageView {
 						// add field-names and -values to array
 						$preset->add_marks($announcement);
 						
-						// return field and value as HTML
+						// get field name and value
+						$values = array();
 						foreach($fields as $field) {
-							$return .= $field->value_to_html($p,$announcement);
+							$values[] = $field->value_to_html();
 						}
+						// smarty
+						$sAe = new JudoIntranetSmarty();
+						$sAe->assign('a', $announcement);
+						for($i=0;$i<count($values);$i++) {
+							if(preg_match('/\{\$a\..*\}/U', $values[$i]['value'])) {
+								$values[$i]['value'] = $sAe->fetch('string:'.$values[$i]['value']);
+							}
+						}
+						$sAe->assign('v',$values);
+						return $sAe->fetch('smarty.announcement.edit.tpl');
 						
 					} else {
-						$return = $form->render($renderer);
+						return $form->render($renderer);
 					}
-					
-					// return
-					return $return;
 				} else {
 					
 					// error
@@ -630,14 +626,8 @@ class AnnouncementView extends PageView {
 					// prepare return
 					$return = '';
 					
-					// get templates
-					try {
-						$confirmation = new HtmlTemplate('templates/div.confirmation.tpl');
-						$a = new HtmlTemplate('templates/a.tpl');
-						$div = new HtmlTemplate('templates/div.tpl');
-					} catch(Exception $e) {
-						$GLOBALS['Error']->handle_error($e);
-					}
+					// smarty-templates
+					$sConfirmation = new JudoIntranetSmarty();
 					
 					$form = new HTML_QuickForm2(
 											'confirm',
@@ -651,23 +641,17 @@ class AnnouncementView extends PageView {
 					// add button
 					$form->addElement('submit','yes',array('value' => parent::lang('class.AnnouncementView#delete#form#yes')));
 					
-					// prepare cancel
-					$cancel_a = $a->parse(array(
-							'a.params' => '',
-							'a.href' => 'calendar.php?id=listall',
-							'a.title' => parent::lang('class.AnnouncementView#delete#title#cancel'),
-							'a.content' => parent::lang('class.AnnouncementView#delete#form#cancel')
-						));
-					$cancel = $div->parse(array(
-							'div.params' => ' id="cancel"',
-							'div.content' => $cancel_a
-					));
-					
-					// set output
-					$return = $confirmation->parse(array(
-							'p.message' => parent::lang('class.AnnouncementView#delete#message#confirm'),
-							'p.form' => $form."\n".$cancel
-						));
+					// smarty-link
+					$link = array(
+									'params' => '',
+									'href' => 'calendar.php?id=listall',
+									'title' => parent::lang('class.AnnouncementView#delete#title#cancel'),
+									'content' => parent::lang('class.AnnouncementView#delete#form#cancel')
+								);
+					$sConfirmation->assign('link', $link);
+					$sConfirmation->assign('spanparams', 'id="cancel"');
+					$sConfirmation->assign('message', parent::lang('class.AnnouncementView#delete#message#confirm'));
+					$sConfirmation->assign('form', $form);
 					
 					// validate
 					if($form->validate()) {
@@ -695,11 +679,9 @@ class AnnouncementView extends PageView {
 						// set preset to 0
 						$calendar->update(array('preset_id' => 0));
 						
-						// set output
-						$return = $confirmation->parse(array(
-								'p.message' => parent::lang('class.AnnouncementView#delete#message#done'),
-								'p.form' => ''
-							));
+						// smarty
+						$sConfirmation->assign('message', parent::lang('class.AnnouncementView#delete#message#done'));
+						$sConfirmation->assign('form', '');
 						
 						// write entry
 						try {
@@ -710,8 +692,8 @@ class AnnouncementView extends PageView {
 						}
 					}
 					
-					// return
-					return $return;
+					// smarty return
+					return $sConfirmation->fetch('smarty.confirmation.tpl');
 				} else {
 					
 					// error
@@ -763,14 +745,9 @@ class AnnouncementView extends PageView {
 					// get preset
 					$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'));
 					
-					// get templates
-					try {
-						$p = new HtmlTemplate('templates/p.tpl');
-						$template = new HtmlTemplate($preset->get_path());
-						$div = new HtmlTemplate('templates/div.tpl');
-					} catch(Exception $e) {
-						$GLOBALS['Error']->handle_error($e);
-					}
+					// smarty
+					$sA = new JudoIntranetSmarty();
+
 					// get calendar
 					$calendar = new Calendar($this->get('cid'));
 					
@@ -785,21 +762,24 @@ class AnnouncementView extends PageView {
 					// add field-names and -values to array
 					$preset->add_marks($announcement);
 					
-					// template
-					$div_out = $template->parse($announcement);
+					// smarty
+					$sA->assign('a', $announcement);
+					// check marks in values
+					foreach($announcement as $k => $v) {
+						
+						if(preg_match('/\{\$a\..*\}/U', $v)) {
+							$announcement[$k] = $sA->fetch('string:'.$v);
+						}
+					}
 					
-					// surrounding divs
-					$page = $div->parse(array(
-								'div.params' => ' class="announcement-page"',
-								'div.content' => $div_out
-							));
-					$return = $div->parse(array(
-								'div.params' => ' class="announcement-page-line"',
-								'div.content' => $page
-							));				
+					// smarty
+					$sA->assign('a', $announcement);
+					$div_out = $sA->fetch($preset->get_path());
 					
-					// return
-					return $return;
+					// smarty
+					$sAd = new JudoIntranetSmarty();
+					$sAd->assign('page', $div_out);
+					return $sAd->fetch('smarty.announcement.details.tpl');
 				} else {
 					
 					// error
@@ -851,14 +831,8 @@ class AnnouncementView extends PageView {
 					// get preset
 					$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'));
 					
-					// get templates
-					try {
-						$p = new HtmlTemplate('templates/p.tpl');
-						$template = new HtmlTemplate($preset->get_path());
-						$dummy = new HtmlTemplate('templates/dummy.tpl');
-					} catch(Exception $e) {
-						$GLOBALS['Error']->handle_error($e);
-					}
+					// smarty
+					$sA = new JudoIntranetSmarty();
 					
 					// get calendar
 					$calendar = new Calendar($this->get('cid'));
@@ -874,8 +848,19 @@ class AnnouncementView extends PageView {
 					// add field-names and -values to array
 					$preset->add_marks($announcement);
 					
-					// template
-					$pdf_out = $template->parse($announcement);				
+					// smarty
+					$sA->assign('a', $announcement);
+					// check marks in values
+					foreach($announcement as $k => $v) {
+						
+						if(preg_match('/\{\$a\..*\}/U', $v)) {
+							$announcement[$k] = $sA->fetch('string:'.$v);
+						}
+					}
+					
+					// smarty
+					$sA->assign('a', $announcement);
+					$pdf_out = $sA->fetch($preset->get_path());			
 					
 					// get HTML2PDF-object
 					$pdf = new HTML2PDF('P', 'A4', 'de', true, 'UTF-8', array(0, 0, 0, 0));
@@ -884,8 +869,7 @@ class AnnouncementView extends PageView {
 					$pdf->writeHTML($pdf_out, false);
 					
 					// output
-					$dummy->dummy_string($preset->get_filename());
-					$pdf_filename = strtolower($this->replace_umlaute(html_entity_decode($dummy->parse($announcement))));
+					$pdf_filename = $this->replace_umlaute(html_entity_decode($sA->fetch('string:'.$preset->get_filename()),ENT_XHTML,'ISO-8859-1'));
 					$pdf->Output($pdf_filename,'D');
 					
 					// return

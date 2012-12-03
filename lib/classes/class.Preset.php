@@ -258,18 +258,18 @@ class Preset extends Object {
 			$field->read_value();
 			// check html
 			if($html === true) {
-				$announcement['field-'.$field->get_id().'-name'] = nl2br(htmlentities($field->get_name(),ENT_QUOTES,'UTF-8'));
+				$announcement['field_'.$field->get_id().'_name'] = nl2br(htmlentities($field->get_name(),ENT_QUOTES,'UTF-8'));
 			} else {
-				$announcement['field-'.$field->get_id().'-name'] = $field->get_name();
+				$announcement['field_'.$field->get_id().'_name'] = $field->get_name();
 			}
 			
 			// check defaults
 			if($field->get_value() == '' && $field->get_defaults() != 0) {
 				// check html
 				if($html === true) {
-					$announcement['field-'.$field->get_id().'-value'] = nl2br(htmlentities($field->return_defaults_value($field->get_defaults()),ENT_QUOTES,'UTF-8'));
+					$announcement['field_'.$field->get_id().'_value'] = nl2br(htmlentities($field->return_defaults_value($field->get_defaults()),ENT_QUOTES,'UTF-8'));
 				} else {
-					$announcement['field-'.$field->get_id().'-value'] = $field->return_defaults_value($field->get_defaults());
+					$announcement['field_'.$field->get_id().'_value'] = $field->return_defaults_value($field->get_defaults());
 				}
 			} else {
 				
@@ -292,9 +292,9 @@ class Preset extends Object {
 							foreach($multiple as $name => $value) {
 								// check html
 								if($html === true) {
-									$announcement['field-'.$field->get_id().'-value.'.$i.'.'.$name] = nl2br(htmlentities($value,ENT_QUOTES,'UTF-8'));
+									$announcement['field_'.$field->get_id().'_value_'.$i.'_'.$name] = nl2br(htmlentities($value,ENT_QUOTES,'UTF-8'));
 								} else {
-									$announcement['field-'.$field->get_id().'-value.'.$i.'.'.$name] = $value;
+									$announcement['field_'.$field->get_id().'_value_'.$i.'_'.$name] = $value;
 								}
 								
 								// add to all
@@ -312,9 +312,9 @@ class Preset extends Object {
 							// add to announcement
 							// check html
 							if($html === true) {
-								$announcement['field-'.$field->get_id().'-value.all.'.$all_name] = nl2br(htmlentities($all_value,ENT_QUOTES,'UTF-8'));
+								$announcement['field_'.$field->get_id().'_value_all_'.$all_name] = nl2br(htmlentities($all_value,ENT_QUOTES,'UTF-8'));
 							} else {
-								$announcement['field-'.$field->get_id().'-value.all.'.$all_name] = $all_value;
+								$announcement['field_'.$field->get_id().'_value_all_'.$all_name] = $all_value;
 							}
 						}
 					} else {
@@ -323,9 +323,9 @@ class Preset extends Object {
 						foreach($values as $name => $value) {
 							// check html
 							if($html === true) {
-								$announcement['field-'.$field->get_id().'-value.0.'.$name] = nl2br(htmlentities($value,ENT_QUOTES,'UTF-8'));
+								$announcement['field_'.$field->get_id().'_value_0_'.$name] = nl2br(htmlentities($value,ENT_QUOTES,'UTF-8'));
 							} else {
-								$announcement['field-'.$field->get_id().'-value.0.'.$name] = $value;
+								$announcement['field_'.$field->get_id().'_value_0_'.$name] = $value;
 							}
 							
 							// add to all
@@ -342,9 +342,9 @@ class Preset extends Object {
 							// add to announcement
 							// check html
 							if($html === true) {
-								$announcement['field-'.$field->get_id().'-value.all.'.$all_name] = nl2br(htmlentities($all_value,ENT_QUOTES,'UTF-8'));
+								$announcement['field_'.$field->get_id().'_value_all_'.$all_name] = nl2br(htmlentities($all_value,ENT_QUOTES,'UTF-8'));
 							} else {
-								$announcement['field-'.$field->get_id().'-value.all.'.$all_name] = $all_value;
+								$announcement['field_'.$field->get_id().'_value_all_'.$all_name] = $all_value;
 							}
 						}
 					}
@@ -356,29 +356,29 @@ class Preset extends Object {
 						foreach($field->dbhierselect_value() as $name => $value) {
 							// check html
 							if($html === true) {
-								$announcement['field-'.$field->get_id().'-value.'.$name] = nl2br(htmlentities($value,ENT_QUOTES,'UTF-8'));
+								$announcement['field_'.$field->get_id().'_value_'.$name] = nl2br(htmlentities($value,ENT_QUOTES,'UTF-8'));
 							} else {
-								$announcement['field-'.$field->get_id().'-value.'.$name] = $value;
+								$announcement['field_'.$field->get_id().'_value_'.$name] = $value;
 							}
 						}
 					}
 				} elseif($field->get_type() == 'date') {
 					// check html
 					if($html === true) {
-						$announcement['field-'.$field->get_id().'-value'] = nl2br(htmlentities($field->get_value()));
-						$announcement['field-'.$field->get_id().'-value-d.m.Y'] = nl2br(htmlentities(date('d.m.Y',strtotime($field->get_value())),ENT_QUOTES,'UTF-8'));
-						$announcement['field-'.$field->get_id().'-value-j.F.Y'] = nl2br(htmlentities(strftime('%e. %B %Y',strtotime($field->get_value())),ENT_QUOTES,'UTF-8'));
+						$announcement['field_'.$field->get_id().'_value'] = nl2br(htmlentities($field->get_value()));
+						$announcement['field_'.$field->get_id().'_value_d_m_Y'] = nl2br(htmlentities(date('d.m.Y',strtotime($field->get_value())),ENT_QUOTES,'UTF-8'));
+						$announcement['field_'.$field->get_id().'_value_j_F_Y'] = nl2br(htmlentities(strftime('%e. %B %Y',strtotime($field->get_value())),ENT_QUOTES,'UTF-8'));
 					} else {
-						$announcement['field-'.$field->get_id().'-value'] = $field->get_value();
-						$announcement['field-'.$field->get_id().'-value-d.m.Y'] = date('d.m.Y',strtotime($field->get_value()));
-						$announcement['field-'.$field->get_id().'-value-j.F.Y'] = strftime('%e. %B %Y',strtotime($field->get_value()));
+						$announcement['field_'.$field->get_id().'_value'] = $field->get_value();
+						$announcement['field_'.$field->get_id().'_value_d_m_Y'] = date('d.m.Y',strtotime($field->get_value()));
+						$announcement['field_'.$field->get_id().'_value_j_F_Y'] = strftime('%e. %B %Y',strtotime($field->get_value()));
 					}
 				} else {
 					// check html
 					if($html === true) {
-						$announcement['field-'.$field->get_id().'-value'] = nl2br(htmlentities($field->get_value(),ENT_QUOTES,'UTF-8'));
+						$announcement['field_'.$field->get_id().'_value'] = nl2br(htmlentities($field->get_value(),ENT_QUOTES,'UTF-8'));
 					} else {
-						$announcement['field-'.$field->get_id().'-value'] = $field->get_value();
+						$announcement['field_'.$field->get_id().'_value'] = $field->get_value();
 					}
 				}
 			}

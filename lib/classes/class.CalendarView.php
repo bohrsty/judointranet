@@ -240,7 +240,6 @@ class CalendarView extends PageView {
 				// error not authorized
 				$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
 				$GLOBALS['Error']->handle_error($errno);
-				$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
 				
 				// smarty
 				$this->tpl->assign('title', $this->title(parent::lang('class.CalendarView#init#Error#NotAuthorized')));

@@ -14,8 +14,6 @@ $announcement_view = new AnnouncementView();
 
 $announcement_view->init();
 
-$announcement_view->output();
-
 
 
 ?>

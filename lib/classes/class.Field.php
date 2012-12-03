@@ -423,25 +423,16 @@ class Field extends Object {
 	
 	
 	/**
-	 * value_to_html returns the field and its $value as html embedded in $template
+	 * value_to_html returns the field and its $value as array
 	 * 
-	 * @param object $template the HtmlTemplate-object to embed the field
-	 * @param array $contents array contains the marks to replace
-	 * @return string the html-representation
+	 * @return array array containing name and value of the field
 	 */
-	public function value_to_html($template,$contents=array()) {
+	public function value_to_html() {
 		
 		// get values
 		$value = $this->get_value();
 		$defaults = $this->get_defaults();
-		
-		// get templates
-		// b
-		try {
-			$b = new HtmlTemplate('templates/b.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
+		$name = $this->get_name();
 		
 		// check value
 		$checked_value = '';
@@ -453,8 +444,20 @@ class Field extends Object {
 			} else {
 				$checked_value = parent::lang('class.Field#value_to_html#checkbox.value#unchecked');
 			}
+			
+			// return
+			return array(
+					'name' => $name,
+					'value' => $checked_value
+				);
 		} elseif($this->get_type() == 'date') {
 			$checked_value = date('d.m.Y',strtotime($value));
+			
+			// return
+			return array(
+					'name' => $name,
+					'value' => $checked_value
+				);
 		} elseif($this->get_type() == 'text') {
 			
 			// check defaults
@@ -464,8 +467,14 @@ class Field extends Object {
 				$checked_value = $this->return_defaults_value($defaults);
 				
 			} else {
-				$checked_value = nl2br($value);
+				$checked_value = $value;
 			}
+			
+			// return
+			return array(
+					'name' => $name,
+					'value' => $checked_value
+				);
 		} elseif($this->get_type() == 'dbselect') {
 			
 			// get values
@@ -483,49 +492,25 @@ class Field extends Object {
 			} else {
 				$checked_value = $values['value'];
 			}
+			
+			// return
+			return array(
+					'name' => $name,
+					'value' => $checked_value
+				);
 		} elseif($this->get_type() == 'dbhierselect') {
 			
 			// get values
 			$values = $this->dbhierselect_value();
 			
 			$checked_value = $values['value1'].'/'.$values['value2'];
-		}
-		
-		// parse 2 times
-		for($i = 0;$i < 2;$i++) {
 			
-			// walk through content-array
-			foreach($contents as $name => $content) {
-				
-				// replace marker in template
-				$checked_value = str_replace('###'.$name.'###',$content,$checked_value);
-			}
-		}
-		
-		// replace all unused marks
-		$checked_value = preg_replace('/###(.+)###/U','',$checked_value);
-		
-		// get fieldname bold
-		$field_name = $b->parse(array(
-					'b.parameters' => '',
-					'b.content' => $this->get_name().': '
-				));
-		
-		// check template
-		if(!is_null($template)) {
-			
-			// prepare values for template-p
-			$content = array(
-						'params' => '',
-						'text' => $field_name.$checked_value
-					);
-		
 			// return
-			return $template->parse($content);
-		} else {
-			return $field_name.$checked_value;
+			return array(
+					'name' => $name,
+					'value' => $checked_value
+				);
 		}
-		
 	}
 	
 	
