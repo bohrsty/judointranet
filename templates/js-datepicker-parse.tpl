@@ -1,1 +1,0 @@
-				$( "####elementid###" ).datepicker( "setDate", $.datepicker.parseDate("###format###", "###value###") );

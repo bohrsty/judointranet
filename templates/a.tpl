@@ -1,1 +1,0 @@
-<a###a.params### href="###a.href###" title="###a.title###">###a.content###</a>

@@ -314,6 +314,8 @@ class CalendarView extends PageView {
 		
 		// smarty-templates
 		$sListall = new JudoIntranetSmarty();
+		// sortlinks
+		$sListall->assign('sortlinks', $this->get_sort_links($this->get('id')));
 		
 		// smarty
 		$sTh = array(
@@ -536,19 +538,8 @@ class CalendarView extends PageView {
 		// prepare output
 		$date_links = $group_links = $output = $reset_links = '';
 		
-		// read templates
-		try {
-			$a = new HtmlTemplate('templates/a.tpl');
-			$div = new HtmlTemplate('templates/div.tpl');
-			$js_toggleSlide_div = new HtmlTemplate('templates/js-toggleSlide-div.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		
-		// prepare links
-		$contents = array();
-		$contents['a.params'] = ' class="a"';
-		
+		// smarty-template
+		$sS = new JudoIntranetSmarty();
 		
 		// if sort, attach sort
 		$sort = '';
@@ -565,31 +556,24 @@ class CalendarView extends PageView {
 		}
 		
 		// prepare resetlinks
-		// all
-		$contents = array(	'a.params' => '',
-							'a.href' => 'calendar.php?id='.$getid, // href
-							'a.title' => parent::lang('class.CalendarView#get_sort_links#title#resetAll'), // alt
-							'a.content' => parent::lang('class.CalendarView#get_sort_links#reset#all') // linktext
+		$r = array(
+				array( // all
+						'href' => 'calendar.php?id='.$getid,
+						'title' => parent::lang('class.CalendarView#get_sort_links#title#resetAll'),
+						'content' => parent::lang('class.CalendarView#get_sort_links#reset#all')
+					),
+				array( // dates
+						'href' => 'calendar.php?id='.$getid.$sort,
+						'title' => parent::lang('class.CalendarView#get_sort_links#title#resetDate'),
+						'content' => parent::lang('class.CalendarView#get_sort_links#reset#date')
+					),
+				array( // groups
+						'href' => 'calendar.php?id='.$getid.$from.$to,
+						'title' => parent::lang('class.CalendarView#get_sort_links#title#resetGroups'),
+						'content' => parent::lang('class.CalendarView#get_sort_links#reset#groups')
+					)
 			);
-		$reset_links .= $a->parse($contents)."\n";
-		
-		// dates
-		$contents = array(	'a.params' => '',
-							'a.href' => 'calendar.php?id='.$getid.$sort, // href
-							'a.title' => parent::lang('class.CalendarView#get_sort_links#title#resetDate'), // alt
-							'a.content' => parent::lang('class.CalendarView#get_sort_links#reset#date') // linktext
-			);
-		$reset_links .= $a->parse($contents)."\n";
-		
-		// groups
-		$contents = array(	'a.params' => '',
-							'a.href' => 'calendar.php?id='.$getid.$from.$to, // href
-							'a.title' => parent::lang('class.CalendarView#get_sort_links#title#resetGroups'), // alt
-							'a.content' => parent::lang('class.CalendarView#get_sort_links#reset#groups') // linktext
-			);
-		$reset_links .= $a->parse($contents)."\n";
-		
-		$output .= $this->p('',$reset_links);
+		$sS->assign('r', $r);
 		
 		// prepare content
 		$dates = array(
@@ -602,65 +586,53 @@ class CalendarView extends PageView {
 					);
 		
 		// create links
+		$dl = array();
 		foreach($dates as $name => $date) {
 			
-			// href
-			$contents['a.href'] = 'calendar.php?id='.$getid.'&from='.date('Y-m-d',time()).'&to='.date('Y-m-d',strtotime($date)).$sort;
-			// alt
-			$contents['a.title'] = parent::lang('class.CalendarView#get_sort_links#title#'.$name);
-			// linktext
-			$contents['a.content'] = parent::lang('class.CalendarView#get_sort_links#dates#'.$name);
-			
-			// parse template
-			$date_links .= $a->parse($contents)."\n";
+			// smarty
+			$dl[] = array(
+					'href' => 'calendar.php?id='.$getid.'&from='.date('Y-m-d',time()).'&to='.date('Y-m-d',strtotime($date)).$sort,
+					'title' => parent::lang('class.CalendarView#get_sort_links#title#'.$name),
+					'content' => parent::lang('class.CalendarView#get_sort_links#dates#'.$name)
+				);
 		}
-		
-		// add <p>
-		$output .= $this->p('',$date_links);
+		$sS->assign('dl', $dl);
 		
 		// add group-links
 		$groups = $_SESSION['user']->return_all_groups('sort');
 		
 		// create links
+		$gl = array();
 		foreach($groups as $g_id => $name) {
 			
-			// href
-			$contents['a.href'] = 'calendar.php?id='.$getid.'&sort='.$g_id.$from.$to;
-			// alt
-			$contents['a.alt'] = $name;
-			// linktext
-			$contents['a.content'] = $name;
-			
-			// parse template
-			$group_links .= $a->parse($contents)."\n";
+			// smarty
+			$gl[] = array(
+					'href' => 'calendar.php?id='.$getid.'&sort='.$g_id.$from.$to,
+					'title' => $name,
+					'content' => $name
+				);
 		}
-		
-		// add <p>
-		$output .= $this->p('',$group_links);
+		$sS->assign('gl', $gl);
 		
 		// add slider-link
-		$link = $a->parse(array(
-				'a.params' => ' id="toggleFilter"',
-				'a.href' => '#',
-				'a.title' => parent::lang('class.CalendarView#get_sort_links#toggleFilter#title'),
-				'a.content' => parent::lang('class.CalendarView#get_sort_links#toggleFilter#name')
-			));
-		
-		// add <p>
-		$link_out = $this->p('',$link);
+		$link = array(
+				'params' => 'id="toggleFilter"',
+				'title' => parent::lang('class.CalendarView#get_sort_links#toggleFilter#title'),
+				'content' => parent::lang('class.CalendarView#get_sort_links#toggleFilter#name')
+			);
+		$sS->assign('link', $link);
 		
 		// add jquery
-		$this->add_jquery($js_toggleSlide_div->parse(array(
-						'id' => '#toggleFilter',
-						'toToggle' => '#sortlinks',
-						'time' => ''
-				)));
+		// smarty jquery
+		$sJsToggleSlide = new JudoIntranetSmarty();
+		$sJsToggleSlide->assign('id', '#toggleFilter');
+		$sJsToggleSlide->assign('toToggle', '#sortlinks');
+		$sJsToggleSlide->assign('time', '');
+		$this->add_jquery($sJsToggleSlide->fetch('smarty.js-toggleSlide.tpl'));
+		$sS->assign('divparams', 'id="sortlinks"');
 		
 		// return
-		return $link_out."\n".$div->parse(array(
-				'div.params' => ' id="sortlinks"',
-				'div.content' => $output
-			));
+		return $sS->fetch('smarty.calendar.sortlinks.tpl');
 	}
 	
 	
@@ -848,13 +820,6 @@ class CalendarView extends PageView {
 			
 			// smarty-template
 			$sCD = new JudoIntranetSmarty();
-			
-			// read template
-			try {
-				$calendar_details = new HtmlTemplate('templates/calendar.details.tpl');
-			} catch(Exception $e) {
-				$GLOBALS['Error']->handle_error($e);
-			}
 			
 			// smarty
 			$sCD->assign('data', $calendar->details_to_html());

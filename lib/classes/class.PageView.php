@@ -136,32 +136,6 @@ class PageView extends Object {
 	
 	
 	/**
-	 * output prints the content of $output to browser
-	 * 
-	 * @return string the html-content of $output
-	 */
-	public function output() {
-		
-		// read template
-		try {
-			$page = new HtmlTemplate('templates/page.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		
-		// parse content w/o removing unused marks
-		$output = $page->parse($this->get_output(),1,false);
-		
-		// print output
-		print($output);
-	}
-	
-	
-	
-	
-	
-	
-	/**
 	 * add_output adds the given string to $output
 	 * 
 	 * @param array $content content to be added to $output
@@ -312,29 +286,8 @@ class PageView extends Object {
 				$naviitems[$navi['firstlevel']['position']] = $navi;
 			}
 		}
-		
-		// prepare output
-		$output = '';
-		// get templates
+
 		// firstlevel
-		try {
-			$navi_0 = new HtmlTemplate('templates/navi.0.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// secondlevel active
-		try {
-			$navi_1a = new HtmlTemplate('templates/navi.1a.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// secondlevel inactive
-		try {
-			$navi_1i = new HtmlTemplate('templates/navi.1i.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		
 		// get authorized navi-entries
 		$navi_entries = Rights::get_authorized_entries('navi');
 		
@@ -358,17 +311,13 @@ class PageView extends Object {
 			}
 			
 			// set firstlevel
-			$output .= $navi_0->parse(array(
-										'navi.0.href' => $firstlevel['file'],
-										'navi.0.title' => parent::lang('class.'.$firstlevel['class'].'#connectnavi#firstlevel#name'),
-										'navi.0.content' => parent::lang($firstlevel['name'])));
-			
 			// smarty
-			$data[] = array('level' => 0,
-							'href' => $firstlevel['file'],
-							'title' => parent::lang('class.'.$firstlevel['class'].'#connectnavi#firstlevel#name'),
-							'content' => parent::lang($firstlevel['name'])
-						);
+			$data[] = array(
+					'level' => 0,
+					'href' => $firstlevel['file'],
+					'title' => parent::lang('class.'.$firstlevel['class'].'#connectnavi#firstlevel#name'),
+					'content' => parent::lang($firstlevel['name'])
+				);
 			
 			// walk through secondlevel
 			$secondlevel = $naviitems[$i]['secondlevel'];
@@ -385,46 +334,19 @@ class PageView extends Object {
 				}
 				
 				// smarty
-				$data[] = array('level' => 1,
-								'href' => ($secondlevel[$j]['getid'] == 'login' && $this->get('id') != 'login' && $this->get('id') != 'logout') ? $firstlevel['file'].'?id='.$secondlevel[$j]['getid'].'&r='.base64_encode($_SERVER['REQUEST_URI']) : $firstlevel['file'].'?id='.$secondlevel[$j]['getid'],
-								'title' => parent::lang($secondlevel[$j]['name']),
-								'content' => parent::lang($secondlevel[$j]['name']),
-								'id' => $secondlevel[$j]['getid'],
-								'file' => $firstlevel['file']
-							);
+				$data[] = array(
+						'level' => 1,
+						'href' => ($secondlevel[$j]['getid'] == 'login' && $this->get('id') != 'login' && $this->get('id') != 'logout') ? $firstlevel['file'].'?id='.$secondlevel[$j]['getid'].'&r='.base64_encode($_SERVER['REQUEST_URI']) : $firstlevel['file'].'?id='.$secondlevel[$j]['getid'],
+						'title' => parent::lang($secondlevel[$j]['name']),
+						'content' => parent::lang($secondlevel[$j]['name']),
+						'id' => $secondlevel[$j]['getid'],
+						'file' => $firstlevel['file']
+					);
 				
-				// check active or inactive
-				if($file == $naviitems[$i]['firstlevel']['file'] && $this->get('id') == $secondlevel[$j]['getid']) {
-					
-					// active
-					$active = array(
-								'navi.1a.href' => $firstlevel['file'].'?id='.$secondlevel[$j]['getid'],
-								'navi.1a.title' => parent::lang($secondlevel[$j]['name']),
-								'navi.1a.content' => parent::lang($secondlevel[$j]['name']));
-					// if login, add base64-encoded uri
-					if($secondlevel[$j]['getid'] == 'login' && $this->get('id') != 'login' && $this->get('id') != 'logout') {
-						$active['navi.1a.href'] = $firstlevel['file'].'?id='.$secondlevel[$j]['getid'].'&r='.base64_encode($_SERVER['REQUEST_URI']);
-					}
-					$output .= $navi_1a->parse($active);
-				} else {
-					
-					// inactive
-					$inactive = array(
-									'navi.1i.href' => $firstlevel['file'].'?id='.$secondlevel[$j]['getid'],
-									'navi.1i.title' => parent::lang($secondlevel[$j]['name']),
-									'navi.1i.content' => parent::lang($secondlevel[$j]['name']));
-					// if login, add base64-encoded uri
-					if($secondlevel[$j]['getid'] == 'login' && $this->get('id') != 'login' && $this->get('id') != 'logout') {
-						$inactive['navi.1i.href'] = $firstlevel['file'].'?id='.$secondlevel[$j]['getid'].'&r='.base64_encode($_SERVER['REQUEST_URI']);
-					}
-					$output .= $navi_1i->parse($inactive);
-				}
 			}
 		}
 		
 		// return
-//		return $output;
-		// return smarty
 		return $data;
 	}
 	
@@ -446,29 +368,13 @@ class PageView extends Object {
 		
 		// smarty
 		$sP = new JudoIntranetSmarty();
-//		
-//		// get standard p-template
-//		try {
-//			$p = new HtmlTemplate('templates/p.tpl');
-//		} catch(Exception $e) {
-//			$GLOBALS['Error']->handle_error($e);
-//		}
-//		
-//		// add " " if param not empty
-//		if($param != '') {
-//			$param = ' '.$param;
-//		}
-//		
+		
 		// prepare contents
 		// smarty
 		$sP->assign('params', $param);
 		$sP->assign('content', $string);
-//		
-//		$contents = array();
-//		$contents['parameters'] = $param;
-//		$contents['text'] = $string;
-		
-//		return $p->parse($contents)."\n";
+
+		// return
 		return $sP->fetch('smarty.p.tpl');
 	}
 	

@@ -196,14 +196,6 @@ class AdministrationView extends PageView {
 	 */
 	private function field() {
 		
-		// read templates
-		try {
-			$hx = new HtmlTemplate('templates/hx.tpl');
-			$a = new HtmlTemplate('templates/a.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		
 		// prepare content
 		$content = '';
 		

@@ -226,13 +226,6 @@ class User extends Object {
 	 */
 	public function logout() {
 		
-		// get template
-		try {
-			$logout_message = new HtmlTemplate('templates/div.logout.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		
 		// smarty-template
 		$sLogout = new JudoIntranetSmarty();
 		
@@ -256,18 +249,12 @@ class User extends Object {
 		$_SESSION['GC'] = new Config();
 		
 		// logout-message
-//		// set contents
-//		$contents = array(
-//						'p.caption' => parent::lang('class.User#logout#logout#caption'),
-//						'p.message' => parent::lang('class.User#logout#logout#message')
-//					);
 		// smarty
 		$sLogout->assign('caption', parent::lang('class.User#logout#logout#caption'));
 		$sLogout->assign('message', parent::lang('class.User#logout#logout#message'));
 		$sLogout->assign('form', '');
 		
-//		// return html
-//		return $logout_message->parse($contents);
+//		// return
 		// smarty
 		return $sLogout->fetch('smarty.login.tpl');
 	}

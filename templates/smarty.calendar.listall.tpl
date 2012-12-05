@@ -1,3 +1,4 @@
+{$sortlinks}
 <table id="calendar.listall">
 	<tr>
 		<th class="date">

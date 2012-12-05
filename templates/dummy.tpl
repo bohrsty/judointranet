@@ -1,1 +1,0 @@
-<!-- empty file to be handled by HtmlTemplate::dummy_string() -->
