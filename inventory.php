@@ -14,8 +14,6 @@ $announcement_view = new InventoryView();
 
 $announcement_view->init();
 
-$announcement_view->output();
-
 
 
 ?>

@@ -412,8 +412,8 @@ class MainView extends PageView {
 					
 					// smarty form and return
 					$sUserPasswd->assign('form', $form->render($renderer));
-					return $sUserPasswd->fetch('smarty.user.passwd.tpl');
 				}
+				return $sUserPasswd->fetch('smarty.user.passwd.tpl');
 			} else {
 				return 'default content';
 			}

@@ -143,94 +143,66 @@ class InventoryView extends PageView {
 					
 					case 'listall':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.CalendarView#init#listall#title'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
-						$this->add_output(array('main' => $this->listall()));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.CalendarView#init#listall#title')));
+						$this->tpl->assign('main', $this->listall());
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', false);
 					break;
 					
 					case 'my':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.InventoryView#init#my#title'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
-						$this->add_output(array('main' => $this->my()));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.InventoryView#init#my#title')));
+						$this->tpl->assign('main', $this->my());
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', false);
 					break;
 					
 					case 'give':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.InventoryView#init#give#title'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
-						$this->add_output(array('main' => $this->give($this->get('did'))));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.InventoryView#init#give#title')));
+						$this->tpl->assign('main', $this->give($this->get('did')));
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', true);
 					break;
 					
 					
 					case 'take':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.InventoryView#init#take#title'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
-						$this->add_output(array('main' => $this->take($this->get('did'))));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.InventoryView#init#take#title')));
+						$this->tpl->assign('main', $this->take($this->get('did')));
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', true);
 					break;
 					
 					case 'cancel':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.InventoryView#init#cancel#title'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
-						$this->add_output(array('main' => $this->cancel($this->get('did'))));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.InventoryView#init#cancel#title')));
+						$this->tpl->assign('main', $this->cancel($this->get('did')));
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', true);
 					break;
 					
 					case 'details':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.InventoryView#init#details#title'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
-						$this->add_output(array('main' => $this->details($this->get('did'))));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.InventoryView#init#details#title')));
+						$this->tpl->assign('main', $this->details($this->get('did')));
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', false);
 					break;
 					
 					case 'movement':
 						
-						// set contents
-						// title
-						$this->add_output(array('title' => $this->title(parent::lang('class.InventoryView#init#movement#title'))));
-						// navi
-						$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-						// main-content
-						$this->add_output(array('main' => $this->movement($this->get('mid'))));
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.InventoryView#init#movement#title')));
+						$this->tpl->assign('main', $this->movement($this->get('mid')));
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', true);
 					break;
 					
 					default:
@@ -238,41 +210,52 @@ class InventoryView extends PageView {
 						// id set, but no functionality
 						$errno = $GLOBALS['Error']->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
 						$GLOBALS['Error']->handle_error($errno);
-						$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
-						// jquery
-						$this->add_output(array('jquery' => $this->get_jquery()));
+						
+						// smarty
+						$this->tpl->assign('title', '');
+						$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', false);
 					break;
 				}
 			} else {
 				
-				// error not authorized
-				// set contents
-				// title
-				$this->add_output(array('title' => $this->title(parent::lang('class.InventoryView#init#Error#NotAuthorized'))));
-				// navi
-				$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-				// main content
 				$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
 				$GLOBALS['Error']->handle_error($errno);
-				$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
-				// jquery
-				$this->add_output(array('jquery' => $this->get_jquery()));
+				
+				// smarty
+				$this->tpl->assign('title', $this->title(parent::lang('class.InventoryView#init#Error#NotAuthorized')));
+				$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+				$this->tpl->assign('jquery', true);
+				$this->tpl->assign('hierselect', false);
 			}
 		} else {
 			
 			// id not set
-			// title
-			$this->add_output(array('title' => $this->title(parent::lang('class.InventoryView#init#default#title')))); 
-			// default-content
-			$this->add_output(array('main' => $this->default_content()));
-			// navi
-			$this->add_output(array('navi' => $this->navi(basename($_SERVER['SCRIPT_FILENAME']))));
-			// jquery
-			$this->add_output(array('jquery' => $this->get_jquery()));
+			// smarty-title
+			$this->tpl->assign('title', $this->title(parent::lang('class.InventoryView#init#default#title'))); 
+			// smarty-main
+			$this->tpl->assign('main', $this->default_content());
+			// smarty-jquery
+			$this->tpl->assign('jquery', true);
+			// smarty-hierselect
+			$this->tpl->assign('hierselect', false);
 		}
 		
-		// add head
-		$this->add_output(array('head' => $this->get_head()));
+		// global smarty
+		// head
+		$this->tpl->assign('head', $this->get_head());
+		// manualjquery
+		$this->tpl->assign('manualjquery', $this->get_jquery());
+		// navi
+		$this->tpl->assign('data', $this->navi(basename($_SERVER['SCRIPT_FILENAME'])));
+		$this->tpl->assign('active', $this->get('id'));
+		$this->tpl->assign('file', basename($_SERVER['SCRIPT_FILENAME']));
+		// logininfo
+		$this->tpl->assign('logininfo', $this->put_userinfo());
+		
+		// smarty-display
+		$this->tpl->display('smarty.main.tpl');
 	}
 	
 	
@@ -292,51 +275,23 @@ class InventoryView extends PageView {
 		// prepare return
 		$return = '';
 		
-		// get templates
-		// hx
-		try {
-			$hx = new HtmlTemplate('templates/hx.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// p
-		try {
-			$p = new HtmlTemplate('templates/p.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
+		// smatry-template
+		$sD = new JudoIntranetSmarty();
 		
-		// prepare headline
-		$return .= $hx->parse(array(
-						'hx.x' => 2,
-						'hx.parameters' => '',
-						'hx.content' => parent::lang('class.InventoryView#default_content#headline#text')
-					));
+		$sD->assign('caption', parent::lang('class.InventoryView#default_content#headline#text'));
+		$text[] = array(
+				'caption' => parent::lang('class.InventoryView#default_content#explain#my.hx'),
+				'text' => parent::lang('class.InventoryView#default_content#explain#my.p')
+			);
 		
-		// explain my
-		$return .= $hx->parse(array(
-						'hx.x' => 4,
-						'hx.parameters' => '',
-						'hx.content' => parent::lang('class.InventoryView#default_content#explain#my.hx')
-					));
-		$return .= $p->parse(array(
-						'parameters' => '',
-						'text' => parent::lang('class.InventoryView#default_content#explain#my.p')
-					));
-		
-		// explain listall
-		$return .= $hx->parse(array(
-						'hx.x' => 4,
-						'hx.parameters' => '',
-						'hx.content' => parent::lang('class.InventoryView#default_content#explain#listall.hx')
-					));
-		$return .= $p->parse(array(
-						'parameters' => '',
-						'text' => parent::lang('class.InventoryView#default_content#explain#listall.p')
-					));
+		$text[] = array(
+				'caption' => parent::lang('class.InventoryView#default_content#explain#listall.hx'),
+				'text' => parent::lang('class.InventoryView#default_content#explain#my.p')
+			);
+		$sD->assign('text', $text);
 					
 		// return
-		return $return;
+		return $sD->fetch('smarty.default.content.tpl');
 	}
 	
 	
@@ -361,70 +316,33 @@ class InventoryView extends PageView {
 		
 		// read all entries
 		$entries = $this->read_all_entries(true);
-				
-		// get templates
-		// a
-		try {
-			$a = new HtmlTemplate('templates/a.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// table
-		try {
-			$table = new HtmlTemplate('templates/table.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// tr
-		try {
-			$tr = new HtmlTemplate('templates/tr.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// th
-		try {
-			$th = new HtmlTemplate('templates/th.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// td
-		try {
-			$td = new HtmlTemplate('templates/td.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// img
-		try {
-			$img = new HtmlTemplate('templates/img.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
+		
+		// smarty-template
+		$sL = new JudoIntranetSmarty();
 		
 		// prepare th
-		$th_out .= $th->parse(array( // name
-				'th.params' => ' class="name"',
-				'th.content' => parent::lang('class.InventoryView#listall#TH#name')
-			));
-		$th_out .= $th->parse(array( // number
-				'th.params' => ' class="number"',
-				'th.content' => parent::lang('class.InventoryView#listall#TH#number')
-			));
-		$th_out .= $th->parse(array( // owner
-				'th.params' => ' class="owner"',
-				'th.content' => parent::lang('class.InventoryView#listall#TH#owner')
-			));
-		$th_out .= $th->parse(array( // status
-				'th.params' => ' class="status"',
-				'th.content' => parent::lang('class.InventoryView#listall#TH#status')
-			));
-		
-		// parse tr for th
-		$tr_out .= $tr->parse(array(
-				'tr.params' => '',
-				'tr.content' => $th_out)
+		$th = array(
+				array(
+						'class' => 'name',
+						'content' => parent::lang('class.InventoryView#listall#TH#name')
+					),
+				array(
+						'class' => 'number',
+						'content' => parent::lang('class.InventoryView#listall#TH#number')
+					),
+				array(
+						'class' => 'owner',
+						'content' => parent::lang('class.InventoryView#listall#TH#owner')
+					),
+				array(
+						'class' => 'status',
+						'content' => parent::lang('class.InventoryView#listall#TH#status')
+					)
 			);
+		$sL->assign('th', $th);
 		
 		// walk through entries
+		$data = array();
 		$counter = 0;
 		foreach($entries as $no => $entry) {
 			
@@ -463,36 +381,16 @@ class InventoryView extends PageView {
 				}
 				
 				// prepare details
-				$detail_a = $a->parse(array(
-						'a.params' => '',
-						'a.href' => 'inventory.php?id=details&did='.$entry->get_id(),
-						'a.title' => parent::lang('class.InventoryView#listall#title#details'),
-						'a.content' => $entry->get_name()
-					));
-				
-				// prepare td
-				$td_out = $td->parse(array( // name
-						'td.params' => ' class="name"',
-						'td.content' => $detail_a
-					));
-				$td_out .= $td->parse(array( // number
-						'td.params' => '',
-						'td.content' => $entry->get_inventory_no()
-					));
-				$td_out .= $td->parse(array( // owner
-						'td.params' => '',
-						'td.content' => $owner
-					));
-				$td_out .= $td->parse(array( // status
-						'td.params' => '',
-						'td.content' => $status
-					));
-					
-				// prepare tr
-				$tr_out .= $tr->parse(array(
-						'tr.params' => $tr_params,
-						'tr.content' => $td_out
-					));
+				$data[$counter] = array( 
+						'name' => array(
+							'href' => 'inventory.php?id=details&did='.$entry->get_id(),
+							'title' => parent::lang('class.InventoryView#listall#title#details'),
+							'content' => $entry->get_name()
+						),
+						'number' => $entry->get_inventory_no(),
+						'owner' => $owner,
+						'status' => $status
+					);
 				
 				// increment counter
 				$counter++;
@@ -501,13 +399,10 @@ class InventoryView extends PageView {
 				// deleted items
 			}
 		}
-		
-		// complete table
-		$output = $table->parse(array(	'table.params' => ' id="inventory.listall"',
-										'table.content' => $tr_out));
+		$sL->assign('data', $data);
 		
 		// return
-		return $output;
+		return $sL->fetch('smarty.inventory.listall.tpl');
 	}
 	
 	
@@ -562,140 +457,69 @@ class InventoryView extends PageView {
 		
 		// read all entries
 		$entries = $this->read_all_entries();
-				
-		// get templates
-		// a
-		try {
-			$a = new HtmlTemplate('templates/a.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// table
-		try {
-			$table = new HtmlTemplate('templates/table.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// tr
-		try {
-			$tr = new HtmlTemplate('templates/tr.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// th
-		try {
-			$th = new HtmlTemplate('templates/th.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// td
-		try {
-			$td = new HtmlTemplate('templates/td.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// img
-		try {
-			$img = new HtmlTemplate('templates/img.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
+		
+		// smarty-template
+		$sM = new JudoIntranetSmarty();
 		
 		// prepare th
-		$th_out .= $th->parse(array( // name
-				'th.params' => ' class="name"',
-				'th.content' => parent::lang('class.InventoryView#my#TH#name')
-			));
-		$th_out .= $th->parse(array( // number
-				'th.params' => ' class="number"',
-				'th.content' => parent::lang('class.InventoryView#my#TH#number')
-			));
-		// if loggedin show admin links
-		if($_SESSION['user']->get_loggedin() === true) {
-			$th_out .= $th->parse(array( // admin
-					'th.params' => ' class="admin"',
-					'th.content' => parent::lang('class.InventoryView#my#TH#admin')
-				));
-		}
-		
-		// parse tr for th
-		$tr_out .= $tr->parse(array(
-				'tr.params' => '',
-				'tr.content' => $th_out)
+		$th = array(
+				'name' => array(
+						'class' => 'name',
+						'content' => parent::lang('class.InventoryView#my#TH#name')
+					),
+				'number' => array(
+						'class' => 'number',
+						'content' => parent::lang('class.InventoryView#my#TH#number')
+					)
 			);
+			
+		// if loggedin show admin links
+		$sM->assign('loggedin', $_SESSION['user']->get_loggedin());
+		if($_SESSION['user']->get_loggedin() === true) {
+			$th['admin'] = array(
+					'class' => 'admin',
+					'content' => parent::lang('class.InventoryView#my#TH#admin')
+				);
+		}
+		$sM->assign('th', $th);
 		
 		// walk through entries
+		$data = array();
 		$counter = 0;
 		foreach($entries as $no => $entry) {
 			
 			// check if valid
 			if($entry->get_valid() == 1) {
 			
-				// odd or even
-				if($counter%2 == 0) {
-					// even
-					$tr_params = ' class="inventory.my.tr even"';
-				} else {
-					// odd
-					$tr_params = ' class="inventory.my.tr odd"';
-				}
-				
 				// prepare details
-				$detail_a = $a->parse(array(
-						'a.params' => '',
-						'a.href' => 'inventory.php?id=details&did='.$entry->get_id(),
-						'a.title' => parent::lang('class.InventoryView#my#title#details'),
-						'a.content' => $entry->get_name()
-					));
-				
-				// prepare td
-				$td_out = $td->parse(array( // name
-						'td.params' => ' class="name"',
-						'td.content' => $detail_a
-					));
-				$td_out .= $td->parse(array( // number
-						'td.params' => '',
-						'td.content' => $entry->get_inventory_no()
-					));
+				$data[$counter]['name'] = array(
+						'href' => 'inventory.php?id=details&did='.$entry->get_id(),
+						'title' => parent::lang('class.InventoryView#my#title#details'),
+						'content' => $entry->get_name()
+					);
+				$data[$counter]['number'] = $entry->get_inventory_no();
 					
 				// add admin
 				// prepare exchange-link
 				if($entry->get_owned() == 'taken') {
-					
-					$a_out = $a->parse(array(
-						'a.params' => '',
-						'a.href' => 'inventory.php?id=give&did='.$entry->get_id(),
-						'a.title' => parent::lang('class.InventoryView#my#title#give'),
-						'a.content' => parent::lang('class.InventoryView#my#content#give')
-					));
+					$data[$counter]['admin'] = array(
+							'href' => 'inventory.php?id=give&did='.$entry->get_id(),
+							'title' => parent::lang('class.InventoryView#my#title#give'),
+							'content' => parent::lang('class.InventoryView#my#content#give')
+						);
 				} elseif($entry->get_owned() == 'givento') {
-				
-					$a_out = $a->parse(array(
-						'a.params' => '',
-						'a.href' => 'inventory.php?id=cancel&did='.$entry->get_id(),
-						'a.title' => parent::lang('class.InventoryView#my#title#cancel'),
-						'a.content' => parent::lang('class.InventoryView#my#content#cancel')
-					));
+					$data[$counter]['admin'] = array(
+							'href' => 'inventory.php?id=cancel&did='.$entry->get_id(),
+							'title' => parent::lang('class.InventoryView#my#title#cancel'),
+							'content' => parent::lang('class.InventoryView#my#content#cancel')
+						);
 				} else {
-					$a_out = $a->parse(array(
-						'a.params' => '',
-						'a.href' => 'inventory.php?id=take&did='.$entry->get_id(),
-						'a.title' => parent::lang('class.InventoryView#my#title#take'),
-						'a.content' => parent::lang('class.InventoryView#my#content#take')
-					));
+					$data[$counter]['admin'] = array(
+						'href' => 'inventory.php?id=take&did='.$entry->get_id(),
+						'title' => parent::lang('class.InventoryView#my#title#take'),
+						'content' => parent::lang('class.InventoryView#my#content#take')
+					);
 				}
-					
-				// prepare td
-				$td_out .= $td->parse(array( // admin
-						'td.params' => ' class="admin"',
-						'td.content' => $a_out
-					));
-				
-				// prepare tr
-				$tr_out .= $tr->parse(array(
-						'tr.params' => $tr_params,
-						'tr.content' => $td_out
-					));
 				
 				// increment counter
 				$counter++;
@@ -704,13 +528,10 @@ class InventoryView extends PageView {
 				// deleted items
 			}
 		}
-		
-		// complete table
-		$output = $table->parse(array(	'table.params' => ' id="inventory.my"',
-										'table.content' => $tr_out));
+		$sM->assign('data', $data);
 		
 		// return
-		return $output;
+		return $sM->fetch('smarty.inventory.my.tpl');
 	}
 	
 	
@@ -736,19 +557,8 @@ class InventoryView extends PageView {
 			// check owned
 			if($inventory->get_owned() == 'taken') {
 				
-				// get templates
-				// hx
-				try {
-					$hx = new HtmlTemplate('templates/hx.tpl');
-				} catch(Exception $e) {
-					$GLOBALS['Error']->handle_error($e);
-				}
-				// p
-				try {
-					$p = new HtmlTemplate('templates/p.tpl');
-				} catch(Exception $e) {
-					$GLOBALS['Error']->handle_error($e);
-				}
+				// smarty-template
+				$sG = new JudoIntranetSmarty();
 				
 				// prepare return
 				$return = '';
@@ -760,16 +570,9 @@ class InventoryView extends PageView {
 				$fields = $preset->get_fields();
 				
 				// add headline
-				$return .= $hx->parse(array(
-								'hx.x' => '2',
-								'hx.parameters' => '',
-								'hx.content' => parent::lang('class.InventoryView#give#page#headline').': '.$inventory->get_name().' ('.$inventory->get_inventory_no().')'
-							));
+				$sG->assign('caption', parent::lang('class.InventoryView#give#page#headline').': '.$inventory->get_name().' ('.$inventory->get_inventory_no().')');
 				// add accessory info
-				$return .= $p->parse(array(
-								'parameters' => '',
-								'text' => parent::lang('class.InventoryView#give#page#accessory.required')
-							));
+				$sG->assign('inventoryinfo', parent::lang('class.InventoryView#give#page#accessory.required'));
 				
 				// formular
 				$form = new HTML_QuickForm2(
@@ -793,6 +596,9 @@ class InventoryView extends PageView {
 					// put id and name in options-array
 					$users_options[$user->get_userinfo('username')] = $user->get_userinfo('name');
 				}
+				// remove admin
+				unset($users_options['admin']);
+				
 				$give_to = $form->addElement('select','give_to',array());
 				$give_to->setLabel(parent::lang('class.InventoryView#give#page#objectinfo.head').$inventory->get_name().' ('.$inventory->get_inventory_no().')'.parent::lang('class.InventoryView#give#page#objectinfo.tail').':');
 				$give_to->loadOptions($users_options);
@@ -828,19 +634,13 @@ class InventoryView extends PageView {
 					$this->values_to_db($insert_id,$fields,$values);
 					
 					// headline
-					$return = $hx->parse(array(
-								'hx.x' => '3',
-								'hx.parameters' => '',
-								'hx.content' => $inventory->get_name().' ('.$inventory->get_inventory_no().')'.parent::lang('class.InventoryView#give#page#headline.givento').$givento_user->get_userinfo('name')
-							));
+					$sG->assign('action', $inventory->get_name().' ('.$inventory->get_inventory_no().')'.parent::lang('class.InventoryView#give#page#headline.givento').$givento_user->get_userinfo('name'));
 					
 					// accessory
-					$return .= $p->parse(array(
-								'parameters' => '',
-								'text' => parent::lang('class.InventoryView#give#page#accessory.given')
-							));
+					$sG->assign('accessoryaction', parent::lang('class.InventoryView#give#page#accessory.given'));
 					
 					// walk through fields
+					$data = array();
 					foreach($fields as $field) {
 						
 						// check value
@@ -851,14 +651,16 @@ class InventoryView extends PageView {
 						}
 						// return field and value as HTML
 						$field->value($field_value);
-						$return .= $field->value_to_html($p);
+						$data[] = $field->value_to_html();
 					}
+					$sG->assign('form', '');
+					$sG->assign('data', $data);
 				} else {
-					$return .= $form->render($renderer);
+					$sG->assign('form', $form->render($renderer));
 				}
 				
 				// return
-				return $return;
+				return $sG->fetch('smarty.inventory.takegive.tpl');
 			} else {
 				
 				// error
@@ -901,19 +703,8 @@ class InventoryView extends PageView {
 			// check owned
 			if($inventory->get_owned() == 'given') {
 				
-				// get templates
-				// hx
-				try {
-					$hx = new HtmlTemplate('templates/hx.tpl');
-				} catch(Exception $e) {
-					$GLOBALS['Error']->handle_error($e);
-				}
-				// p
-				try {
-					$p = new HtmlTemplate('templates/p.tpl');
-				} catch(Exception $e) {
-					$GLOBALS['Error']->handle_error($e);
-				}
+				// smarty-template
+				$sT = new JudoIntranetSmarty();
 				
 				// prepare return
 				$return = '';
@@ -925,25 +716,15 @@ class InventoryView extends PageView {
 				$fields = $preset->get_fields();
 				
 				// add headline
-				$return .= $hx->parse(array(
-								'hx.x' => '2',
-								'hx.parameters' => '',
-								'hx.content' => parent::lang('class.InventoryView#take#page#headline').': '.$inventory->get_name().' ('.$inventory->get_inventory_no().')'
-							));
+				$sT->assign('caption', parent::lang('class.InventoryView#take#page#headline').': '.$inventory->get_name().' ('.$inventory->get_inventory_no().')');
 				
 				// add take from
 				$movements = Inventory::movement_last_row($db,$inventory->get_id(),'user_id',2);
 				$user = new User();
 				$user->change_user($movements[1],false,'id');
-				$return .= $p->parse(array(
-								'parameters' => '',
-								'text' => parent::lang('class.InventoryView#take#page#TakeFrom').': '.$user->get_userinfo('name')
-							));
+				$sT->assign('takefrom', parent::lang('class.InventoryView#take#page#TakeFrom').': '.$user->get_userinfo('name'));
 				// add accessory info
-				$return .= $p->parse(array(
-								'parameters' => '',
-								'text' => parent::lang('class.InventoryView#take#page#accessory.required')
-							));
+				$sT->assign('accessoryinfo', parent::lang('class.InventoryView#take#page#accessory.required'));
 				
 				// formular
 				$form = new HTML_QuickForm2(
@@ -991,19 +772,13 @@ class InventoryView extends PageView {
 					$this->values_to_db($insert_id,$fields,$values);
 					
 					// headline
-					$return = $hx->parse(array(
-								'hx.x' => '3',
-								'hx.parameters' => '',
-								'hx.content' => $inventory->get_name().' ('.$inventory->get_inventory_no().') '.parent::lang('class.InventoryView#take#page#headline.taken')
-							));
+					$sT->assign('action', $inventory->get_name().' ('.$inventory->get_inventory_no().') '.parent::lang('class.InventoryView#take#page#headline.taken'));
 					
 					// accessory
-					$return .= $p->parse(array(
-								'parameters' => '',
-								'text' => parent::lang('class.InventoryView#take#page#accessory.taken')
-							));
+					$sT->assign('accessoryaction', parent::lang('class.InventoryView#take#page#accessory.taken'));
 					
 					// walk through fields
+					$data = array();
 					foreach($fields as $field) {
 						
 						// check value
@@ -1014,14 +789,16 @@ class InventoryView extends PageView {
 						}
 						// return field and value as HTML
 						$field->value($field_value);
-						$return .= $field->value_to_html($p);
+						$data[] = $field->value_to_html();
 					}
+					$sT->assign('form', '');
+					$sT->assign('data', $data);
 				} else {
-					$return .= $form->render($renderer);
+					$sT->assign('form', $form->render($renderer));
 				}
 				
 				// return
-				return $return;
+				return $sT->fetch('smarty.inventory.takegive.tpl');
 			} else {
 				
 				// error
@@ -1067,31 +844,8 @@ class InventoryView extends PageView {
 			// check owned
 			if($inventory->get_owned() == 'givento') {
 				
-				// get templates
-				// hx
-				try {
-					$hx = new HtmlTemplate('templates/hx.tpl');
-				} catch(Exception $e) {
-					$GLOBALS['Error']->handle_error($e);
-				}
-				// p
-				try {
-					$p = new HtmlTemplate('templates/p.tpl');
-				} catch(Exception $e) {
-					$GLOBALS['Error']->handle_error($e);
-				}
-				// confirmation
-				try {
-				$confirmation = new HtmlTemplate('templates/div.confirmation.tpl');
-				} catch(Exception $e) {
-					$GLOBALS['Error']->handle_error($e);
-				}
-				// a
-				try {
-					$a = new HtmlTemplate('templates/a.tpl');
-				} catch(Exception $e) {
-					$GLOBALS['Error']->handle_error($e);
-				}
+				// smarty-template
+				$sC = new JudoIntranetSmarty();
 				
 				// prepare return
 				$return = '';
@@ -1108,33 +862,24 @@ class InventoryView extends PageView {
 				// add button
 				$form->addElement('submit','yes',array('value' => parent::lang('class.InventoryView#cancel#form#yes')));
 				
-				// prepare cancel
-				$cancel_a = $a->parse(array(
-						'a.params' => '',
-						'a.href' => 'inventory.php?id=my',
-						'a.title' => parent::lang('class.InventoryView#cancel#title#cancel'),
-						'a.content' => parent::lang('class.InventoryView#cancel#form#cancel')
-					));
-				$cancel = $p->parse(array(
+				// smarty-link
+				$link = array(
 						'params' => '',
-						'text' => $cancel_a
-				));
-				
-				// set output
-				$return = $confirmation->parse(array(
-						'p.message' => parent::lang('class.InventoryView#cancel#message#confirm'),
-						'p.form' => $form."\n".$cancel
-					));
+						'href' => 'inventory.php?id=my',
+						'title' => parent::lang('class.InventoryView#cancel#title#cancel'),
+						'content' => parent::lang('class.InventoryView#cancel#form#cancel')
+					);
+				$sC->assign('link', $link);
+				$sC->assign('spanparams', 'id="cancel"');
+				$sC->assign('message', parent::lang('class.InventoryView#cancel#message#confirm'));
+				$sC->assign('form', $form);
 				
 				// validate
 				if($form->validate()) {
 				
-					// set output
-					$return = $hx->parse(array(
-							'hx.content' => parent::lang('class.InventoryView#cancel#message#done'),
-							'hx.x' => '3',
-							'hx.parameters' => ''
-						));
+					// smarty
+					$sC->assign('message', parent::lang('class.InventoryView#cancel#message#done'));
+					$sC->assign('form', '');
 					
 					// movement to db
 					$insert_id = $this->movement_to_db('taken',$inventory->get_id());
@@ -1145,7 +890,7 @@ class InventoryView extends PageView {
 				}
 				
 				// return
-				return $return;
+				return $sC->fetch('smarty.confirmation.tpl');
 			} else {
 				
 				// error
@@ -1188,40 +933,12 @@ class InventoryView extends PageView {
 			// get fields
 			$fields = $preset->get_fields();
 			
-			// get templates
-			// hx
-			try {
-				$hx = new HtmlTemplate('templates/hx.tpl');
-			} catch(Exception $e) {
-				$GLOBALS['Error']->handle_error($e);
-			}
-			// p
-			try {
-				$p = new HtmlTemplate('templates/p.tpl');
-			} catch(Exception $e) {
-				$GLOBALS['Error']->handle_error($e);
-			}
-			// detail
-			try {
-			$inventory_detail = new HtmlTemplate('templates/div.inventory.tpl');
-			} catch(Exception $e) {
-				$GLOBALS['Error']->handle_error($e);
-			}
-			// b
-			try {
-				$b = new HtmlTemplate('templates/b.tpl');
-			} catch(Exception $e) {
-				$GLOBALS['Error']->handle_error($e);
-			}
-			
-			// prepare return
-			$return = '';
-			
-			// get accessories
-			$accessories = $b->parse(array(
-							'b.parameters' => '',
-							'b.content' => parent::lang('class.InventoryView#details#accessories#list').': '
-						));
+			// smarty-template
+			$sD = new JudoIntranetSmarty();
+			// smarty
+			$sD->assign('caption', $inventory->get_name().' ('.$inventory->get_inventory_no().')');
+			$sD->assign('accessorylist', parent::lang('class.InventoryView#details#accessories#list'));
+			$accessories = '';
 			foreach($fields as $field) {
 				
 				// check type
@@ -1230,25 +947,14 @@ class InventoryView extends PageView {
 				}
 			}
 			$accessories = substr($accessories,0,-2);
-			$accessories_p = $p->parse(array(
-									'parameters' => '',
-									'text' => $accessories
-								));
+			$sD->assign('accessories', $accessories);
 			
 			// get movements
 			$movements = $this->get_movements($inventory);
-			
-			// put in template
-			$return .= $inventory_detail->parse(array(
-									'h3.content' => $inventory->get_name().' ('.$inventory->get_inventory_no().')',
-									'div.fields.parameters' => '',
-									'div.movements.parameters' => '',
-									'div.fields.content' => $accessories_p,
-									'div.movements.content' => $movements
-								));
+			$sD->assign('data', $movements);
 			
 			// return
-			return $return;
+			return $sD->fetch('smarty.inventory.details.tpl');
 		} else {
 			
 			// error
@@ -1299,25 +1005,8 @@ class InventoryView extends PageView {
 		// check rights
 		if(Rights::check_rights($inventory->get_id(),'inventory')) {
 			
-			// get templates
-			// hx
-			try {
-				$hx = new HtmlTemplate('templates/hx.tpl');
-			} catch(Exception $e) {
-				$GLOBALS['Error']->handle_error($e);
-			}
-			// p
-			try {
-				$p = new HtmlTemplate('templates/p.tpl');
-			} catch(Exception $e) {
-				$GLOBALS['Error']->handle_error($e);
-			}
-			// a
-			try {
-				$a = new HtmlTemplate('templates/a.tpl');
-			} catch(Exception $e) {
-				$GLOBALS['Error']->handle_error($e);
-			}
+			//smarty-template
+			$sM = new JudoIntranetSmarty();
 			
 			// prepare sql
 			$sql = "SELECT m.id,m.user_id,m.action,m.date_time
@@ -1359,27 +1048,15 @@ class InventoryView extends PageView {
 				}
 			}
 			
-			// walk through movements
-			$movement_out = $hx->parse(array(
-							'hx.x' => 3,
-							'hx.parameters' => '',
-							'hx.content' => parent::lang('class.InventoryView#movement#hx#movement').$inventory->get_name().' ('.$inventory->get_inventory_no().')'
-						));
-			$movement_out .= $hx->parse(array(
-							'hx.x' => 4,
-							'hx.parameters' => '',
-							'hx.content' => parent::lang('class.InventoryView#movement#hx#at').date('d.m.Y',strtotime($data[0]['date_time']))
-						));
-			$a_out = $a->parse(array(
-							'a.params' => '',
-							'a.href' => 'javascript:history.back(1)',
-							'a.title' => parent::lang('class.InventoryView#movement#back#title'),
-							'a.content' => parent::lang('class.InventoryView#movement#back#name')
-						));
-			$movement_out .= $p->parse(array(
-							'parameters' => '',
-							'text' => $a_out
-						));
+			$sM->assign('inventory', parent::lang('class.InventoryView#movement#hx#movement').$inventory->get_name().' ('.$inventory->get_inventory_no().')');
+			$sM->assign('date', parent::lang('class.InventoryView#movement#hx#at').date('d.m.Y',strtotime($data[0]['date_time'])));
+			$back = array(
+					'href' => 'javascript:history.back(1)',
+					'title' => parent::lang('class.InventoryView#movement#back#title'),
+					'content' => parent::lang('class.InventoryView#movement#back#name')
+				);
+			$sM->assign('back', $back);
+			
 			foreach($data as $movement) {
 				
 				// get user
@@ -1387,7 +1064,7 @@ class InventoryView extends PageView {
 				$user->change_user($movement['user_id'],false,'id');
 				
 				// prepare fields
-				$fields_out = '';
+				$fields_out = array();
 				foreach($fields as $field) {
 					
 					// get values
@@ -1396,18 +1073,14 @@ class InventoryView extends PageView {
 							'table_id' => $movement['id'],
 							'field_id' => $field->get_id());
 					$field->read_value($data);
-					$fields_out .= $field->value_to_html($p);
+					$fields_out[] = $field->value_to_html();
 				}
-				$movement_out .= $hx->parse(array(
-							'hx.x' => 4,
-							'hx.parameters' => '',
-							'hx.content' => parent::lang('class.InventoryView#movement#fields#'.$movement['action']).' '.$user->get_userinfo('name')
-						));
-				$movement_out .= $fields_out;
+				$sM->assign('data', $fields_out);
+				$sM->assign('user', parent::lang('class.InventoryView#movement#fields#'.$movement['action']).' '.$user->get_userinfo('name'));
 			}
 			
 			// return
-			return $movement_out;
+			return $sM->fetch('smarty.inventory.movement.tpl');
 		} else {
 			
 			// error
@@ -1524,31 +1197,6 @@ class InventoryView extends PageView {
 		// get fields
 		$fields = $preset->get_fields();
 		
-		// table
-		try {
-			$table = new HtmlTemplate('templates/table.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// tr
-		try {
-			$tr = new HtmlTemplate('templates/tr.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// td
-		try {
-			$td = new HtmlTemplate('templates/td.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		// a
-		try {
-			$a = new HtmlTemplate('templates/a.tpl');
-		} catch(Exception $e) {
-			$GLOBALS['Error']->handle_error($e);
-		}
-		
 		// get db-object
 		$db = Db::newDb();
 		
@@ -1563,56 +1211,20 @@ class InventoryView extends PageView {
 		// execute
 		$result = $db->query($sql);
 		
-		// fetch result
-		$tr_out = '';
-		$counter = 0;
+		$movements = array();
 		while(list($name,$movement_id,$date_time) = $result->fetch_array(MYSQL_NUM)) {
 			
-			// odd or even
-			if($counter%2 == 0) {
-				// even
-				$tr_params = ' class="inventory.movements.tr even"';
-			} else {
-				// odd
-				$tr_params = ' class="inventory.movements.tr odd"';
-			}
-			
-			// prepare link to movements
-			$a_out = $a->parse(array(
-						'a.params' => '',
-						'a.href' => 'inventory.php?id=movement&mid='.$movement_id,
-						'a.title' => parent::lang('class.InventoryView#get_movements#date#title'),
-						'a.content' => date('d.m.Y',strtotime($date_time))
-					));
-			
-			// prepare td
-			$td_out = $td->parse(array(
-						'td.params' => '',
-						'td.content' => $a_out
-					));
-			$td_out .= $td->parse(array(
-						'td.params' => '',
-						'td.content' => $name
-					));
-			
-			// prepare tr
-			$tr_out .= $tr->parse(array(
-						'tr.params' => $tr_params,
-						'tr.content' => $td_out
-					));
-			
-			// increment counter
-			$counter++;
+			// smarty
+			$movements[] = array(
+					'href' => 'inventory.php?id=movement&mid='.$movement_id,
+					'title' => parent::lang('class.InventoryView#get_movements#date#title'),
+					'content' => date('d.m.Y',strtotime($date_time)),
+					'name' => $name
+				);
 		}
 		
-		// prepare table
-		$table_out = $table->parse(array(
-						'table.params' => '',
-						'table.content' => $tr_out
-					));
-		
 		// return
-		return $table_out;
+		return $movements;
 	}
 }
 

@@ -464,7 +464,11 @@ class Field extends Object {
 			if($value == '') {
 				
 				// get default-value
-				$checked_value = $this->return_defaults_value($defaults);
+				if($defaults != '') {
+					$checked_value = $this->return_defaults_value($defaults);
+				} else {
+					$checked_value = '';
+				}
 				
 			} else {
 				$checked_value = $value;

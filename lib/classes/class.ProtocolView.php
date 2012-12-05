@@ -202,7 +202,11 @@ class ProtocolView extends PageView {
 		
 		// smarty
 		$sD->assign('caption', parent::lang('class.ProtocolView#default_content#headline#text'));
-		$sD->assign('text', '');
+		$text[] = array(
+				'caption' => '',
+				'text' => ''
+			);
+		$sD->assign('text', $text);
 		
 		// return
 		return $sD->fetch('smarty.default.content.tpl');
