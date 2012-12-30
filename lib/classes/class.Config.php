@@ -138,13 +138,24 @@ class Config extends Object {
 		// get config
 		$config = $this->get_config();
 		
+		// read default configuration from ini-file
+		if(is_file('cnf/default.ini') && is_readable('cnf/default.ini')) {
+			$default = parse_ini_file('cnf/default.ini',true);
+			
+			// merge arrays
+			foreach($default as $parts) {
+				$config = array_merge($config,$parts);
+			}
+		}
+		
 		// read configuration from ini-file
-		$file = parse_ini_file('cnf/config.ini',true);
-		
-		// merge arrays
-		foreach($file as $parts) {
-		
-			$config = array_merge($config,$parts);
+		if(is_file('cnf/config.ini') && is_readable('cnf/config.ini')) {
+			$file = parse_ini_file('cnf/config.ini',true);
+			
+			// merge arrays
+			foreach($file as $parts) {		
+				$config = array_merge($config,$parts);
+			}
 		}
 		
 		// set config

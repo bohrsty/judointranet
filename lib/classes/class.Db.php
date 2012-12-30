@@ -13,13 +13,63 @@ class Db {
 	public static function newDb() {
 		
 		// get configuration
-		$config = parse_ini_file('cnf/config.ini',true);
+		if(		is_file('cnf/default.ini')
+				&& is_readable('cnf/default.ini')
+				&& is_file('cnf/config.ini')
+				&& is_readable('cnf/config.ini')) {
+			$default = parse_ini_file('cnf/default.ini',true);
+			$config = parse_ini_file('cnf/config.ini',true);
+			
+			// merge arrays
+			$config = array_merge($default,$config);
+		} else {
+			
+			// error
+			$message = "<html>";
+			$message .= "<head>\n<title>ERROR - Database connection failed</title>\n</head>";
+			$message .= "<body>\n<div style=\"font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;\"><h3 style=\"color: red;\">ERROR</h3><p>Database connection failed.<br />
+									Please inform your administrator.<br /></p>[NoFile|NotReadable: \"default.ini|config.ini\"]</div>\n</body>";
+			$message .= "</html>";
+			
+			// die
+			die($message);
+		}
 		
 		// connect to db
-		$db = new mysqli($config['db']['host'],$config['db']['username'],$config['db']['password'],$config['db']['database']);
-		$db->set_charset('utf8');
+		$db = null;
+		if(		isset($config['db']['host'])
+				&& isset($config['db']['username'])
+				&& isset($config['db']['password'])
+				&& isset($config['db']['database'])) {
+			$db = @new mysqli($config['db']['host'],$config['db']['username'],$config['db']['password'],$config['db']['database']);
+			
+			// check connection
+			if($db->connect_error) {
+				// error
+				$message = "<html>";
+				$message .= "<head>\n<title>ERROR - Database connection failed</title>\n</head>";
+				$message .= "<body>\n<div style=\"font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;\"><h3 style=\"color: red;\">ERROR</h3><p>Database connection failed.<br />
+										Please inform your administrator.<br /></p>[ConnectionFailed: \"".$db->connect_error."\"]</div>\n</body>";
+				$message .= "</html>";
 				
-		return $db;
+				// die
+				die($message);
+			} else {
+				$db->set_charset('utf8');
+				return $db;
+			}
+		} else {
+			
+			// error
+			$message = "<html>";
+			$message .= "<head>\n<title>ERROR - Database connection failed</title>\n</head>";
+			$message .= "<body>\n<div style=\"font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;\"><h3 style=\"color: red;\">ERROR</h3><p>Database connection failed.<br />
+									Please inform your administrator.<br /></p>[ConfigNotSet]</div>\n</body>";
+			$message .= "</html>";
+			
+			// die
+			die($message);
+		}
 	}
 }
 

@@ -1,12 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 3.5.1
--- http://www.phpmyadmin.net
---
--- Host: localhost
--- Erstellungszeit: 02. Jun 2012 um 18:03
--- Server Version: 5.5.23
--- PHP-Version: 5.3.13
-
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
@@ -16,14 +7,10 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
 
---
--- Datenbank: `bfv_newdb`
---
-
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `calendar`
+-- Structure for table `calendar`
 --
 
 DROP TABLE IF EXISTS `calendar`;
@@ -42,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `calendar` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `category`
+-- Structure for table `category`
 --
 
 DROP TABLE IF EXISTS `category`;
@@ -56,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `category` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `club`
+-- Structure for table `club`
 --
 
 DROP TABLE IF EXISTS `club`;
@@ -71,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `club` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `config`
+-- Structure for table `config`
 --
 
 DROP TABLE IF EXISTS `config`;
@@ -85,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `config` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `contact`
+-- Structure for table `contact`
 --
 
 DROP TABLE IF EXISTS `contact`;
@@ -100,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `contact` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `defaults`
+-- Structure for table `defaults`
 --
 
 DROP TABLE IF EXISTS `defaults`;
@@ -116,7 +103,7 @@ CREATE TABLE IF NOT EXISTS `defaults` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `field`
+-- Structure for table `field`
 --
 
 DROP TABLE IF EXISTS `field`;
@@ -132,7 +119,7 @@ CREATE TABLE IF NOT EXISTS `field` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `fields2presets`
+-- Structure for table `fields2presets`
 --
 
 DROP TABLE IF EXISTS `fields2presets`;
@@ -147,7 +134,7 @@ CREATE TABLE IF NOT EXISTS `fields2presets` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `group`
+-- Structure for table `group`
 --
 
 DROP TABLE IF EXISTS `group`;
@@ -161,7 +148,7 @@ CREATE TABLE IF NOT EXISTS `group` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `group2group`
+-- Structure for table `group2group`
 --
 
 DROP TABLE IF EXISTS `group2group`;
@@ -174,7 +161,7 @@ CREATE TABLE IF NOT EXISTS `group2group` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `inventory`
+-- Structure for table `inventory`
 --
 
 DROP TABLE IF EXISTS `inventory`;
@@ -191,7 +178,7 @@ CREATE TABLE IF NOT EXISTS `inventory` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `inventory_movement`
+-- Structure for table `inventory_movement`
 --
 
 DROP TABLE IF EXISTS `inventory_movement`;
@@ -207,7 +194,7 @@ CREATE TABLE IF NOT EXISTS `inventory_movement` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `judo`
+-- Structure for table `judo`
 --
 
 DROP TABLE IF EXISTS `judo`;
@@ -225,7 +212,7 @@ CREATE TABLE IF NOT EXISTS `judo` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `judo_belt`
+-- Structure for table `judo_belt`
 --
 
 DROP TABLE IF EXISTS `judo_belt`;
@@ -240,7 +227,7 @@ CREATE TABLE IF NOT EXISTS `judo_belt` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `location`
+-- Structure for table `location`
 --
 
 DROP TABLE IF EXISTS `location`;
@@ -258,7 +245,7 @@ CREATE TABLE IF NOT EXISTS `location` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `preset`
+-- Structure for table `preset`
 --
 
 DROP TABLE IF EXISTS `preset`;
@@ -275,7 +262,7 @@ CREATE TABLE IF NOT EXISTS `preset` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `rights`
+-- Structure for table `rights`
 --
 
 DROP TABLE IF EXISTS `rights`;
@@ -283,7 +270,7 @@ CREATE TABLE IF NOT EXISTS `rights` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `g_id` int(11) NOT NULL,
   `table_name` varchar(25) COLLATE utf8_unicode_ci NOT NULL,
-  `table_id` bigint(15) NOT NULL,
+  `table_id` varchar(32) NOT NULL,
   `comment` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=30 ;
@@ -291,7 +278,7 @@ CREATE TABLE IF NOT EXISTS `rights` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `staff`
+-- Structure for table `staff`
 --
 
 DROP TABLE IF EXISTS `staff`;
@@ -309,7 +296,7 @@ CREATE TABLE IF NOT EXISTS `staff` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `user`
+-- Structure for table `user`
 --
 
 DROP TABLE IF EXISTS `user`;
@@ -326,7 +313,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `user2group`
+-- Structure for table `user2group`
 --
 
 DROP TABLE IF EXISTS `user2group`;
@@ -339,7 +326,7 @@ CREATE TABLE IF NOT EXISTS `user2group` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `value`
+-- Structure for table `value`
 --
 
 DROP TABLE IF EXISTS `value`;

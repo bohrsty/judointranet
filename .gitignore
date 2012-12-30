@@ -1,8 +1,8 @@
 /TODO
 /test.*
 /img/Momentum_MatteEntireSet1.zip
-/templates/announcements/*
+/templates/announcements/*/*
 /.project
 /templates/test.*
 *.z
-/templates/smarty/*/*.php
+/templates/smarty/compile/*tpl.php

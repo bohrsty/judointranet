@@ -49,38 +49,38 @@ class AnnouncementView extends PageView {
 							'file' => 'announcement.php',
 							'position' => 2,
 							'class' => get_class(),
-							'id' => crc32('AnnouncementView'), // 3960320393
+							'id' => md5('AnnouncementView'), // 703120e744fe3aee8e1ad24a2a1bcfcc
 							'show' => false
 						),
 						'secondlevel' => array(
 							0 => array(
 								'getid' => 'new', 
 								'name' => 'class.AnnouncementView#connectnavi#secondlevel#new',
-								'id' => crc32('AnnouncementView|new'), // 3704676583
+								'id' => md5('AnnouncementView|new'), // 1322c66e80ccc07b28a1ac0a55baceed
 								'show' => false
 							),
 							1 => array(
 								'getid' => 'edit', 
 								'name' => 'class.AnnouncementView#connectnavi#secondlevel#edit',
-								'id' => crc32('AnnouncementView|edit'), // 3109695354
+								'id' => md5('AnnouncementView|edit'), // fc7e08b6b68d7c8892047d71482a3750
 								'show' => false
 							),
 							2 => array(
 								'getid' => 'delete', 
 								'name' => 'class.AnnouncementView#connectnavi#secondlevel#delete',
-								'id' => crc32('AnnouncementView|delete'), // 2505436613 
+								'id' => md5('AnnouncementView|delete'), // 3bc6ea59f9756ed16fc77d71d790439c 
 								'show' => false
 							),
 							3 => array(
 								'getid' => 'details', 
 								'name' => 'class.AnnouncementView#connectnavi#secondlevel#details',
-								'id' => crc32('AnnouncementView|details'), // 3931860135 
+								'id' => md5('AnnouncementView|details'), // 6ff52a4c896d4c5ccba6726a6736f75e 
 								'show' => false
 							),
 							4 => array(
 								'getid' => 'topdf', 
 								'name' => 'class.AnnouncementView#connectnavi#secondlevel#topdf',
-								'id' => crc32('AnnouncementView|topdf'), // 353262192
+								'id' => md5('AnnouncementView|topdf'), // 7f529045f2c8310b2e383ac4c789c62a
 								'show' => false
 							)
 						)

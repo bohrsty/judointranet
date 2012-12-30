@@ -49,7 +49,7 @@ class MainView extends PageView {
 							'file' => 'index.php',
 							'position' => 0,
 							'class' => 'MainView',
-							'id' => crc32('MainView'), // 2349400854
+							'id' => md5('MainView'), // ffe65f439f54bfbd4437df5967d4c173
 							'show' => true
 						),
 						'secondlevel' => array(
@@ -64,13 +64,13 @@ class MainView extends PageView {
 					array(
 						'getid' => 'logout', 
 						'name' => 'class.PageView#navi#secondlevel#logout',
-						'id' => crc32('MainView|logout'), // 447709445
+						'id' => md5('MainView|logout'), // 2440e505211f609c568a2a0e811b1636
 						'show' => true
 					),
 					array(
 						'getid' => 'user', 
 						'name' => 'class.PageView#navi#secondlevel#user',
-						'id' => crc32('MainView|user'), // 858116738
+						'id' => md5('MainView|user'), // 23b195e85c4e452b9990b75f64d9a4a3
 						'show' => false
 					)
 				);
@@ -81,7 +81,7 @@ class MainView extends PageView {
 					array(
 						'getid' => 'login', 
 						'name' => 'class.PageView#navi#secondlevel#login',
-						'id' => crc32('MainView|login'), // 2785044012
+						'id' => md5('MainView|login'), // a2f4f271c394ad7472ee4e600d3df345
 						'show' => true
 					)
 				);

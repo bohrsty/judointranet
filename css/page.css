@@ -312,5 +312,6 @@ div.calendar-details p.details span{
 
 div.logininfo {
 	text-align: right;
-	font-size: 10pt;;
+	font-size: 10pt;
+	height: 3em;
 }

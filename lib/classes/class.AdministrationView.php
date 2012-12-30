@@ -49,20 +49,20 @@ class AdministrationView extends PageView {
 							'file' => 'administration.php',
 							'position' => 5,
 							'class' => get_class(),
-							'id' => crc32('AdministrationView'), // 3403310372
+							'id' => md5('AdministrationView'), // 2a9bbf011365fd7d204f6eeca370468f
 							'show' => true
 						),
 						'secondlevel' => array(
 							0 => array(
 								'getid' => 'field', 
 								'name' => 'class.AdministrationView#connectnavi#secondlevel#field',
-								'id' => crc32('AdministrationView|field'), // 1221274410
+								'id' => md5('AdministrationView|field'), // 8eb55c6f5a92a320407b1805b9ec01b4
 								'show' => true
 							),
 							1 => array(
 								'getid' => 'defaults', 
 								'name' => 'class.AdministrationView#connectnavi#secondlevel#defaults',
-								'id' => crc32('AdministrationView|defaults'), // 1626061281
+								'id' => md5('AdministrationView|defaults'), // 172aec6f699d651e8dacbc09be10907a
 								'show' => true
 							)
 						)

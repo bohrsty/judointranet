@@ -144,7 +144,11 @@ class Rights extends Object {
 		$db->close();
 		
 		// unique $entry_ids
-		$entry_ids = array_unique($entry_ids,SORT_NUMERIC);
+		if($table == 'navi') {
+			$entry_ids = array_unique($entry_ids);
+		} else {
+			$entry_ids = array_unique($entry_ids,SORT_NUMERIC);
+		}
 		
 		// return
 		return $entry_ids;

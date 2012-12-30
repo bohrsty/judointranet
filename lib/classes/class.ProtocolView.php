@@ -49,20 +49,20 @@ class ProtocolView extends PageView {
 							'file' => 'protocol.php',
 							'position' => 4,
 							'class' => get_class(),
-							'id' => crc32('ProtocolView'), // 87925365
+							'id' => md5('ProtocolView'), // 3adfd8a4d24ba4849ddeb8d7f06e1828
 							'show' => true
 						),
 						'secondlevel' => array(
 							1 => array(
 								'getid' => 'listall', 
 								'name' => 'class.ProtocolView#connectnavi#secondlevel#listall',
-								'id' => crc32('ProtocolView|listall'), // 667344926
+								'id' => md5('ProtocolView|listall'), // b98ac7ca180fa172d86affb97bda7590
 								'show' => true
 							),
 							0 => array(
 								'getid' => 'new', 
 								'name' => 'class.ProtocolView#connectnavi#secondlevel#new',
-								'id' => crc32('ProtocolView|new'), // 143669502
+								'id' => md5('ProtocolView|new'), // a2c6bee54b75fe9498fb32c75950cf61
 								'show' => true
 							)
 						)

@@ -49,50 +49,50 @@ class InventoryView extends PageView {
 							'file' => 'inventory.php',
 							'position' => 3,
 							'class' => get_class(),
-							'id' => crc32('InventoryView'), // 3652205019
+							'id' => md5('InventoryView'), // f32d321bb51244f1e09cfd0f34c82bda
 							'show' => true
 						),
 						'secondlevel' => array(
 							1 => array(
 								'getid' => 'listall', 
 								'name' => 'class.InventoryView#connectnavi#secondlevel#listall',
-								'id' => crc32('InventoryView|listall'), // 2615517752
+								'id' => md5('InventoryView|listall'), // 4c13dc7e14dd5fe1ade036aac60f64c4
 								'show' => true
 							),
 							0 => array(
 								'getid' => 'my', 
 								'name' => 'class.InventoryView#connectnavi#secondlevel#my',
-								'id' => crc32('InventoryView|my'), // 521760874
+								'id' => md5('InventoryView|my'), // 1b7715352a02ff2cdd753e7b23fa46c4
 								'show' => true
 							),
 							2 => array(
 								'getid' => 'give', 
 								'name' => 'class.InventoryView#connectnavi#secondlevel#give',
-								'id' => crc32('InventoryView|give'), // 3119052612
+								'id' => md5('InventoryView|give'), // 1b26a57943c16402c4b206936e1fc44a
 								'show' => false
 							),
 							3 => array(
 								'getid' => 'take', 
 								'name' => 'class.InventoryView#connectnavi#secondlevel#take',
-								'id' => crc32('InventoryView|take'), // 171651729
+								'id' => md5('InventoryView|take'), // e1181951b8950761f24c0d6c1dedb269
 								'show' => false
 							),
 							4 => array(
 								'getid' => 'cancel', 
 								'name' => 'class.InventoryView#connectnavi#secondlevel#cancel',
-								'id' => crc32('InventoryView|cancel'), // 2421882413
+								'id' => md5('InventoryView|cancel'), // 4a90ccaf9dd0b1359fa550eafa77e0e0
 								'show' => false
 							),
 							5 => array(
 								'getid' => 'details', 
 								'name' => 'class.InventoryView#connectnavi#secondlevel#details',
-								'id' => crc32('InventoryView|details'), // 2301889492
+								'id' => md5('InventoryView|details'), // 10fbb6433764f41e4d40b53a511da245
 								'show' => false
 							),
 							6 => array(
 								'getid' => 'movement', 
 								'name' => 'class.InventoryView#connectnavi#secondlevel#movement',
-								'id' => crc32('InventoryView|movement'), // 2029386500
+								'id' => md5('InventoryView|movement'), // 237ff1df758a293404b01433488ed577
 								'show' => false
 							)
 						)

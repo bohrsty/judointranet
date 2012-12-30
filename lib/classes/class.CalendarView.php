@@ -49,38 +49,38 @@ class CalendarView extends PageView {
 							'file' => 'calendar.php',
 							'position' => 1,
 							'class' => get_class(),
-							'id' => crc32('CalendarView'), // 4126450689
+							'id' => md5('CalendarView'), // 9163fef556569ffd1f18f8e3e2a9404d
 							'show' => true
 						),
 						'secondlevel' => array(
 							1 => array(
 								'getid' => 'listall', 
 								'name' => 'class.CalendarView#connectnavi#secondlevel#listall',
-								'id' => crc32('CalendarView|listall'), // 316626287
+								'id' => md5('CalendarView|listall'), // 49769d7048c1520f081c9de448f35de6
 								'show' => true
 							),
 							0 => array(
 								'getid' => 'new', 
 								'name' => 'class.CalendarView#connectnavi#secondlevel#new',
-								'id' => crc32('CalendarView|new'), // 1338371484
+								'id' => md5('CalendarView|new'), // 00638c249fae83ef1a03e92d291cf1a3
 								'show' => true
 							),
 							2 => array(
 								'getid' => 'details', 
 								'name' => 'class.CalendarView#connectnavi#secondlevel#details',
-								'id' => crc32('CalendarView|details'), // 982147 
+								'id' => md5('CalendarView|details'), // e7d37edd6f90df7a8b47098b6c57ebf3 
 								'show' => false
 							),
 							3 => array(
 								'getid' => 'edit', 
 								'name' => 'class.CalendarView#connectnavi#secondlevel#edit',
-								'id' => crc32('CalendarView|edit'), // 2115932867
+								'id' => md5('CalendarView|edit'), // fc3947ed132c20dd2e1681ce4cd12fe6
 								'show' => false
 							),
 							4 => array(
 								'getid' => 'delete', 
 								'name' => 'class.CalendarView#connectnavi#secondlevel#delete',
-								'id' => crc32('CalendarView|delete'), //  360902721
+								'id' => md5('CalendarView|delete'), //  1b35786f36c1601d20c9e86155363c7f
 								'show' => false
 							)
 						)

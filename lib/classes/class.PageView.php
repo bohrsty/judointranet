@@ -301,7 +301,7 @@ class PageView extends Object {
 			$firstlevel = $naviitems[$i]['firstlevel'];
 			
 			// check rights
-			if(!in_array(crc32($firstlevel['class']),$navi_entries)) {
+			if(!in_array(md5($firstlevel['class']),$navi_entries)) {
 				continue;
 			}
 			
@@ -324,7 +324,7 @@ class PageView extends Object {
 			for($j=0;$j<count($secondlevel);$j++){
 				
 				// check rights
-				if(!in_array(crc32($firstlevel['class'].'|'.$secondlevel[$j]['getid']),$navi_entries)) {
+				if(!in_array(md5($firstlevel['class'].'|'.$secondlevel[$j]['getid']),$navi_entries)) {
 					continue;
 				}
 				
