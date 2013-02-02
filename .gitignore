@@ -6,3 +6,4 @@
 /templates/test.*
 *.z
 /templates/smarty/compile/*tpl.php
+/templates/smarty/compile/*string.php

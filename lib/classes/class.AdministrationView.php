@@ -85,6 +85,9 @@ class AdministrationView extends PageView {
 	 */
 	public function init() {
 		
+		// set pagename
+		$this->tpl->assign('pagename',parent::lang('class.AdministrationView#page#init#name'));
+		
 		// switch $_GET['id'] if set
 		if($this->get('id') !== false) {
 			
@@ -160,7 +163,7 @@ class AdministrationView extends PageView {
 			// smarty-title
 			$this->tpl->assign('title', $this->title(parent::lang('class.AdministrationView#init#default#title'))); 
 			// smarty-main
-			$this->tpl->assign('main', '<h2>default content</h2>');
+			$this->tpl->assign('main', $this->defaultContent());
 			// smarty-jquery
 			$this->tpl->assign('jquery', true);
 			// smarty-hierselect
@@ -286,7 +289,7 @@ class AdministrationView extends PageView {
 			$this->tpl->assign('caption', parent::lang('class.AdministrationView#field#caption#name'));
 			
 			// add default content
-			$content .= $this->default_content();
+			$content .= $this->defaultContent();
 		
 		}
 		
@@ -425,30 +428,6 @@ class AdministrationView extends PageView {
 	
 	
 	/**
-	 * default_content returns the html-content to be displayed on page without
-	 * parameters or functions
-	 * 
-	 * @return string html-content as default content
-	 */
-	private function default_content() {
-		
-		// prepare return
-		$return = '';
-		
-		// content
-		$return .= $this->p('','default content');
-					
-		// return
-		return $return;
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
 	 * list_table_content returns the content of the table as HTML-string 
 	 * 
 	 * @param string $table name of the table to list
@@ -543,8 +522,32 @@ class AdministrationView extends PageView {
 		
 		// fetch result
 		$index = $index2 = 0;
-		$th_out = '';
-		$tr_out = '';
+		$data = array();
+		
+		// get table info
+		$tinfo = $result->fetch_fields();
+		
+		// prepare th
+		$i = 0;
+		foreach($tinfo as $col) {
+			
+			// check translation
+			$translated_name = '';
+			if(parent::lang('class.AdministrationView#tableRows#name#'.$col->name) != "class.AdministrationView#tableRows#name#$col->name not translated") {
+				$translated_name = parent::lang('class.AdministrationView#tableRows#name#'.$col->name);
+			} else {
+				$translated_name = $col->name;
+			}
+			// smarty
+			if($i == 0) {
+				$data[0]['th'][$i]['content'] = parent::lang('class.AdministrationView#list_table_content#table#tasks');
+			} else {
+				$data[0]['th'][$i]['content'] = $translated_name;
+			}
+			
+			// increment counter
+			$i++;
+		}
 		
 		while($row = $result->fetch_array(MYSQL_ASSOC)) {
 			
@@ -593,23 +596,6 @@ class AdministrationView extends PageView {
 					$cat_sql = "SELECT name FROM category WHERE id=$value";
 					$cat_result = $db->query($cat_sql);
 					list($value) = $cat_result->fetch_array(MYSQL_NUM);
-				}
-				// check index
-				if($index == 0) {
-					
-					// check translation
-					$translated_name = '';
-					if(parent::lang('class.AdministrationView#tableRows#name#'.$name) != "class.AdministrationView#tableRows#name#$name not translated") {
-						$translated_name = parent::lang('class.AdministrationView#tableRows#name#'.$name);
-					} else {
-						$translated_name = $name;
-					}
-					// smarty
-					if($index2 == 0) {
-						$data[$index]['th'][$index2]['content'] = parent::lang('class.AdministrationView#list_table_content#table#tasks');
-					} else {
-						$data[$index]['th'][$index2]['content'] = $translated_name;
-					}
 				}
 				
 				// smarty
@@ -1052,8 +1038,8 @@ class AdministrationView extends PageView {
 		// execute
 		$result = $db->query($sql);
 		
-		// fetch result
-		$row = $result->fetch_array(MYSQL_ASSOC);
+		// table info
+		$tinfo = $result->fetch_fields();
 		
 		// prepare form
 		$form = new HTML_QuickForm2(
@@ -1075,27 +1061,27 @@ class AdministrationView extends PageView {
 		// get values and fields
 		$i = 0;
 		$fields = array();
-		foreach($row as $col => $value) {
+		
+		foreach($tinfo as $col) {
 			
 			// check translation
-			$translated_name = '';
-			if(parent::lang('class.AdministrationView#tableRows#name#'.$col) != "class.AdministrationView#tableRows#name#$col not translated") {
-				$translated_col = parent::lang('class.AdministrationView#tableRows#name#'.$col);
+			$translated_col = '';
+			if(parent::lang('class.AdministrationView#tableRows#name#'.$col->name) != "class.AdministrationView#tableRows#name#$col->name not translated") {
+				$translated_col = parent::lang('class.AdministrationView#tableRows#name#'.$col->name);
 			} else {
-				$translated_col = $col;
+				$translated_col = $col->name;
 			}
 			
 			// check id
-			if($col != 'id') {
+			if($col->name != 'id') {
 				
-				// get fieldconfig
+				// col->type
 				// 252 = text, 253 = varchar; 1 = tinyint(boolean); 3 = int
-				$field_config = $result->fetch_field_direct($i);
 				
 				// add field
 				$field = null;
 				// check category
-				if($col == 'category') {
+				if($col->name == 'category') {
 					
 					// get options
 					$cat_sql = "SELECT id,name FROM category WHERE valid=1";
@@ -1106,7 +1092,7 @@ class AdministrationView extends PageView {
 					}
 					
 					// select
-					$field = $form->addElement('select',$col,array());
+					$field = $form->addElement('select',$col->name,array());
 					$field->setLabel($translated_col.':');
 					
 					// load options
@@ -1120,10 +1106,10 @@ class AdministrationView extends PageView {
 				} else {
 					
 					// check type
-					if($field_config->type == 252) {
+					if($col->type == 252) {
 						
 						// textarea
-						$field = $form->addElement('textarea',$col,array());
+						$field = $form->addElement('textarea',$col->name,array());
 						$field->setLabel($translated_col.':');
 						
 						// add rules
@@ -1135,10 +1121,10 @@ class AdministrationView extends PageView {
 						if($table == 'defaults') {
 							$field->addRule('required',parent::lang('class.AdministrationView#new_row#rule#required'));
 						}
-					} elseif($field_config->type == 253 || $field_config->type == 3) {
+					} elseif($col->type == 253 || $col->type == 3) {
 						
 						// input
-						$field = $form->addElement('text',$col,array());
+						$field = $form->addElement('text',$col->name,array());
 						$field->setLabel($translated_col.':');
 						
 						// add rules
@@ -1150,10 +1136,10 @@ class AdministrationView extends PageView {
 						if($table == 'defaults') {
 							$field->addRule('required',parent::lang('class.AdministrationView#new_row#rule#required'));
 						}
-					} elseif($field_config->type == 1) {
+					} elseif($col->type == 1) {
 						
 						// input
-						$field = $form->addElement('checkbox',$col,array());
+						$field = $form->addElement('checkbox',$col->name,array());
 						$field->setLabel($translated_col.':');
 					}
 				}
@@ -1238,6 +1224,9 @@ class AdministrationView extends PageView {
 		
 		// check $_GET['field']
 		if($this->get('rid') !== false || $this->get('action') == 'new') {
+			
+			// pagecaption
+			$this->tpl->assign('pagecaption',parent::lang('class.AdministrationView#page#caption#defaults'));
 			
 			// check if row exists
 			if($this->row_exists('defaults',$rid) || $this->get('action') == 'new') {

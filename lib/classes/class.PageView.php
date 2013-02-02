@@ -437,6 +437,35 @@ class PageView extends Object {
 			return parent::lang('class.PageView#put_userinfo#logininfo#NotLoggedin');
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * defaultContent returns the content if nothing else is given
+	 * 
+	 * @return string default content as html-string
+	 */
+	protected function defaultContent() {
+		
+		// smatry-template
+		$sD = new JudoIntranetSmarty();
+		
+		$sD->assign('caption', parent::lang('class.PageView#defaultContent#text#caption'));
+		$text[] = array(
+				'caption' => '',
+				'text' => parent::lang('class.PageView#defaultContent#text#content')
+			);
+		$sD->assign('text', $text);
+					
+		// return
+		return $sD->fetch('smarty.default.content.tpl');
+	}
 }
 
 

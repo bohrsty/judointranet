@@ -160,7 +160,7 @@ class ProtocolView extends PageView {
 			// smarty-title
 			$this->tpl->assign('title', $this->title(parent::lang('class.ProtocolView#init#default#title'))); 
 			// smarty-main
-			$this->tpl->assign('main', $this->default_content());
+			$this->tpl->assign('main', $this->defaultContent());
 			// smarty-jquery
 			$this->tpl->assign('jquery', true);
 			// smarty-hierselect
@@ -195,13 +195,13 @@ class ProtocolView extends PageView {
 	 * 
 	 * @return string html-content as default content
 	 */
-	private function default_content() {
+	protected function defaultContent() {
 		
 		// smarty-template
 		$sD = new JudoIntranetSmarty();
 		
 		// smarty
-		$sD->assign('caption', parent::lang('class.ProtocolView#default_content#headline#text'));
+		$sD->assign('caption', parent::lang('class.ProtocolView#defaultContent#headline#text'));
 		$text[] = array(
 				'caption' => '',
 				'text' => ''

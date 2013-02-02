@@ -104,6 +104,9 @@ class MainView extends PageView {
 	 */
 	public function init() {
 		
+		// set pagename
+		$this->tpl->assign('pagename',parent::lang('class.MainView#page#init#name'));
+		
 		// switch $_GET['id'] if set
 		if($this->get('id') !== false) {
 			
@@ -192,7 +195,7 @@ class MainView extends PageView {
 			// smarty-title
 			$this->tpl->assign('title', $this->title(parent::lang('class.MainView#init#default#title'))); 
 			// smarty-main
-			$this->tpl->assign('main', '<h2>default content</h2>');
+			$this->tpl->assign('main', $this->defaultContent());
 			// smarty-jquery
 			$this->tpl->assign('jquery', true);
 			// smarty-hierselect

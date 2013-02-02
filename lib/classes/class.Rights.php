@@ -271,11 +271,11 @@ class Rights extends Object {
 		$update_rights = array('insert' => array(),'remove' => array());
 		
 		// walk through $new_rights to get insert g-ids
-		for($i=0;$i<count($new_rights);$i++) {
+		foreach($new_rights as $new_right) {
 			
 			// check if actual g_id is in $rights
-			if(!in_array($new_rights[$i],$rights)) {
-				$update_rights['insert'][] = $new_rights[$i];
+			if(!in_array($new_right,$rights)) {
+				$update_rights['insert'][] = $new_right;
 			}
 		}
 		

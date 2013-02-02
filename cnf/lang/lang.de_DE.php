@@ -204,9 +204,10 @@ $lang = array(
 				'name' => 'Name',
 				'shortname' => 'Kurzbezeichnung',
 				'type' => 'Veranstaltungstyp',
-				'rights' => 'Berechtigte Gruppen (mehrfache Auswahl: &lt;STRG&gt; gedr&uuml;ckt halten und Gruppen ausw&auml;hlen)',
+				'rights' => 'Filterbare Gruppen (mehrfache Auswahl: &lt;STRG&gt; gedr&uuml;ckt halten und Gruppen ausw&auml;hlen)',
 				'entry_content' => 'Inhalt/Beschreibung',
-				'announcement' => 'Ausschreibung'
+				'announcement' => 'Ausschreibung',
+				'public' => '&Ouml;ffentlicher Zugriff'
 			),
 			'rule' => array(
 				'required.date' => 'Datum muss ausgew&auml;hlt werden!',
@@ -238,6 +239,18 @@ $lang = array(
 			'rule' => array(
 				'select' => 'Bitte eine Vorlage ausw&auml;hlen'
 			)
+		),
+		'page' => array(
+			'init' => array(
+				'name' => 'Kalender'
+			),
+			'caption' => array(
+				'edit' => 'Editiere Eintrag',
+				'listall' => 'Listenansicht',
+				'new_entry' => 'Neuen Eintrag erstellen',
+				'details' => 'Details',
+				'delete' => 'L&ouml;sche Eintrag'
+			)
 		)
 	),
 	'class.PageView' => array(
@@ -264,9 +277,20 @@ $lang = array(
 				'logout' => 'Logout',
 				'logout.title' => 'Logout'
 			)
+		),
+		'defaultContent' => array(
+			'text' => array(
+				'caption' => '&Uuml;berschrift',
+				'content' => 'Inhalt'
+			)
 		)
 	),
 	'class.MainView' => array(
+		'page' => array(
+			'init' => array(
+				'name' => 'Startseite'
+			)
+		),
 		'connectnavi' => array(
 			'firstlevel' => array(
 				'name' => 'Startseite'
@@ -454,6 +478,16 @@ $lang = array(
 			'title' => array(
 				'cancel' => 'Bricht den L&ouml;schvorgang ab'
 			)
+		),
+		'page' => array(
+			'init' => array(
+				'name' => 'Ausschreibung'
+			),
+			'caption' => array(
+				'edit' => 'Editiere Eintrag',
+				'details' => 'Details',
+				'delete' => 'L&ouml;sche Eintrag'
+			)
 		)
 	),
 	'class.InventoryView' => array(
@@ -614,9 +648,27 @@ $lang = array(
 				'listall.p' =>	'Die Listenansicht bietet einen &Uuml;berblick &uuml;ber das Inventar, die derzeitigen Besitzer und den Status eines Objekts. Die Details eines
 								Objekts zeigen die &Uuml;bergaben und Details zum &uuml;bergebenen Zubeh&ouml;r.'
 			)
+		),
+		'page' => array(
+			'init' => array(
+				'name' => 'Inventar'
+			),
+			'caption' => array(
+				'listall' => 'Listenansicht',
+				'my' => 'Eigene Objekte verwalten',
+				'give' => 'Objekt abgeben',
+				'take' => 'Objekt &uuml;bernehmen',
+				'details' => 'Details',
+				'cancel' => 'Aktion abbrechen'
+			)
 		)
 	),
 	'class.AdministrationView' => array(
+		'page' => array(
+			'init' => array(
+				'name' => 'Administration'
+			)
+		),
 		'tableRows' => array(
 			'name' => array(
 				'name' => 'Name/Anzeigename',
@@ -762,6 +814,15 @@ $lang = array(
 				'rowNotDisabled' => 'Diese Tabellenzeile ist nicht deaktiviert und kann nicht aktiviert werden, m&ouml;chten Sie sie stattdessen deaktivieren?',
 				'rowNotDisabled.disable' => 'Zeile deaktivieren'
 			)
+		),
+		'page' => array(
+			'init' => array(
+				'name' => 'Administration'
+			),
+			'caption' => array(
+				'field' => 'Benutzerdefinierte Tabellen',
+				'defaults' => 'Vorgegebene Felder'
+			)
 		)
 	),
 	'class.ProtocolView' => array(
@@ -794,7 +855,7 @@ $lang = array(
 				'new' => 'Neues Protokoll erstellen'
 			)
 		),
-		'default_content' => array(
+		'defaultContent' => array(
 			'headline' => array(
 				'text' => 'Protokolle'
 			)

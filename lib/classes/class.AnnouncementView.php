@@ -103,6 +103,9 @@ class AnnouncementView extends PageView {
 	 */
 	public function init() {
 		
+		// set pagename
+		$this->tpl->assign('pagename',parent::lang('class.AnnouncementView#page#init#name'));
+		
 		// switch $_GET['id'] if set
 		if($this->get('id') !== false) {
 			
@@ -204,9 +207,11 @@ class AnnouncementView extends PageView {
 			
 			// id not set
 			// smarty-title
-			$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#default#title'))); 
+			$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#default#title')));
+			// smarty-pagecaption
+			$this->tpl->assign('pagecaption', $this->defaultContent()); 
 			// smarty-main
-			$this->tpl->assign('main', '<h2>default content</h2>');
+			$this->tpl->assign('main', '');
 			// smarty-jquery
 			$this->tpl->assign('jquery', true);
 			// smarty-hierselect
@@ -439,6 +444,9 @@ class AnnouncementView extends PageView {
 				// check cid and pid exists
 				if(Calendar::check_id($this->get('cid')) && Preset::check_preset($this->get('pid'),'calendar')) {
 					
+					// pagecaption
+					$this->tpl->assign('pagecaption',parent::lang('class.AnnouncementView#page#caption#edit'));
+					
 					// prepare return
 					$return = '';
 					
@@ -623,6 +631,9 @@ class AnnouncementView extends PageView {
 				// check cid and pid exists
 				if(Calendar::check_id($this->get('cid')) && Preset::check_preset($this->get('pid'),'calendar')) {
 					
+					// pagecaption
+					$this->tpl->assign('pagecaption',parent::lang('class.AnnouncementView#page#caption#delete'));
+					
 					// prepare return
 					$return = '';
 					
@@ -738,6 +749,9 @@ class AnnouncementView extends PageView {
 				
 				// check if announcement has values
 				if(Calendar::check_ann_value($this->get('cid'))) {
+					
+					// pagecaption
+					$this->tpl->assign('pagecaption',parent::lang('class.AnnouncementView#page#caption#details'));
 					
 					// prepare return
 					$return = '';

@@ -103,6 +103,9 @@ class CalendarView extends PageView {
 	 */
 	public function init() {
 		
+		// set pagename
+		$this->tpl->assign('pagename',parent::lang('class.CalendarView#page#init#name'));
+		
 		// switch $_GET['id'] if set
 		if($this->get('id') !== false) {
 			
@@ -251,9 +254,11 @@ class CalendarView extends PageView {
 			
 			// id not set
 			// smarty-title
-			$this->tpl->assign('title', $this->title(parent::lang('class.CalendarView#init#default#title'))); 
+			$this->tpl->assign('title', $this->title(parent::lang('class.CalendarView#init#default#title')));
+			// smarty-pagecaption
+			$this->tpl->assign('pagecaption', $this->defaultContent()); 
 			// smarty-main
-			$this->tpl->assign('main', '<h2>default content</h2>');
+			$this->tpl->assign('main', '');
 			// smarty-jquery
 			$this->tpl->assign('jquery', true);
 			// smarty-hierselect
@@ -292,6 +297,9 @@ class CalendarView extends PageView {
 	 */
 	private function listall($timeto,$timefrom) {
 		
+		// pagecaption
+		$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#listall'));
+			
 		// prepare return
 		$output = $tr_out = $th_out = '';
 		
@@ -353,7 +361,7 @@ class CalendarView extends PageView {
 						);
 					
 					// details and pdf if announcement
-					if($entry->get_preset_id() != 0) {
+					if($entry->get_preset_id() != 0 && Calendar::check_ann_value($entry->get_id(),$entry->get_preset_id()) === true) {
 						
 						$sList[$counter]['show'][] = array(
 								'href' => 'announcement.php?id=details&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
@@ -429,9 +437,9 @@ class CalendarView extends PageView {
 									'title' => '',
 									'src' => '',
 									'alt' => '',
-									'preset' => $entry->get_preset_id()
+									'preset' => $entry->get_preset_id(),
+									'form' => $this->read_preset_form($entry)
 								);
-							$sListall->assign('form', $this->read_preset_form($entry));;
 						} else {
 							
 							// get new or edit
@@ -449,7 +457,8 @@ class CalendarView extends PageView {
 									'title' => parent::lang('class.CalendarView#listall#title#AnnEdit'),
 									'src' => 'img/ann_edit.png',
 									'alt' => parent::lang('class.CalendarView#listall#alt#AnnEdit'),
-									'preset' => $entry->get_preset_id()
+									'preset' => $entry->get_preset_id(),
+									'form' => ''
 								);
 							// delete
 							$sList[$counter]['annadmin'][] = array(
@@ -457,7 +466,8 @@ class CalendarView extends PageView {
 									'title' => parent::lang('class.CalendarView#listall#title#AnnDelete'),
 									'src' => 'img/ann_delete.png',
 									'alt' => parent::lang('class.CalendarView#listall#alt#AnnDelete'),
-									'preset' => $entry->get_preset_id()
+									'preset' => $entry->get_preset_id(),
+									'form' => ''
 								);
 						}
 					} else {
@@ -648,6 +658,9 @@ class CalendarView extends PageView {
 	 */
 	private function new_entry() {
 		
+		// pagecaption
+		$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#new_entry'));
+		
 		// smarty-templates
 		$sD = new JudoIntranetSmarty();
 		
@@ -729,10 +742,15 @@ class CalendarView extends PageView {
 		
 		
 		// select rights
-		$options = $_SESSION['user']->return_all_groups();
+		$options = $_SESSION['user']->return_all_groups('sort');
 		$rights = $form->addElement('select','rights',array('multiple' => 'multiple','size' => 5));
 		$rights->setLabel(parent::lang('class.CalendarView#entry#form#rights').':');
 		$rights->loadOptions($options);
+		
+		
+		// checkbox public
+		$rights = $form->addElement('checkbox','public');
+		$rights->setLabel(parent::lang('class.CalendarView#entry#form#public').':');
 		
 		
 		// submit-button
@@ -743,6 +761,23 @@ class CalendarView extends PageView {
 			
 			// create calendar-object
 			$data = $form->getValue();
+				
+			// check $data['rights']
+			if(!isset($data['rights']))
+			{
+				$data['rights'] = array();
+			}
+			
+			// merge with own groups, add admin
+			$data['rights'] = array_merge($data['rights'],$_SESSION['user']->get_groups(),array(1));
+			
+			// add public access
+			$kPublicAccess = array_search(0,$data['rights']);
+			if($kPublicAccess === false && isset($data['public']) && $data['public'] == 1) {
+				$data['rights'][] = 0;
+			} elseif($kPublicAccess !== false && !isset($data['public'])) {
+				unset($data['rights'][$kPublicAccess]);
+			}
 			
 			$right_array = array(
 								'action' => 'new',
@@ -812,6 +847,9 @@ class CalendarView extends PageView {
 	 */
 	private function details($cid) {
 	
+		// pagecaption
+		$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#details'));
+		
 		// check rights
 		if(Rights::check_rights($cid,'calendar',true)) {
 				
@@ -852,9 +890,22 @@ class CalendarView extends PageView {
 			
 			// smarty-templates
 			$sD = new JudoIntranetSmarty();
-				
+							
 			// get calendar-object
 			$calendar = new Calendar($cid);
+			
+			// pagecaption
+			$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#edit').": \"$cid\" (".$calendar->get_name().")");
+			
+			// get rights
+			$cRights = $calendar->get_rights()->get_rights();
+			// check public access
+			$kPublicAccess = array_search(0,$cRights);
+			$publicAccess = false;
+			if($kPublicAccess !== false) {
+				$publicAccess = true;
+				unset($cRights[$kPublicAccess]);
+			}
 					
 			// prepare return
 			$return = '';
@@ -871,14 +922,22 @@ class CalendarView extends PageView {
 			$now_year = (int) date('Y');
 			$year_min = $now_year;
 			$year_max = $now_year + 3;
-			$form->addDataSource(new HTML_QuickForm2_DataSource_Array(array(
+			
+			// get datasource
+			$datasource = array(
 					'date' => $calendar->get_date(),
 					'name' => $calendar->get_name(),
 					'shortname' => $calendar->get_shortname(),
 					'type' => $calendar->return_type(),
 					'entry_content' => $calendar->get_content(),
-					'rights' => $calendar->get_rights()->get_rights()
-				)));
+					'rights' => $cRights
+				);
+			// add public access
+			if($publicAccess) {
+				$datasource['public'] = 1;
+			}
+			
+			$form->addDataSource(new HTML_QuickForm2_DataSource_Array($datasource));
 			
 			// renderer
 			$renderer = HTML_QuickForm2_Renderer::factory('default');
@@ -936,10 +995,15 @@ class CalendarView extends PageView {
 			
 			
 			// select rights
-			$options = $_SESSION['user']->return_all_groups();
+			$options = $_SESSION['user']->return_all_groups('sort');
 			$rights = $form->addElement('select','rights',array('multiple' => 'multiple','size' => 5));
 			$rights->setLabel(parent::lang('class.CalendarView#entry#form#rights').':');
 			$rights->loadOptions($options);
+			
+		
+			// checkbox public
+			$rights = $form->addElement('checkbox','public');
+			$rights->setLabel(parent::lang('class.CalendarView#entry#form#public').':');
 			
 			
 			// submit-button
@@ -950,6 +1014,23 @@ class CalendarView extends PageView {
 				
 				// create calendar-object
 				$data = $form->getValue();
+								
+				// check $data['rights']
+				if(!isset($data['rights']))
+				{
+					$data['rights'] = array();
+				}
+				
+				// merge with own groups, add admin
+				$data['rights'] = array_merge($data['rights'],$_SESSION['user']->get_groups(),array(1));
+				
+				// add public access
+				$kPublicAccess = array_search(0,$data['rights']);
+				if($kPublicAccess === false && isset($data['public']) && $data['public'] == 1) {
+					$data['rights'][] = 0;
+				} elseif($kPublicAccess !== false && !isset($data['public'])) {
+					unset($data['rights'][$kPublicAccess]);
+				}
 				
 				$calendar_new = array(
 						'date' => $data['date'],
@@ -1004,6 +1085,9 @@ class CalendarView extends PageView {
 	 */
 	private function delete($cid) {
 	
+		// pagecaption
+		$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#delete').": $cid");
+		
 		// check rights
 		if(Rights::check_rights($cid,'calendar')) {
 				
@@ -1116,6 +1200,9 @@ class CalendarView extends PageView {
 			$calendar->update($update);
 			$calendar->write_db('update');
 			
+			// redirect to listall
+			header('Location: calendar.php?id=listall');
+			exit;
 		} else {
 			return $form;
 		}

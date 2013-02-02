@@ -91,6 +91,14 @@ div.quickform div.row {
 	margin-bottom: 15px;
 }
 
+td.admin div.quickform div.row {
+	margin-bottom: 0px;
+}
+
+td.admin div.quickform div.row p.label {
+	display: none;
+}
+
 .even {
 	background-color: #ccf;
 }
@@ -294,6 +302,20 @@ form#login .error input {
 
 form#login span.error {
 	color: red;
+}
+
+.quickform textarea {
+	width: 450px;
+	height: 150px;
+}
+
+.quickform #date-0 {
+	width: 100px;
+}
+
+p.label {
+	margin: 0;
+	padding: 0;
 }
 
 /*

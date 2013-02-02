@@ -115,6 +115,9 @@ class InventoryView extends PageView {
 	 */
 	public function init() {
 		
+		// set pagename
+		$this->tpl->assign('pagename',parent::lang('class.InventoryView#page#init#name'));
+		
 		// switch $_GET['id'] if set
 		if($this->get('id') !== false) {
 			
@@ -235,7 +238,7 @@ class InventoryView extends PageView {
 			// smarty-title
 			$this->tpl->assign('title', $this->title(parent::lang('class.InventoryView#init#default#title'))); 
 			// smarty-main
-			$this->tpl->assign('main', $this->default_content());
+			$this->tpl->assign('main', $this->defaultContent());
 			// smarty-jquery
 			$this->tpl->assign('jquery', true);
 			// smarty-hierselect
@@ -265,15 +268,12 @@ class InventoryView extends PageView {
 	
 	
 	/**
-	 * default_content returns the html-content to be displayed on page without
+	 * defaultContent returns the html-content to be displayed on page without
 	 * parameters or functions
 	 * 
 	 * @return string html-content as default content
 	 */
-	private function default_content() {
-		
-		// prepare return
-		$return = '';
+	protected function defaultContent() {
 		
 		// smatry-template
 		$sD = new JudoIntranetSmarty();
@@ -307,6 +307,9 @@ class InventoryView extends PageView {
 	 * @return string html-string with the output
 	 */
 	private function listall() {
+		
+		// pagecaption
+		$this->tpl->assign('pagecaption',parent::lang('class.InventoryView#page#caption#listall'));
 		
 		// get db-object
 		$db = Db::newDb();
@@ -452,6 +455,9 @@ class InventoryView extends PageView {
 	 */
 	private function my() {
 		
+		// pagecaption
+		$this->tpl->assign('pagecaption',parent::lang('class.InventoryView#page#caption#my'));
+		
 		// prepare return
 		$output = $tr_out = $th_out = '';
 		
@@ -550,6 +556,9 @@ class InventoryView extends PageView {
 	
 		// check rights
 		if(Rights::check_rights($did,'inventory')) {
+			
+			// pagecaption
+			$this->tpl->assign('pagecaption',parent::lang('class.InventoryView#page#caption#give'));
 				
 			// get inventory-object
 			$inventory = new Inventory($did);
@@ -694,6 +703,9 @@ class InventoryView extends PageView {
 		// check rights
 		if(Rights::check_rights($did,'inventory')) {
 			
+			// pagecaption
+			$this->tpl->assign('pagecaption',parent::lang('class.InventoryView#page#caption#take'));
+			
 			// get db-object
 			$db = Db::newDb();
 			
@@ -831,6 +843,9 @@ class InventoryView extends PageView {
 	
 		// check rights
 		if(Rights::check_rights($did,'inventory')) {
+			
+			// pagecaption
+			$this->tpl->assign('pagecaption',parent::lang('class.InventoryView#page#caption#cancel'));
 				
 			// get inventory-object
 			$inventory = new Inventory($did);
@@ -923,6 +938,9 @@ class InventoryView extends PageView {
 	
 		// check rights
 		if(Rights::check_rights($did,'inventory')) {
+			
+			// pagecaption
+			$this->tpl->assign('pagecaption',parent::lang('class.InventoryView#page#caption#details'));
 				
 			// get invetory-object
 			$inventory = new Inventory($did);

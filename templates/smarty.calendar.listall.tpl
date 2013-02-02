@@ -37,7 +37,7 @@
 				<a href="{$list.$i.admin.1.href|escape}" title="{$list.$i.admin.1.title}"><img src="{$list.$i.admin.1.src}" alt="{$list.$i.admin.1.alt}" class="icon" title="{$list.$i.admin.1.alt}" /></a>
 			</div>
 {if $list.$i.annadmin.0.preset==0}
-			{$form}
+			{$list.$i.annadmin.0.form}
 {else}
 			<div class="admin-links">
 				<a href="{$list.$i.annadmin.0.href|escape}" title="{$list.$i.annadmin.0.title}"><img src="{$list.$i.annadmin.0.src}" alt="{$list.$i.annadmin.0.alt}" class="icon" title="{$list.$i.annadmin.0.alt}" /></a>
