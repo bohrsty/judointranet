@@ -6,7 +6,7 @@
 {for $i=0 to (count($data.0.th)-1)}
 		<th>{$data.0.th.$i.content}</th>
 {/for}
-{if count($data) > 1}
+{if count($data) >= 1}
 {for $j=0 to (count($data)-1)}
 	<tr class="{cycle values="odd,even"}">
 		<td>

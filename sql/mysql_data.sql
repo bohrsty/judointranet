@@ -54,7 +54,6 @@ INSERT INTO `rights` (`id`, `g_id`, `table_name`, `table_id`, `comment`) VALUES
 (NULL, 1, 'navi', MD5('InventoryView|cancel'), 'InventoryView|cancel'),
 (NULL, 1, 'navi', MD5('InventoryView|details'), 'InventoryView|details'),
 (NULL, 1, 'navi', MD5('InventoryView|movement'), 'InventoryView|movement'),
-(NULL, 1, 'navi', MD5('AnnouncementView|details'), 'AnnouncementView|details'),
 (NULL, 1, 'navi', MD5('AnnouncementView|topdf'), 'AnnouncementView|topdf'),
 (NULL, 1, 'navi', MD5('AdministrationView'), 'AdministrationView'),
 (NULL, 1, 'navi', MD5('AdministrationView|field'), 'AdministrationView|field'),

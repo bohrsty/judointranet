@@ -204,7 +204,7 @@ CREATE TABLE IF NOT EXISTS `judo` (
   `type` varchar(25) COLLATE utf8_unicode_ci NOT NULL,
   `weightclass` text COLLATE utf8_unicode_ci NOT NULL,
   `time` varchar(6) COLLATE utf8_unicode_ci NOT NULL,
-  `agegroups` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
+  `agegroups` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `valid` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;

@@ -185,15 +185,9 @@ class Field extends Object {
 				// add textarea
 				$textarea = $element->addElement('textarea','manual',array());
 				$textarea->setLabel(parent::lang('class.Field#element#label#textarea.manual'));
-				
-				// prepare options
-				$options = array('--');
-				
-				// get defaults
-				$this->read_defaults($options);
-				
-				// load options
-				$select->loadOptions($options);
+								
+				// add options
+				$this->read_defaults($select);
 			} else {
 				
 				// textarea
@@ -590,7 +584,7 @@ class Field extends Object {
 	 * 
 	 * @param array $options array to add default- and last-used-values
 	 */
-	public function read_defaults(&$options) {
+	public function read_defaults(&$element) {
 		
 		// get db-object
 		$db = Db::newDb();
@@ -606,20 +600,25 @@ class Field extends Object {
 		// execute
 		$result = $db->query($sql);
 		
-		// fetch defaults
-		$defaults = array();
+		// add first option
+		$element->addOption('--',0);
+		
+		// add default-optgroup
+		$dOptgroup = $element->addOptgroup(parent::lang('class.Field#read_defaults#defaults#separator'));
+		
 		while(list($id,$name) = $result->fetch_array(MYSQL_NUM)) {
 			
 			// check name length
+			$truncName = '';
 			if(strlen($name) > 30) {
-				$name = substr($name,0,27).'...';
+				$truncName = substr($name,0,27).'...';
+			} else {
+				$truncName = $name;
 			}
 			
-			$defaults['d'.$id] = $name;
+			// add options
+			$dOptgroup->addOption($truncName,'d'.$id,array('title' => $name));
 		}
-		
-		// add separator and options
-		$options[parent::lang('class.Field#read_defaults#defaults#separator')] = $defaults;
 		
 		// get last-used
 		// get authorized calendar-ids
@@ -637,8 +636,10 @@ class Field extends Object {
 		// execute
 		$result = $db->query($sql);
 		
-		// fetch last-used
-		$last = array();
+		// add last-optgroup
+		$lOptgroup = $element->addOptgroup(parent::lang('class.Field#read_defaults#lastUsed#separator'));
+		
+		
 		while(list($id,$table_id,$value) = $result->fetch_array(MYSQL_NUM)) {
 			
 			// check rights
@@ -648,20 +649,17 @@ class Field extends Object {
 				$value = str_replace(array("\r\n","\r","\n")," ",$value);
 				
 				// check value length
+				$truncValue = '';
 				if(strlen($value) > 30) {
-					$value = substr($value,0,27).'...';
+					$truncValue = substr($value,0,27).'...';
+				} else {
+					$truncValue = $value;
 				}
 				
-				$last['l'.$id] = $value;
+				// add options
+				$lOptgroup->addOption($truncValue,'l'.$id);
 			}
 		}
-		
-		// reverse array
-		array_reverse($last,true);
-		
-		
-		// add separator and options
-		$options[parent::lang('class.Field#read_defaults#lastUsed#separator')] = $last;
 	}
 	
 	

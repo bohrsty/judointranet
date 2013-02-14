@@ -1169,13 +1169,18 @@ class CalendarView extends PageView {
 	 */
 	private function read_preset_form(&$calendar) {
 		
+		// check sort or from/to
+		$sort = $from = $to = '';
+		if($this->get('sort') !== false) {$sort = "&sort=".$this->get('sort');}
+		if($this->get('from') !== false) {$from = "&from=".$this->get('from');}
+		if($this->get('to') !== false) {$to = "&to=".$this->get('to');}
 		// form-object
 		$form = new HTML_QuickForm2(
 									'choose_preset_'.$calendar->get_id(),
 									'post',
 									array(
 										'name' => 'choose_preset_'.$calendar->get_id(),
-										'action' => 'calendar.php?id=listall'
+										'action' => 'calendar.php?id=listall'.$sort.$from.$to
 									)
 								);
 		
@@ -1201,7 +1206,7 @@ class CalendarView extends PageView {
 			$calendar->write_db('update');
 			
 			// redirect to listall
-			header('Location: calendar.php?id=listall');
+			header('Location: calendar.php?id=listall'.$sort.$from.$to);
 			exit;
 		} else {
 			return $form;

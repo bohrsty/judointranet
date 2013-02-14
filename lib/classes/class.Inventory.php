@@ -2,7 +2,7 @@
 
 
 /**
- * class Preset implements a preset (combination of fields)
+ * class Inventory implements the representation of an inventory object
  */
 class Inventory extends Object {
 	

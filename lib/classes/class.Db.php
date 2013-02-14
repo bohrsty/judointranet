@@ -71,6 +71,39 @@ class Db {
 			die($message);
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * returnValueById returns the value in col $col from $table by $id
+	 * 
+	 * @param int $id id of the row to be resolved
+	 * @param string $table tablename to be resolved from
+	 * @param string $col name of the col to be returned from
+	 */
+	public static function returnValueById($id, $table, $col) {
+		
+		// get db-object
+		$db = DB::newDB();
+		
+		// prepare sql-statement
+		$sql = "SELECT $col
+				FROM $table
+				WHERE id=$id";
+		
+		// execute
+		$result = $db->query($sql);
+		
+		// fetch result, close db and return
+		$return = $result->fetch_array(MYSQL_NUM);
+		$db->close();
+		return $return[0];
+	}
 }
 
 

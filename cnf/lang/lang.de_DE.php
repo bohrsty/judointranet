@@ -449,6 +449,9 @@ $lang = array(
 			),
 			'listall' => array(
 				'title' => 'Ausschreibung: Listenansicht'
+			),
+			'edit' => array(
+				'title' => 'Ausschreibung: Bearbeiten'
 			)
 		),
 		'entry' => array(
@@ -826,25 +829,35 @@ $lang = array(
 		)
 	),
 	'class.ProtocolView' => array(
-		'init' => array(
-			'listall' => array(
-				'title' => 'Protokolle: Listenansicht'
+		'page' => array(
+			'caption' => array(
+				'listall' => 'Listenansicht',
+				'details' => 'Details',
+				'show' => 'Protokoll anzeigen',
+				'topdf' => 'PDF anzeigen',
+				'correct' => 'Protokoll korrigieren',
+				'new_entry' => 'Neues Protokoll',
+				'edit' => 'Protokoll bearbeiten'
 			),
-			'default' => array(
-				'title' => 'Protokolle'
+			'init' => array(
+				'name' => 'Protokolle'
+			)
+		),
+		'init' => array(
+			'title' => array(
+				'listall' => 'Protokolle: Listenansicht',
+				'details' => 'Protokolle: Details',
+				'default' => 'Protokolle',
+				'new' => 'Protokolle: Neues Protokoll',
+				'edit' => 'Protokolle: Protokoll bearbeiten',
+				'delete' => 'Protokolle: Protokoll l&ouml;schen',
+				'show' => 'Protokolle: Protokoll anzeigen',
+				'topdf' => 'Protokolle: Protokoll als PDF',
+				'correct' => 'Protokolle: Protokoll korrigieren'
 			),
 			'Error' => array(
 				'NotAuthorized' => 'FEHLER - Nicht berechtigt'
 			),
-			'new' => array(
-				'title' => 'Protokolle: Neues Protokoll'
-			),
-			'edit' => array(
-				'title' => 'Protokolle: Protokoll bearbeiten'
-			),
-			'delete' => array(
-				'title' => 'Protokolle: Protokoll l&ouml;schen'
-			)
 		),
 		'connectnavi' => array(
 			'firstlevel' => array(
@@ -858,6 +871,103 @@ $lang = array(
 		'defaultContent' => array(
 			'headline' => array(
 				'text' => 'Protokolle'
+			)
+		),
+		'listall' => array(
+			'TH' => array(
+				'date' => 'Datum',
+				'type' => 'Art',
+				'location' => 'Ort',
+				'show' => 'Ansehen',
+				'admin' => 'Aufgaben'
+			),
+			'title' => array(
+				'edit' => 'Protokoll bearbeiten',
+				'delete' => 'Protokoll l&ouml;schen',
+				'correct' => 'Protokoll korrigieren',
+				'ProtShow' => 'Protokoll anzeigen',
+				'ProtPDF' => 'Protokoll als PDF',
+				'date' => 'Details anzeigen'
+			),
+			'alt' => array(
+				'edit' => 'Protokoll bearbeiten',
+				'delete' => 'Protokoll l&ouml;schen',
+				'correct' => 'Protokoll korrigieren',
+				'ProtShow' => 'Protokoll anzeigen',
+				'ProtPDF' => 'Protokoll als PDF'
+			)
+		),
+		'details' => array(
+			'show' => array(
+				'title' => 'Protokoll anzeigen',
+				'name' => 'Protokoll'
+			),
+			'decisions' => array(
+				'title' => 'Alle Beschl&uuml;sse dieses Protokolls anzeigen',
+				'name' => 'Beschl&uuml;sse'
+			),
+			'topdf' => array(
+				'title' => 'Protokoll als PDF anzeigen',
+				'name' => 'PDF'
+			)
+		),
+		'entry' => array(
+			'form' => array(
+				'requiredNote' => '<span class="required">*</span> erforderliches Feld',
+				'preset' => 'Vorlage',
+				'date' => 'Datum',
+				'submitButton' => 'Speichern',
+				'location' => 'Ort',
+				'member' => 'Teilnehmer (einer pro Zeile)',
+				'type' => 'Art der Sitzung',
+				'rights' => 'Rechte',
+				'protocol' => 'Inhalt/Protokolltext',
+				'recorder' => 'Protokollant',
+				'public' => '&Ouml;ffentlicher Zugriff',
+				'correction' => 'Korrekturfreigabe'
+			),
+			'rule' => array(
+				'required.date' => 'Datum muss ausgew&auml;hlt werden!',
+				'check.date' => 'Korrektes Datum muss ausgew&auml;hlt werden!',
+				'required.location' => 'Ort muss eingetragen werden!',
+				'required.type' => 'Art der Sitzung muss ausgew&auml;hlt werden!',
+				'required.preset' => 'Vorlage muss ausgew&auml;hlt werden!',
+				'check.select' => 'Feld muss ausgew&auml;ht werden!',
+				'regexp.allowedChars' => 'Es k&ouml;nnen nur folgende Zeichen eingegeben werden!',
+				'required.member' => 'Mindestens ein Teilnehmer muss angegeben werden!',
+				'required.recorder' => 'Protokollant muss eingetragen werden!'
+			)
+		),
+		'new_entry' => array(
+			'tmce' => array(
+				'item' => 'TOP',
+				'decision' => 'Beschluss'
+			)
+		),
+		'delete' => array(
+			'form' => array(
+				'yes' => 'Ja'
+			),
+			'cancel' => array(
+				'title' => 'Bricht den L&ouml;schvorgang ab',
+				'form' => 'abbrechen'
+			),
+			'message' => array(
+				'confirm' => 'Wollen Sie diesen Eintrag wirklich l&ouml;schen?',
+				'done' => 'Der Eintrag wurde erfolgreich gel&ouml;scht.'
+			)
+		)
+	),
+	'class.Protocol' => array(
+		'details' => array(
+			'data' => array(
+				'date' => '<span>Datum:</span><br />',
+				'type' => '<span>Art:</span><br />',
+				'location' => '<span>Ort:</span><br />',
+				'member' => '<span>Teilnehmer:</span><br />',
+				'decisions' => '<span>Beschreibung:</span><br />',
+				'owner' => '<span>Besitzer:</span><br />',
+				'recorder' => '<span>Protokollant:</span><br />'
 			)
 		)
 	)

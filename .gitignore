@@ -2,6 +2,9 @@
 /test.*
 /img/Momentum_MatteEntireSet1.zip
 /templates/announcements/*/*
+/templates/protocols/*
+!/templates/protocols/index.php
+!/templates/protocols/tcme_default.css
 /.project
 /templates/test.*
 *.z

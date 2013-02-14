@@ -119,6 +119,14 @@ td.date {
 	text-align: center;
 }
 
+th.type {
+	width: 200px;
+}
+
+th.location {
+	width: 300px;
+}
+
 div#sortlinks {
 	max-height: 120px;
 	overflow: scroll;
@@ -172,6 +180,22 @@ div.announcement-page-line {
 	height: 297mm;
 }
 
+div.protocol-page {
+	position: relative;
+	left: 20mm;
+	top: 10mm;
+	width: 180mm;
+	height: 277mm;
+}
+
+div.protocol-page-line {
+	position: relative;
+	left: 25mm;
+	border: solid 1px black;
+	width: 210mm;
+	height: 297mm;
+}
+
 p.usertable {
 	border-bottom: 1px solid white;
 	background-color: #0000ff;
@@ -215,6 +239,23 @@ a.usersettings {
 	text-decoration: none;
 	color: white;
 	padding: 3px;
+}
+
+div.protcolDetailLinks {
+	width: 85%;
+	border: 1px solid #00f;
+	padding: 5px;
+	background-color: #e1e1e1;
+	margin: 0 0 40px 0;
+}
+
+div.protcolDetailLinks a {
+	padding: 0 5px 0 7px;
+}
+
+div.element textarea#protocol-0 {
+	width: 85%;
+	height: 400px;
 }
 
 /* navi */
@@ -329,6 +370,10 @@ input#yes-0 {
  * fonts
  */
 div.calendar-details p.details span{
+	font-weight: bold;
+}
+
+div.protocol-details p.details span{
 	font-weight: bold;
 }
 
