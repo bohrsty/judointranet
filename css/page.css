@@ -150,6 +150,24 @@ td.admin div.admin-links {
 	float: left;
 }
 
+table#protocol_showdecisions {
+	width: 90%;
+	border: 1px solid black;
+	margin: 10px 0;
+}
+
+table#protocol_showdecisions td {
+	text-align: left;
+}
+
+table#protocol_showdecisions td.date {
+	width: 200px;
+}
+
+table#protocol_showdecisions td.type {
+	width: 300px;
+}
+
 form#inventory_give textarea {
 	width: 350px;
 	height: 150px;

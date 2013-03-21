@@ -66,6 +66,12 @@ class ProtocolView extends PageView {
 								'name' => 'class.ProtocolView#connectnavi#secondlevel#new',
 								'id' => md5('ProtocolView|new'), // a2c6bee54b75fe9498fb32c75950cf61
 								'show' => true
+							),
+							2 => array(
+								'getid' => 'showdecisions', 
+								'name' => 'class.ProtocolView#connectnavi#secondlevel#showdecisions',
+								'id' => md5('ProtocolView|showdecisions'), // 7a3a2cfd86522105318cefe3928ecde8
+								'show' => true
 							)
 						)
 					);
@@ -197,6 +203,16 @@ class ProtocolView extends PageView {
 //						$this->tpl->assign('hierselect', false);
 //						$this->tpl->assign('tinymce', false);
 //					break;
+					
+					case 'showdecisions':
+						
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.ProtocolView#init#title#decisions')));
+						$this->tpl->assign('main', $this->decisions($this->get('pid')));
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', false);
+						$this->tpl->assign('tinymce', false);
+					break;
 					
 					default:
 						
@@ -359,19 +375,9 @@ class ProtocolView extends PageView {
 					);
 					
 				// add admin
-				// get intersection of user-groups and rights
-				$intersect = array_intersect(array_keys($_SESSION['user']->return_all_groups()),$entry->get_rights()->get_rights());
-				$admin = false;
-				// check if $intersect has values other than 0
-				foreach($intersect as $num => $igroup) {
-					if($igroup != 0) {
-						$admin = true;
-						break;
-					}
-				}
 				
-				// if $admin is true add admin-links
-				if($admin === true) {
+				// if user is loggedin add admin-links
+				if($_SESSION['user']->get_loggedin() === true) {
 					
 					// edit and delete only for author
 					if($_SESSION['user']->get_userinfo('name') == $entry->get_owner()) {
@@ -382,16 +388,14 @@ class ProtocolView extends PageView {
 								'href' => 'protocol.php?id=edit&pid='.$entry->get_id(),
 								'title' => parent::lang('class.ProtocolView#listall#title#edit'),
 								'src' => 'img/prot_edit.png',
-								'alt' => parent::lang('class.ProtocolView#listall#alt#edit'),
-								'admin' => $admin
+								'alt' => parent::lang('class.ProtocolView#listall#alt#edit')
 							);
 						// delete
 						$sList[$counter]['admin'][] = array(
 								'href' => 'protocol.php?id=delete&pid='.$entry->get_id(),
 								'title' => parent::lang('class.ProtocolView#listall#title#delete'),
 								'src' => 'img/prot_delete.png',
-								'alt' => parent::lang('class.ProtocolView#listall#alt#delete'),
-								'admin' => $admin
+								'alt' => parent::lang('class.ProtocolView#listall#alt#delete')
 							);
 					}
 					
@@ -403,8 +407,7 @@ class ProtocolView extends PageView {
 								'href' => 'protocol.php?id=correct&pid='.$entry->get_id(),
 								'title' => parent::lang('class.ProtocolView#listall#title#correct'),
 								'src' => 'img/prot_correct.png',
-								'alt' => parent::lang('class.ProtocolView#listall#alt#correct'),
-								'admin' => $admin
+								'alt' => parent::lang('class.ProtocolView#listall#alt#correct')
 							);
 					}
 					
@@ -415,8 +418,7 @@ class ProtocolView extends PageView {
 							'href' => '',
 							'title' => '',
 							'src' => '',
-							'alt' => '',
-							'admin' => $admin
+							'alt' => ''
 						);
 				}
 				
@@ -784,7 +786,6 @@ class ProtocolView extends PageView {
 									)
 								);
 			
-			$now = date('Y-m-d');
 			$datasource = array(
 					'date' => $protocol->get_date('Y-m-d'),
 					'type' => $protocol->get_type('i'),
@@ -836,7 +837,7 @@ class ProtocolView extends PageView {
 			// smarty
 			$sD->assign('elementid', 'date-0');
 			$sD->assign('dateFormat', 'yy-mm-dd');
-			$sD->assign('dateValue', $now);
+			$sD->assign('dateValue', $protocol->get_date('y-m-d'));
 			$this->add_jquery($sD->fetch('smarty.js-datepicker.tpl'));
 			
 			// type
@@ -1023,12 +1024,21 @@ class ProtocolView extends PageView {
 				}
 			}
 			
+			// decision link
+			$decisionLink = array(
+									"href" => "protocol.php?id=showdecisions&pid=$pid",
+									"title" => parent::lang('class.ProtocolView#show#decisionLink#title'),
+									"text" => parent::lang('class.ProtocolView#show#decisionLink#text'),
+									"number" => $protocol->hasDecisions() 
+								);
+			
 			// smarty
 			$sP->assign('p', $infos);
 			$div_out = $sP->fetch('templates/protocols/'.$protocol->get_preset()->get_path().'.tpl');
 			
 			// smarty
 			$sPd = new JudoIntranetSmarty();
+			$sPd->assign('decisionlink', $decisionLink);
 			$sPd->assign('page', $div_out);
 			return $sPd->fetch('smarty.protocol.show.tpl');
 		} else {
@@ -1225,6 +1235,121 @@ class ProtocolView extends PageView {
 			$GLOBALS['Error']->handle_error($errno);
 			return $GLOBALS['Error']->to_html($errno);
 		}
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * decissions shows the decissions of this or all protocols
+	 * 
+	 * @param int $pid entry-id for protocol
+	 * @return string html of the decissions page
+	 */
+	private function decisions($pid) {
+	
+		// pagecaption
+		$this->tpl->assign('pagecaption',parent::lang('class.ProtocolView#page#caption#decisions'));
+		
+		// check rights
+		if(Rights::check_rights($pid,'protocol',true) || $pid == false) {
+			
+			// prepare template
+			$sD = new JudoIntranetSmarty();
+			
+			// check pid all or single
+			if($pid === false) {
+				
+				// get protocol ids
+				$pids = Protocol::return_protocols();
+				
+				// create protocol objects to sort
+				$protocols = array();
+				foreach($pids as $pid) {
+					$protocols[] = new Protocol($pid);
+				}
+				
+				// sort array by protocols date
+				usort($protocols,array($this,'callback_compare_protocols'));
+				
+				// walk through ids
+				$counter = 0;
+				foreach($protocols as $protocol) {
+					
+					// assign data
+					$data[$counter] = array(	'date' => $protocol->get_date('d.m.Y'),
+												'type' => $protocol->get_type(),
+												'location' => $protocol->get_location(),
+												'decisions' => $this->parseHtml($protocol->get_protocol(),'<p class="tmceDecision">|</p>'));
+					
+					// check if protocol has decisions
+					if(count($data[$counter]['decisions']) == 0) {
+						unset($data[$counter]);
+					}
+					$data = array_merge($data);
+					
+					// add to template
+					$sD->assign('data',$data);
+					
+					// increment counter
+					$counter++;
+				}
+			} else {
+				
+				// get protocol object
+				$protocol = new Protocol($pid);
+								
+				// assign data
+				$data[] = array(	'date' => $protocol->get_date('d.m.Y'),
+									'type' => $protocol->get_type(),
+									'location' => $protocol->get_location(),
+									'decisions' => $this->parseHtml($protocol->get_protocol(),'<p class="tmceDecision">|</p>'));
+				
+				// add to template
+				$sD->assign('data',$data);
+			}
+			
+				// return
+				return $sD->fetch('smarty.protocol.showdecisions.tpl');
+		} else {
+			
+			// error
+			$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+			$GLOBALS['Error']->handle_error($errno);
+			return $GLOBALS['Error']->to_html($errno);
+		}
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * parseHtml parses $text and returns an array containing the text between $tag
+	 * 
+	 * @param string $text the HTML text to be parsed
+	 * @param string $tag the complete HTML tag (open and close, devided by |)
+	 * @return array array containing the text between the given HTML tags
+	 */
+	private function parseHtml($text,$tag) {
+	
+		// split tag
+		list($open,$close) = explode("|",$tag);
+		
+		// match text
+		$matches = array();
+		$preg = "|$open(.*)$close|U";
+		$result = preg_match_all($preg,$text,$matches);
+		
+		// return
+		return $matches[1];
 	}
 }
 

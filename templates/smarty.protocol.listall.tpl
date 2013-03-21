@@ -35,8 +35,6 @@
 		</td>
 {if $loggedin}
 		<td class="admin">
-{if $list.$i.admin.0.admin}
-			<div class="admin-links">
 {if isset($list.$i.admin.0)}
 				<a href="{$list.$i.admin.0.href|escape}" title="{$list.$i.admin.0.title}"><img src="{$list.$i.admin.0.src}" alt="{$list.$i.admin.0.alt}" class="icon" title="{$list.$i.admin.0.alt}" /></a>
 {/if}
@@ -45,8 +43,6 @@
 {/if}
 {if isset($list.$i.admin.2)}
 				<a href="{$list.$i.admin.2.href|escape}" title="{$list.$i.admin.2.title}"><img src="{$list.$i.admin.2.src}" alt="{$list.$i.admin.2.alt}" class="icon" title="{$list.$i.admin.2.alt}" /></a>
-{/if}
-			</div>
 {/if}
 		</td>
 {/if}

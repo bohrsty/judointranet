@@ -837,7 +837,8 @@ $lang = array(
 				'topdf' => 'PDF anzeigen',
 				'correct' => 'Protokoll korrigieren',
 				'new_entry' => 'Neues Protokoll',
-				'edit' => 'Protokoll bearbeiten'
+				'edit' => 'Protokoll bearbeiten',
+				'decisions' => 'Beschl&uuml;sse anzeigen'
 			),
 			'init' => array(
 				'name' => 'Protokolle'
@@ -853,7 +854,8 @@ $lang = array(
 				'delete' => 'Protokolle: Protokoll l&ouml;schen',
 				'show' => 'Protokolle: Protokoll anzeigen',
 				'topdf' => 'Protokolle: Protokoll als PDF',
-				'correct' => 'Protokolle: Protokoll korrigieren'
+				'correct' => 'Protokolle: Protokoll korrigieren',
+				'decisions' => 'Protokolle: Beschl&uuml;sse anzeigen'
 			),
 			'Error' => array(
 				'NotAuthorized' => 'FEHLER - Nicht berechtigt'
@@ -865,7 +867,8 @@ $lang = array(
 			),
 			'secondlevel' => array(
 				'listall' => 'Listenansicht',
-				'new' => 'Neues Protokoll erstellen'
+				'new' => 'Neues Protokoll erstellen',
+				'showdecisions' => 'Alle Beschl&uuml;sse anzeigen'
 			)
 		),
 		'defaultContent' => array(
@@ -955,6 +958,12 @@ $lang = array(
 			'message' => array(
 				'confirm' => 'Wollen Sie diesen Eintrag wirklich l&ouml;schen?',
 				'done' => 'Der Eintrag wurde erfolgreich gel&ouml;scht.'
+			)
+		),
+		'show' => array(
+			'decisionLink' => array(
+				'title' => 'Zusammenfassung der Beschl&uuml;sse dieses Protokolls anzeigen',
+				'text' => 'Zeige Beschl&uuml;sse dieses Protokolls'
 			)
 		)
 	),

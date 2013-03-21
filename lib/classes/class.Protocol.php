@@ -526,6 +526,25 @@ class Protocol extends Page {
 			}
 		}
 	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * hasDecisions counts the number of decisions in protocol text and returns it
+	 * 
+	 * @return int number of decisions in protocol text
+	 */
+	public function hasDecisions() {
+		
+		// match HTML tag
+		$number = preg_match('|<p class="tmceDecision">(.*)</p>|U',$this->get_protocol());
+		
+		// return
+		return $number;
+	}
 }
 
 
