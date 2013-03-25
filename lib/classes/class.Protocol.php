@@ -20,7 +20,6 @@ class Protocol extends Page {
 	private $preset;
 	private $valid;
 	private $member;
-	private $decisions;
 	private $owner;
 	private $correctable;
 	private $recorder;
@@ -85,12 +84,19 @@ class Protocol extends Page {
 	public function set_valid($valid) {
 		$this->valid = $valid;
 	}
-	public function get_member($sep=''){
+	public function get_member($str=false,$sep=''){
 		
-		// check separator
-		if($sep == '') {
-			return $this->member;
+		// check $str
+		if($str === false) {
+			
+			// check $sep
+			if($sep === '') {
+				return $this->member;
+			} else {
+				return $this->member[$sep];
+			}
 		} else {
+			
 			return implode($sep,$this->member);
 		}
 	}
@@ -100,32 +106,8 @@ class Protocol extends Page {
 		if(is_array($member)) {
 			$this->member = $member;
 		} else {
-			
-			// check \r\n, \n\r or \n
-			if(strpos($member,"\n\r") !== false) {
-				$this->member = explode("\n\r",$member);
-			} elseif(strpos($member,"\r\n") !== false) {
-				$this->member = explode("\r\n",$member);
-			} elseif(strpos($member,"\n") !== false) {
-				$this->member = explode("\n",$member);
-			} elseif(strpos($member,"|") !== false) {
-				$this->member = explode("|",$member);
-			} else {
-				$this->member = array($member);
-			}
+			$this->member = explode("|",$member);
 		}
-	}
-	public function get_decisions($type='array'){
-		
-		// check type
-		if($type == 'array') {
-			return $this->decisions;
-		} else {
-			return implode("\n",$this->decisions);
-		}
-	}
-	public function set_decisions($decisions) {
-		$this->decisions = $decisions;
 	}
 	public function get_owner(){
 		return $this->owner;
@@ -163,7 +145,6 @@ class Protocol extends Page {
 			$this->set_location($arg['location']);
 			$this->set_member($arg['member']);
 			$this->set_protocol($arg['protocol']);
-			$this->set_decisions($this->readDecisions());
 			$this->set_preset(new Preset($arg['preset'],'protocol',0));
 			$this->set_valid($arg['valid']);
 			$this->set_owner($arg['owner']);
@@ -214,7 +195,6 @@ class Protocol extends Page {
 		$this->set_location($location);
 		$this->set_member($member);
 		$this->set_protocol($protocol);
-		$this->set_decisions($this->readDecisions());
 		$this->set_preset(new Preset($preset_id,strtolower(get_class($this)),$id));
 		$this->set_valid($valid);
 		$this->set_owner($owner);
@@ -250,26 +230,6 @@ class Protocol extends Page {
 	
 	
 	
-	
-	
-	/**
-	 * readDecisions extracts the decisions from protocol
-	 * 
-	 * @return array array containing the extracted decisions
-	 */
-	private function readDecisions() {
-		
-		// prepare
-		$return = array();
-		
-		
-		// return
-		return $return;
-	}
-	
-	
-	
-	
 	/**
 	 * details returns the protocol-entry-details as array
 	 * 
@@ -291,7 +251,9 @@ class Protocol extends Page {
 		$data = array(
 					'date' => parent::lang('class.Protocol#details#data#date').$this->get_date('d.m.Y'),
 					'location' => parent::lang('class.Protocol#details#data#location').$this->get_location(),
-					'member' => parent::lang('class.Protocol#details#data#member').$this->get_member(', '),
+					'member0' => parent::lang('class.Protocol#details#data#member0').$this->get_member(false,0),
+					'member1' => parent::lang('class.Protocol#details#data#member1').$this->get_member(false,1),
+					'member2' => parent::lang('class.Protocol#details#data#member2').$this->get_member(false,2),
 					'recorder' => parent::lang('class.Protocol#details#data#recorder').$this->get_recorder()
 		);
 		if(is_numeric($this->get_type())) {
@@ -383,7 +345,7 @@ class Protocol extends Page {
 						.$db->real_escape_string($this->get_protocol())."',"
 						.$db->real_escape_string($this->get_preset()->get_id()).","
 						.$db->real_escape_string($this->get_valid()).",'"
-						.$db->real_escape_string($this->get_member("|"))."',"
+						.$db->real_escape_string($this->get_member(true,"|"))."',"
 						.$db->real_escape_string($this->get_owner()).","
 						.$db->real_escape_string($this->get_correctable()).",'"
 						.$db->real_escape_string($this->get_recorder())."')";
@@ -415,7 +377,7 @@ class Protocol extends Page {
 						protocol='".$db->real_escape_string($this->get_protocol())."',
 						preset_id=".$db->real_escape_string($this->get_preset()->get_id()).",
 						valid=".$db->real_escape_string($this->get_valid()).",
-						member='".$db->real_escape_string($this->get_member("|"))."',
+						member='".$db->real_escape_string($this->get_member(true,"|"))."',
 						correctable=".$db->real_escape_string($this->get_correctable()).",
 						recorder='".$db->real_escape_string($this->get_recorder())."'
 					WHERE id = ".$db->real_escape_string($this->get_id());
@@ -463,10 +425,11 @@ class Protocol extends Page {
 			$infos['location'] = nl2br(htmlentities($this->get_location(),ENT_QUOTES,'UTF-8'));
 			$infos['date_d_m_Y'] = nl2br(htmlentities($this->get_date('d.m.Y'),ENT_QUOTES,'UTF-8'));
 			$infos['date_dmY'] = nl2br(htmlentities($this->get_date('dmY'),ENT_QUOTES,'UTF-8'));
-			$infos['date_j_F_Y'] = nl2br(htmlentities(strftime('%e. %B %Y',$this->get_date('U')),ENT_QUOTES,'UTF-8'));
-			$infos['member'] = nl2br(htmlentities($this->get_member(', '),ENT_QUOTES,'UTF-8'));
+			$infos['date_j_F_Y'] = nl2br(htmlentities(utf8_encode(strftime('%e. %B %Y',$this->get_date('U'))),ENT_QUOTES,'UTF-8'));
+			$infos['member0'] = nl2br(htmlentities($this->get_member(false,0),ENT_QUOTES,'UTF-8'));
+			$infos['member1'] = nl2br(htmlentities($this->get_member(false,1),ENT_QUOTES,'UTF-8'));
+			$infos['member2'] = nl2br(htmlentities($this->get_member(false,2),ENT_QUOTES,'UTF-8'));
 			$infos['protocol'] = nl2br(htmlentities($this->get_protocol(),ENT_QUOTES,'UTF-8'));
-			$infos['decisions'] = nl2br(htmlentities($this->get_decisions('string'),ENT_QUOTES,'UTF-8'));
 			$infos['recorder'] = nl2br(htmlentities($this->get_recorder(),ENT_QUOTES,'UTF-8'));
 		} else {
 			$infos['date'] = $this->get_date();
@@ -474,10 +437,11 @@ class Protocol extends Page {
 			$infos['location'] = $this->get_location();
 			$infos['date_d_m_Y'] = $this->get_date('d.m.Y');
 			$infos['date_dmY'] = $this->get_date('dmY');
-			$infos['date_j_F_Y'] = strftime('%e. %B %Y',$this->get_date('U'));
-			$infos['member'] = $this->get_member(', ');
+			$infos['date_j_F_Y'] = utf8_encode(strftime('%e. %B %Y',$this->get_date('U')));
+			$infos['member0'] = $this->get_member(false,0);
+			$infos['member1'] = $this->get_member(false,1);
+			$infos['member2'] = $this->get_member(false,2);
 			$infos['protocol'] = $this->get_protocol();
-			$infos['decisions'] = $this->get_decisions('string');
 			$infos['recorder'] = $this->get_recorder();
 		}
 	}
@@ -513,8 +477,6 @@ class Protocol extends Page {
 				$this->get_rights()->update($this->get_id(),$value);
 			} elseif($name == 'member') {
 				$this->set_member($value);
-			} elseif($name == 'decisions') {
-				$this->set_decisions($value);
 			} elseif($name == 'owner') {
 				$this->set_owner($value);
 			} elseif($name == 'correctable') {

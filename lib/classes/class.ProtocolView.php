@@ -576,14 +576,29 @@ class ProtocolView extends PageView {
 					parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('name.desc').']',
 					$_SESSION['GC']->get_config('name.regexp'));
 		
-		// member
-		$member = $form->addElement('textarea','member');
-		$member->setLabel(parent::lang('class.ProtocolView#entry#form#member').':');
-		$member->addRule('required',parent::lang('class.ProtocolView#entry#rule#required.member'));
+		// member0
+		$member = $form->addElement('text','member0');
+		$member->setLabel(parent::lang('class.ProtocolView#entry#form#member0').':');
 		$member->addRule(
 						'regex',
-						parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('textarea.desc').']',
-						$_SESSION['GC']->get_config('textarea.regexp'));
+						parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('text.desc').']',
+						$_SESSION['GC']->get_config('text.regexp'));
+		
+		// member1
+		$member = $form->addElement('text','member1');
+		$member->setLabel(parent::lang('class.ProtocolView#entry#form#member1').':');
+		$member->addRule(
+						'regex',
+						parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('text.desc').']',
+						$_SESSION['GC']->get_config('text.regexp'));
+		
+		// member2
+		$member = $form->addElement('text','member2');
+		$member->setLabel(parent::lang('class.ProtocolView#entry#form#member2').':');
+		$member->addRule(
+						'regex',
+						parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('text.desc').']',
+						$_SESSION['GC']->get_config('text.regexp'));
 		
 		// recorder
 		$recorder = $form->addElement('text','recorder');
@@ -657,7 +672,7 @@ class ProtocolView extends PageView {
 								'date' => $data['date'],
 								'type' => $data['type'],
 								'location' => $data['location'],
-								'member' => $data['member'],
+								'member' => $data['member0'].'|'.$data['member1'].'|'.$data['member2'],
 								'protocol' => $data['protocol'],
 								'preset' => $data['preset'],
 								'owner' => $_SESSION['user']->get_id(),
@@ -718,7 +733,7 @@ class ProtocolView extends PageView {
 				);
 			// decisions
 			$links[] = array(
-					'href' => 'protocol.php?id=decisions&pid='.$protocol->get_id(),
+					'href' => 'protocol.php?id=showdecisions&pid='.$protocol->get_id(),
 					'title' => parent::lang('class.ProtocolView#details#decisions#title'),
 					'name' => parent::lang('class.ProtocolView#details#decisions#name')
 				);
@@ -790,7 +805,9 @@ class ProtocolView extends PageView {
 					'date' => $protocol->get_date('Y-m-d'),
 					'type' => $protocol->get_type('i'),
 					'location' => $protocol->get_location(),
-					'member' => $protocol->get_member("\n"),
+					'member0' => $protocol->get_member(false,0),
+					'member1' => $protocol->get_member(false,1),
+					'member2' => $protocol->get_member(false,2),
 					'protocol' => $protocol->get_protocol(),
 					'preset' => $protocol->get_preset()->get_id(),
 					'recorder' => $protocol->get_recorder(),
@@ -857,14 +874,29 @@ class ProtocolView extends PageView {
 						parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('name.desc').']',
 						$_SESSION['GC']->get_config('name.regexp'));
 			
-			// member
-			$member = $form->addElement('textarea','member');
-			$member->setLabel(parent::lang('class.ProtocolView#entry#form#member').':');
-			$member->addRule('required',parent::lang('class.ProtocolView#entry#rule#required.member'));
+			// member0
+			$member = $form->addElement('text','member0');
+			$member->setLabel(parent::lang('class.ProtocolView#entry#form#member0').':');
 			$member->addRule(
 							'regex',
-							parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('textarea.desc').']',
-							$_SESSION['GC']->get_config('textarea.regexp'));
+							parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('text.desc').']',
+							$_SESSION['GC']->get_config('text.regexp'));
+			
+			// member1
+			$member = $form->addElement('text','member1');
+			$member->setLabel(parent::lang('class.ProtocolView#entry#form#member1').':');
+			$member->addRule(
+							'regex',
+							parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('text.desc').']',
+							$_SESSION['GC']->get_config('text.regexp'));
+			
+			// member2
+			$member = $form->addElement('text','member2');
+			$member->setLabel(parent::lang('class.ProtocolView#entry#form#member2').':');
+			$member->addRule(
+							'regex',
+							parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('text.desc').']',
+							$_SESSION['GC']->get_config('text.regexp'));
 			
 			// recorder
 			$recorder = $form->addElement('text','recorder');
@@ -942,7 +974,7 @@ class ProtocolView extends PageView {
 									'date' => $data['date'],
 									'type' => $data['type'],
 									'location' => $data['location'],
-									'member' => $data['member'],
+									'member' => $data['member0'].'|'.$data['member1'].'|'.$data['member2'],
 									'protocol' => $data['protocol'],
 									'preset' => new Preset($data['preset'],'protocol',$protocol->get_id()),
 									'recorder' => $data['recorder'],
