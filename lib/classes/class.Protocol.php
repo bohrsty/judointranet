@@ -115,11 +115,43 @@ class Protocol extends Page {
 	public function set_owner($owner) {
 		$this->owner = $owner;
 	}
-	public function get_correctable(){
-		return $this->correctable;
+	public function get_correctable($string=true){
+		
+		// check string
+		if($string === true) {
+			
+			// put corrector together
+			$correctors = implode(",",$this->correctable['correctors']);
+			// put status and return
+			return $this->correctable['status']."|".$correctors;
+		} else {
+			return $this->correctable;
+		}
 	}
 	public function set_correctable($correctable) {
-		$this->correctable = $correctable;
+		
+		// check $correctable
+		if(is_array($correctable)) {
+			$this->correctable = $correctable;
+		} else {
+			
+			$array = array();
+			// split value
+			// status
+			$status = explode("|",$correctable);
+			$array['status'] = $status[0];
+			// correctors
+			if(isset($status[1])) {
+				
+				$correctors = explode(",",$status[1]);
+				$array['correctors'] = $correctors;
+			} else {
+				$array['correctors'] = array();
+			}
+			
+			// set
+			$this->correctable = $array;
+		}
 	}
 	public function get_recorder(){
 		return $this->recorder;
@@ -248,7 +280,9 @@ class Protocol extends Page {
 //		$rights_string = substr($rights_string,0,-2);
 		
 		// prepare data
+		$correctable = $this->get_correctable(false);
 		$data = array(
+					'status' => parent::lang('class.Protocol#details#data#status').parent::lang('class.Protocol#details#data#status'.$correctable['status']),
 					'date' => parent::lang('class.Protocol#details#data#date').$this->get_date('d.m.Y'),
 					'location' => parent::lang('class.Protocol#details#data#location').$this->get_location(),
 					'member0' => parent::lang('class.Protocol#details#data#member0').$this->get_member(false,0),
@@ -346,8 +380,8 @@ class Protocol extends Page {
 						.$db->real_escape_string($this->get_preset()->get_id()).","
 						.$db->real_escape_string($this->get_valid()).",'"
 						.$db->real_escape_string($this->get_member(true,"|"))."',"
-						.$db->real_escape_string($this->get_owner()).","
-						.$db->real_escape_string($this->get_correctable()).",'"
+						.$db->real_escape_string($this->get_owner()).",'"
+						.$db->real_escape_string($this->get_correctable())."','"
 						.$db->real_escape_string($this->get_recorder())."')";
 			
 			// execute;
@@ -378,7 +412,7 @@ class Protocol extends Page {
 						preset_id=".$db->real_escape_string($this->get_preset()->get_id()).",
 						valid=".$db->real_escape_string($this->get_valid()).",
 						member='".$db->real_escape_string($this->get_member(true,"|"))."',
-						correctable=".$db->real_escape_string($this->get_correctable()).",
+						correctable='".$db->real_escape_string($this->get_correctable())."',
 						recorder='".$db->real_escape_string($this->get_recorder())."'
 					WHERE id = ".$db->real_escape_string($this->get_id());
 			
@@ -394,7 +428,7 @@ class Protocol extends Page {
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('DbActionUnknown','write_calendar',$action);
+			$errno = $GLOBALS['Error']->error_raised('DbActionUnknown','write_protocol',$action);
 			throw new Exception('DbActionUnknown',$errno);
 		}
 		
@@ -506,6 +540,29 @@ class Protocol extends Page {
 		
 		// return
 		return $number;
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * hasCorrections returns if there are corrections for this protocol
+	 * 
+	 * @return bool true if there are corrections, false otherwise
+	 */
+	public function hasCorrections() {
+		
+		// get corrections list
+		$corrections = ProtocolCorrection::listCorrections($this->get_id());
+		
+		// check list
+		if(count($corrections) > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
 

@@ -189,20 +189,18 @@ class ProtocolView extends PageView {
 						$this->tpl->assign('main', $this->delete($this->get('pid')));
 						$this->tpl->assign('jquery', true);
 						$this->tpl->assign('hierselect', false);
-						$this->tpl->assign('tinymce', false);
+						$this->tpl->assign('tinymce', true);
 					break;
 					
-// TODO
-// DISABLED UNTIL IMPLEMENTATION OF correct()
-//					case 'correct':
-//						
-//						// smarty
-//						$this->tpl->assign('title', $this->title(parent::lang('class.ProtocolView#init#title#correct')));
-//						$this->tpl->assign('main', $this->correct($this->get('pid')));
-//						$this->tpl->assign('jquery', true);
-//						$this->tpl->assign('hierselect', false);
-//						$this->tpl->assign('tinymce', false);
-//					break;
+					case 'correct':
+						
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.ProtocolView#init#title#correct')));
+						$this->tpl->assign('main', $this->correct($this->get('pid')));
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('hierselect', false);
+						$this->tpl->assign('tinymce', true);
+					break;
 					
 					case 'showdecisions':
 						
@@ -346,6 +344,9 @@ class ProtocolView extends PageView {
 			// check if valid
 			if($entry->get_valid() == 1) {
 				
+				// get status
+				$correctable = $entry->get_correctable(false);
+				
 				// smarty
 				$sList[$counter] = array(
 						'date' => array(
@@ -358,21 +359,40 @@ class ProtocolView extends PageView {
 						
 					);
 				
-				// show
-				$sList[$counter]['show'][] = array(
-						'href' => 'protocol.php?id=show&pid='.$entry->get_id(),
-						'title' => parent::lang('class.ProtocolView#listall#title#ProtShow'),
-						'src' => 'img/prot_details.png',
-						'alt' => parent::lang('class.ProtocolView#listall#alt#ProtShow'),
-						'show' => true
-					);
-				$sList[$counter]['show'][] = array(
-						'href' => 'protocol.php?id=topdf&pid='.$entry->get_id(),
-						'title' => parent::lang('class.ProtocolView#listall#title#ProtPDF'),
-						'src' => 'img/prot_pdf.png',
-						'alt' => parent::lang('class.ProtocolView#listall#alt#ProtPDF'),
-						'show' => true
-					);
+				// check status
+				if($correctable['status'] == 2 || $_SESSION['user']->get_userinfo('name') == $entry->get_owner()) {
+					// show
+					$sList[$counter]['show'][] = array(
+							'href' => 'protocol.php?id=show&pid='.$entry->get_id(),
+							'title' => parent::lang('class.ProtocolView#listall#title#ProtShow'),
+							'src' => 'img/prot_details.png',
+							'alt' => parent::lang('class.ProtocolView#listall#alt#ProtShow'),
+							'show' => true
+						);
+					$sList[$counter]['show'][] = array(
+							'href' => 'protocol.php?id=topdf&pid='.$entry->get_id(),
+							'title' => parent::lang('class.ProtocolView#listall#title#ProtPDF'),
+							'src' => 'img/prot_pdf.png',
+							'alt' => parent::lang('class.ProtocolView#listall#alt#ProtPDF'),
+							'show' => true
+						);
+				} else {
+					
+					$sList[$counter]['show'][] = array(
+							'href' => '',
+							'title' => '',
+							'src' => '',
+							'alt' => '',
+							'show' => false
+						);
+					$sList[$counter]['show'][] = array(
+							'href' => '',
+							'title' => '',
+							'src' => '',
+							'alt' => '',
+							'show' => false
+						);
+				}
 					
 				// add admin
 				
@@ -400,7 +420,7 @@ class ProtocolView extends PageView {
 					}
 					
 					// correction
-					if($entry->get_correctable() == 1 && $_SESSION['user']->get_userinfo('name') != $entry->get_owner()) {
+					if($correctable['status'] == 1 && in_array($_SESSION['user']->get_id(),$correctable['correctors']) && $_SESSION['user']->get_userinfo('name') != $entry->get_owner()) {
 						
 						// delete
 						$sList[$counter]['admin'][] = array(
@@ -408,6 +428,18 @@ class ProtocolView extends PageView {
 								'title' => parent::lang('class.ProtocolView#listall#title#correct'),
 								'src' => 'img/prot_correct.png',
 								'alt' => parent::lang('class.ProtocolView#listall#alt#correct')
+							);
+					}
+					
+					// corrected
+					if($correctable['status'] == 1 && $_SESSION['user']->get_userinfo('name') == $entry->get_owner() && $entry->hasCorrections()) {
+						
+						// delete
+						$sList[$counter]['admin'][] = array(
+								'href' => 'protocol.php?id=correct&pid='.$entry->get_id().'&action=diff',
+								'title' => parent::lang('class.ProtocolView#listall#title#corrected'),
+								'src' => 'img/prot_corrected.png',
+								'alt' => parent::lang('class.ProtocolView#listall#alt#corrected')
 							);
 					}
 					
@@ -624,13 +656,7 @@ class ProtocolView extends PageView {
 				'transdecision' => parent::lang('class.ProtocolView#new_entry#tmce#decision')
 			);
 		// smarty
-		$this->tpl->assign('tmce',$tmce);		
-		
-		// select rights
-		$options = $_SESSION['user']->return_all_groups('sort');
-		$rights = $form->addElement('select','rights',array('multiple' => 'multiple','size' => 5));
-		$rights->setLabel(parent::lang('class.ProtocolView#entry#form#rights').':');
-		$rights->loadOptions($options);
+		$this->tpl->assign('tmce',$tmce);
 		
 		
 		// checkbox public
@@ -664,6 +690,7 @@ class ProtocolView extends PageView {
 				unset($data['rights'][$kPublicAccess]);
 			}
 			
+			$data['rights'] = array_unique($data['rights'],SORT_NUMERIC); 
 			$right_array = array(
 								'action' => 'new',
 								'new' => $data['rights']);
@@ -679,7 +706,7 @@ class ProtocolView extends PageView {
 								'recorder' => $data['recorder'],
 								'rights' => $right_array,
 								'valid' => 1,
-								'correctable' => 0
+								'correctable' => "0|"
 								)
 				);
 				
@@ -717,12 +744,19 @@ class ProtocolView extends PageView {
 				
 			// get protocol-object
 			$protocol = new Protocol($pid);
+			$correctable = $protocol->get_correctable(false);
+			// check status
+			$status = false;
+			if($correctable['status'] == 2 || $_SESSION['user']->get_userinfo('name') == $protocol->get_owner()) {
+				$status = true;
+			}
 			
 			// smarty-template
 			$sPD = new JudoIntranetSmarty();
 			
 			// smarty
 			$sPD->assign('data', $protocol->details());
+			$sPD->assign('status', $status);
 			
 			// prepare links
 			// show
@@ -800,7 +834,8 @@ class ProtocolView extends PageView {
 										'action' => 'protocol.php?id=edit&pid='.$pid
 									)
 								);
-			
+			// get correction status and correctors
+			$correctable = $protocol->get_correctable(false);
 			$datasource = array(
 					'date' => $protocol->get_date('Y-m-d'),
 					'type' => $protocol->get_type('i'),
@@ -811,7 +846,8 @@ class ProtocolView extends PageView {
 					'protocol' => $protocol->get_protocol(),
 					'preset' => $protocol->get_preset()->get_id(),
 					'recorder' => $protocol->get_recorder(),
-					'correctionGroup' => array('correction' => $protocol->get_correctable())
+					'correction' => $correctable['status'],
+					'correctors' => $correctable['correctors']
 				);
 			
 			// add public access
@@ -826,14 +862,26 @@ class ProtocolView extends PageView {
 			$renderer = HTML_QuickForm2_Renderer::factory('default');
 			$renderer->setOption('required_note',parent::lang('class.ProtocolView#entry#form#requiredNote'));
 			
-// TODO
-// DISABLED UNTIL IMPLEMENTATION OF correct()
-//			// elements
-//			// correction MOVE TO EDIT
-//			$correctionGroup = $form->addElement('group','correctionGroup');
-//			$correctionGroup->setLabel(parent::lang('class.ProtocolView#entry#form#correction').':');
-//			// checkbox
-//			$correction = $correctionGroup->addElement('checkbox','correction');
+			// elements
+			// correction
+			// radio
+			$radio0 = $form->addElement('radio','correction',array('value' => 0));
+			$radio0->setContent(parent::lang('class.ProtocolView#entry#form#correctionInWork'));
+			$radio0->setLabel(parent::lang('class.ProtocolView#entry#form#correction').':');
+			$radio1 = $form->addElement('radio','correction',array('value' => 1));
+			$radio1->setContent(parent::lang('class.ProtocolView#entry#form#correctionCorrect'));
+			$radio2 = $form->addElement('radio','correction',array('value' => 2));
+			$radio2->setContent(parent::lang('class.ProtocolView#entry#form#correctionFinished'));
+			// select correctors
+			// get all users and put id and name to options
+			$users = $_SESSION['user']->return_all_users(array($_SESSION['user']->get_userinfo('username')));
+			$options = array();
+			foreach($users as $user) {
+				$options[$user->get_userinfo('id')] = $user->get_userinfo('name');
+			}
+			$correctors = $form->addElement('select','correctors',array('multiple' => 'multiple','size' => 5));
+			$correctors->setLabel(parent::lang('class.ProtocolView#entry#form#correctors').':');
+			$correctors->loadOptions($options);
 			
 			// preset
 			$options = array(0 => '--')+Preset::read_all_presets('protocol');
@@ -922,13 +970,7 @@ class ProtocolView extends PageView {
 					'transdecision' => parent::lang('class.ProtocolView#new_entry#tmce#decision')
 				);
 			// smarty
-			$this->tpl->assign('tmce',$tmce);		
-			
-			// select rights
-			$options = $_SESSION['user']->return_all_groups('sort');
-			$rights = $form->addElement('select','rights',array('multiple' => 'multiple','size' => 5));
-			$rights->setLabel(parent::lang('class.ProtocolView#entry#form#rights').':');
-			$rights->loadOptions($options);
+			$this->tpl->assign('tmce',$tmce);
 			
 			
 			// checkbox public
@@ -949,8 +991,7 @@ class ProtocolView extends PageView {
 				$data['owner'] = $protocol->get_owner();
 					
 				// check $data['rights']
-				if(!isset($data['rights']))
-				{
+				if(!isset($data['rights'])) {
 					$data['rights'] = array();
 				}
 				
@@ -965,9 +1006,16 @@ class ProtocolView extends PageView {
 					unset($data['rights'][$kPublicAccess]);
 				}
 				
-				// check correctable
-				if(!isset($data['correctionGroup']['correction'])) {
-					$data['correctionGroup']['correction'] = 0;
+				if(!isset($data['correctors'])) {
+					$data['correctors'] = array();
+				}
+				// get user and put to update
+				$correctionString = $data['correction'].'|';
+				foreach($data['correctors'] as $userid) {
+					$correctionString .= $userid.',';
+				}
+				if(count($data['correctors'])>0) {
+					$correctionString = substr($correctionString,0,-1);
 				}
 				
 				$protocolUpdate = array(
@@ -978,8 +1026,8 @@ class ProtocolView extends PageView {
 									'protocol' => $data['protocol'],
 									'preset' => new Preset($data['preset'],'protocol',$protocol->get_id()),
 									'recorder' => $data['recorder'],
+									'correctable' => $correctionString,
 									'rights' => $data['rights'],
-									'correctable' => $data['correctionGroup']['correction'],
 									'owner' => $data['owner'],
 									'valid' => 1
 					);
@@ -1023,14 +1071,17 @@ class ProtocolView extends PageView {
 		// pagecaption
 		$this->tpl->assign('pagecaption',parent::lang('class.ProtocolView#page#caption#show'));
 		
+		// get protocol
+		$protocol = new Protocol($pid);
+		
+		// get status
+		$correctable = $protocol->get_correctable(false);
+			
 		// check rights
-		if(Rights::check_rights($pid,'protocol',true)) {
+		if(Rights::check_rights($pid,'protocol',true) && ($correctable['status'] == 2 || $_SESSION['user']->get_userinfo('name') == $protocol->get_owner())) {
 			
 			// smarty
 			$sP = new JudoIntranetSmarty();
-
-			// get protocol
-			$protocol = new Protocol($pid);
 			
 			// prepare marker-array
 			$infos = array(
@@ -1098,15 +1149,18 @@ class ProtocolView extends PageView {
 	
 		// pagecaption
 		$this->tpl->assign('pagecaption',parent::lang('class.ProtocolView#page#caption#topdf'));
+
+		// get protocol
+		$protocol = new Protocol($pid);
 		
+		// get status
+		$correctable = $protocol->get_correctable(false);
+			
 		// check rights
-		if(Rights::check_rights($pid,'protocol',true)) {
+		if(Rights::check_rights($pid,'protocol',true) && ($correctable['status'] == 2 || $_SESSION['user']->get_userinfo('name') == $protocol->get_owner())) {
 			
 			// smarty
 			$sP = new JudoIntranetSmarty();
-
-			// get protocol
-			$protocol = new Protocol($pid);
 			
 			// prepare marker-array
 			$infos = array(
@@ -1256,10 +1310,249 @@ class ProtocolView extends PageView {
 		// pagecaption
 		$this->tpl->assign('pagecaption',parent::lang('class.ProtocolView#page#caption#correct'));
 		
+		// get protocol object
+		$protocol = new Protocol($pid);
+		$correctable = $protocol->get_correctable(false);
+		
+		// js tiny_mce
+		$tmce = array(
+				'element' => 'protocol-0',
+				'css' => 'templates/protocols/tmce_'.$protocol->get_preset()->get_path().'.css',
+				'transitem' => parent::lang('class.ProtocolView#new_entry#tmce#item'),
+				'transdecision' => parent::lang('class.ProtocolView#new_entry#tmce#decision')
+			);
+		// smarty
+		$this->tpl->assign('tmce',$tmce);
+		
 		// check rights
-		if(Rights::check_rights($pid,'protocol',true)) {
-// TODO			
+		if(Rights::check_rights($pid,'protocol',true) && (in_array($_SESSION['user']->get_id(),$correctable['correctors']) || $_SESSION['user']->get_userinfo('name') == $protocol->get_owner())) {
 			
+			// check owner
+			if($_SESSION['user']->get_userinfo('name') == $protocol->get_owner()) {
+				
+				// smarty
+				$sPCo = new JudoIntranetSmarty();
+				
+				// check action
+				if($this->get('action') == 'diff' && $this->get('uid') !== false) {
+					
+					// diff correction of $uid
+					// get correction
+					$correction = new ProtocolCorrection($protocol,$this->get('uid'));
+					
+					// clean protocols for diff
+					$diffBase = html_entity_decode(preg_replace('/<.*>/U','',$protocol->get_protocol()));
+					$diffNew = html_entity_decode(preg_replace('/<.*>/U','',$correction->get_protocol()));
+					
+					// smarty
+					$sJsDL = new JudoIntranetSmarty();
+					
+					// activate difflib js-files
+					$this->tpl->assign('jsdifflib',true);
+					// set values for difflib
+					$difflib = array(
+							'protDiffBase' => 'protDiffBase-0',
+							'protDiffNew' => 'protDiffNew-0',
+							'protDiffOut' => 'diffOut',
+							'protDiffBaseCaption' => parent::lang('class.ProtocolView#correct#diff#baseCaption'),
+							'protDiffNewCaption' => parent::lang('class.ProtocolView#correct#diff#newCaption')
+						);
+					
+					// add difflib values to js-template
+					$sJsDL->assign('dl',$difflib);
+					$this->add_jquery($sJsDL->fetch('smarty.js-jsdifflib.tpl'));
+					
+					// add diffOut to template
+					$sPCo->assign('diffOut','diffOut');
+					
+					// build form
+					$form = new HTML_QuickForm2(
+											'diffCorrection',
+											'post',
+											array(
+												'name' => 'diffCorrection',
+												'action' => 'protocol.php?id=correct&pid='.$pid.'&action=diff&uid='.$this->get('uid')
+											)
+										);
+					
+					$datasource = array(
+							'protocol' => $protocol->get_protocol(),
+							'protDiffBase' => $diffBase,
+							'protDiffNew' => $diffNew
+						);
+					
+					// add datasource
+					$form->addDataSource(new HTML_QuickForm2_DataSource_Array($datasource));
+						
+					
+					// renderer
+					$renderer = HTML_QuickForm2_Renderer::factory('default');
+					$renderer->setOption('required_note',parent::lang('class.ProtocolView#entry#form#requiredNote'));
+					
+					// elements
+					// protocol text
+					$protocolTA = $form->addElement('textarea','protocol');
+					$protocolTA->setLabel(parent::lang('class.ProtocolView#entry#form#protocol').':');
+					$protocolTA->addRule(
+									'regex',
+									parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('textarea.desc').']',
+									$_SESSION['GC']->get_config('textarea.regexp'));
+					
+					// checkbox to mark correction as finished
+					$finished = $form->addElement('checkbox','finished');
+					$finished->setLabel(parent::lang('class.ProtocolView#entry#form#finished').':');
+					
+					// hidden textareas for texts to diff
+					$protocolBase = $form->addElement('textarea','protDiffBase');
+					$protocolNew = $form->addElement('textarea','protDiffNew');
+									
+					// submit-button
+					$form->addElement('submit','submit',array('value' => parent::lang('class.ProtocolView#entry#form#submitButton')));
+					
+					// add form to template
+					$sPCo->assign('c',true);
+					$sPCo->assign('form',$form->render($renderer));
+					
+					// validate
+					if($form->validate()) {
+						
+						// get form data
+						$data = $form->getValue();
+						
+						// check finished
+						if(!isset($data['finished'])) {
+							$data['finished'] = 0;
+						}
+						
+						$correctionUpdate = array(
+								'finished' => $data['finished']
+							);
+						$protocolUpdate = array(
+								'protocol' => $data['protocol'],
+							);
+						
+						// update
+						$protocol->update($protocolUpdate);
+						$correction->update($correctionUpdate);
+						
+						$protocol->writeDb('update');
+						$correction->writeDb('update');
+						
+						// message
+						$message = array(
+								'message' => parent::lang('class.ProtocolView#correct#message#corrected'),
+								'href' => 'protocol.php?id=correct&pid='.$pid.'&action=diff&uid='.$this->get('uid'),
+								'title' => parent::lang('class.ProtocolView#correct#message#back'),
+								'text' => parent::lang('class.ProtocolView#correct#message#back')
+							);
+						
+						// assign to template
+						$sPCo->assign('c',false);
+						$sPCo->assign('message',$message);
+					}
+					
+				} else {
+					
+					// list all corrections
+					// get corrections
+					$corrections = ProtocolCorrection::listCorrections($pid);
+					// put information together
+					$list = array();
+					$user = new User();
+					foreach($corrections as $correction) {
+						
+						// change user
+						$user->change_user($correction['uid'],false,'id');
+						// fill list
+						$img = false;
+						if($correction['finished'] == 1) {
+							$img = array(
+									'src' => 'img/done.png',
+									'alt' => parent::lang('class.ProtocolView#correct#difflist#imgDone'),
+									'title' => parent::lang('class.ProtocolView#correct#difflist#imgDone')
+								);
+						}
+						$list[] = array(
+								'href' => 'protocol.php?id=correct&pid='.$pid.'&action=diff&uid='.$correction['uid'],
+								'title' => parent::lang('class.ProtocolView#correct#difflist#correctedBy').': '.$user->get_userinfo('name'),
+								'text' => $user->get_userinfo('name').' ('.date('d.m.Y',strtotime($correction['modified'])).')',
+								'img' => $img
+							);
+					}
+					
+					// smarty
+					$sPCo->assign('caption',parent::lang('class.ProtocolView#correct#difflist#caption'));
+					$sPCo->assign('list', $list);
+				}
+				
+				// return
+				return $sPCo->fetch('smarty.protocolcorrection.owner.tpl');
+			} else {
+				
+				// get ProtocolCorretion object
+				$correction = new ProtocolCorrection($protocol);
+				
+				// formular
+				$form = new HTML_QuickForm2(
+										'correctProtocol',
+										'post',
+										array(
+											'name' => 'correctProtocol',
+											'action' => 'protocol.php?id=correct&pid='.$pid
+										)
+									);
+				
+				$datasource = array(
+						'protocol' => $correction->get_protocol()
+					);
+				
+				// add datasource
+				$form->addDataSource(new HTML_QuickForm2_DataSource_Array($datasource));
+					
+				
+				// renderer
+				$renderer = HTML_QuickForm2_Renderer::factory('default');
+				$renderer->setOption('required_note',parent::lang('class.ProtocolView#entry#form#requiredNote'));
+				
+				// elements
+				// protocol text
+				$protocolTA = $form->addElement('textarea','protocol');
+				$protocolTA->setLabel(parent::lang('class.ProtocolView#entry#form#protocol').':');
+				$protocolTA->addRule(
+								'regex',
+								parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('textarea.desc').']',
+								$_SESSION['GC']->get_config('textarea.regexp'));
+								
+				// submit-button
+				$form->addElement('submit','submit',array('value' => parent::lang('class.ProtocolView#entry#form#submitButton')));
+				
+				// validate
+				if($form->validate()) {
+					
+					// get form data
+					$data = $form->getValue();
+					
+					$correctionUpdate = array(
+										'protocol' => $data['protocol'],
+										'modified' => date('U'),
+										'pid' => $pid
+						);
+					
+					// update protocol
+					$correction->update($correctionUpdate);
+						
+					// write to db
+					$action = 'new';
+					if(ProtocolCorrection::hasCorrected($pid) === true) {
+						$action = 'update';
+					}
+					$correction->writeDb($action);
+					
+					return parent::lang('class.ProtocolView#correct#message#done');
+				} else {
+					return $form->render($renderer);
+				}
+			}
 		} else {
 			
 			// error

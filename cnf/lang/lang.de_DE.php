@@ -890,14 +890,16 @@ $lang = array(
 				'correct' => 'Protokoll korrigieren',
 				'ProtShow' => 'Protokoll anzeigen',
 				'ProtPDF' => 'Protokoll als PDF',
-				'date' => 'Details anzeigen'
+				'date' => 'Details anzeigen',
+				'corrected' => 'Korrekturen vorhanden, &uuml;berpr&uuml;fen'
 			),
 			'alt' => array(
 				'edit' => 'Protokoll bearbeiten',
 				'delete' => 'Protokoll l&ouml;schen',
 				'correct' => 'Protokoll korrigieren',
 				'ProtShow' => 'Protokoll anzeigen',
-				'ProtPDF' => 'Protokoll als PDF'
+				'ProtPDF' => 'Protokoll als PDF',
+				'corrected' => 'Korrekturen vorhanden, &uuml;berpr&uuml;fen'
 			)
 		),
 		'details' => array(
@@ -929,7 +931,12 @@ $lang = array(
 				'protocol' => 'Inhalt/Protokolltext',
 				'recorder' => 'Protokollant',
 				'public' => '&Ouml;ffentlicher Zugriff',
-				'correction' => 'Korrekturfreigabe'
+				'correction' => 'Status',
+				'correctionInWork' => 'in Bearbeitung',
+				'correctionCorrect' => 'Korrekturfreigabe',
+				'correctionFinished' => 'ver&ouml;ffentlicht',
+				'correctors' => 'Korrektoren',
+				'finished' => 'Korrektur abgeschlossen'
 			),
 			'rule' => array(
 				'required.date' => 'Datum muss ausgew&auml;hlt werden!',
@@ -967,11 +974,31 @@ $lang = array(
 				'title' => 'Zusammenfassung der Beschl&uuml;sse dieses Protokolls anzeigen',
 				'text' => 'Zeige Beschl&uuml;sse dieses Protokolls'
 			)
+		),
+		'correct' => array(
+			'message' => array(
+				'done' => '<p>Korrektur erfolgreich gespeichert.</p>',
+				'corrected' => 'Protokoll erfolgreich aktualisiert',
+				'back' => 'zur&uuml;ck zur Korrektur'
+			),
+			'difflist' => array(
+				'correctedBy' => 'Korrektur von',
+				'caption' => 'Liste der erstellten Korrekturen',
+				'imgDone' => 'Korrektur bearbeitet'
+			),
+			'diff' => array(
+				'baseCaption' => 'Originaltext',
+				'newCaption' => 'Korrektur'
+			)
 		)
 	),
 	'class.Protocol' => array(
 		'details' => array(
 			'data' => array(
+				'status' => '<span>Status:</span><br />',
+				'status0' => 'in Bearbeitung',
+				'status1' => 'in Bearbeitung',
+				'status2' => 'Ver&ouml;ffentlicht',
 				'date' => '<span>Datum:</span><br />',
 				'type' => '<span>Art:</span><br />',
 				'location' => '<span>Ort:</span><br />',

@@ -18,6 +18,10 @@
 {if isset($tinymce) and $tinymce}
 		<script type="text/javascript" src="js/tiny_mce/tiny_mce.js"></script>
 {/if}
+{if isset($jsdifflib) and $jsdifflib}
+		<script type="text/javascript" src="js/difflib.js"></script>
+		<script type="text/javascript" src="js/diffview.js"></script>
+{/if}
 {if $jquery}
 		<script type="text/javascript">
 			$(document).ready(function(){ldelim}

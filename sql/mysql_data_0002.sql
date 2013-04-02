@@ -1,0 +1,1 @@
+UPDATE `config` SET `value` = 'calendar,category,config,defaults,field,fields2presets,group,group2group,inventory,inventory_movement,preset,rights,user,user2group,value,protocol,protocol_correction' WHERE `config`.`name` = 'systemtables';
