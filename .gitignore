@@ -10,3 +10,4 @@
 *.z
 /templates/smarty/compile/*tpl.php
 /templates/smarty/compile/*string.php
+/cnf/config.ini
