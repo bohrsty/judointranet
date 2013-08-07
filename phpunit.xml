@@ -1,5 +1,4 @@
-SOFTWARE: MIT License
-
+<?xml version="1.0" encoding="UTF-8"?><!--
 Copyright (c) 2011 Nils Bohrs
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this
@@ -16,11 +15,17 @@ INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PA
 PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
 FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
+DEALINGS IN THE SOFTWARE.-->
 
 
-
-THIRD PARTY LICENSES
-
-Icons:
-Icons – Matte Set by Momentum Design Lab (CC-BY-SA 3.0 http://creativecommons.org/licenses/by-sa/3.0/de/)
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/3.7/phpunit.xsd"
+         backupGlobals="false"
+         verbose="true"
+         colors="true" bootstrap="tests/bootstrap.php">
+  <testsuites>
+    <testsuite name="judointranet">
+      <directory suffix="Test.php">tests/classes</directory>
+    </testsuite>
+  </testsuites>
+ </phpunit>
