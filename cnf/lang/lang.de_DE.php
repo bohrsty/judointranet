@@ -306,7 +306,12 @@ $lang = array(
 				'caption' => '&Uuml;berschrift',
 				'content' => 'Inhalt'
 			)
-		)
+		),
+		'showPage' => array(
+			'helpMessages' => array(
+				'closeText' => 'Schlie&szlig;en',
+			),
+		),
 	),
 	'class.MainView' => array(
 		'page' => array(
@@ -1033,6 +1038,23 @@ $lang = array(
 				'recorder' => '<span>Protokollant:</span><br />'
 			)
 		)
+	),
+	'class.Help' => array(
+		'global' => array(
+			'title' => array(
+				'errorIdNotExists' => 'Fehler',
+				'title-1' => 'Info'
+			),
+			'message' => array(
+				'errorIdNotExists' => 'Dieses Hilfe-Thema konnte nicht gefunden werden',
+				'message-1' => '<b>judointranet</b><br />Author: Nils Bohrs<br />Version: {$replace.version}<br />Lizenz: MIT'
+			),
+		),
+		'getMessage' => array(
+			'templateValues' => array(
+				'imgTitle' => 'Hilfe',
+			),
+		),
 	)
 );
 

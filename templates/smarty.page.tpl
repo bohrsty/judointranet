@@ -24,15 +24,11 @@
 <html>
 	<head>
 		<title>{$title}</title>
-{if $jquery}
-		<link rel="stylesheet" type="text/css" href="css/start/jquery-ui-1.8.20.custom.css" />
-{/if}
+		<link rel="stylesheet" type="text/css" href="css/start/jquery-ui-1.10.3.custom.css" />
 		<link rel="stylesheet" type="text/css" href="css/page.css" />
-{if $jquery}
 		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
-		<script type="text/javascript" src="js/jquery-ui-1.8.20.custom.min.js"></script>
+		<script type="text/javascript" src="js/jquery-ui-1.10.3.custom.min.js"></script>
 		<script type="text/javascript" src="js/jquery.ui.datepicker-de.js"></script>
-{/if}
 {if $hierselect}
 		<script type="text/javascript" src="js/quickform.js"></script>
 		<script type="text/javascript" src="js/quickform-hierselect.js"></script>
@@ -44,6 +40,36 @@
 		<script type="text/javascript" src="js/difflib.js"></script>
 		<script type="text/javascript" src="js/diffview.js"></script>
 {/if}
+		<script type="text/javascript">
+			{literal}$(document).ready(function(){
+				$(function($) {
+					$( '.{/literal}{$help.buttonClass}{literal}' ).each(function() {
+						$.data(this, 'dialog',
+							$(this).next('.{/literal}{$help.dialogClass}{literal}').dialog({
+								autoOpen: false,
+								show: {
+									effect: '{/literal}{$help.effect}{literal}',
+									duration: {/literal}{$help.effectDuration}{literal}
+								},
+								position: { 
+									my: 'right center', 
+									at: 'right center', 
+									of: window
+								},
+								closeText: '{/literal}{$help.closeText}{literal}'
+							})
+						);
+					}).click(function() {
+						var isOpen = $.data( this, 'dialog' ).dialog( 'isOpen' );
+						if(isOpen) {
+							$.data( this, 'dialog' ).dialog( 'moveToTop' );
+						} else {
+							$.data( this, 'dialog' ).dialog( 'open' );
+						}
+					});
+				});
+			});{/literal}
+		</script>
 {if $jquery}
 		<script type="text/javascript">
 			$(document).ready(function(){ldelim}
@@ -99,8 +125,13 @@
 {/for}
 		</div>
 		<div id="content">
-			<div class="logininfo">
-				{$logininfo}
+			<div class="headinfo">
+				<div class="logininfo">
+					{$logininfo}
+				</div>
+				<div class="helpabout">
+					{$helpabout}
+				</div>
 			</div>
 			{block name="main"}Default Text{/block}
 		</div>

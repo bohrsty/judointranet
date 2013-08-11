@@ -271,8 +271,6 @@ p.usersettings {
 	width: 200px;
 	padding: 0;
 	margin: 0;
-	position: relative;
-	left: 85%;
 	text-align: left;
 }
 
@@ -446,10 +444,21 @@ div.protocol-details p.details span{
 	font-weight: bold;
 }
 
-div.logininfo {
-	text-align: right;
+div.headinfo {
 	font-size: 10pt;
 	height: 3em;
+	position: absolute;
+	right: 0px;
+	margin-right: 10px;
+}
+
+div.logininfo {
+	float: left;
+}
+
+div.helpabout {
+	float: left;
+	margin-left: 15px;
 }
 
 

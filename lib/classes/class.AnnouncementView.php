@@ -243,19 +243,7 @@ class AnnouncementView extends PageView {
 		}
 		
 		// global smarty
-		// head
-		$this->tpl->assign('head', $this->get_head());
-		// manualjquery
-		$this->tpl->assign('manualjquery', $this->get_jquery());
-		// navi
-		$this->tpl->assign('data', $this->navi(basename($_SERVER['SCRIPT_FILENAME'])));
-		$this->tpl->assign('active', $this->get('id'));
-		$this->tpl->assign('file', basename($_SERVER['SCRIPT_FILENAME']));
-		// logininfo
-		$this->tpl->assign('logininfo', $this->put_userinfo());
-		
-		// smarty-display
-		$this->tpl->display('smarty.main.tpl');
+		$this->showPage();
 	}
 	
 	

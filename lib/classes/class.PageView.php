@@ -94,7 +94,10 @@ class PageView extends Object {
 		$this->set_head('');
 		
 		// set userinfos if logged in
-		$this->put_userinfo();		
+		$this->put_userinfo();
+		
+		// initialize help
+		$GLOBALS['help'] = new Help();
 	}
 	
 	/*
@@ -489,6 +492,50 @@ class PageView extends Object {
 					
 		// return
 		return $sD->fetch('smarty.default.content.tpl');
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * showPage() sets some global template variables and displays the page
+	 * 
+	 * @return void
+	 */
+	protected function showPage() {
+		
+		// head
+		$this->tpl->assign('head', $this->get_head());
+		// manualjquery
+		$this->tpl->assign('manualjquery', $this->get_jquery());
+		// navi
+		$this->tpl->assign('data', $this->navi(basename($_SERVER['SCRIPT_FILENAME'])));
+		$this->tpl->assign('active', $this->get('id'));
+		$this->tpl->assign('file', basename($_SERVER['SCRIPT_FILENAME']));
+		// logininfo
+		$this->tpl->assign('logininfo', $this->put_userinfo());
+		
+		// help messages
+		$help = array(
+				'buttonClass' => $_SESSION['GC']->get_config('help.buttonClass'),
+				'dialogClass' => $_SESSION['GC']->get_config('help.dialogClass'),
+				'effect' => $_SESSION['GC']->get_config('help.effect'),
+				'effectDuration' => $_SESSION['GC']->get_config('help.effectDuration'),
+				'closeText' => parent::lang('class.PageView#showPage#helpMessages#closeText'),
+			);
+		$this->tpl->assign('help', $help);
+		
+		// assign about
+		$helpabout = $GLOBALS['help']->getMessage(1, array('version' => $_SESSION['GC']->get_config('global.version')));
+		$this->tpl->assign('helpabout', $helpabout);
+		
+		// smarty-display
+		$this->tpl->display('smarty.main.tpl');
 	}
 }
 
