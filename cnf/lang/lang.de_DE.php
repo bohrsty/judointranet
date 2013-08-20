@@ -244,7 +244,7 @@ $lang = array(
 		'delete' => array(
 			'form' => array(
 				'yes' => 'Ja',
-				'cancel' => 'abbrechen'
+				'cancel' => 'Abbrechen'
 			),
 			'message' => array(
 				'confirm' => 'Wollen Sie diesen Eintrag wirklich l&ouml;schen?',
@@ -500,7 +500,7 @@ $lang = array(
 		'delete' => array(
 			'form' => array(
 				'yes' => 'Ja',
-				'cancel' => 'abbrechen'
+				'cancel' => 'Abbrechen'
 			),
 			'message' => array(
 				'confirm' => 'Wollen Sie diesen Eintrag wirklich l&ouml;schen?',
@@ -618,7 +618,7 @@ $lang = array(
 		'cancel' => array(
 			'form' => array(
 				'yes' => 'Ja',
-				'cancel' => 'abbrechen'
+				'cancel' => 'Abbrechen'
 			),
 			'message' => array(
 				'confirm' => 'Wollen Sie dieses Objekt wirklich zur&uuml;ckziehen?',
@@ -990,7 +990,7 @@ $lang = array(
 			),
 			'cancel' => array(
 				'title' => 'Bricht den L&ouml;schvorgang ab',
-				'form' => 'abbrechen'
+				'form' => 'Abbrechen'
 			),
 			'message' => array(
 				'confirm' => 'Wollen Sie diesen Eintrag wirklich l&ouml;schen?',
@@ -1043,11 +1043,188 @@ $lang = array(
 		'global' => array(
 			'title' => array(
 				'errorIdNotExists' => 'Fehler',
-				'title-1' => 'Info'
+				'about' => 'Info',
+				'fieldDate' => 'Datumsfeld',
+				'fieldName' => 'Namen-/Bezeichnungsfeld',
+				'fieldShortname' => 'Kurznamensfeld',
+				'fieldType' => 'Typauswahlfeld',
+				'fieldContent' => 'Inhaltsfeld',
+				'fieldSort' => 'Gruppierungsauswahlfeld',
+				'fieldIsPublic' => 'Ver&ouml;ffentlichungsauswahlfeld',
+				'calendarNew' => 'Neuer Termin',
+				'calendarListall' => 'Terminliste',
+				'calendarListAdmin' => 'Aufgaben in der Terminliste',
+				'calendarListSortlinks' => 'Filterliste',
+				'delete' => 'L&ouml;schen',
+				'FieldText' => 'Textfeld',
+				'FieldCheckbox' => 'Auswahlbox',
+				'FieldDbselect' => 'Auswahlfeld',
+				'FieldDbhierselect' => 'Abh&auml;ngiges Auswahlfeld',
+				'Login' => 'Login',
 			),
 			'message' => array(
-				'errorIdNotExists' => 'Dieses Hilfe-Thema konnte nicht gefunden werden',
-				'message-1' => '<b>judointranet</b><br />Author: Nils Bohrs<br />Version: {$replace.version}<br />Lizenz: MIT'
+				'errorIdNotExists' => '<p>Dieses Hilfe-Thema konnte nicht gefunden werden.</p>',
+				'about' => '<p><b>judointranet</b></p>
+					<p>Author: Nils Bohrs<br />
+					Version: {$replace.version}<br />Lizenz: MIT</p>
+					<p>&nbsp;</p>
+					<p>Copyright (c) 2011 Nils Bohrs</p>
+					<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this
+					software and associated documentation files (the "Software"), to deal in the Software
+					without restriction, including without limitation the rights to use, copy, modify, merge,
+					publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+					to whom the Software is furnished to do so, subject to the following conditions:</p>
+					<p>The above copyright notice and this permission notice shall be included in all copies or
+					substantial portions of the Software.</p>
+					<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+					INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+					PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+					FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+					OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+					DEALINGS IN THE SOFTWARE.</p>',
+				'fieldDate' => '<p><b>Format</b>: <i>yyyy-mm-dd</i><br />
+					<b>Standardwert</b>: <i>das heutige Datum</i></p>
+					<p>Dieses Feld legt ein Datum f&uuml;r diesen Datensatz fest, das Feld
+					hat eine Datumsauswahl zur Unterst&uuml;tzung, dieses sollte zur Sicherstellung
+					des korrekten Formats verwendet werden.</p>',
+				'fieldName' => '<p><b>Format</b>: <i>einzeiliger Text</i><br />
+					<b>Standardwert</b>: <i>keiner</i><br />
+					<b>Erlaubte Zeichen</b>: <i>"'.$_SESSION['GC']->get_config('name.desc').'"</i></p>
+					<p>Dieses Feld legt den Namen oder die Bezeichnung f&uuml;r diesen Datensatz
+					fest, der Wert erscheint zumeist in Listen oder &Uuml;berschriften.</p>',
+				'fieldShortname' => '<p><b>Format</b>: <i>einzeiliger Text</i><br />
+					<b>Standardwert</b>: <i>keiner</i><br />
+					<b>Erlaubte Zeichen</b>: <i>"'.$_SESSION['GC']->get_config('name.desc').'"</i></p>
+					<p>Dieses Feld legt einen Kurznamen f&uuml;r diesen Datensatz fest, der Wert wird in
+					den Dateinamen der Ausschreibungen zur Abk&uuml;rzung verwendet. Wenn das Feld nicht
+					ausgef&uuml;llt wird, wird der Wert beim Speichern auf die ersten drei Buchstaben
+					des Namens-/Bezeichnungsfeldes gesetzt, der Wert wird immer in Gro&szlig;buchstaben
+					umgewandelt.</p>',
+				'fieldType' => '<p><b>Format</b>: <i>einzeiliges Auswahlfeld</i></p>
+					<p>Dieses Feld legt den Typ f&uuml;r diesen Datensatz fest, z.B. bei Veranstaltunge
+					oder Terminen die Art der Veranstaltung (Turnier, Lehrgang, etc.).</p>',
+				'fieldContent' => '<p><b>Format</b>: <i>mehrzeiliger Text</i><br />
+					<b>Standardwert</b>: <i>keiner</i><br />
+					<b>Erlaubte Zeichen</b>: <i>"'.
+					htmlspecialchars($_SESSION['GC']->get_config('textarea.desc')).'"</i></p>
+					<p>Dieses Feld legt den Inhalt f&uuml;r diesen Datensatz fest, hier kann
+					z.B. die genaue Beschreibung eines Termin eingetragen werden.</p>',
+				'fieldSort' => '<p><b>Format</b>: <i>Mehrfachauswahlfeld</i></p>
+					<p>Dieses Feld legt die Gruppen fest, nach denen der Datensatz mittels
+					Sortierung in den Listen angezeigt wird. Die Auswahl mehrerer Gruppen ist
+					durch Dr&uuml;cken und Halten der &lt;STRG&gt;-Taste m&ouml;glich, das
+					Entfernen der Auswahl oder einzelner Gruppen ist ebenfalls mittels
+					Dr&uuml;cken und Halten der &lt;STRG&gt;-Taste m&ouml;glich.</p>',
+				'fieldIsPublic' => '<p><b>Format</b>: <i>Auswahlbox</i></p>
+					<p>Das Anhaken der Auswahlbox markiert diesen Datensatz als &ouml;ffentlich,
+					wenn der Haken gesetzt ist, wird der Datensatz in den &ouml;ffentlichen Listen,
+					also ohne Anmeldung sichtbar.</p>',
+				'calendarNew' => '<p>Formular zur Erstellung eines neuen Termins. Alle Felder, die
+					mit einem roten <span class="required">*</span> gekennzeichnet sind, m&uuml;ssen ausgef&uuml;llt werden, das
+					Formular l&auml;sst sich sonst nicht speichern.<br />Die erlaubten Zeichen
+					werden in der Hilfe des jeweiligen Feldes erl&auml;tert, bei Fehleingaben
+					wird eine entsprechende Meldung ausgegeben.</p>',
+				'calendarListall' => '<p>Diese Seite listet alle Termine, die noch nicht abgelaufen
+					sind (inkl. des gesamten heutigen Tages). Ein Klick auf den unterstrichenen
+					Namen des Termins &ouml;ffnet dessen Details, wenn eine Ausschreibung zu
+					diesem Termin vorhanden ist, stehen folgende weitere Ansichten zur
+					Verf&uuml;gung:</p>
+					<ul>
+					<li><img src="img/ann_details.png" />&nbsp;:&nbsp; &ouml;ffnet
+					die Ausschreibung als Seitenansicht eingebettet in diese Seite, Drucken ist
+					in dieser Ansicht nicht m&ouml;glich.</li>
+					<li><img src="img/ann_pdf.png" />&nbsp;:&nbsp; &ouml;ffnet die
+					Ausschreibung direkt als PDF (ein entsprechendes Programm zur Anzeige
+					wie der AdobeReader vorausgesetzt), in dieser Ansicht kann die Ausschreibung
+					gedruckt oder gespeichert werden.</li>
+					</ul>',
+				'calendarListAdmin' => '<p>Die Administration eines Termins oder einer
+					Ausschreibung erfolgt &uuml;ber folgende Buttons:</p>
+					<ul>
+					<li><img src="img/edit.png" />&nbsp;:&nbsp; &ouml;ffnet den Termin im
+					Bearbeitungsmodus, hier k&ouml;nnen die einzelnen Felder des Datensatzes
+					ge&auml;ndert werden.</li>
+					<li><img src="img/delete.png" />&nbsp;:&nbsp; l&ouml;scht den Termin nach
+					R&uuml;ckfrage endg&uuml;ltig.</li>
+					<li><img src="img/ann_edit.png" />&nbsp;:&nbsp; &ouml;ffnet die Ausschreibung
+					im Bearbeitungsmodus, hier k&ouml;nnen die einzelnen Felder des Datensatzes
+					ge&auml;ndert werden, die erste Bearbeitung erstellt die zugeh&ouml;rigen
+					Felder.</li>
+					<li><img src="img/ann_delete.png" />&nbsp;:&nbsp; l&ouml;scht die Ausschreibung
+					nach R&uuml;ckfrage endg&uuml;ltig.</li>
+					<li><select><option>Ausschreibungsvorlage ausw&auml;hlen</option></select>
+					<input type="submit" value="+" />&nbsp;:&nbsp; Um eine Ausschreibung mit Daten
+					zu f&uuml;llen muss ihr eine Vorlage zugewiesen werden, die die zu verwendenden
+					Felder und das Aussehen festlegt.<br />
+					Das Zuweisen der Vorlage erfolgt durch das Ausw&auml;hlen der Vorlage aus dem
+					einzeiligen Auswahlfeld und anschlie&szlig;endem Zuf&uuml;gen durch den Button.</li>
+					</ul>',
+				'calendarListSortlinks' => '<p>Die eingeblendete Filterauswahl besteht aus drei
+					Bereichen:
+					<ul>
+					<li>Der erste Bereich enth&auml;lt die Buttons zum Zur&uuml;cksetzen der
+					gew&auml;hlten Filter:<br />"<u>Alle Filter zur&uuml;cksetzen</u>" zeigt wieder die
+					komplette Liste an, ohne Filter.<br />"<u>Datumsfilter zur&uuml;cksetzen</u>"
+					beh&auml;lt die ausgew&auml;hlte Gruppe bei und entfernt nur den Zeitraum.<br />
+					"<u>Gruppenfilter zur&uuml;cksetzen</u>"beh&auml;lt den gew&auml;hlten Zeitraum und
+					entfernt nur die Gruppe</li>
+					<li>Der zweite Bereich enth&auml;lt die Buttons zur Auswahl eines festgelegten
+					Zeitraums, der die Liste auf die Termine einschr&auml;nkt, die in diesem Zeitraum
+					stattfinden.</li>
+					<li>Der dritte Bereich enth&auml;lt die Buttons zur Auswahl nach festgelegten
+					Gruppierungen (z.B.: Altersklassen), die beim anlegen des Termins festgelegt
+					wurden.</li>
+					</ul>
+					</p>',
+				'delete' => '<p>Der Klick auf "Ja" l&ouml;scht den Datensatz endg&uuml;ltig,
+					"Abbrechen" f&uuml;hrt zur&uuml;ck zur Liste.</p>',
+				'FieldText' => '<p><b>Format</b>: <i>mehrzeiliger Text</i><br />
+					<b>Standardwert</b>: <i>keiner</i><br />
+					<b>Erlaubte Zeichen</b>: <i>"'.
+					htmlspecialchars($_SESSION['GC']->get_config('textarea.desc')).'"</i><br />
+					<b>Auswahl</b>: <i>Systemvorgaben oder Auswahl aus den letzten Eingaben</i></p>
+					<p>Das Textfeld nimmt alle Zeichen laut <b>Erlaubte Zeichen</b> an, &uuml;ber
+					das einzeilige Auswahlfeld k&ouml;nnen vorgefertigte Texte des Systems oder
+					aus der Historie der zuletzt eingegebenen Texte ausgew&auml;hlt werden.</p>',
+				'FieldCheckbox' => '<p><b>Format</b>: <i>Auswahlbox</i></p>
+					<p>Das Anhaken der Auswahlbox aktiviert die Einstellung oder den Wert, das
+					Entfernen des Hakens deaktiviert sie.</p>',
+				'FieldDbselect' => '<p><b>Format</b>: <i>Auswahlfeld/Mehrfachauswahlfeld</i></p>
+					<p>Dieses Feld erlaubt die Auswahl eines (bei einfachem Auswahlfeld) oder
+					mehrfache Auswahl der vorgegebenen Werte. Die Auswahl mehrerer Werte ist
+					durch Dr&uuml;cken und Halten der &lt;STRG&gt;-Taste m&ouml;glich, das
+					Entfernen der Auswahl oder einzelner Werte ist ebenfalls mittels
+					Dr&uuml;cken und Halten der &lt;STRG&gt;-Taste m&ouml;glich.</p>',
+				'FieldDbhierselect' => '<p><b>Format</b>: <i>abh&auml;ngigesAuswahlfeld</i></p>
+					<p>Dieses Feld bietet von einander abh&auml;ngige Optionen zur Auswahl an. Die
+					get&auml;tige Auswahl des ersten Felds beeinflusst die zur Auswahl stehenden
+					Optionen des zweiten Auswahlfeldes.</p>',
+				'Login' => '
+					{if array_key_exists(\'class.MainView#callback_check_login#message#UserNotActive\', $replace)}
+						<p><b>Benutzer nicht aktiv</b></p>
+						<p>Dieser Benutzer ist deaktiviert worden oder noch nicht aktiviert, falls
+						diese Meldung zu unrecht erscheint, bitte beim '.htmlspecialchars($_SESSION['GC']->get_config('global.systemcontactName')).'
+						nachfragen.</p>
+					{elseif array_key_exists(\'class.MainView#callback_check_login#message#WrongPassword\', $replace)}
+						<p><b>Falsches Passwort</b></p>
+						<p>Es wurde versucht sich mit einem falschen Passwort an zu melden, falls
+						diese Meldung zu unrecht erscheint, bitte die Schreibweise des Passworts
+						pr&uuml;fen, oder beim '.htmlspecialchars($_SESSION['GC']->get_config('global.systemcontactName')).'
+						nachfragen.</p>
+					{elseif array_key_exists(\'class.MainView#callback_check_login#message#UserNotExist\', $replace)}
+						<p><b>Benutzer existiert nicht</b></p>
+						<p>Es wurde versucht sich mit einem nicht existierenden Benutzer an zu melden, falls
+						diese Meldung zu unrecht erscheint, bitte die Schreibweise des Benutzernamens
+						pr&uuml;fen, oder beim '.htmlspecialchars($_SESSION['GC']->get_config('global.systemcontactName')).'
+						nachfragen.</p>
+					{else}
+						<p><b>Login</b></p>
+						<p>Um die nicht &ouml;ffentlichen Funktionen zu nutzen, muss in einem der
+						beteiligten Gremien mitgearbeitet werden. Der Zugang wird durch die
+						entsprechenden Vorst&auml;nde genehmigt und die Zugangsdaten (Benutzername
+						und Passwort) werden durch den '.htmlspecialchars($_SESSION['GC']->get_config('global.systemcontactName')).'
+						zur Verf&uuml;gung gestellt.</p>
+					{/if}',
 			),
 		),
 		'getMessage' => array(

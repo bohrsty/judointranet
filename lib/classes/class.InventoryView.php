@@ -142,6 +142,9 @@ class InventoryView extends PageView {
 		// set pagename
 		$this->tpl->assign('pagename',parent::lang('class.InventoryView#page#init#name'));
 		
+		// init helpmessages
+		$this->initHelp();
+		
 		// switch $_GET['id'] if set
 		if($this->get('id') !== false) {
 			

@@ -200,7 +200,7 @@ class Field extends Object {
 				
 				// field-group
 				$element = HTML_QuickForm2_Factory::createElement('group', $this->get_table().'-'.$this->get_id(),$options);
-				$element->setLabel($this->get_name().':');
+				$element->setLabel($this->get_name().':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDTEXT));
 				
 				// add select
 				$select = $element->addElement('select','defaults',array());
@@ -216,7 +216,7 @@ class Field extends Object {
 				
 				// textarea
 				$element = HTML_QuickForm2_Factory::createElement('textarea', $this->get_table().'-'.$this->get_id(),$options);
-				$element->setLabel($this->get_name().':');
+				$element->setLabel($this->get_name().':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDTEXT));
 				
 				// add rules
 				if($this->get_required() == 1) {
@@ -234,7 +234,7 @@ class Field extends Object {
 			
 			// date in input-text for use with jquery
 			$element = HTML_QuickForm2_Factory::createElement('text', $this->get_table().'-'.$this->get_id(),$options);
-			$element->setLabel($this->get_name().':');
+			$element->setLabel($this->get_name().':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDDATE));
 			
 			// add rules
 			if($this->get_required() == 1) {
@@ -248,7 +248,7 @@ class Field extends Object {
 			
 			// checkbox
 			$element = HTML_QuickForm2_Factory::createElement('checkbox', $this->get_table().'-'.$this->get_id(),$options);
-			$element->setLabel($this->get_name().':');
+			$element->setLabel($this->get_name().':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDCHECKBOX));
 			
 			// add rules
 			if($this->get_required() == 1) {
@@ -267,7 +267,7 @@ class Field extends Object {
 			
 			// select
 			$element = HTML_QuickForm2_Factory::createElement('select', $this->get_table().'-'.$this->get_id(),$options);
-			$element->setLabel($this->get_name().':');
+			$element->setLabel($this->get_name().':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDDBSELECT));
 			
 			// add rules
 			if($this->get_required() == 1) {
@@ -288,7 +288,7 @@ class Field extends Object {
 			
 			// select
 			$element = HTML_QuickForm2_Factory::createElement('hierselect', $this->get_table().'-'.$this->get_id(),$options);
-			$element->setLabel($this->get_name().':');
+			$element->setLabel($this->get_name().':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDDBHIERSELECT));
 			
 			// add rules
 			if($this->get_required() == 1) {

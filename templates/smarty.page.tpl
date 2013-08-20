@@ -41,33 +41,34 @@
 		<script type="text/javascript" src="js/diffview.js"></script>
 {/if}
 		<script type="text/javascript">
-			{literal}$(document).ready(function(){
-				$(function($) {
-					$( '.{/literal}{$help.buttonClass}{literal}' ).each(function() {
-						$.data(this, 'dialog',
-							$(this).next('.{/literal}{$help.dialogClass}{literal}').dialog({
-								autoOpen: false,
-								show: {
-									effect: '{/literal}{$help.effect}{literal}',
-									duration: {/literal}{$help.effectDuration}{literal}
-								},
-								position: { 
-									my: 'right center', 
-									at: 'right center', 
-									of: window
-								},
-								closeText: '{/literal}{$help.closeText}{literal}'
-							})
-						);
-					}).click(function() {
-						var isOpen = $.data( this, 'dialog' ).dialog( 'isOpen' );
+			{literal}$(function() {
+				$({/literal}{$helpids}{literal}).each(function() {
+					var i = this;
+					$( '#{/literal}{$help.dialogClass}{literal}-'+i ).dialog({
+						autoOpen: false,
+						show: {
+							effect: '{/literal}{$help.effect}{literal}',
+							duration: {/literal}{$help.effectDuration}{literal}
+						},
+						position: { 
+							my: 'right center', 
+							at: 'right center', 
+							of: window
+						},
+						closeText: '{/literal}{$help.closeText}{literal}',
+						minWidth: '600',
+						minHeight: '250'
+					});
+					$( '#{/literal}{$help.buttonClass}{literal}-'+i ).click(function() {
+						$( "#{/literal}{$help.dialogClass}{literal}-"+i ).dialog( "open" );
+						var isOpen = $( "#{/literal}{$help.dialogClass}{literal}-"+i ).dialog( 'isOpen' );
 						if(isOpen) {
-							$.data( this, 'dialog' ).dialog( 'moveToTop' );
+							$( "#{/literal}{$help.dialogClass}{literal}-"+i ).dialog( 'moveToTop' );
 						} else {
-							$.data( this, 'dialog' ).dialog( 'open' );
+							$( "#{/literal}{$help.dialogClass}{literal}-"+i ).dialog( 'open' );
 						}
 					});
-				});
+				})
 			});{/literal}
 		</script>
 {if $jquery}
@@ -135,5 +136,6 @@
 			</div>
 			{block name="main"}Default Text{/block}
 		</div>
+		{$helpmessages}
 	</body>
 </html>

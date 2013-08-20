@@ -131,6 +131,9 @@ class MainView extends PageView {
 		// set pagename
 		$this->tpl->assign('pagename',parent::lang('class.MainView#page#init#name'));
 		
+		// init helpmessages
+		$this->initHelp();
+		
 		// switch $_GET['id'] if set
 		if($this->get('id') !== false) {
 			
@@ -252,7 +255,7 @@ class MainView extends PageView {
 		$r = '';
 		if($this->get('r') !== false) {
 			$uri = base64_decode($this->get('r'));
-			$r = '&r='.$this->get('r');
+			$r = '&amp;r='.$this->get('r');
 		}
 		
 		// formular		
@@ -299,7 +302,7 @@ class MainView extends PageView {
 		} else {
 			
 			// smarty message and form
-			$sLogin->assign('message', parent::lang($_SESSION['user']->get_login_message()));
+			$sLogin->assign('message', parent::lang($_SESSION['user']->get_login_message()).'&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_LOGIN, array($_SESSION['user']->get_login_message() => '')));
 			$sLogin->assign('form', $form->render($renderer));
 		}
 		

@@ -119,6 +119,9 @@ class ProtocolView extends PageView {
 		// set pagename
 		$this->tpl->assign('pagename',parent::lang('class.ProtocolView#page#init#name'));
 		
+		// init helpmessages
+		$this->initHelp();
+		
 		// switch $_GET['id'] if set
 		if($this->get('id') !== false) {
 			
@@ -266,7 +269,7 @@ class ProtocolView extends PageView {
 			
 			// id not set
 			// smarty-title
-			$this->tpl->assign('title', $this->title(parent::lang('class.ProtocolView#init#default#title'))); 
+			$this->tpl->assign('title', $this->title(parent::lang('class.ProtocolView#init#title#default'))); 
 			// smarty-main
 			$this->tpl->assign('main', $this->defaultContent());
 			// smarty-jquery

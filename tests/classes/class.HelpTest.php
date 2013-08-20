@@ -34,15 +34,23 @@ class TestObject extends Object {
 	}
 }
 
+class TestView extends PageView {
+	
+	function __construct() {
+		parent::__construct();
+	}
+}
+
 class HelpTest extends PHPUnit_Framework_TestCase {
 	
 	// variables
+	private $page;
 	private $help;
 	
 	// setup
 	public function setUp() {
 		
-		$page = new MainView();
+		$this->page = new TestView();
 		
 		$this->help = $GLOBALS['help'];
 	}
@@ -56,22 +64,32 @@ class HelpTest extends PHPUnit_Framework_TestCase {
 	public function testHelpMessageGenerationExistingId() {
 		
 		// register message 1
-		$message = $this->help->getMessage(1);
+		$mid = 1;
+		$message = $this->help->getMessage($mid);
 		// check output
-		$this->assertContains(TestObject::lang('class.Help#global#title#title-1'), $message);
-		$this->assertContains(TestObject::lang('class.Help#global#message#message-1'), $message);
-		$this->assertContains('class="'.$_SESSION['GC']->get_config('help.buttonClass').'"', $message);
-		$this->assertContains('class="'.$_SESSION['GC']->get_config('help.dialogClass').'"', $message);
+		$this->assertContains(TestObject::lang('class.Help#getMessage#templateValues#imgTitle'), $message);
+		$this->assertContains('id="'.$_SESSION['GC']->get_config('help.buttonClass'), $message);
+		
+		// test output
+		$this->assertContains(TestObject::lang('class.Help#global#message#about'), $this->page->getHelpmessages());
+		$this->assertContains('id="'.$_SESSION['GC']->get_config('help.dialogClass'), $this->page->getHelpmessages());
+		
+	}
+	
+	
+	public function testHelpMessageGenerationNonExistingId() {
 		
 		// check nonexistent id
-		$message2 = $this->help->getMessage(-1);
-		$this->assertContains(TestObject::lang('class.Help#global#title#errorIdNotExists'), $message2);
-		$this->assertContains(TestObject::lang('class.Help#global#message#errorIdNotExists'), $message2);
+		$message = $this->help->getMessage(-1);
+		$this->assertContains(TestObject::lang('class.Help#global#message#errorIdNotExists'), $this->page->getHelpmessages());
+	}
+	
+	
+	public function testHelpMessageGenerationReplacement() {
 		
 		// check replacement
-		$message3 = $this->help->getMessage(1,array('version' => $_SESSION['GC']->get_config('global.version')));
-		$this->assertContains($_SESSION['GC']->get_config('global.version'), $message3);
-		
+		$message = $this->help->getMessage(1,array('version' => $_SESSION['GC']->get_config('global.version')));
+		$this->assertContains($_SESSION['GC']->get_config('global.version'), $this->page->getHelpmessages());
 	}
 }
 

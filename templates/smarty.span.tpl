@@ -20,7 +20,4 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-<div id="confirm">
-	<p>{$message}</p>
-	{if $form!=''}<div class="confirmForm">{$form}</div><span{if $spanparams!=''} {$spanparams}{/if}><input type="button"{if $link.params!=''} {$link.params}{/if} onclick="window.location='{$link.href|escape}'" title="{$link.title}" value="{$link.content|escape}" /></span>{/if}
-</div>
+<span{if $params!=''} {$params}{/if} title="{$title}">{$content}</span>

@@ -34,16 +34,23 @@ class Help extends Object {
 	/*
 	 * class-variables
 	 */
+	private $pageView;
 	
 	/*
 	 * getter/setter
 	 */
+	private function getPageView() {
+		return $this->pageView;
+	}
+	private function setPageView($pageView) {
+		$this->pageView = $pageView;
+	}
 	
 	
 	/*
 	 * constructor/destructor
 	 */
-	public function __construct() {
+	public function __construct($pageView) {
 		
 		// setup parent
 		try {
@@ -53,6 +60,9 @@ class Help extends Object {
 			// handle error
 			$GLOBALS['Error']->handle_error($e);
 		}
+		
+		// set classvariables
+		$this->setPageView($pageView);
 	}
 
 	
@@ -91,6 +101,9 @@ class Help extends Object {
 			}
 		}
 		
+		// prepare random-id
+		$randomId = base_convert(mt_rand(10000000, 99999999), 10, 36);
+		
 		// prepare template values
 		$templateValues = array(
 				'buttonClass' => $_SESSION['GC']->get_config('help.buttonClass'),
@@ -98,14 +111,18 @@ class Help extends Object {
 				'imgTitle' => parent::lang('class.Help#getMessage#templateValues#imgTitle'),
 				'title' => $message['title'],
 				'message' => $message['message'],
+				'messageId' => $randomId,
 			);
 		
 		// smarty template
 		$helpTemplate = new JudoIntranetSmarty();
 		$helpTemplate->assign('help', $templateValues);
 		
-		// return
-		return $helpTemplate->fetch('smarty.help.tpl');	
+		// add dialog
+		$this->getPageView()->addHelpmessages($randomId, $helpTemplate->fetch('smarty.help.dialog.tpl'));
+		
+		// return button
+		return $helpTemplate->fetch('smarty.help.button.tpl');	
 	}
 	
 	

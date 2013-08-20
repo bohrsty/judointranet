@@ -130,6 +130,9 @@ class CalendarView extends PageView {
 		// set pagename
 		$this->tpl->assign('pagename',parent::lang('class.CalendarView#page#init#name'));
 		
+		// init helpmessages
+		$this->initHelp();
+		
 		// switch $_GET['id'] if set
 		if($this->get('id') !== false) {
 			
@@ -310,7 +313,7 @@ class CalendarView extends PageView {
 	private function listall($timeto,$timefrom) {
 		
 		// pagecaption
-		$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#listall'));
+		$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#listall').'&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_CALENDARLISTALL));
 			
 		// prepare return
 		$output = $tr_out = $th_out = '';
@@ -423,6 +426,8 @@ class CalendarView extends PageView {
 					// if $admin is true add admin-links
 					if($admin === true) {
 						
+						// prepare admin help
+						$helpListAdmin = $GLOBALS['help']->getMessage(HELP_MSG_CALENDARLISTADMIN);
 						// smarty
 						// edit
 						$sList[$counter]['admin'][] = array(
@@ -450,7 +455,7 @@ class CalendarView extends PageView {
 									'src' => '',
 									'alt' => '',
 									'preset' => $entry->get_preset_id(),
-									'form' => $this->read_preset_form($entry)
+									'form' => $this->read_preset_form($entry),
 								);
 						} else {
 							
@@ -505,6 +510,9 @@ class CalendarView extends PageView {
 		
 		// smarty
 		$sListall->assign('list', $sList);
+		if(isset($helpListAdmin)) {
+			$sListall->assign('helpListAdmin', $helpListAdmin);
+		}
 		
 		// smarty-return
 		return $sListall->fetch('smarty.calendar.listall.tpl');
@@ -640,7 +648,8 @@ class CalendarView extends PageView {
 		$link = array(
 				'params' => 'id="toggleFilter"',
 				'title' => parent::lang('class.CalendarView#get_sort_links#toggleFilter#title'),
-				'content' => parent::lang('class.CalendarView#get_sort_links#toggleFilter#name')
+				'content' => parent::lang('class.CalendarView#get_sort_links#toggleFilter#name'),
+				'help' => $GLOBALS['help']->getMessage(HELP_MSG_CALENDARLISTSORTLINKS),
 			);
 		$sS->assign('link', $link);
 		
@@ -669,9 +678,6 @@ class CalendarView extends PageView {
 	 * @return string html-string with the "new-entry"-form
 	 */
 	private function new_entry() {
-		
-		// pagecaption
-		$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#new_entry'));
 		
 		// smarty-templates
 		$sD = new JudoIntranetSmarty();
@@ -705,7 +711,7 @@ class CalendarView extends PageView {
 		// elements
 		// date
 		$date = $form->addElement('text','date',array());
-		$date->setLabel(parent::lang('class.CalendarView#entry#form#date').':');
+		$date->setLabel(parent::lang('class.CalendarView#entry#form#date').':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDDATE));
 		// rule
 		$date->addRule('required',parent::lang('class.CalendarView#entry#rule#required.date'));
 		$date->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.date'),array($this,'callback_check_date'));
@@ -718,7 +724,7 @@ class CalendarView extends PageView {
 		
 		// name
 		$name = $form->addElement('text','name');
-		$name->setLabel(parent::lang('class.CalendarView#entry#form#name').':');
+		$name->setLabel(parent::lang('class.CalendarView#entry#form#name').':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDNAME));
 		$name->addRule('required',parent::lang('class.CalendarView#entry#rule#required.name'));
 		$name->addRule(
 					'regex',
@@ -728,7 +734,7 @@ class CalendarView extends PageView {
 		
 		// shortname
 		$shortname = $form->addElement('text','shortname');
-		$shortname->setLabel(parent::lang('class.CalendarView#entry#form#shortname').':');
+		$shortname->setLabel(parent::lang('class.CalendarView#entry#form#shortname').':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDSHORTNAME));
 		$shortname->addRule(
 						'regex',
 						parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('name.desc').']',
@@ -738,7 +744,7 @@ class CalendarView extends PageView {
 		// type
 		$options = array_merge(array(0 => '--'),Calendar::return_types());
 		$type = $form->addElement('select','type');
-		$type->setLabel(parent::lang('class.CalendarView#entry#form#type').':');
+		$type->setLabel(parent::lang('class.CalendarView#entry#form#type').':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDTYPE));
 		$type->loadOptions($options);
 		$type->addRule('required',parent::lang('class.CalendarView#entry#rule#required.type'));
 		$type->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.select'),array($this,'callback_check_select'));
@@ -746,7 +752,7 @@ class CalendarView extends PageView {
 		
 		// entry_content
 		$content = $form->addElement('textarea','entry_content');
-		$content->setLabel(parent::lang('class.CalendarView#entry#form#entry_content').':');
+		$content->setLabel(parent::lang('class.CalendarView#entry#form#entry_content').':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDCONTENT));
 		$content->addRule(
 						'regex',
 						parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('textarea.desc').']',
@@ -756,13 +762,13 @@ class CalendarView extends PageView {
 		// select rights
 		$options = $_SESSION['user']->return_all_groups('sort');
 		$rights = $form->addElement('select','rights',array('multiple' => 'multiple','size' => 5));
-		$rights->setLabel(parent::lang('class.CalendarView#entry#form#rights').':');
+		$rights->setLabel(parent::lang('class.CalendarView#entry#form#rights').':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDSORT));
 		$rights->loadOptions($options);
 		
 		
 		// checkbox public
 		$rights = $form->addElement('checkbox','public');
-		$rights->setLabel(parent::lang('class.CalendarView#entry#form#public').':');
+		$rights->setLabel(parent::lang('class.CalendarView#entry#form#public').':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDISPUBLIC));
 		
 		
 		// submit-button
@@ -812,8 +818,14 @@ class CalendarView extends PageView {
 			// smarty
 			$sCD = new JudoIntranetSmarty();
 			$sCD->assign('data', $calendar->details_to_html());
+			
+			// pagecaption
+			$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#new_entry'));
+			
 			return $sCD->fetch('smarty.calendar.details.tpl');
 		} else {
+			// pagecaption
+			$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#new_entry').'&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_CALENDARNEW));
 			return $form->render($renderer);
 		}
 	}
@@ -958,7 +970,7 @@ class CalendarView extends PageView {
 			// elements
 			// date
 			$date = $form->addElement('text','date',array());
-			$date->setLabel(parent::lang('class.CalendarView#entry#form#date').':');
+			$date->setLabel(parent::lang('class.CalendarView#entry#form#date').':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDDATE));
 			// rule
 			$date->addRule('required',parent::lang('class.CalendarView#entry#rule#required.date'));
 			$date->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.date'),array($this,'callback_check_date'));
@@ -971,7 +983,7 @@ class CalendarView extends PageView {
 			
 			// name
 			$name = $form->addElement('text','name');
-			$name->setLabel(parent::lang('class.CalendarView#entry#form#name').':');
+			$name->setLabel(parent::lang('class.CalendarView#entry#form#name').':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDNAME));
 			$name->addRule('required',parent::lang('class.CalendarView#entry#rule#required.name'));
 			$name->addRule(
 						'regex',
@@ -981,7 +993,7 @@ class CalendarView extends PageView {
 			
 			// shortname
 			$shortname = $form->addElement('text','shortname');
-			$shortname->setLabel(parent::lang('class.CalendarView#entry#form#shortname').':');
+			$shortname->setLabel(parent::lang('class.CalendarView#entry#form#shortname').':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDSHORTNAME));
 			$shortname->addRule(
 							'regex',
 							parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('name.desc').']',
@@ -991,7 +1003,7 @@ class CalendarView extends PageView {
 			// type
 			$options = array_merge(array(0 => '--'),Calendar::return_types());
 			$type = $form->addElement('select','type');
-			$type->setLabel(parent::lang('class.CalendarView#entry#form#type').':');
+			$type->setLabel(parent::lang('class.CalendarView#entry#form#type').':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDTYPE));
 			$type->loadOptions($options);
 			$type->addRule('required',parent::lang('class.CalendarView#entry#rule#required.type'));
 			$type->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.select'),array($this,'callback_check_select'));
@@ -999,7 +1011,7 @@ class CalendarView extends PageView {
 			
 			// entry_content
 			$content = $form->addElement('textarea','entry_content');
-			$content->setLabel(parent::lang('class.CalendarView#entry#form#entry_content').':');
+			$content->setLabel(parent::lang('class.CalendarView#entry#form#entry_content').':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDCONTENT));
 			$content->addRule(
 							'regex',
 							parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('textarea.desc').']',
@@ -1009,13 +1021,13 @@ class CalendarView extends PageView {
 			// select rights
 			$options = $_SESSION['user']->return_all_groups('sort');
 			$rights = $form->addElement('select','rights',array('multiple' => 'multiple','size' => 5));
-			$rights->setLabel(parent::lang('class.CalendarView#entry#form#rights').':');
+			$rights->setLabel(parent::lang('class.CalendarView#entry#form#rights').':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDSORT));
 			$rights->loadOptions($options);
 			
 		
 			// checkbox public
 			$rights = $form->addElement('checkbox','public');
-			$rights->setLabel(parent::lang('class.CalendarView#entry#form#public').':');
+			$rights->setLabel(parent::lang('class.CalendarView#entry#form#public').':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDISPUBLIC));
 			
 			
 			// submit-button
@@ -1130,7 +1142,7 @@ class CalendarView extends PageView {
 						);
 			$sConfirmation->assign('link', $link);
 			$sConfirmation->assign('spanparams', 'id="cancel"');
-			$sConfirmation->assign('message', parent::lang('class.CalendarView#delete#message#confirm'));
+			$sConfirmation->assign('message', parent::lang('class.CalendarView#delete#message#confirm').'&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_DELETE));
 			$sConfirmation->assign('form', $form);
 			
 			// validate
@@ -1183,9 +1195,9 @@ class CalendarView extends PageView {
 		
 		// check sort or from/to
 		$sort = $from = $to = '';
-		if($this->get('sort') !== false) {$sort = "&sort=".$this->get('sort');}
-		if($this->get('from') !== false) {$from = "&from=".$this->get('from');}
-		if($this->get('to') !== false) {$to = "&to=".$this->get('to');}
+		if($this->get('sort') !== false) {$sort = "&amp;sort=".$this->get('sort');}
+		if($this->get('from') !== false) {$from = "&amp;from=".$this->get('from');}
+		if($this->get('to') !== false) {$to = "&amp;to=".$this->get('to');}
 		// form-object
 		$form = new HTML_QuickForm2(
 									'choose_preset_'.$calendar->get_id(),

@@ -34,7 +34,7 @@
 		</th>
 {if $loggedin}
 		<th class="admin">
-			{$th.admin}
+			{$th.admin}&nbsp;{if isset($helpListAdmin)}{$helpListAdmin}{/if}
 		</th>
 {/if}
 	</tr>
@@ -52,8 +52,8 @@
 			<a href="{$list.$i.show.1.href|escape}" title="{$list.$i.show.1.title}"><img src="{$list.$i.show.1.src}" alt="{$list.$i.show.1.alt}" class="icon" title="{$list.$i.show.1.alt}" /></a>
 {/if}			
 		</td>
-		<td class="admin">
 {if $list.$i.admin.0.admin}
+		<td class="admin">
 			<div class="admin-links">
 				<a href="{$list.$i.admin.0.href|escape}" title="{$list.$i.admin.0.title}"><img src="{$list.$i.admin.0.src}" alt="{$list.$i.admin.0.alt}" class="icon" title="{$list.$i.admin.0.alt}" /></a>
 				<a href="{$list.$i.admin.1.href|escape}" title="{$list.$i.admin.1.title}"><img src="{$list.$i.admin.1.src}" alt="{$list.$i.admin.1.alt}" class="icon" title="{$list.$i.admin.1.alt}" /></a>
@@ -66,8 +66,8 @@
 				<a href="{$list.$i.annadmin.1.href|escape}" title="{$list.$i.annadmin.1.title}"><img src="{$list.$i.annadmin.1.src}" alt="{$list.$i.annadmin.1.alt}" class="icon" title="{$list.$i.annadmin.1.alt}" /></a>
 			</div>
 {/if}
-{/if}
 		</td>
+{/if}
 	</tr>
 {/for}	
 </table>

@@ -20,7 +20,7 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-<p><a{if $link.params!=''} {$link.params}{/if} href="#" title="{$link.title}">{$link.content}</a></p>
+<p><span{if $link.params!=''} {$link.params}{/if} title="{$link.title}">{$link.content}</span>{if $link.help!=''}&nbsp;{$link.help}{/if}</p>
 <div{if $divparams!=''} {$divparams}{/if}>
 	<p>
 {for $i=0 to (count($r)-1)}

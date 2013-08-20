@@ -37,6 +37,8 @@ class PageView extends Object {
 	private $output;
 	private $jquery;
 	private $head;
+	private $helpmessages;
+	private $helpids;
 	// smarty
 	protected $tpl;
 	
@@ -67,6 +69,23 @@ class PageView extends Object {
 	public function set_head($head) {
 		$this->head = $head;
 	}
+	public function getHelpmessages(){
+		return $this->helpmessages;
+	}
+	public function setHelpmessages($helpmessages) {
+		$this->helpmessages = $helpmessages;
+	}
+	public function getHelpids($complete=false){
+		
+		if($complete === true) {
+			return '['.$this->helpids.']';
+		} else {
+			return $this->helpids;
+		}
+	}
+	public function setHelpids($helpids) {
+		$this->helpids = $helpids;
+	}
 	
 	/*
 	 * constructor/destructor
@@ -92,12 +111,14 @@ class PageView extends Object {
 		$this->set_output(array());
 		$this->set_jquery('');
 		$this->set_head('');
+		$this->setHelpmessages('');
+		$this->setHelpids('');
 		
 		// set userinfos if logged in
 		$this->put_userinfo();
 		
 		// initialize help
-		$GLOBALS['help'] = new Help();
+		$GLOBALS['help'] = new Help($this);
 	}
 	
 	/*
@@ -244,6 +265,31 @@ class PageView extends Object {
 		
 		// add and set back
 		$this->set_head($head.$content."\n");
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * addHelpmessages() adds the given string to $helpmessages
+	 * 
+	 * @param string $content content to be added to $helpmessages
+	 */
+	public function addHelpmessages($id, $content) {
+		
+		// get help components
+		$helpmessages = $this->getHelpmessages();
+		$helpids = $this->getHelpids();
+		
+		// add and set back
+		$this->setHelpmessages($helpmessages.$content."\n");
+		if($this->getHelpids() == '') {
+			$this->setHelpids('\''.$id.'\'');
+		} else {
+			$this->setHelpids($helpids.', \''.$id.'\'');
+		}
 	}
 	
 	
@@ -421,7 +467,7 @@ class PageView extends Object {
 	protected function put_userinfo() {
 		
 		// smarty-templates
-		$sA = new JudoIntranetSmarty();
+		$sUserLink = new JudoIntranetSmarty();
 		$sUsersettings = new JudoIntranetSmarty();
 		$sJsToggleSlide = new JudoIntranetSmarty();
 		
@@ -430,11 +476,10 @@ class PageView extends Object {
 		if($name !== false) {
 			
 			// smarty-link
-			$sA->assign('params','id="toggleUsersettings"');
-			$sA->assign('href', '#');
-			$sA->assign('title', parent::lang('class.PageView#put_userinfo#logininfo#toggleUsersettings'));
-			$sA->assign('content', $name);
-			$link = $sA->fetch('smarty.a.tpl');
+			$sUserLink->assign('params','id="toggleUsersettings"');
+			$sUserLink->assign('title', parent::lang('class.PageView#put_userinfo#logininfo#toggleUsersettings'));
+			$sUserLink->assign('content', $name);
+			$link = $sUserLink->fetch('smarty.span.tpl');
 			
 			// smarty-usersettings
 			$usersettings = array(0 => array(	
@@ -521,6 +566,29 @@ class PageView extends Object {
 		$this->tpl->assign('logininfo', $this->put_userinfo());
 		
 		// help messages
+		$this->tpl->assign('helpmessages', $this->getHelpmessages());
+		$this->tpl->assign('helpids', $this->getHelpids(true));
+		
+		// smarty-display
+		$this->tpl->display('smarty.main.tpl');
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * initHelp() sets the global helpmessages
+	 * 
+	 * @return void
+	 */
+	protected function initHelp() {
+		
+		// help messages
 		$help = array(
 				'buttonClass' => $_SESSION['GC']->get_config('help.buttonClass'),
 				'dialogClass' => $_SESSION['GC']->get_config('help.dialogClass'),
@@ -531,11 +599,8 @@ class PageView extends Object {
 		$this->tpl->assign('help', $help);
 		
 		// assign about
-		$helpabout = $GLOBALS['help']->getMessage(1, array('version' => $_SESSION['GC']->get_config('global.version')));
+		$helpabout = $GLOBALS['help']->getMessage(HELP_MSG_ABOUT, array('version' => $_SESSION['GC']->get_config('global.version')));
 		$this->tpl->assign('helpabout', $helpabout);
-		
-		// smarty-display
-		$this->tpl->display('smarty.main.tpl');
 	}
 }
 

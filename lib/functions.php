@@ -83,6 +83,27 @@ spl_autoload_register(
 
 
 
+/*
+ * constants
+ */
+define('HELP_MSG_ABOUT', 1);
+define('HELP_MSG_FIELDDATE', 2);
+define('HELP_MSG_FIELDNAME', 3);
+define('HELP_MSG_FIELDSHORTNAME', 4);
+define('HELP_MSG_FIELDTYPE', 5);
+define('HELP_MSG_FIELDCONTENT', 6);
+define('HELP_MSG_FIELDSORT', 7);
+define('HELP_MSG_FIELDISPUBLIC', 8);
+define('HELP_MSG_CALENDARNEW', 9);
+define('HELP_MSG_CALENDARLISTALL', 10);
+define('HELP_MSG_CALENDARLISTADMIN', 11);
+define('HELP_MSG_DELETE', 12);
+define('HELP_MSG_CALENDARLISTSORTLINKS', 13);
+define('HELP_MSG_FIELDTEXT', 14);
+define('HELP_MSG_LOGIN', 15);
+define('HELP_MSG_FIELDCHECKBOX', 16);
+define('HELP_MSG_FIELDDBSELECT', 17);
+define('HELP_MSG_FIELDDBHIERSELECT', 18);
 
 
 

@@ -122,6 +122,10 @@ td.admin div.quickform div.row p.label {
 	display: none;
 }
 
+div.quickform div.row div.group select {
+	display: block;
+}
+
 .even {
 	background-color: #ccf;
 }
@@ -265,6 +269,12 @@ a#newLink {
 	left: 20px;
 }
 
+#toggleUsersettings {
+	text-decoration: underline;
+	font-size: 90%;
+	cursor: pointer;
+}
+
 p.usersettings {
 	border-bottom: 1px solid white;
 	background-color: #0000ff;
@@ -325,6 +335,12 @@ div#diffOut {
 	margin-bottom: 30px;
 }
 
+#toggleFilter {
+	text-decoration: underline;
+	font-size: 90%;
+	cursor: pointer;
+}
+
 /* navi */
 div.navi_0 {
 	border: 1px solid blue;
@@ -375,9 +391,9 @@ div#login-out {
 div#confirm {
 	margin: 130px auto;
 	width: 430px;
-	min-height: 250px;
+	min-height: 200px;
 	border: 2px dashed blue;
-	padding: 7px;
+	padding: 40px 7px 7px 40px;
 }
 
 div#confirm div.quickform {
@@ -385,7 +401,7 @@ div#confirm div.quickform {
 }
 
 span#cancel {
-	padding-left: 100px;
+	padding-left: 70px;
 	vertical-align: bottom;
 }
 
@@ -459,6 +475,10 @@ div.logininfo {
 div.helpabout {
 	float: left;
 	margin-left: 15px;
+}
+
+div.confirmForm {
+	margin-left: 40px;
 }
 
 

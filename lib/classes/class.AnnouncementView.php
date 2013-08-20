@@ -130,6 +130,9 @@ class AnnouncementView extends PageView {
 		// set pagename
 		$this->tpl->assign('pagename',parent::lang('class.AnnouncementView#page#init#name'));
 		
+		// init helpmessages
+		$this->initHelp();
+		
 		// switch $_GET['id'] if set
 		if($this->get('id') !== false) {
 			
@@ -673,7 +676,7 @@ class AnnouncementView extends PageView {
 								);
 					$sConfirmation->assign('link', $link);
 					$sConfirmation->assign('spanparams', 'id="cancel"');
-					$sConfirmation->assign('message', parent::lang('class.AnnouncementView#delete#message#confirm'));
+					$sConfirmation->assign('message', parent::lang('class.AnnouncementView#delete#message#confirm').'&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_DELETE));
 					$sConfirmation->assign('form', $form);
 					
 					// validate
