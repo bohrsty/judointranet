@@ -20,7 +20,7 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-<table id="inventory.listall">
+<table id="inventory.listall" class="content">
 	<tr>
 {for $i=0 to (count($th)-1)}
 		<th class="{$th.$i.class}">{$th.$i.content}</th>

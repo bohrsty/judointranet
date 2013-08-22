@@ -707,8 +707,8 @@ $lang = array(
 				'value' => 'Wert',
 				'valid' => 'Aktiviert',
 				'number' => 'Nummer',
-				'id' => 'ID',
-				'club_id' => 'Vereins-ID',
+				'id' => 'Schl&uuml;ssel',
+				'club_id' => 'Vereins-Schl&uuml;ssel',
 				'class' => 'Altersgruppe',
 				'type' => 'Typ',
 				'weightclass' => 'Gewichtsklasse',
@@ -753,7 +753,7 @@ $lang = array(
 			'toggleTable' => array(
 				'title' => 'Tabellenauswahl ein- oder ausblenden',
 				'name' => 'Tabellenauswahl ein- oder ausblenden'
-			)
+			),
 		),
 		'field' => array(
 			'caption' => array(
@@ -781,7 +781,9 @@ $lang = array(
 				'edit' => 'Bearbeiten',
 				'disable' => 'Deaktivieren',
 				'enable' => 'Aktivieren',
-				'delete' => 'L&ouml;schen'
+				'delete' => 'L&ouml;schen',
+				'disabled' => 'Deaktiviert',
+				'enabled' => 'Aktiviert',
 			),
 			'new' => array(
 				'title' => 'Neuen Eintrag in diese Tabelle einf&uuml;gen',
@@ -854,7 +856,18 @@ $lang = array(
 				'field' => 'Benutzerdefinierte Tabellen',
 				'defaults' => 'Vorgegebene Felder'
 			)
-		)
+		),
+		'tables' => array(
+			'name' => array(
+				'club' => '<b>Vereine</b>',
+				'contact' => '<b>Ansprechpartner</b>',
+				'judo' => '<b>Judo</b>',
+				'judo_belt' => '<b>G&uuml;rtelfarben</b>',
+				'location' => '<b>Hallen</b>',
+				'protocol_types' => '<b>Protokolltypen</b>',
+				'staff' => '<b>Referenten</b>'
+			),
+		),
 	),
 	'class.ProtocolView' => array(
 		'page' => array(

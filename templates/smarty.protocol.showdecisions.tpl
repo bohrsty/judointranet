@@ -21,7 +21,7 @@
  * 
  * ********************************************************************************************}
 {for $i=0 to (count($data)-1)}
-<table id="protocol_showdecisions">
+<table class="content protocol_showdecisions">
 	<tr class="head">
 		<td class="date">
 			<b>{$data.$i.date}</b>

@@ -20,21 +20,4 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-<p><span{if $link.params!=''} {$link.params}{/if} title="{$link.title}">{$link.content}</span>{if isset($link.help) and $link.help!=''}&nbsp;{$link.help}{/if}</p>
-<div{if $divparams!=''} {$divparams}{/if}>
-	<p>
-{for $i=0 to (count($r)-1)}
-		<a href="{$r.$i.href|escape}" title="{$r.$i.title}">{$r.$i.content}</a>
-{/for}
-	</p>
-	<p>
-{for $i=0 to (count($dl)-1)}
-		<a href="{$dl.$i.href|escape}" title="{$dl.$i.title}">{$dl.$i.content}</a>
-{/for}
-	</p>
-	<p>
-{for $i=0 to (count($gl)-1)}
-		<a href="{$gl.$i.href|escape}" title="{$gl.$i.title}">{$gl.$i.content}</a>
-{/for}
-	</p>
-</div>
+ <img class="center" src="img/admin_{$status}.png" title="{$statusTranslated}" alt="{$statusTranslated}" />

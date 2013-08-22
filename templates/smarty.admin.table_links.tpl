@@ -20,9 +20,7 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-<p>
-	<a{if $params!=''} {$params}{/if} href="{$href|escape}" title="{$title}">{$content}</a>
-</p>
+<span{if $link.params!=''} {$link.params}{/if} title="{$link.title}">{$link.content}</span>{if isset($link.help) and $link.help!=''}&nbsp;{$link.help}{/if}
 <div id="tablelinks">
 {for $i=0 to (count($data)-1)}
 	<p {$class}>

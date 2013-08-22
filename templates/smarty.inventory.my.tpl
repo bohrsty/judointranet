@@ -20,7 +20,7 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-<table id="inventory.my">
+<table id="inventory.my" class="content">
 	<tr>
 		<th class="{$th.name.class}">{$th.name.content}</th>
 		<th class="{$th.number.class}">{$th.number.content}</th>

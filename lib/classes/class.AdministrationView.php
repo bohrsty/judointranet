@@ -198,7 +198,7 @@ class AdministrationView extends PageView {
 		}
 		
 		// global smarty
-		$this->showPage();
+		$this->showPage('smarty.admin.tpl');
 	}
 	
 	
@@ -220,8 +220,15 @@ class AdministrationView extends PageView {
 		// check $_GET['field']
 		if($this->get('field') !== false) {
 			
+			// translate table name
+			if(parent::lang('class.AdministrationView#tables#name#'.$this->get('field')) != 'class.AdministrationView#tables#name#'.$this->get('field').' not translated') {
+				$translatedField = parent::lang('class.AdministrationView#tables#name#'.$this->get('field'));
+			} else {
+				$translatedField = $this->get('field');
+			}
+			
 			// set caption
-			$this->tpl->assign('caption', parent::lang('class.AdministrationView#field#caption#name.table').'"'.$this->get('field').'"');
+			$this->tpl->assign('caption', parent::lang('class.AdministrationView#field#caption#name.table').$translatedField.' ("'.$this->get('field').'")');
 			
 			// check if 'field' exists
 			if($this->check_usertable($this->get('field')) !== false) {
@@ -346,12 +353,18 @@ class AdministrationView extends PageView {
 			// check table
 			if($this->get('field') === false || $this->get('field') != $table) {
 			
+				// translate table name
+				if(parent::lang('class.AdministrationView#tables#name#'.$table) != 'class.AdministrationView#tables#name#'.$table.' not translated') {
+					$translatedTable = parent::lang('class.AdministrationView#tables#name#'.$table);
+				} else {
+					$translatedTable = $table;
+				}
 				// smarty
 				$data[] = array(
 						'params' => 'class="usertable"',
 						'href' => 'administration.php?id='.$this->get('id').'&field='.$table,
-						'title' => '\''.$table.'\''.parent::lang('class.AdministrationView#create_table_links#title#manage'),
-						'content' => '\''.$table.'\''.parent::lang('class.AdministrationView#create_table_links#name#manage')
+						'title' => $translatedTable.' '.parent::lang('class.AdministrationView#create_table_links#title#manage'),
+						'content' => $translatedTable.' '.parent::lang('class.AdministrationView#create_table_links#name#manage')
 					);
 			}
 		}
@@ -360,10 +373,13 @@ class AdministrationView extends PageView {
 		
 		// add slider-link
 		// smarty
-		$sTl->assign('title', parent::lang('class.AdministrationView#create_table_links#toggleTable#title'));
-		$sTl->assign('content', parent::lang('class.AdministrationView#create_table_links#toggleTable#name'));
-		$sTl->assign('params', 'id="toggleTable"');
-		$sTl->assign('href', '#');
+		$link = array(
+				'title' => parent::lang('class.AdministrationView#create_table_links#toggleTable#title'),
+				'content' => parent::lang('class.AdministrationView#create_table_links#toggleTable#name'),
+				'params' => 'id="toggleTable"',
+				'help' => '',
+			);
+		$sTl->assign('link', $link);
 		
 		// add jquery
 		$sToggleSlide = new JudoIntranetSmarty();
@@ -527,6 +543,16 @@ class AdministrationView extends PageView {
 						parent::lang('class.AdministrationView#list_table_content#pages#of')." $rows)";
 		$sTc->assign('toof', $toOf);
 		
+		// check if table has "usertableShow.$table" entry
+		$configUsertableCols = $_SESSION['GC']->get_config('usertableCols.'.$table_name);
+		if($configUsertableCols === false || $configUsertableCols == '') {
+			$usertableCols = array();
+			$skipUsertableCols = false;
+		} else {
+			$usertableCols = explode(',', $configUsertableCols);
+			$skipUsertableCols = true;
+		}
+				
 		// prepare statement
 		$sql = "SELECT *
 				FROM $table_name
@@ -543,9 +569,14 @@ class AdministrationView extends PageView {
 		$tinfo = $result->fetch_fields();
 		
 		// prepare th
-		$i = 0;
+		$i = 1;
+		$data[0]['th'][0]['content'] = parent::lang('class.AdministrationView#list_table_content#table#tasks');
 		foreach($tinfo as $col) {
 			
+			// check usertableCols
+			if(!in_array($col->name, $usertableCols) && $skipUsertableCols) {
+				continue;
+			}
 			// check translation
 			$translated_name = '';
 			if(parent::lang('class.AdministrationView#tableRows#name#'.$col->name) != "class.AdministrationView#tableRows#name#$col->name not translated") {
@@ -554,23 +585,19 @@ class AdministrationView extends PageView {
 				$translated_name = $col->name;
 			}
 			// smarty
-			if($i == 0) {
-				$data[0]['th'][$i]['content'] = parent::lang('class.AdministrationView#list_table_content#table#tasks');
-			} else {
-				$data[0]['th'][$i]['content'] = $translated_name;
-			}
-			
+			$data[0]['th'][$i]['content'] = $translated_name;
+						
 			// increment counter
 			$i++;
 		}
 		
 		while($row = $result->fetch_array(MYSQL_ASSOC)) {
 			
-			$index2 = 0;
+			$index2 = 1;
 			
 			// add edit
 			// smarty
-			$data[$index]['td'][$index2]['edit'] = array(
+			$data[$index]['td'][0]['edit'] = array(
 					'src' => 'img/admin_edit.png',
 					'alt' => parent::lang('class.AdministrationView#list_table_content#table#edit'),
 					'href' => $link.'&action=edit&rid='.$row['id'],
@@ -582,11 +609,13 @@ class AdministrationView extends PageView {
 			$status = '';
 			if($row['valid'] == 0) {
 				$status = 'enable';
+				$actualStatus = 'disabled';
 			} else {
 				$status = 'disable';
+				$actualStatus = 'enabled';
 			}
 			// smarty
-			$data[$index]['td'][$index2]['disenable'] = array(
+			$data[$index]['td'][0]['disenable'] = array(
 					'src' => 'img/admin_'.$status.'.png',
 					'alt' => parent::lang('class.AdministrationView#list_table_content#table#'.$status),
 					'href' => $link.'&action='.$status.'&rid='.$row['id'],
@@ -594,7 +623,7 @@ class AdministrationView extends PageView {
 				);
 			// add delete
 			// smarty
-			$data[$index]['td'][$index2]['delete'] = array(
+			$data[$index]['td'][0]['delete'] = array(
 					'src' => 'img/admin_delete.png',
 					'alt' => parent::lang('class.AdministrationView#list_table_content#table#delete'),
 					'href' => $link.'&action=delete&rid='.$row['id'],
@@ -604,6 +633,14 @@ class AdministrationView extends PageView {
 			// walk through $row
 			foreach($row as $name => $value) {
 				
+				// check usertableCols
+				if(!in_array($name, $usertableCols) && $skipUsertableCols) {
+					continue;
+				}
+				
+				// set escape to true maybe overridden later
+				$data[$index]['td'][$index2]['escape'] = true;
+				
 				// check category
 				if($name == 'category') {
 					
@@ -611,6 +648,14 @@ class AdministrationView extends PageView {
 					$cat_sql = "SELECT name FROM category WHERE id=$value";
 					$cat_result = $db->query($cat_sql);
 					list($value) = $cat_result->fetch_array(MYSQL_NUM);
+				} elseif($name == 'valid') {
+					
+					// set value to according img
+					$validImg = new JudoIntranetSmarty();
+					$validImg->assign('status', $actualStatus);
+					$validImg->assign('statusTranslated', parent::lang('class.AdministrationView#list_table_content#table#'.$actualStatus));
+					$value = $validImg->fetch('smarty.admin.valid_img.tpl');
+					$data[$index]['td'][$index2]['escape'] = false;
 				}
 				
 				// smarty

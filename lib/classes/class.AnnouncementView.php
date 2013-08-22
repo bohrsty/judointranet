@@ -246,7 +246,7 @@ class AnnouncementView extends PageView {
 		}
 		
 		// global smarty
-		$this->showPage();
+		$this->showPage('smarty.main.tpl');
 	}
 	
 	

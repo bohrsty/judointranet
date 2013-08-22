@@ -20,7 +20,7 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-<table id="protocol.listall">
+<table id="protocol.listall" class="content">
 	<tr>
 		<th class="date">
 			{$th.date}

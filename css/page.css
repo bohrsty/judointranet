@@ -127,7 +127,7 @@ div.quickform div.row div.group select {
 }
 
 .even {
-	background-color: #ccf;
+	background-color: #b6d6e4;
 }
 
 th.admin {
@@ -156,8 +156,7 @@ th.location {
 
 div#sortlinks {
 	max-height: 120px;
-	overflow: scroll;
-	overflow: -moz-scrollbars-vertical;
+	overflow: auto;
 	margin-bottom: 20px;
 }
 
@@ -177,21 +176,23 @@ td.admin div.admin-links {
 	float: left;
 }
 
-table#protocol_showdecisions {
+table.protocol_showdecisions {
 	width: 90%;
-	border: 1px solid black;
-	margin: 10px 0;
+	border: 1px solid #b6d6e4;
+	border-radius: 3px;
+	margin: 15px 0;
+	padding: 3px;
 }
 
-table#protocol_showdecisions td {
+table.protocol_showdecisions td {
 	text-align: left;
 }
 
-table#protocol_showdecisions td.date {
+table.protocol_showdecisions td.date {
 	width: 200px;
 }
 
-table#protocol_showdecisions td.type {
+table.protocol_showdecisions td.type {
 	width: 300px;
 }
 
@@ -241,17 +242,25 @@ div.protocol-page-line {
 	height: 297mm;
 }
 
+#toggleTable {
+	text-decoration: underline;
+	font-size: 90%;
+	cursor: pointer;
+}
+
 p.usertable {
-	border-bottom: 1px solid white;
-	background-color: #0000ff;
+	border-bottom: 1px solid #3a9ec8;
+	border-right: 1px solid #3a9ec8;
+	border-radius: 3px;
+	background-color: #b6d6e4;
 	width: 225px;
-	padding: 0;
-	margin: 0;
+	padding: 2px 0;
+	margin: 0 0 1px 0;
 }
 
 a.usertable {
 	text-decoration: none;
-	color: white;
+	color: black;
 	padding: 3px;
 }
 
@@ -276,25 +285,28 @@ a#newLink {
 }
 
 p.usersettings {
-	border-bottom: 1px solid white;
-	background-color: #0000ff;
+	border-bottom: 1px solid #3a9ec8;
+	border-right: 1px solid #3a9ec8;
+	border-radius: 3px;
+	background-color: #b6d6e4;
 	width: 200px;
-	padding: 0;
-	margin: 0;
+	padding: 2px 0;
+	margin: 0 0 1px 0;
 	text-align: left;
 }
 
 a.usersettings {
 	text-decoration: none;
-	color: white;
+	color: black;
 	padding: 3px;
 }
 
 div.protocolDetailLinks {
 	width: 85%;
-	border: 1px solid #00f;
+	border: 1px solid #3a9ec8;
+	border-radius: 3px;
 	padding: 5px;
-	background-color: #e1e1e1;
+	background-color: #b6d6e4;
 	margin: 0 0 40px 0;
 }
 
@@ -341,24 +353,29 @@ div#diffOut {
 	cursor: pointer;
 }
 
-/* navi */
 div.navi_0 {
-	border: 1px solid blue;
-	background-color: #0000ff;
+	border: 1px solid #3a9ec8;
+	border-radius: 3px;
+	background: url("start/images/ui-bg_gloss-wave_75_2191c0_500x100.png") scroll repeat-x 1.2em;
+	background-color: #3a9ec8;
 	width: 225px;
 	text-align: left;
 	color: white;
+	font-weight: bold;
 	padding: 2px;
 	height: 1.2em;
+	margin-bottom: 1px;
 }
 
 div.navi_0 a {
 	color: white;
+	font-weight: bold;
 }
 
 div.navi_1_i {
 	border: 1px solid black;
-	margin: 0 0 0 15px;
+	border-radius: 3px;
+	margin: 0 0 1px 15px;
 	width: 210px;
 	text-align: left;
 	padding: 2px;
@@ -367,7 +384,8 @@ div.navi_1_i {
 
 div.navi_1_a {
 	border: 1px solid black;
-	margin: 0 0 0 15px;
+	border-radius: 3px;
+	margin: 0 0 1px 15px;
 	width: 210px;
 	text-align: left;
 	color: #aa0000;
@@ -377,7 +395,7 @@ div.navi_1_a {
 }
 
 div.navi_1_a a {
-	color: #aa0000;
+	color: #800;
 }
 
 div#login-out {
@@ -405,12 +423,6 @@ span#cancel {
 	vertical-align: bottom;
 }
 
-/*
- * quickform2
- */
-/*
- * loginform
- */
 form#login div.row {
 	font-size: 85%;
 	margin-bottom: 10px;
@@ -442,16 +454,10 @@ p.label {
 	padding: 0;
 }
 
-/*
- * confirmation
- */
 input#yes-0 {
 	width: 80px;
 }
 
-/*
- * fonts
- */
 div.calendar-details p.details span{
 	font-weight: bold;
 }
@@ -480,6 +486,35 @@ div.helpabout {
 div.confirmForm {
 	margin-left: 40px;
 }
+
+table.adminTableContent {
+	min-width: 85%;
+	padding: 2px;
+	font-size: 90%;
+}
+
+table.content th,td {
+	border-right: solid 1px #3a9ec8;
+	border-bottom: solid 1px #3a9ec8;
+	border-bottom-right-radius: 3px;
+}
+
+img.center {
+	display: block;
+	margin: auto;
+}
+
+table.adminTableContent td.adminTasks {
+	margin: 0;
+	text-align: center;
+}
+
+table.adminTableContent td.adminTasks img {
+	margin: 0 5px;
+}
+
+
+
 
 
 

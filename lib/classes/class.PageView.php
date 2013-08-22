@@ -550,9 +550,10 @@ class PageView extends Object {
 	/**
 	 * showPage() sets some global template variables and displays the page
 	 * 
+	 * @param string $template name of the template file to use
 	 * @return void
 	 */
-	protected function showPage() {
+	protected function showPage($template) {
 		
 		// head
 		$this->tpl->assign('head', $this->get_head());
@@ -570,7 +571,7 @@ class PageView extends Object {
 		$this->tpl->assign('helpids', $this->getHelpids(true));
 		
 		// smarty-display
-		$this->tpl->display('smarty.main.tpl');
+		$this->tpl->display($template);
 	}
 	
 	

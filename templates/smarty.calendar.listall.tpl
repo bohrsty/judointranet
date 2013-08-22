@@ -21,7 +21,7 @@
  * 
  * ********************************************************************************************}
 {$sortlinks}
-<table id="calendar.listall">
+<table id="calendar.listall" class="content">
 	<tr>
 		<th class="date">
 			{$th.date}
