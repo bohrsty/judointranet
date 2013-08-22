@@ -283,39 +283,6 @@ class InventoryView extends PageView {
 	
 	
 	/**
-	 * defaultContent returns the html-content to be displayed on page without
-	 * parameters or functions
-	 * 
-	 * @return string html-content as default content
-	 */
-	protected function defaultContent() {
-		
-		// smatry-template
-		$sD = new JudoIntranetSmarty();
-		
-		$sD->assign('caption', parent::lang('class.InventoryView#default_content#headline#text'));
-		$text[] = array(
-				'caption' => parent::lang('class.InventoryView#default_content#explain#my.hx'),
-				'text' => parent::lang('class.InventoryView#default_content#explain#my.p')
-			);
-		
-		$text[] = array(
-				'caption' => parent::lang('class.InventoryView#default_content#explain#listall.hx'),
-				'text' => parent::lang('class.InventoryView#default_content#explain#my.p')
-			);
-		$sD->assign('text', $text);
-					
-		// return
-		return $sD->fetch('smarty.default.content.tpl');
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
 	 * listall lists all inventoryentries, shows only entrys for which
 	 * the user has sufficient rights
 	 * 

@@ -513,6 +513,16 @@ table.adminTableContent td.adminTasks img {
 	margin: 0 5px;
 }
 
+div.defaultContent {
+	width: 100%;
+	height: 500px;
+    background-color: white;
+    background-image: url("../img/judo.png");
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-position: 30% 0%;
+}
+
 
 
 

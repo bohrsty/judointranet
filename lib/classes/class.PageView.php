@@ -527,13 +527,6 @@ class PageView extends Object {
 		
 		// smatry-template
 		$sD = new JudoIntranetSmarty();
-		
-		$sD->assign('caption', parent::lang('class.PageView#defaultContent#text#caption'));
-		$text[] = array(
-				'caption' => '',
-				'text' => parent::lang('class.PageView#defaultContent#text#content')
-			);
-		$sD->assign('text', $text);
 					
 		// return
 		return $sD->fetch('smarty.default.content.tpl');
