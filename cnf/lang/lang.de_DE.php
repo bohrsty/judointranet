@@ -691,7 +691,7 @@ $lang = array(
 				'name' => 'Name/Anzeigename',
 				'category' => 'Kategorie',
 				'value' => 'Wert',
-				'valid' => 'Aktiviert',
+				'valid' => 'Status',
 				'number' => 'Nummer',
 				'id' => 'Schl&uuml;ssel',
 				'club_id' => 'Vereins-Schl&uuml;ssel',
@@ -1060,6 +1060,8 @@ $lang = array(
 				'FieldDbselect' => 'Auswahlfeld',
 				'FieldDbhierselect' => 'Abh&auml;ngiges Auswahlfeld',
 				'Login' => 'Login',
+				'adminUsertableSelect' => 'Tabelle ausw&auml;hlen',
+				'adminUsertableTasks' => 'Aufgaben',
 			),
 			'message' => array(
 				'errorIdNotExists' => '<p>Dieses Hilfe-Thema konnte nicht gefunden werden.</p>',
@@ -1224,6 +1226,25 @@ $lang = array(
 						und Passwort) werden durch den '.htmlspecialchars($_SESSION['GC']->get_config('global.systemcontactName')).'
 						zur Verf&uuml;gung gestellt.</p>
 					{/if}',
+				'adminUsertableSelect' => '<p>Der nebenstehende Link blendet die Auswahl der
+					administrierbaren Tabellen ein (z.B.: Vereine und deren Ansprechpartner).
+					Ein Klick auf die gew&uuml;nschte Tabelle zeigt deren Inhalt an und bietet
+					die Funktionen diese zu ver&auml;ndern, zu deaktivieren oder zu l&ouml;schen
+					und neue Datens&auml;tze an zu legen.<br />
+					Die Art und Zahl der Spalten unterscheidet sich je nach Tabelle, da
+					unterschiedliche Daten gespeichert werden.</p>',
+				'adminUsertableTasks' => '<p></p>
+					<ul>
+					<li><img src="img/admin_edit.png" />&nbsp;:&nbsp; &ouml;ffnet den Datensatz
+					zur Bearbeitung, hier k&ouml;nnen alle Felder bis auf den Schl&uuml;ssel
+					ge&auml;ndert werden.</li>
+					<li><img src="img/admin_disable.png" />/<img src="img/admin_enable.png" />&nbsp;:&nbsp;
+					Je nach Status des Datensatzes aktiviert oder deaktiviert dieser Button den Datensatz.
+					Deaktivierte Datens&auml;tze werden in keinem Auswahlfeld angezeigt, existieren aber noch.</li>
+					<li><img src="img/admin_delete.png" />&nbsp;:&nbsp; L&ouml;scht den Datensatz nach
+					R&uuml;ckfrage. Der Datensatz ist danach endg&uuml;ltig aus der Datenbank entfernt und
+					nur durch Neueintragen wiederherstellbar.</li>
+					</ul>',
 			),
 		),
 		'getMessage' => array(

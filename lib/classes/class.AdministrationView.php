@@ -309,10 +309,6 @@ class AdministrationView extends PageView {
 			
 			// set caption
 			$this->tpl->assign('caption', parent::lang('class.AdministrationView#field#caption#name'));
-			
-			// add default content
-			$content .= $this->defaultContent();
-		
 		}
 		
 		// smarty
@@ -377,7 +373,7 @@ class AdministrationView extends PageView {
 				'title' => parent::lang('class.AdministrationView#create_table_links#toggleTable#title'),
 				'content' => parent::lang('class.AdministrationView#create_table_links#toggleTable#name'),
 				'params' => 'id="toggleTable"',
-				'help' => '',
+				'help' => $GLOBALS['help']->getMessage(HELP_MSG_ADMINUSERTABLESELECT),
 			);
 		$sTl->assign('link', $link);
 		
@@ -471,12 +467,12 @@ class AdministrationView extends PageView {
 		$sTc = new JudoIntranetSmarty();
 		
 		// get url-parameters
-		$link = '';
 		if($table_name == 'defaults') {
-			$link = 'administration.php?id='.$this->get('id');
+			$preface = 'administration.php?id='.$this->get('id');
 		} else {
-			$link = 'administration.php?id='.$this->get('id').'&field='.$table_name;
+			$preface = 'administration.php?id='.$this->get('id').'&field='.$table_name;
 		}
+		$sTc->assign('preface', $preface);
 		
 		// prepare return
 		$return = '';
@@ -484,7 +480,7 @@ class AdministrationView extends PageView {
 		// smarty
 		$newlink = array(
 				'params' => 'id="newLink"',
-				'href' => $link.'&action=new',
+				'href' => $preface.'&action=new',
 				'title' => parent::lang('class.AdministrationView#list_table_content#new#title'),
 				'content' => parent::lang('class.AdministrationView#list_table_content#new#name')
 			);
@@ -493,55 +489,11 @@ class AdministrationView extends PageView {
 		// get db-object
 		$db = Db::newDb();
 		
-		// prepare statement
-		$sql = "SELECT COUNT(*)
-				FROM $table_name";
+		// get pagelinks
+		list($page, $pagelinks) = $this->pageLinks($table_name, $page);
 		
-		// execute
-		$result = $db->query($sql);
-		
-		// fetch rows
-		list($rows) = $result->fetch_array(MYSQL_NUM);
-		
-		// get total pages
-		$pagesize = $_SESSION['GC']->get_config('pagesize');
-		$total_pages = ceil($rows / $pagesize);
-		
-		// generate page-links
-		// smarty
-		$sTc->assign('pages', parent::lang('class.AdministrationView#list_table_content#pages#pages'));
-		$pagelinks = array();
-		for($i=1;$i<=$total_pages;$i++) {
-			
-			// smarty
-			$pagelinks[] = array(
-					'params' => 'class="pagelinks"',
-					'href' => $link.'&page='.$i,
-					'title' => parent::lang('class.AdministrationView#list_table_content#pages#page').' '.$i,
-					'content' => $i
-				);
-		}
-		$sTc->assign('pl', $pagelinks);
-		
-		// get rows from db
-		// prepare LIMIT
-		if($page === false || ($page - 1) * $pagesize >= $rows) {
-			$page = 0;
-		} else {
-			$page -= 1;
-		}
-		
-		// add rows
-		// check last
-		$last = $page * $pagesize + $pagesize;
-		if(($page * $pagesize + $pagesize) > $rows) {
-			$last = $rows;
-		}
-		// smarty
-		$toOf = " (".($page * $pagesize + 1)." ".
-						parent::lang('class.AdministrationView#list_table_content#pages#to')." $last ".
-						parent::lang('class.AdministrationView#list_table_content#pages#of')." $rows)";
-		$sTc->assign('toof', $toOf);
+		// assign pagelink data
+		$sTc->assign('pagelinks', $pagelinks);
 		
 		// check if table has "usertableShow.$table" entry
 		$configUsertableCols = $_SESSION['GC']->get_config('usertableCols.'.$table_name);
@@ -554,6 +506,7 @@ class AdministrationView extends PageView {
 		}
 				
 		// prepare statement
+		$pagesize = $_SESSION['GC']->get_config('pagesize');
 		$sql = "SELECT *
 				FROM $table_name
 				LIMIT ".$page * $pagesize.",$pagesize";
@@ -570,7 +523,7 @@ class AdministrationView extends PageView {
 		
 		// prepare th
 		$i = 1;
-		$data[0]['th'][0]['content'] = parent::lang('class.AdministrationView#list_table_content#table#tasks');
+		$data[0]['th'][0]['content'] = parent::lang('class.AdministrationView#list_table_content#table#tasks').'&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_ADMINUSERTABLETASKS);
 		foreach($tinfo as $col) {
 			
 			// check usertableCols
@@ -600,7 +553,7 @@ class AdministrationView extends PageView {
 			$data[$index]['td'][0]['edit'] = array(
 					'src' => 'img/admin_edit.png',
 					'alt' => parent::lang('class.AdministrationView#list_table_content#table#edit'),
-					'href' => $link.'&action=edit&rid='.$row['id'],
+					'href' => $preface.'&action=edit&rid='.$row['id'],
 					'title' => parent::lang('class.AdministrationView#list_table_content#table#edit').': '.$row['id']
 				);
 			
@@ -618,7 +571,7 @@ class AdministrationView extends PageView {
 			$data[$index]['td'][0]['disenable'] = array(
 					'src' => 'img/admin_'.$status.'.png',
 					'alt' => parent::lang('class.AdministrationView#list_table_content#table#'.$status),
-					'href' => $link.'&action='.$status.'&rid='.$row['id'],
+					'href' => $preface.'&action='.$status.'&rid='.$row['id'],
 					'title' => parent::lang('class.AdministrationView#list_table_content#table#'.$status).': '.$row['id']
 				);
 			// add delete
@@ -626,7 +579,7 @@ class AdministrationView extends PageView {
 			$data[$index]['td'][0]['delete'] = array(
 					'src' => 'img/admin_delete.png',
 					'alt' => parent::lang('class.AdministrationView#list_table_content#table#delete'),
-					'href' => $link.'&action=delete&rid='.$row['id'],
+					'href' => $preface.'&action=delete&rid='.$row['id'],
 					'title' => parent::lang('class.AdministrationView#list_table_content#table#delete').': '.$row['id']
 				);
 			

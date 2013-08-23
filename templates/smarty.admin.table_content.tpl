@@ -21,7 +21,7 @@
  * 
  * ********************************************************************************************}
 <p id="pagelinks">
-	{$pages}&nbsp;{for $i=0 to (count($pl)-1)}<a{if $pl.$i.params!=''} {$pl.$i.params}{/if} href="{$pl.$i.href|escape}" title="{$pl.$i.title}">{$pl.$i.content}</a>&nbsp;{/for}&nbsp;{$toof}&nbsp;<a{if $newlink.params!=''} {$newlink.params}{/if} href="{$newlink.href|escape}" title="{$newlink.title}">{$newlink.content}</a>
+	{include file='smarty.pagelinks.tpl' pagelinks=$pagelinks preface=$preface}&nbsp;<a{if $newlink.params!=''} {$newlink.params}{/if} href="{$newlink.href|escape}" title="{$newlink.title}">{$newlink.content}</a>
 </p>
 <table class="content adminTableContent">
 	<tr>
@@ -42,5 +42,5 @@
 {/if}
 </table>
 <p id="pagelinks">
-	{$pages}&nbsp;{for $i=0 to (count($pl)-1)}<a{if $pl.$i.params!=''} {$pl.$i.params}{/if} href="{$pl.$i.href|escape}" title="{$pl.$i.title}">{$pl.$i.content}</a>&nbsp;{/for}&nbsp;{$toof}&nbsp;<a{if $newlink.params!=''} {$newlink.params}{/if} href="{$newlink.href|escape}" title="{$newlink.title}">{$newlink.content}</a>
+	{include file='smarty.pagelinks.tpl' pagelinks=$pagelinks preface=$preface}&nbsp;<a{if $newlink.params!=''} {$newlink.params}{/if} href="{$newlink.href|escape}" title="{$newlink.title}">{$newlink.content}</a>
 </p>

@@ -596,6 +596,84 @@ class PageView extends Object {
 		$helpabout = $GLOBALS['help']->getMessage(HELP_MSG_ABOUT, array('version' => $_SESSION['GC']->get_config('global.version')));
 		$this->tpl->assign('helpabout', $helpabout);
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * pageLinks() generates the information of the pages to be used in "smarty.pagelinks.tpl"
+	 * template
+	 * 
+	 * @param string $table table name for which the result should be paged
+	 * @param int $page actual page
+	 * @return array array containing the information of the generated pages
+	 */
+	protected function pageLinks($table, $page) {
+		
+		// get db-object
+		$db = Db::newDb();
+		
+		// prepare statement
+		$sql = "SELECT COUNT(*)
+				FROM $table";
+		
+		// execute
+		$result = $db->query($sql);
+		
+		// fetch rows
+		list($rows) = $result->fetch_array(MYSQL_NUM);
+		
+		// get total pages
+		$pagesize = $_SESSION['GC']->get_config('pagesize');
+		$total_pages = ceil($rows / $pagesize);
+		
+		$pagelinks = array();
+		for($i=1;$i<=$total_pages;$i++) {
+			
+			// check if active page
+			$params = 'class="pagelinks"';
+			if($i == $page || ($page === false && $i == 1)) {
+				$params = 'class="pagelinks active"';
+			}
+			$pagelinks['links'][] = array(
+					'params' => $params,
+					'href' => '&page='.$i,
+					'title' => parent::lang('class.AdministrationView#list_table_content#pages#page').' '.$i,
+					'content' => $i
+				);
+		}
+		
+		// get rows from db
+		// prepare LIMIT
+		if($page === false || ($page - 1) * $pagesize >= $rows) {
+			$page = 0;
+		} else {
+			$page -= 1;
+		}
+		
+		// add rows
+		// check last
+		$last = $page * $pagesize + $pagesize;
+		if(($page * $pagesize + $pagesize) > $rows) {
+			$last = $rows;
+		}
+		
+		// assign "from - to - of"
+		$pagelinks['toof'] = " (".($page * $pagesize + 1)." ".
+				parent::lang('class.AdministrationView#list_table_content#pages#to')." $last ".
+				parent::lang('class.AdministrationView#list_table_content#pages#of')." $rows)";
+		
+		// assign "pages"
+		$pagelinks['pages'] = parent::lang('class.AdministrationView#list_table_content#pages#pages');
+		
+		// return
+		return array($page, $pagelinks);
+	}
 }
 
 

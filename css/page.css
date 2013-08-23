@@ -523,6 +523,10 @@ div.defaultContent {
     background-position: 30% 0%;
 }
 
+a.active {
+	color: #3a9ec8;
+}
+
 
 
 
