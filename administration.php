@@ -26,7 +26,7 @@
 /*
  * required lib
  */
-require('lib/functions.php');
+require('lib/common.inc.php');
 
 /*
  * start session

@@ -409,7 +409,7 @@ class PageView extends Object {
 				// smarty
 				$data[] = array(
 						'level' => 1,
-						'href' => ($secondlevel[$j]['getid'] == 'login' && $this->get('id') != 'login' && $this->get('id') != 'logout') ? $firstlevel['file'].'?id='.$secondlevel[$j]['getid'].'&r='.base64_encode($_SERVER['REQUEST_URI']) : $firstlevel['file'].'?id='.$secondlevel[$j]['getid'],
+						'href' => ($secondlevel[$j]['getid'] == 'login' && $this->get('id') != 'login' && $this->get('id') != 'logout') ? $firstlevel['file'].'?id='.$secondlevel[$j]['getid'].'&amp;r='.base64_encode($_SERVER['REQUEST_URI']) : $firstlevel['file'].'?id='.$secondlevel[$j]['getid'],
 						'title' => parent::lang($secondlevel[$j]['name']),
 						'content' => parent::lang($secondlevel[$j]['name']),
 						'id' => $secondlevel[$j]['getid'],
