@@ -898,7 +898,7 @@ class AnnouncementView extends PageView {
 					$pdf->writeHTML($pdf_out, false);
 					
 					// output
-					$pdf_filename = $this->replace_umlaute(html_entity_decode($sA->fetch('string:'.$preset->get_filename()),ENT_XHTML,'ISO-8859-1'));
+					$pdf_filename = $this->replace_umlaute(html_entity_decode($sA->fetch('string:'.$preset->get_filename()),ENT_COMPAT,'ISO-8859-1'));
 					$pdf->Output($pdf_filename,'D');
 					
 					// return

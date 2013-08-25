@@ -56,8 +56,9 @@
 							of: window
 						},
 						closeText: '{/literal}{$help.closeText}{literal}',
-						minWidth: '600',
-						minHeight: '250'
+						minWidth: 600,
+						minHeight: 250,
+						maxHeight: 600
 					});
 					$( '#{/literal}{$help.buttonClass}{literal}-'+i ).click(function() {
 						$( "#{/literal}{$help.dialogClass}{literal}-"+i ).dialog( "open" );

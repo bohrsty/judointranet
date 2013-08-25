@@ -654,8 +654,7 @@ class Field extends Object {
 				WHERE v.table_name='".$this->get_table()."'
 				AND f.type='".$this->get_type()."'
 				AND f.id=v.field_id
-				ORDER BY v.id DESC
-				LIMIT 30";
+				ORDER BY v.id DESC";
 		
 		// execute
 		$result = $db->query($sql);
@@ -663,7 +662,8 @@ class Field extends Object {
 		// add last-optgroup
 		$lOptgroup = $element->addOptgroup(parent::lang('class.Field#read_defaults#lastUsed#separator'));
 		
-		
+		// set index
+		$index = 0;
 		while(list($id,$table_id,$value) = $result->fetch_array(MYSQL_NUM)) {
 			
 			// check rights
@@ -680,8 +680,24 @@ class Field extends Object {
 					$truncValue = $value;
 				}
 				
+				// check if truncated value has already been added
+				$tempOptions = $lOptgroup->getOptions();
+				for($i=0; $i<count($tempOptions); $i++) {
+					if($tempOptions[$i]['text'] == $truncValue) {
+						continue 2;
+					}
+				}
+				
 				// add options
 				$lOptgroup->addOption($truncValue,'l'.$id);
+				
+				// increment index
+				$index++;
+			}
+			
+			// check count of options
+			if($index == 29) {
+				break;
 			}
 		}
 	}
