@@ -402,7 +402,8 @@ div#login-out {
 	margin: 130px auto;
 	width: 430px;
 	min-height: 250px;
-	border: 2px dashed blue;
+	border: 2px dashed #3a9ec8;
+	border-radius: 6px;
 	padding: 7px;
 }
 
@@ -410,7 +411,8 @@ div#confirm {
 	margin: 130px auto;
 	width: 430px;
 	min-height: 200px;
-	border: 2px dashed blue;
+	border: 2px dashed #3a9ec8;
+	border-radius: 6px;
 	padding: 40px 7px 7px 40px;
 }
 
@@ -493,7 +495,7 @@ table.adminTableContent {
 	font-size: 90%;
 }
 
-table.content th,td {
+table.content th, table.content td {
 	border-right: solid 1px #3a9ec8;
 	border-bottom: solid 1px #3a9ec8;
 	border-bottom-right-radius: 3px;

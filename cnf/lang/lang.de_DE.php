@@ -480,7 +480,10 @@ $lang = array(
 			),
 			'edit' => array(
 				'title' => 'Ausschreibung: Bearbeiten'
-			)
+			),
+			'details' => array(
+				'title' => 'Ausschreibung: Detailansicht',
+			),
 		),
 		'entry' => array(
 			'form' => array(

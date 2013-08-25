@@ -118,7 +118,7 @@ class Error extends Object {
 			case 'GETInvalidChars':
 								
 				// fatal error, die()
-				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
 				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#GETInvalidChars#ERROR.caption').'</h3>';
 				$message .= '<p>'.parent::lang('class.Error#handle_error#GETInvalidChars#ERROR.message').'</p>';
 				$message .= '[GETInvalidChars in '.$this->return_entry($errno).']';
@@ -140,7 +140,7 @@ class Error extends Object {
 			case 'ReadTemplateFile':
 				
 				// fatal error, die()
-				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
 				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#ReadTemplateFile#ERROR.caption').'</h3>';
 				$message .= '<p>'.parent::lang('class.Error#handle_error#ReadTemplateFile#ERROR.message').'</p>';
 				$message .= '[ReadTemplateFile: "'.$this->return_message($errno).'"]';
@@ -151,7 +151,7 @@ class Error extends Object {
 			case 'GETUnkownId':
 				
 				// non-fatal error, message
-				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
 				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#GETUnknownId#ERROR.caption').'</h3>';
 				$message .= '<p>'.parent::lang('class.Error#handle_error#GETUnknownId#ERROR.message').'</p>';
 				$message .= '[GETUnknownId: "'.$this->return_entry($errno).'"]';
@@ -166,7 +166,7 @@ class Error extends Object {
 			case 'CannotGetNavi':
 				
 				// fatal error, die()
-				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
 				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#CannotGetNavi#ERROR.caption').'</h3>';
 				$message .= '<p>'.parent::lang('class.Error#handle_error#CannotGetNavi#ERROR.message').'</p>';
 				$message .= '[CannotGetNavi from '.$this->return_entry($errno).']';
@@ -177,7 +177,7 @@ class Error extends Object {
 			case 'NotAuthorized':
 				
 				// non-fatal error, message
-				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
 				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#NotAuthorized#ERROR.caption').'</h3>';
 				$message .= '<p>'.parent::lang('class.Error#handle_error#NotAuthorized#ERROR.message').'</p>';
 				$message .= '[NotAuthorized: "'.$this->return_entry($errno).'"]';
@@ -192,7 +192,7 @@ class Error extends Object {
 			case 'DbActionUnknown':
 				
 				// non-fatal error, message
-				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
 				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#DbActionUnknown#ERROR.caption').'</h3>';
 				$message .= '<p>'.parent::lang('class.Error#handle_error#DbActionUnknown#ERROR.message').'</p>';
 				$message .= '[DbActionUnknown: "'.$this->return_entry($errno).'"]';
@@ -207,7 +207,7 @@ class Error extends Object {
 			case 'CidNotExists':
 				
 				// non-fatal error, message
-				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
 				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#CidNotExists#ERROR.caption').'</h3>';
 				$message .= '<p>'.parent::lang('class.Error#handle_error#CidNotExists#ERROR.message').'</p>';
 				$message .= '[CidNotExits: "'.$this->return_entry($errno).'" in '.$this->return_message($errno).']';
@@ -222,7 +222,7 @@ class Error extends Object {
 			case 'NotOwned':
 				
 				// non-fatal error, message
-				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
 				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#NotOwned#ERROR.caption').'</h3>';
 				$message .= '<p>'.parent::lang('class.Error#handle_error#NotOwned#ERROR.message').'</p>';
 				$message .= '[NotOwned: "'.$this->return_entry($errno).'" in '.$this->return_message($errno).']';
@@ -237,7 +237,7 @@ class Error extends Object {
 			case 'NotGiven':
 				
 				// non-fatal error, message
-				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
 				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#NotGiven#ERROR.caption').'</h3>';
 				$message .= '<p>'.parent::lang('class.Error#handle_error#NotGiven#ERROR.message').'</p>';
 				$message .= '[NotGiven: "'.$this->return_entry($errno).'" in '.$this->return_message($errno).']';
@@ -252,7 +252,7 @@ class Error extends Object {
 			case 'NotGivenTo':
 				
 				// non-fatal error, message
-				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
 				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#NotGivenTo#ERROR.caption').'</h3>';
 				$message .= '<p>'.parent::lang('class.Error#handle_error#NotGivenTo#ERROR.message').'</p>';
 				$message .= '[NotGivenTo: "'.$this->return_entry($errno).'" in '.$this->return_message($errno).']';
@@ -267,7 +267,7 @@ class Error extends Object {
 			case 'MissingParams':
 				
 				// non-fatal error, message
-				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
 				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#MissingParams#ERROR.caption').'</h3>';
 				$message .= '<p>'.parent::lang('class.Error#handle_error#MissingParams#ERROR.message').'</p>';
 				$message .= '[MissingParams: "'.$this->return_entry($errno).']';
@@ -282,7 +282,7 @@ class Error extends Object {
 			case 'WrongParams':
 				
 				// non-fatal error, message
-				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
 				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#WrongParams#ERROR.caption').'</h3>';
 				$message .= '<p>'.parent::lang('class.Error#handle_error#WrongParams#ERROR.message').'</p>';
 				$message .= '[WrongParams: "'.$this->return_entry($errno).']';
@@ -297,7 +297,7 @@ class Error extends Object {
 			case 'AnnNotExists':
 				
 				// non-fatal error, message
-				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
 				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#AnnNotExists#ERROR.caption').'</h3>';
 				$message .= '<p>'.parent::lang('class.Error#handle_error#AnnNotExists#ERROR.message').'</p>';
 				$message .= '[AnnNotExists: "'.$this->return_entry($errno).'"]';
@@ -312,7 +312,7 @@ class Error extends Object {
 			case 'UsertableNotExists':
 				
 				// non-fatal error, message
-				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
 				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#UsertableNotExists#ERROR.caption').'</h3>';
 				$message .= '<p>'.parent::lang('class.Error#handle_error#UsertableNotExists#ERROR.message').'</p>';
 				$message .= '[UsertableNotExists: "'.$this->return_message($errno).'"]';
@@ -327,7 +327,7 @@ class Error extends Object {
 			case 'RowNotExists':
 				
 				// non-fatal error, message
-				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; padding: 5px;">';
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
 				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#RowNotExists#ERROR.caption').'</h3>';
 				$message .= '<p>'.parent::lang('class.Error#handle_error#RowNotExists#ERROR.message').'</p>';
 				$message .= '[RowNotExists: "'.$this->return_message($errno).'"]';
