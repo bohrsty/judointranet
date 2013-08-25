@@ -1,4 +1,4 @@
-INSERT INTO `bfv_newdb`.`helpmessages` (`id`, `title`, `message`)
+INSERT INTO `helpmessages` (`id`, `title`, `message`)
 	VALUES (2, 'class.Help#global#title#fieldDate', 'class.Help#global#message#fieldDate'),
 		(3, 'class.Help#global#title#fieldName', 'class.Help#global#message#fieldName'),
 		(4, 'class.Help#global#title#fieldShortname', 'class.Help#global#message#fieldShortname'),
@@ -17,6 +17,6 @@ INSERT INTO `bfv_newdb`.`helpmessages` (`id`, `title`, `message`)
 		(17, 'class.Help#global#title#FieldDbselect', 'class.Help#global#message#FieldDbselect'),
 		(18, 'class.Help#global#title#FieldDbhierselect', 'class.Help#global#message#FieldDbhierselect');
 		
-INSERT INTO `bfv_newdb`.`config` (`name`, `value`, `comment`)
+INSERT INTO `config` (`name`, `value`, `comment`)
 	VALUES ('global.systemcontactEmail', 'email@adres.se', ''),
 		('global.systemcontactName', 'Systembetreuer', '');

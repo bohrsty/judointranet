@@ -1,4 +1,4 @@
-INSERT INTO `bfv_newdb`.`config` (`name`, `value`, `comment`) 
+INSERT INTO `config` (`name`, `value`, `comment`) 
 	VALUES ('usertableCols.club', '', ''),
 		('usertableCols.contact', '', ''),
 		('usertableCols.judo', '', ''),
