@@ -216,7 +216,12 @@ $lang = array(
 			),
 			'toggleFilter' => array(
 				'title' => 'Filter ein- oder ausblenden',
-				'name' => 'Filter ein- oder ausblenden'
+				'name' => 'Filter ein- oder ausblenden',
+				'closeText' => 'Filterdialog schlie&szlig;en',
+				'resetFilter' => 'Filter zur&uuml;cksetzen',
+				'dateFilter' => 'Datumsfilter',
+				'groupFilter' => 'Gruppenfilter',
+				'dialogTitle' => 'Filter ausw&auml;hlen'
 			)
 		),
 		'entry' => array(

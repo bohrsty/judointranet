@@ -604,6 +604,7 @@ class CalendarView extends PageView {
 					)
 			);
 		$sS->assign('r', $r);
+		$sS->assign('resetFilter', parent::lang('class.CalendarView#get_sort_links#toggleFilter#resetFilter'));
 		
 		// prepare content
 		$dates = array(
@@ -627,6 +628,7 @@ class CalendarView extends PageView {
 				);
 		}
 		$sS->assign('dl', $dl);
+		$sS->assign('dateFilter', parent::lang('class.CalendarView#get_sort_links#toggleFilter#dateFilter'));
 		
 		// add group-links
 		$groups = $_SESSION['user']->return_all_groups('sort');
@@ -642,7 +644,9 @@ class CalendarView extends PageView {
 					'content' => $name
 				);
 		}
+		usort($gl, array($this, 'callbackCompareFilter'));
 		$sS->assign('gl', $gl);
+		$sS->assign('groupFilter', parent::lang('class.CalendarView#get_sort_links#toggleFilter#groupFilter'));
 		
 		// add slider-link
 		$link = array(
@@ -653,14 +657,26 @@ class CalendarView extends PageView {
 			);
 		$sS->assign('link', $link);
 		
-		// add jquery
+		// assign dialog title
+		$sS->assign('dialogTitle', parent::lang('class.CalendarView#get_sort_links#toggleFilter#dialogTitle'));
+		
+		// add jquery-ui dialog
+		$dialog = array(
+			'dialogClass' => 'filter',
+			'openerClass' => 'toggleFilter',
+			'autoOpen' => 'false',
+			'effect' => 'slide',
+			'duration' => 300,
+			'modal' => 'true',
+			'closeText' => parent::lang('class.CalendarView#get_sort_links#toggleFilter#closeText'),
+			'height' => 400,
+			'maxHeight' => 400,
+			'width' => 750,
+		);
 		// smarty jquery
 		$sJsToggleSlide = new JudoIntranetSmarty();
-		$sJsToggleSlide->assign('id', '#toggleFilter');
-		$sJsToggleSlide->assign('toToggle', '#sortlinks');
-		$sJsToggleSlide->assign('time', '');
-		$this->add_jquery($sJsToggleSlide->fetch('smarty.js-toggleSlide.tpl'));
-		$sS->assign('divparams', 'id="sortlinks"');
+		$sJsToggleSlide->assign('dialog', $dialog);
+		$this->add_jquery($sJsToggleSlide->fetch('smarty.js-dialog.tpl'));
 		
 		// return
 		return $sS->fetch('smarty.calendar.sortlinks.tpl');
@@ -1234,6 +1250,33 @@ class CalendarView extends PageView {
 			exit;
 		} else {
 			return $form;
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * callbackCompareFilter compares two arrays of filter entries by string (for usort)
+	 * 
+	 * @param object $first first filter entry
+	 * @param object $second second filter entry
+	 * @return int -1 if $first<$second, 0 if equal, 1 if $first>$second
+	 */
+	private function callbackCompareFilter($first,$second) {
+	
+		// compare dates
+		if($first['content'] < $second['content']) {
+			return -1;
+		}
+		if($first['content'] == $second['content']) {
+			return 0;
+		}
+		if($first['content'] > $second['content']) {
+			return 1;
 		}
 	}
 }

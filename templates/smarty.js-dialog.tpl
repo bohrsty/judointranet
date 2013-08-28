@@ -20,30 +20,20 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-<p><span{if $link.params!=''} {$link.params}{/if} title="{$link.title}">{$link.content}</span>{if isset($link.help) and $link.help!=''}&nbsp;{$link.help}{/if}</p>
-<div id="filter" title="{$dialogTitle}">
-	<div class="filterPart">
-		<p class="filterEntry center">{$resetFilter}</p>
-{for $i=0 to (count($r)-1)}
-		<p class="filterEntry">
-			<a href="{$r.$i.href|escape}" title="{$r.$i.title}">{$r.$i.content}</a>
-		</p>
-{/for}
-	</div>
-	<div class="filterPart">
-		<p class="filterEntry center">{$dateFilter}</p>
-{for $i=0 to (count($dl)-1)}
-		<p class="filterEntry">
-			<a href="{$dl.$i.href|escape}" title="{$dl.$i.title}">{$dl.$i.content}</a>
-		</p>
-{/for}
-	</div>
-	<div class="filterPart">
-		<p class="filterEntry center">{$groupFilter}</p>
-{for $i=0 to (count($gl)-1)}
-		<p class="filterEntry">
-			<a href="{$gl.$i.href|escape}" title="{$gl.$i.title}">{$gl.$i.content}</a>
-		</p>
-{/for}
-	</div>
-</div>
+		$(function() {ldelim}
+			$( "#{$dialog.dialogClass}" ).dialog({ldelim}
+				autoOpen: {$dialog.autoOpen},
+				show: {ldelim}
+					effect: "{$dialog.effect}",
+					duration: {$dialog.duration}
+				{rdelim},
+				modal: {$dialog.modal},
+				closeText: "{$dialog.closeText}",
+				height: {$dialog.height},
+				maxHeight: {$dialog.maxHeight},
+				width: {$dialog.width}
+			{rdelim});
+			$( "#{$dialog.openerClass}" ).click(function() {ldelim}
+				$( "#{$dialog.dialogClass}" ).dialog( "open" );
+			{rdelim});
+		{rdelim});

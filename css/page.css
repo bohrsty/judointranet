@@ -154,10 +154,19 @@ th.location {
 	width: 300px;
 }
 
-div#sortlinks {
-	max-height: 120px;
-	overflow: auto;
-	margin-bottom: 20px;
+div.filterPart {
+	width: 32%;
+	float: left;
+	margin-right: 4px;
+}
+
+p.filterEntry {
+	width: 100%;
+	border-bottom: 1px solid #3a9ec8;
+	border-right: 1px solid #3a9ec8;
+	border-radius: 3px;
+	background-color: #b6d6e4;
+	margin: 0 0 2px 0;
 }
 
 td.admin div.row {
@@ -531,6 +540,10 @@ a.active {
 
 .underline {
 	text-decoration: underline;
+}
+
+.center {
+	text-align: center;
 }
 
 
