@@ -546,6 +546,14 @@ a.active {
 	text-align: center;
 }
 
+div#tablelinks {
+	position: absolute;
+	top: 100;
+	left: 200;
+	z-index: 10;
+	background-color: white;
+}
+
 
 
 
