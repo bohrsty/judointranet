@@ -40,6 +40,8 @@ class Calendar extends Page {
 	private $content;
 	private $preset_id;
 	private $valid;
+	private $lastModified;
+	private $modifiedBy;
 	
 	/*
 	 * getter/setter
@@ -91,6 +93,18 @@ class Calendar extends Page {
 	}
 	public function set_valid($valid) {
 		$this->valid = $valid;
+	}
+	public function getModifiedBy(){
+		return $this->modifiedBy;
+	}
+	public function setModifiedBy($modifiedBy) {
+		$this->modifiedBy = $modifiedBy;
+	}
+	public function getLastModified(){
+		return $this->lastModified;
+	}
+	public function setLastModified($lastModified) {
+		$this->lastModified = $lastModified;
 	}
 	
 	/*
@@ -145,7 +159,7 @@ class Calendar extends Page {
 		
 		// prepare sql-statement
 		$sql = "
-			SELECT c.name,c.shortname,c.date,c.type,c.content,c.preset_id,c.valid
+			SELECT c.name,c.shortname,c.date,c.type,c.content,c.preset_id,c.valid,c.last_modified,c.modified_by
 			FROM calendar AS c
 			WHERE c.id = $id";
 		
@@ -153,7 +167,7 @@ class Calendar extends Page {
 		$result = $db->query($sql);
 		
 		// fetch result
-		list($name,$shortname,$date,$type,$content,$preset_id,$valid) = $result->fetch_array(MYSQL_NUM);
+		list($name,$shortname,$date,$type,$content,$preset_id,$valid,$lastModified,$modifiedBy) = $result->fetch_array(MYSQL_NUM);
 		
 		// set variables to object
 		$this->set_id($id);
@@ -164,6 +178,8 @@ class Calendar extends Page {
 		$this->set_content($content);
 		$this->set_preset_id($preset_id);
 		$this->set_valid($valid);
+		$this->setLastModified((strtotime($lastModified) < 0 ? 0 :strtotime($lastModified)));
+		$this->setModifiedBy($modifiedBy);
 		
 		// close db
 		$db->close();
@@ -190,7 +206,7 @@ class Calendar extends Page {
 		
 			// insert
 			// prepare sql-statement
-			$sql = 'INSERT INTO calendar (id,name,shortname,date,type,content,preset_id,valid)
+			$sql = 'INSERT INTO calendar (id,name,shortname,date,type,content,preset_id,valid,modified_by)
 					VALUES (null,"'
 					.$this->get_name().'","'
 					.$this->get_shortname().'","'
@@ -198,7 +214,8 @@ class Calendar extends Page {
 					.$this->get_type().'","'
 					.$this->get_content().'",
 					0,'
-					.$this->get_valid().')';
+					.$this->get_valid().','.
+					(int)$_SESSION['user']->get_id().')';
 			
 			// execute
 			$db->query($sql);
@@ -228,7 +245,8 @@ class Calendar extends Page {
 						type = "'.$this->get_type().'",
 						content = "'.$this->get_content().'",
 						preset_id = "'.$this->get_preset_id().'",
-						valid = '.$this->get_valid().'
+						valid = '.$this->get_valid().',
+						modified_by = '.$_SESSION['user']->get_id().'
 					WHERE id = "'.$this->get_id().'"';
 			
 			// execute
@@ -449,6 +467,10 @@ class Calendar extends Page {
 	 */
 	public function add_marks(&$announcement,$html=true) {
 		
+		// get version
+		$version = max(strtotime($announcement['version']), (int)$this->getLastModified());
+		$announcement['version'] = date('dmy', $version);
+
 		// add fields
 		// check html
 		if($html === true) {

@@ -484,6 +484,9 @@ $lang = array(
 			'details' => array(
 				'title' => 'Ausschreibung: Detailansicht',
 			),
+			'Error' => array(
+				'NotAuthorized' => 'FEHLER - Nicht berechtigt'
+			),
 		),
 		'entry' => array(
 			'form' => array(
@@ -1134,10 +1137,10 @@ $lang = array(
 					diesem Termin vorhanden ist, stehen folgende weitere Ansichten zur
 					Verf&uuml;gung:</p>
 					<ul>
-					<li><img src="img/ann_details.png" />&nbsp;:&nbsp; &ouml;ffnet
+					<li><img src="img/ann_details.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; &ouml;ffnet
 					die Ausschreibung als Seitenansicht eingebettet in diese Seite, Drucken ist
 					in dieser Ansicht nicht m&ouml;glich.</li>
-					<li><img src="img/ann_pdf.png" />&nbsp;:&nbsp; &ouml;ffnet die
+					<li><img src="img/ann_pdf.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; &ouml;ffnet die
 					Ausschreibung direkt als PDF (ein entsprechendes Programm zur Anzeige
 					wie der AdobeReader vorausgesetzt), in dieser Ansicht kann die Ausschreibung
 					gedruckt oder gespeichert werden.</li>
@@ -1145,16 +1148,16 @@ $lang = array(
 				'calendarListAdmin' => '<p>Die Administration eines Termins oder einer
 					Ausschreibung erfolgt &uuml;ber folgende Buttons:</p>
 					<ul>
-					<li><img src="img/edit.png" />&nbsp;:&nbsp; &ouml;ffnet den Termin im
+					<li><img src="img/edit.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; &ouml;ffnet den Termin im
 					Bearbeitungsmodus, hier k&ouml;nnen die einzelnen Felder des Datensatzes
 					ge&auml;ndert werden.</li>
-					<li><img src="img/delete.png" />&nbsp;:&nbsp; l&ouml;scht den Termin nach
+					<li><img src="img/delete.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; l&ouml;scht den Termin nach
 					R&uuml;ckfrage endg&uuml;ltig.</li>
-					<li><img src="img/ann_edit.png" />&nbsp;:&nbsp; &ouml;ffnet die Ausschreibung
+					<li><img src="img/ann_edit.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; &ouml;ffnet die Ausschreibung
 					im Bearbeitungsmodus, hier k&ouml;nnen die einzelnen Felder des Datensatzes
 					ge&auml;ndert werden, die erste Bearbeitung erstellt die zugeh&ouml;rigen
 					Felder.</li>
-					<li><img src="img/ann_delete.png" />&nbsp;:&nbsp; l&ouml;scht die Ausschreibung
+					<li><img src="img/ann_delete.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; l&ouml;scht die Ausschreibung
 					nach R&uuml;ckfrage endg&uuml;ltig.</li>
 					<li><select><option>Ausschreibungsvorlage ausw&auml;hlen</option></select>
 					<input type="submit" value="+" />&nbsp;:&nbsp; Um eine Ausschreibung mit Daten
@@ -1164,13 +1167,13 @@ $lang = array(
 					einzeiligen Auswahlfeld und anschlie&szlig;endem Zuf&uuml;gen durch den Button.</li>
 					</ul>',
 				'calendarListSortlinks' => '<p>Die eingeblendete Filterauswahl besteht aus drei
-					Bereichen:
+					Bereichen:</p>
 					<ul>
 					<li>Der erste Bereich enth&auml;lt die Buttons zum Zur&uuml;cksetzen der
-					gew&auml;hlten Filter:<br />"<u>Alle Filter zur&uuml;cksetzen</u>" zeigt wieder die
-					komplette Liste an, ohne Filter.<br />"<u>Datumsfilter zur&uuml;cksetzen</u>"
+					gew&auml;hlten Filter:<br />"<span class="underline">Alle Filter zur&uuml;cksetzen</span>" zeigt wieder die
+					komplette Liste an, ohne Filter.<br />"<span class="underline">Datumsfilter zur&uuml;cksetzen</span>"
 					beh&auml;lt die ausgew&auml;hlte Gruppe bei und entfernt nur den Zeitraum.<br />
-					"<u>Gruppenfilter zur&uuml;cksetzen</u>"beh&auml;lt den gew&auml;hlten Zeitraum und
+					"<span class="underline">Gruppenfilter zur&uuml;cksetzen</span>"beh&auml;lt den gew&auml;hlten Zeitraum und
 					entfernt nur die Gruppe</li>
 					<li>Der zweite Bereich enth&auml;lt die Buttons zur Auswahl eines festgelegten
 					Zeitraums, der die Liste auf die Termine einschr&auml;nkt, die in diesem Zeitraum
@@ -1178,8 +1181,7 @@ $lang = array(
 					<li>Der dritte Bereich enth&auml;lt die Buttons zur Auswahl nach festgelegten
 					Gruppierungen (z.B.: Altersklassen), die beim anlegen des Termins festgelegt
 					wurden.</li>
-					</ul>
-					</p>',
+					</ul>',
 				'delete' => '<p>Der Klick auf "Ja" l&ouml;scht den Datensatz endg&uuml;ltig,
 					"Abbrechen" f&uuml;hrt zur&uuml;ck zur Liste.</p>',
 				'FieldText' => '<p><b>Format</b>: <i>mehrzeiliger Text</i><br />
@@ -1238,13 +1240,13 @@ $lang = array(
 					unterschiedliche Daten gespeichert werden.</p>',
 				'adminUsertableTasks' => '<p></p>
 					<ul>
-					<li><img src="img/admin_edit.png" />&nbsp;:&nbsp; &ouml;ffnet den Datensatz
+					<li><img src="img/admin_edit.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; &ouml;ffnet den Datensatz
 					zur Bearbeitung, hier k&ouml;nnen alle Felder bis auf den Schl&uuml;ssel
 					ge&auml;ndert werden.</li>
-					<li><img src="img/admin_disable.png" />/<img src="img/admin_enable.png" />&nbsp;:&nbsp;
+					<li><img src="img/admin_disable.png" alt="Bild im Hilfetext" />/<img src="img/admin_enable.png" />&nbsp;:&nbsp;
 					Je nach Status des Datensatzes aktiviert oder deaktiviert dieser Button den Datensatz.
 					Deaktivierte Datens&auml;tze werden in keinem Auswahlfeld angezeigt, existieren aber noch.</li>
-					<li><img src="img/admin_delete.png" />&nbsp;:&nbsp; L&ouml;scht den Datensatz nach
+					<li><img src="img/admin_delete.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; L&ouml;scht den Datensatz nach
 					R&uuml;ckfrage. Der Datensatz ist danach endg&uuml;ltig aus der Datenbank entfernt und
 					nur durch Neueintragen wiederherstellbar.</li>
 					</ul>',

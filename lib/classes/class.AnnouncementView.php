@@ -372,7 +372,7 @@ class AnnouncementView extends PageView {
 						
 						// prepare marker-array
 						$announcement = array(
-								'version' => date('dmy')
+								'version' => 0
 							);
 						
 						// get data
@@ -561,7 +561,7 @@ class AnnouncementView extends PageView {
 						
 						// prepare marker-array
 						$announcement = array(
-								'version' => date('dmy')
+								'version' => 0
 							);
 						
 						// get data
@@ -782,7 +782,7 @@ class AnnouncementView extends PageView {
 					
 					// prepare marker-array
 					$announcement = array(
-							'version' => date('dmy')
+							'version' => 0
 						);
 					
 					// add calendar-fields to array
@@ -868,7 +868,7 @@ class AnnouncementView extends PageView {
 					
 					// prepare marker-array
 					$announcement = array(
-							'version' => date('dmy')
+							'version' => 0
 						);
 					
 					// add calendar-fields to array

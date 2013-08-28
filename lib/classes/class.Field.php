@@ -44,6 +44,8 @@ class Field extends Object {
 	private $category;
 	private $defaults;
 	private $config;
+	private $lastModified;
+	private $modifiedBy;
 	
 	/*
 	 * getter/setter
@@ -113,6 +115,18 @@ class Field extends Object {
 	}
 	public function set_config($config) {
 		$this->config = $config;
+	}
+	public function getModifiedBy(){
+		return $this->modifiedBy;
+	}
+	public function setModifiedBy($modifiedBy) {
+		$this->modifiedBy = $modifiedBy;
+	}
+	public function getLastModified(){
+		return $this->lastModified;
+	}
+	public function setLastModified($lastModified) {
+		$this->lastModified = $lastModified;
 	}
 	
 	/*
@@ -347,7 +361,7 @@ class Field extends Object {
 		}
 		
 		// prepare sql-statement
-		$sql = "SELECT v.value,v.defaults
+		$sql = "SELECT v.value,v.defaults,v.last_modified,v.modified_by
 				FROM value AS v
 				WHERE v.table_name = '$table'
 				AND v.table_id = $table_id
@@ -359,7 +373,7 @@ class Field extends Object {
 		// check if value is set
 		if($result->num_rows != 0) {
 			// fetch result
-			list($value,$defaults) = $result->fetch_array(MYSQL_NUM);
+			list($value,$defaults,$lastModified,$modifiedBy) = $result->fetch_array(MYSQL_NUM);
 		}
 		
 		// close db
@@ -368,6 +382,8 @@ class Field extends Object {
 		// set
 		$this->set_value($value);
 		$this->set_defaults($defaults);
+		$this->setLastModified((strtotime($lastModified) < 0 ? 0 :strtotime($lastModified)));
+		$this->setModifiedBy($modifiedBy);
 	}
 	
 	
@@ -555,14 +571,15 @@ class Field extends Object {
 		if($action == 'insert') {
 			
 			// insert
-			$sql = "INSERT INTO value (id,table_name,table_id,field_id,value,defaults)
-					VALUES (NULL,'".$this->get_table()."',".$this->get_table_id().",".$this->get_id().",'".$this->get_value()."',".$this->get_defaults().")";
+			$sql = "INSERT INTO value (id,table_name,table_id,field_id,value,defaults,modified_by)
+					VALUES (NULL,'".$this->get_table()."',".$this->get_table_id().",".$this->get_id().",'".$this->get_value()."',".$this->get_defaults().",".(int)$_SESSION['user']->get_id().")";
 		} else {
 			
 			// update
 			$sql = "UPDATE value SET
 					value='".$this->get_value()."',
-					defaults=".$this->get_defaults()."
+					defaults=".$this->get_defaults().",
+					modified_by=".(int)$_SESSION['user']->get_id()."
 					WHERE field_id = ".$this->get_id()."
 					AND table_id = ".$this->table_id."
 					AND table_name = '".$this->get_table()."'";

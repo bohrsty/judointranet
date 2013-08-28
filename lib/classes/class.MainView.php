@@ -255,7 +255,7 @@ class MainView extends PageView {
 		$r = '';
 		if($this->get('r') !== false) {
 			$uri = base64_decode($this->get('r'));
-			$r = '&amp;r='.$this->get('r');
+			$r = '&r='.$this->get('r');
 		}
 		
 		// formular		
