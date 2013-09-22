@@ -52,7 +52,7 @@ class HelpTest extends PHPUnit_Framework_TestCase {
 		
 		$this->page = new TestView();
 		
-		$this->help = $GLOBALS['help'];
+		$this->help = $this->page->getHelp();
 	}
 	
 	
@@ -68,11 +68,11 @@ class HelpTest extends PHPUnit_Framework_TestCase {
 		$message = $this->help->getMessage($mid);
 		// check output
 		$this->assertContains(TestObject::lang('class.Help#getMessage#templateValues#imgTitle'), $message);
-		$this->assertContains('id="'.$_SESSION['GC']->get_config('help.buttonClass'), $message);
+		$this->assertContains('id="'.$this->page->getGc()->get_config('help.buttonClass'), $message);
 		
 		// test output
 		$this->assertContains(TestObject::lang('class.Help#global#message#about'), $this->page->getHelpmessages());
-		$this->assertContains('id="'.$_SESSION['GC']->get_config('help.dialogClass'), $this->page->getHelpmessages());
+		$this->assertContains('id="'.$this->page->getGc()->get_config('help.dialogClass'), $this->page->getHelpmessages());
 		
 	}
 	
@@ -88,8 +88,8 @@ class HelpTest extends PHPUnit_Framework_TestCase {
 	public function testHelpMessageGenerationReplacement() {
 		
 		// check replacement
-		$message = $this->help->getMessage(1,array('version' => $_SESSION['GC']->get_config('global.version')));
-		$this->assertContains($_SESSION['GC']->get_config('global.version'), $this->page->getHelpmessages());
+		$message = $this->help->getMessage(1,array('version' => $this->page->getGc()->get_config('global.version')));
+		$this->assertContains($this->page->getGc()->get_config('global.version'), $this->page->getHelpmessages());
 	}
 }
 

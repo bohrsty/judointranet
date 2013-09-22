@@ -58,7 +58,7 @@ class Help extends Object {
 		} catch(Exception $e) {
 			
 			// handle error
-			$GLOBALS['Error']->handle_error($e);
+			$this->getError()->handle_error($e);
 		}
 		
 		// set classvariables
@@ -106,8 +106,8 @@ class Help extends Object {
 		
 		// prepare template values
 		$templateValues = array(
-				'buttonClass' => $_SESSION['GC']->get_config('help.buttonClass'),
-				'dialogClass' => $_SESSION['GC']->get_config('help.dialogClass'),
+				'buttonClass' => $this->getGc()->get_config('help.buttonClass'),
+				'dialogClass' => $this->getGc()->get_config('help.dialogClass'),
 				'imgTitle' => parent::lang('class.Help#getMessage#templateValues#imgTitle'),
 				'title' => $message['title'],
 				'message' => $message['message'],

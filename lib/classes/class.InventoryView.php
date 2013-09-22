@@ -49,7 +49,7 @@ class InventoryView extends PageView {
 		} catch(Exception $e) {
 			
 			// handle error
-			$GLOBALS['Error']->handle_error($e);
+			$this->getError()->handle_error($e);
 		}
 	}
 	
@@ -238,24 +238,24 @@ class InventoryView extends PageView {
 					default:
 						
 						// id set, but no functionality
-						$errno = $GLOBALS['Error']->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
-						$GLOBALS['Error']->handle_error($errno);
+						$errno = $this->getError()->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
+						$this->getError()->handle_error($errno);
 						
 						// smarty
 						$this->tpl->assign('title', '');
-						$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+						$this->tpl->assign('main', $this->getError()->to_html($errno));
 						$this->tpl->assign('jquery', true);
 						$this->tpl->assign('hierselect', false);
 					break;
 				}
 			} else {
 				
-				$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-				$GLOBALS['Error']->handle_error($errno);
+				$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+				$this->getError()->handle_error($errno);
 				
 				// smarty
 				$this->tpl->assign('title', $this->title(parent::lang('class.InventoryView#init#Error#NotAuthorized')));
-				$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+				$this->tpl->assign('main', $this->getError()->to_html($errno));
 				$this->tpl->assign('jquery', true);
 				$this->tpl->assign('hierselect', false);
 			}
@@ -462,8 +462,8 @@ class InventoryView extends PageView {
 			);
 			
 		// if loggedin show admin links
-		$sM->assign('loggedin', $_SESSION['user']->get_loggedin());
-		if($_SESSION['user']->get_loggedin() === true) {
+		$sM->assign('loggedin', $this->getUser()->get_loggedin());
+		if($this->getUser()->get_loggedin() === true) {
 			$th['admin'] = array(
 					'class' => 'admin',
 					'content' => parent::lang('class.InventoryView#my#TH#admin')
@@ -581,7 +581,7 @@ class InventoryView extends PageView {
 				// add user-selection
 				// get users
 				$users_options = array('--');
-				$users = $_SESSION['user']->return_all_users(array($_SESSION['user']->get_userinfo('username')));
+				$users = $this->getUser()->return_all_users(array($this->getUser()->get_userinfo('username')));
 				foreach($users as $user) {
 					
 					// put id and name in options-array
@@ -655,16 +655,16 @@ class InventoryView extends PageView {
 			} else {
 				
 				// error
-				$errno = $GLOBALS['Error']->error_raised('NotOwned',$this->get('id'),$did);
-				$GLOBALS['Error']->handle_error($errno);
-				return $GLOBALS['Error']->to_html($errno);
+				$errno = $this->getError()->error_raised('NotOwned',$this->get('id'),$did);
+				$this->getError()->handle_error($errno);
+				return $this->getError()->to_html($errno);
 			}
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('NotAuthorized',$this->get('id'),$did);
-			$GLOBALS['Error']->handle_error($errno);
-			return $GLOBALS['Error']->to_html($errno);
+			$errno = $this->getError()->error_raised('NotAuthorized',$this->get('id'),$did);
+			$this->getError()->handle_error($errno);
+			return $this->getError()->to_html($errno);
 		}
 	}
 	
@@ -761,7 +761,7 @@ class InventoryView extends PageView {
 					$values = $form->getValue();
 					
 					// write to db
-					$insert_id = $this->movement_to_db('taken',$inventory->get_id(),$_SESSION['user']->userid());
+					$insert_id = $this->movement_to_db('taken',$inventory->get_id(),$this->getUser()->userid());
 					// accessory to db
 					$this->values_to_db($insert_id,$fields,$values);
 					
@@ -796,16 +796,16 @@ class InventoryView extends PageView {
 			} else {
 				
 				// error
-				$errno = $GLOBALS['Error']->error_raised('NotGivenTo',$this->get('id'),$did);
-				$GLOBALS['Error']->handle_error($errno);
-				return $GLOBALS['Error']->to_html($errno);
+				$errno = $this->getError()->error_raised('NotGivenTo',$this->get('id'),$did);
+				$this->getError()->handle_error($errno);
+				return $this->getError()->to_html($errno);
 			}
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('NotAuthorized',$this->get('id'),$did);
-			$GLOBALS['Error']->handle_error($errno);
-			return $GLOBALS['Error']->to_html($errno);
+			$errno = $this->getError()->error_raised('NotAuthorized',$this->get('id'),$did);
+			$this->getError()->handle_error($errno);
+			return $this->getError()->to_html($errno);
 		}
 	}
 	
@@ -891,16 +891,16 @@ class InventoryView extends PageView {
 			} else {
 				
 				// error
-				$errno = $GLOBALS['Error']->error_raised('NotGiven',$this->get('id'),$did);
-				$GLOBALS['Error']->handle_error($errno);
-				return $GLOBALS['Error']->to_html($errno);
+				$errno = $this->getError()->error_raised('NotGiven',$this->get('id'),$did);
+				$this->getError()->handle_error($errno);
+				return $this->getError()->to_html($errno);
 			}
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('NotAuthorized',$this->get('id'),$did);
-			$GLOBALS['Error']->handle_error($errno);
-			return $GLOBALS['Error']->to_html($errno);
+			$errno = $this->getError()->error_raised('NotAuthorized',$this->get('id'),$did);
+			$this->getError()->handle_error($errno);
+			return $this->getError()->to_html($errno);
 		}
 	}
 	
@@ -958,9 +958,9 @@ class InventoryView extends PageView {
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('NotAuthorized',$this->get('id'),$did);
-			$GLOBALS['Error']->handle_error($errno);
-			return $GLOBALS['Error']->to_html($errno);
+			$errno = $this->getError()->error_raised('NotAuthorized',$this->get('id'),$did);
+			$this->getError()->handle_error($errno);
+			return $this->getError()->to_html($errno);
 		}
 	}
 	
@@ -1084,9 +1084,9 @@ class InventoryView extends PageView {
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('NotAuthorized',$this->get('id'),$mid);
-			$GLOBALS['Error']->handle_error($errno);
-			return $GLOBALS['Error']->to_html($errno);
+			$errno = $this->getError()->error_raised('NotAuthorized',$this->get('id'),$mid);
+			$this->getError()->handle_error($errno);
+			return $this->getError()->to_html($errno);
 		}
 	}
 	
@@ -1121,7 +1121,7 @@ class InventoryView extends PageView {
 		} else {
 			
 			// userid
-			$userid = $_SESSION['user']->userid();
+			$userid = $this->getUser()->userid();
 			// prepare sql-statement
 			$sql = "INSERT INTO inventory_movement (id,inventory_id,date_time,action,user_id)
 					VALUES (NULL,$inventoryid,'$now','$action',$userid)";

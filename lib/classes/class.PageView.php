@@ -96,12 +96,7 @@ class PageView extends Object {
 		parent::__construct();
 		
 		// initialize error-handling
-		$GLOBALS['Error'] = new Error();
-		
-		// initialize user
-		if(!isset($_SESSION['user'])) {
-			$_SESSION['user'] = new User();
-		}
+		$GLOBALS['error'] = new Error();
 		
 		// init smarty
 		$this->tpl = new JudoIntranetSmarty();
@@ -142,7 +137,7 @@ class PageView extends Object {
 				if($value === false) {
 					
 					// handle error
-					$errno = $GLOBALS['Error']->error_raised('GETInvalidChars','entry:'.$get_entry,$get_entry);
+					$errno = $this->getError()->error_raised('GETInvalidChars','entry:'.$get_entry,$get_entry);
 					throw new Exception('GETInvalidChars',$errno);
 				} else {
 					
@@ -319,12 +314,12 @@ class PageView extends Object {
 		
 		// read php-files from /
 		$filenames = array();
-		$dh = opendir($_SERVER['DOCUMENT_ROOT'].'/'.$_SESSION['GC']->get_config('relative_path'));
+		$dh = opendir($_SERVER['DOCUMENT_ROOT'].'/'.$this->getGc()->get_config('relative_path'));
 
 		while($entry = readdir($dh)) {
 
 			// check if file, .php-extension and !test.php
-			if(is_file($_SERVER['DOCUMENT_ROOT'].'/'.$_SESSION['GC']->get_config('relative_path').$entry) 
+			if(is_file($_SERVER['DOCUMENT_ROOT'].'/'.$this->getGc()->get_config('relative_path').$entry) 
 					&& substr($entry,-4) == '.php' 
 					&& $entry != 'test.php') {
 				$filenames[] = $entry;
@@ -343,8 +338,8 @@ class PageView extends Object {
 				$navi = $classname::connectnavi();
 				// check if array
 				if(!is_array($navi)) {
-					$errno = $GLOBALS['Error']->error_raised('CannotGetNavi','class:'.$classname);
-					$GLOBALS['Error']->handle_error($errno);
+					$errno = $this->getError()->error_raised('CannotGetNavi','class:'.$classname);
+					$this->getError()->handle_error($errno);
 				}
 				$naviitems[$navi['firstlevel']['position']] = $navi;
 			} else {
@@ -353,8 +348,8 @@ class PageView extends Object {
 				$navi = MainView::connectnavi();
 				// check if array
 				if(!is_array($navi)) {
-					$errno = $GLOBALS['Error']->error_raised('CannotGetNavi','class:MainView');
-					$GLOBALS['Error']->handle_error($errno);
+					$errno = $this->getError()->error_raised('CannotGetNavi','class:MainView');
+					$this->getError()->handle_error($errno);
 				}
 				$naviitems[$navi['firstlevel']['position']] = $navi;
 			}
@@ -472,7 +467,7 @@ class PageView extends Object {
 		$sJsToggleSlide = new JudoIntranetSmarty();
 		
 		// check if userinfo exists and set to output
-		$name = $_SESSION['user']->get_userinfo('name');
+		$name = $this->getUser()->get_userinfo('name');
 		if($name !== false) {
 			
 			// smarty-link
@@ -503,7 +498,7 @@ class PageView extends Object {
 			$this->add_jquery($sJsToggleSlide->fetch('smarty.js-toggleSlide.tpl'));
 			
 			// smarty return
-			return parent::lang('class.PageView#put_userinfo#logininfo#LoggedinAs').' '.$link.' ('.$_SESSION['user']->get_userinfo('username').')'.$sUsersettings->fetch('smarty.usersettings.tpl');
+			return parent::lang('class.PageView#put_userinfo#logininfo#LoggedinAs').' '.$link.' ('.$this->getUser()->get_userinfo('username').')'.$sUsersettings->fetch('smarty.usersettings.tpl');
 		} else {
 			// smarty return
 			return parent::lang('class.PageView#put_userinfo#logininfo#NotLoggedin');
@@ -584,16 +579,16 @@ class PageView extends Object {
 		
 		// help messages
 		$help = array(
-				'buttonClass' => $_SESSION['GC']->get_config('help.buttonClass'),
-				'dialogClass' => $_SESSION['GC']->get_config('help.dialogClass'),
-				'effect' => $_SESSION['GC']->get_config('help.effect'),
-				'effectDuration' => $_SESSION['GC']->get_config('help.effectDuration'),
+				'buttonClass' => $this->getGc()->get_config('help.buttonClass'),
+				'dialogClass' => $this->getGc()->get_config('help.dialogClass'),
+				'effect' => $this->getGc()->get_config('help.effect'),
+				'effectDuration' => $this->getGc()->get_config('help.effectDuration'),
 				'closeText' => parent::lang('class.PageView#showPage#helpMessages#closeText'),
 			);
 		$this->tpl->assign('help', $help);
 		
 		// assign about
-		$helpabout = $GLOBALS['help']->getMessage(HELP_MSG_ABOUT, array('version' => $_SESSION['GC']->get_config('global.version')));
+		$helpabout = $this->getHelp()->getMessage(HELP_MSG_ABOUT, array('version' => $this->getGc()->get_config('global.version')));
 		$this->tpl->assign('helpabout', $helpabout);
 	}
 	
@@ -629,7 +624,7 @@ class PageView extends Object {
 		list($rows) = $result->fetch_array(MYSQL_NUM);
 		
 		// get total pages
-		$pagesize = $_SESSION['GC']->get_config('pagesize');
+		$pagesize = $this->getGc()->get_config('pagesize');
 		$total_pages = ceil($rows / $pagesize);
 		
 		$pagelinks = array();

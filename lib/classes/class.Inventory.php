@@ -137,7 +137,7 @@ class Inventory extends Object {
 		$owned_userid = Inventory::movement_last_row($db,$id,'user_id',2);
 		if($owned_action === false) {
 			$this->set_owned('');
-		} elseif($owned_action[0] == 'given' && $owned_userid[1] == $_SESSION['user']->userid()) {
+		} elseif($owned_action[0] == 'given' && $owned_userid[1] == $this->getUser()->userid()) {
 			$this->set_owned('givento');
 		} else {
 			$this->set_owned($owned_action[0]);
@@ -200,13 +200,13 @@ class Inventory extends Object {
 			if($action[0] == 'taken') {
 				
 				// check user_id
-				if($user_id[0] == $_SESSION['user']->userid() || ($user_id[1] == $_SESSION['user']->userid() && $user_id[0] != $user_id[2])) {
+				if($user_id[0] == self::getUser()->userid() || ($user_id[1] == self::getUser()->userid() && $user_id[0] != $user_id[2])) {
 					$return[] = $all[$i];
 				}
 			} else {
 				
 				// check user_id
-				if($user_id[0] == $_SESSION['user']->userid() || $user_id[1] == $_SESSION['user']->userid()) {
+				if($user_id[0] == self::getUser()->userid() || $user_id[1] == self::getUser()->userid()) {
 					$return[] = $all[$i];
 				}
 			}

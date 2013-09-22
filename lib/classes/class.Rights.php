@@ -137,7 +137,7 @@ class Rights extends Object {
 	public static function get_authorized_entries($table) {
 		
 		// get groups
-		$group_ids = $_SESSION['user']->groups();
+		$group_ids = self::getUser()->groups();
 				
 		// get db-object
 		$db = Db::newDb();
@@ -257,7 +257,7 @@ class Rights extends Object {
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('DbActionUnknown','write_rights',$action);
+			$errno = $this->getError()->error_raised('DbActionUnknown','write_rights',$action);
 			throw new Exception('DbActionUnknown',$errno);
 		}
 		
@@ -331,7 +331,7 @@ class Rights extends Object {
 	public static function check_rights($table_id,$table,$public=false) {
 		
 		// get groups
-		$groups = $_SESSION['user']->groups();
+		$groups = self::getUser()->groups();
 		
 		// get rights for given id and table
 		// get db-object

@@ -1101,12 +1101,12 @@ $lang = array(
 					des korrekten Formats verwendet werden.</p>',
 				'fieldName' => '<p><b>Format</b>: <i>einzeiliger Text</i><br />
 					<b>Standardwert</b>: <i>keiner</i><br />
-					<b>Erlaubte Zeichen</b>: <i>"'.$_SESSION['GC']->get_config('name.desc').'"</i></p>
+					<b>Erlaubte Zeichen</b>: <i>"'.self::getGc()->get_config('name.desc').'"</i></p>
 					<p>Dieses Feld legt den Namen oder die Bezeichnung f&uuml;r diesen Datensatz
 					fest, der Wert erscheint zumeist in Listen oder &Uuml;berschriften.</p>',
 				'fieldShortname' => '<p><b>Format</b>: <i>einzeiliger Text</i><br />
 					<b>Standardwert</b>: <i>keiner</i><br />
-					<b>Erlaubte Zeichen</b>: <i>"'.$_SESSION['GC']->get_config('name.desc').'"</i></p>
+					<b>Erlaubte Zeichen</b>: <i>"'.self::getGc()->get_config('name.desc').'"</i></p>
 					<p>Dieses Feld legt einen Kurznamen f&uuml;r diesen Datensatz fest, der Wert wird in
 					den Dateinamen der Ausschreibungen zur Abk&uuml;rzung verwendet. Wenn das Feld nicht
 					ausgef&uuml;llt wird, wird der Wert beim Speichern auf die ersten drei Buchstaben
@@ -1118,7 +1118,7 @@ $lang = array(
 				'fieldContent' => '<p><b>Format</b>: <i>mehrzeiliger Text</i><br />
 					<b>Standardwert</b>: <i>keiner</i><br />
 					<b>Erlaubte Zeichen</b>: <i>"'.
-					htmlspecialchars($_SESSION['GC']->get_config('textarea.desc')).'"</i></p>
+					htmlspecialchars(self::getGc()->get_config('textarea.desc')).'"</i></p>
 					<p>Dieses Feld legt den Inhalt f&uuml;r diesen Datensatz fest, hier kann
 					z.B. die genaue Beschreibung eines Termin eingetragen werden.</p>',
 				'fieldSort' => '<p><b>Format</b>: <i>Mehrfachauswahlfeld</i></p>
@@ -1192,7 +1192,7 @@ $lang = array(
 				'FieldText' => '<p><b>Format</b>: <i>mehrzeiliger Text</i><br />
 					<b>Standardwert</b>: <i>keiner</i><br />
 					<b>Erlaubte Zeichen</b>: <i>"'.
-					htmlspecialchars($_SESSION['GC']->get_config('textarea.desc')).'"</i><br />
+					htmlspecialchars(self::getGc()->get_config('textarea.desc')).'"</i><br />
 					<b>Auswahl</b>: <i>Systemvorgaben oder Auswahl aus den letzten Eingaben</i></p>
 					<p>Das Textfeld nimmt alle Zeichen laut <b>Erlaubte Zeichen</b> an, &uuml;ber
 					das einzeilige Auswahlfeld k&ouml;nnen vorgefertigte Texte des Systems oder
@@ -1214,26 +1214,26 @@ $lang = array(
 					{if array_key_exists(\'class.MainView#callback_check_login#message#UserNotActive\', $replace)}
 						<p><b>Benutzer nicht aktiv</b></p>
 						<p>Dieser Benutzer ist deaktiviert worden oder noch nicht aktiviert, falls
-						diese Meldung zu unrecht erscheint, bitte beim '.htmlspecialchars($_SESSION['GC']->get_config('global.systemcontactName')).'
+						diese Meldung zu unrecht erscheint, bitte beim '.htmlspecialchars(self::getGc()->get_config('global.systemcontactName')).'
 						nachfragen.</p>
 					{elseif array_key_exists(\'class.MainView#callback_check_login#message#WrongPassword\', $replace)}
 						<p><b>Falsches Passwort</b></p>
 						<p>Es wurde versucht sich mit einem falschen Passwort an zu melden, falls
 						diese Meldung zu unrecht erscheint, bitte die Schreibweise des Passworts
-						pr&uuml;fen, oder beim '.htmlspecialchars($_SESSION['GC']->get_config('global.systemcontactName')).'
+						pr&uuml;fen, oder beim '.htmlspecialchars(self::getGc()->get_config('global.systemcontactName')).'
 						nachfragen.</p>
 					{elseif array_key_exists(\'class.MainView#callback_check_login#message#UserNotExist\', $replace)}
 						<p><b>Benutzer existiert nicht</b></p>
 						<p>Es wurde versucht sich mit einem nicht existierenden Benutzer an zu melden, falls
 						diese Meldung zu unrecht erscheint, bitte die Schreibweise des Benutzernamens
-						pr&uuml;fen, oder beim '.htmlspecialchars($_SESSION['GC']->get_config('global.systemcontactName')).'
+						pr&uuml;fen, oder beim '.htmlspecialchars(self::getGc()->get_config('global.systemcontactName')).'
 						nachfragen.</p>
 					{else}
 						<p><b>Login</b></p>
 						<p>Um die nicht &ouml;ffentlichen Funktionen zu nutzen, muss in einem der
 						beteiligten Gremien mitgearbeitet werden. Der Zugang wird durch die
 						entsprechenden Vorst&auml;nde genehmigt und die Zugangsdaten (Benutzername
-						und Passwort) werden durch den '.htmlspecialchars($_SESSION['GC']->get_config('global.systemcontactName')).'
+						und Passwort) werden durch den '.htmlspecialchars(self::getGc()->get_config('global.systemcontactName')).'
 						zur Verf&uuml;gung gestellt.</p>
 					{/if}',
 				'adminUsertableSelect' => '<p>Der nebenstehende Link blendet die Auswahl der

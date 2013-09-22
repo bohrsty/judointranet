@@ -50,7 +50,7 @@ class ProtocolView extends PageView {
 		} catch(Exception $e) {
 			
 			// handle error
-			$GLOBALS['Error']->handle_error($e);
+			$this->getError()->handle_error($e);
 		}
 	}
 	
@@ -241,12 +241,12 @@ class ProtocolView extends PageView {
 					default:
 						
 						// id set, but no functionality
-						$errno = $GLOBALS['Error']->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
-						$GLOBALS['Error']->handle_error($errno);
+						$errno = $this->getError()->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
+						$this->getError()->handle_error($errno);
 						
 						// smarty
 						$this->tpl->assign('title', '');
-						$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+						$this->tpl->assign('main', $this->getError()->to_html($errno));
 						$this->tpl->assign('jquery', true);
 						$this->tpl->assign('hierselect', false);
 						$this->tpl->assign('tinymce', false);
@@ -255,12 +255,12 @@ class ProtocolView extends PageView {
 			} else {
 				
 				// error not authorized
-				$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-				$GLOBALS['Error']->handle_error($errno);
+				$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+				$this->getError()->handle_error($errno);
 				
 				// smarty
 				$this->tpl->assign('title', $this->title(parent::lang('class.ProtocolView#init#Error#NotAuthorized')));
-				$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+				$this->tpl->assign('main', $this->getError()->to_html($errno));
 				$this->tpl->assign('jquery', true);
 				$this->tpl->assign('hierselect', false);
 				$this->tpl->assign('tinymce', false);
@@ -347,7 +347,7 @@ class ProtocolView extends PageView {
 
 		$sListall->assign('th', $sTh);
 		// loggedin? admin links
-		$sListall->assign('loggedin', $_SESSION['user']->get_loggedin());
+		$sListall->assign('loggedin', $this->getUser()->get_loggedin());
 		
 		// walk through entries
 		$counter = 0;
@@ -374,7 +374,7 @@ class ProtocolView extends PageView {
 					);
 				
 				// check status
-				if($correctable['status'] == 2 || $_SESSION['user']->get_userinfo('name') == $entry->get_owner()) {
+				if($correctable['status'] == 2 || $this->getUser()->get_userinfo('name') == $entry->get_owner()) {
 					// show
 					$sList[$counter]['show'][] = array(
 							'href' => 'protocol.php?id=show&pid='.$entry->get_id(),
@@ -411,10 +411,10 @@ class ProtocolView extends PageView {
 				// add admin
 				
 				// if user is loggedin add admin-links
-				if($_SESSION['user']->get_loggedin() === true) {
+				if($this->getUser()->get_loggedin() === true) {
 					
 					// edit and delete only for author
-					if($_SESSION['user']->get_userinfo('name') == $entry->get_owner()) {
+					if($this->getUser()->get_userinfo('name') == $entry->get_owner()) {
 						
 						// smarty
 						// edit
@@ -434,7 +434,7 @@ class ProtocolView extends PageView {
 					}
 					
 					// correction
-					if($correctable['status'] == 1 && in_array($_SESSION['user']->get_id(),$correctable['correctors']) && $_SESSION['user']->get_userinfo('name') != $entry->get_owner()) {
+					if($correctable['status'] == 1 && in_array($this->getUser()->get_id(),$correctable['correctors']) && $this->getUser()->get_userinfo('name') != $entry->get_owner()) {
 						
 						// delete
 						$sList[$counter]['admin'][] = array(
@@ -446,7 +446,7 @@ class ProtocolView extends PageView {
 					}
 					
 					// corrected
-					if($correctable['status'] == 1 && $_SESSION['user']->get_userinfo('name') == $entry->get_owner() && $entry->hasCorrections()) {
+					if($correctable['status'] == 1 && $this->getUser()->get_userinfo('name') == $entry->get_owner() && $entry->hasCorrections()) {
 						
 						// delete
 						$sList[$counter]['admin'][] = array(
@@ -619,32 +619,32 @@ class ProtocolView extends PageView {
 		$location->addRule('required',parent::lang('class.ProtocolView#entry#rule#required.location'));
 		$location->addRule(
 					'regex',
-					parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('name.desc').']',
-					$_SESSION['GC']->get_config('name.regexp'));
+					parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('name.desc').']',
+					$this->getGc()->get_config('name.regexp'));
 		
 		// member0
 		$member = $form->addElement('text','member0');
 		$member->setLabel(parent::lang('class.ProtocolView#entry#form#member0').':');
 		$member->addRule(
 						'regex',
-						parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('text.desc').']',
-						$_SESSION['GC']->get_config('text.regexp'));
+						parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('text.desc').']',
+						$this->getGc()->get_config('text.regexp'));
 		
 		// member1
 		$member = $form->addElement('text','member1');
 		$member->setLabel(parent::lang('class.ProtocolView#entry#form#member1').':');
 		$member->addRule(
 						'regex',
-						parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('text.desc').']',
-						$_SESSION['GC']->get_config('text.regexp'));
+						parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('text.desc').']',
+						$this->getGc()->get_config('text.regexp'));
 		
 		// member2
 		$member = $form->addElement('text','member2');
 		$member->setLabel(parent::lang('class.ProtocolView#entry#form#member2').':');
 		$member->addRule(
 						'regex',
-						parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('text.desc').']',
-						$_SESSION['GC']->get_config('text.regexp'));
+						parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('text.desc').']',
+						$this->getGc()->get_config('text.regexp'));
 		
 		// recorder
 		$recorder = $form->addElement('text','recorder');
@@ -652,20 +652,20 @@ class ProtocolView extends PageView {
 		$recorder->addRule('required',parent::lang('class.ProtocolView#entry#rule#required.recorder'));
 		$recorder->addRule(
 					'regex',
-					parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('name.desc').']',
-					$_SESSION['GC']->get_config('name.regexp'));
+					parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('name.desc').']',
+					$this->getGc()->get_config('name.regexp'));
 		
 		// protocol text
 		$protocolTA = $form->addElement('textarea','protocol');
 		$protocolTA->setLabel(parent::lang('class.ProtocolView#entry#form#protocol').':');
 		$protocolTA->addRule(
 						'regex',
-						parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('textarea.desc').']',
-						$_SESSION['GC']->get_config('textarea.regexp'));
+						parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
+						$this->getGc()->get_config('textarea.regexp'));
 		// js tiny_mce
 		$tmce = array(
 				'element' => 'protocol-0',
-				'css' => 'templates/protocols/tmce_'.$_SESSION['GC']->get_config('tmce.default.css').'.css',
+				'css' => 'templates/protocols/tmce_'.$this->getGc()->get_config('tmce.default.css').'.css',
 				'transitem' => parent::lang('class.ProtocolView#new_entry#tmce#item'),
 				'transdecision' => parent::lang('class.ProtocolView#new_entry#tmce#decision')
 			);
@@ -694,7 +694,7 @@ class ProtocolView extends PageView {
 			}
 			
 			// merge with own groups, add admin
-			$data['rights'] = array_merge($data['rights'],$_SESSION['user']->get_groups(),array(1));
+			$data['rights'] = array_merge($data['rights'],$this->getUser()->get_groups(),array(1));
 			
 			// add public access
 			$kPublicAccess = array_search(0,$data['rights']);
@@ -716,7 +716,7 @@ class ProtocolView extends PageView {
 								'member' => $data['member0'].'|'.$data['member1'].'|'.$data['member2'],
 								'protocol' => $data['protocol'],
 								'preset' => $data['preset'],
-								'owner' => $_SESSION['user']->get_id(),
+								'owner' => $this->getUser()->get_id(),
 								'recorder' => $data['recorder'],
 								'rights' => $right_array,
 								'valid' => 1,
@@ -761,7 +761,7 @@ class ProtocolView extends PageView {
 			$correctable = $protocol->get_correctable(false);
 			// check status
 			$status = false;
-			if($correctable['status'] == 2 || $_SESSION['user']->get_userinfo('name') == $protocol->get_owner()) {
+			if($correctable['status'] == 2 || $this->getUser()->get_userinfo('name') == $protocol->get_owner()) {
 				$status = true;
 			}
 			
@@ -797,9 +797,9 @@ class ProtocolView extends PageView {
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$GLOBALS['Error']->handle_error($errno);
-			return $GLOBALS['Error']->to_html($errno);
+			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+			$this->getError()->handle_error($errno);
+			return $this->getError()->to_html($errno);
 		}
 	}
 	
@@ -888,7 +888,7 @@ class ProtocolView extends PageView {
 			$radio2->setContent(parent::lang('class.ProtocolView#entry#form#correctionFinished'));
 			// select correctors
 			// get all users and put id and name to options
-			$users = $_SESSION['user']->return_all_users(array($_SESSION['user']->get_userinfo('username')));
+			$users = $this->getUser()->return_all_users(array($this->getUser()->get_userinfo('username')));
 			$options = array();
 			foreach($users as $user) {
 				$options[$user->get_userinfo('id')] = $user->get_userinfo('name');
@@ -933,32 +933,32 @@ class ProtocolView extends PageView {
 			$location->addRule('required',parent::lang('class.ProtocolView#entry#rule#required.location'));
 			$location->addRule(
 						'regex',
-						parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('name.desc').']',
-						$_SESSION['GC']->get_config('name.regexp'));
+						parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('name.desc').']',
+						$this->getGc()->get_config('name.regexp'));
 			
 			// member0
 			$member = $form->addElement('text','member0');
 			$member->setLabel(parent::lang('class.ProtocolView#entry#form#member0').':');
 			$member->addRule(
 							'regex',
-							parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('text.desc').']',
-							$_SESSION['GC']->get_config('text.regexp'));
+							parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('text.desc').']',
+							$this->getGc()->get_config('text.regexp'));
 			
 			// member1
 			$member = $form->addElement('text','member1');
 			$member->setLabel(parent::lang('class.ProtocolView#entry#form#member1').':');
 			$member->addRule(
 							'regex',
-							parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('text.desc').']',
-							$_SESSION['GC']->get_config('text.regexp'));
+							parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('text.desc').']',
+							$this->getGc()->get_config('text.regexp'));
 			
 			// member2
 			$member = $form->addElement('text','member2');
 			$member->setLabel(parent::lang('class.ProtocolView#entry#form#member2').':');
 			$member->addRule(
 							'regex',
-							parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('text.desc').']',
-							$_SESSION['GC']->get_config('text.regexp'));
+							parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('text.desc').']',
+							$this->getGc()->get_config('text.regexp'));
 			
 			// recorder
 			$recorder = $form->addElement('text','recorder');
@@ -966,16 +966,16 @@ class ProtocolView extends PageView {
 			$recorder->addRule('required',parent::lang('class.ProtocolView#entry#rule#required.recorder'));
 			$recorder->addRule(
 						'regex',
-						parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('name.desc').']',
-						$_SESSION['GC']->get_config('name.regexp'));
+						parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('name.desc').']',
+						$this->getGc()->get_config('name.regexp'));
 			
 			// protocol text
 			$protocolTA = $form->addElement('textarea','protocol');
 			$protocolTA->setLabel(parent::lang('class.ProtocolView#entry#form#protocol').':');
 			$protocolTA->addRule(
 							'regex',
-							parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('textarea.desc').']',
-							$_SESSION['GC']->get_config('textarea.regexp'));
+							parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
+							$this->getGc()->get_config('textarea.regexp'));
 			// js tiny_mce
 			$tmce = array(
 					'element' => 'protocol-0',
@@ -1010,7 +1010,7 @@ class ProtocolView extends PageView {
 				}
 				
 				// merge with own groups, add admin
-				$data['rights'] = array_merge($data['rights'],$_SESSION['user']->get_groups(),array(1));
+				$data['rights'] = array_merge($data['rights'],$this->getUser()->get_groups(),array(1));
 				
 				// add public access
 				$kPublicAccess = array_search(0,$data['rights']);
@@ -1062,9 +1062,9 @@ class ProtocolView extends PageView {
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$GLOBALS['Error']->handle_error($errno);
-			return $GLOBALS['Error']->to_html($errno);
+			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+			$this->getError()->handle_error($errno);
+			return $this->getError()->to_html($errno);
 		}
 	}
 	
@@ -1092,7 +1092,7 @@ class ProtocolView extends PageView {
 		$correctable = $protocol->get_correctable(false);
 			
 		// check rights
-		if(Rights::check_rights($pid,'protocol',true) && ($correctable['status'] == 2 || $_SESSION['user']->get_userinfo('name') == $protocol->get_owner())) {
+		if(Rights::check_rights($pid,'protocol',true) && ($correctable['status'] == 2 || $this->getUser()->get_userinfo('name') == $protocol->get_owner())) {
 			
 			// smarty
 			$sP = new JudoIntranetSmarty();
@@ -1141,9 +1141,9 @@ class ProtocolView extends PageView {
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$GLOBALS['Error']->handle_error($errno);
-			return $GLOBALS['Error']->to_html($errno);
+			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+			$this->getError()->handle_error($errno);
+			return $this->getError()->to_html($errno);
 		}
 	}
 	
@@ -1171,7 +1171,7 @@ class ProtocolView extends PageView {
 		$correctable = $protocol->get_correctable(false);
 			
 		// check rights
-		if(Rights::check_rights($pid,'protocol',true) && ($correctable['status'] == 2 || $_SESSION['user']->get_userinfo('name') == $protocol->get_owner())) {
+		if(Rights::check_rights($pid,'protocol',true) && ($correctable['status'] == 2 || $this->getUser()->get_userinfo('name') == $protocol->get_owner())) {
 			
 			// smarty
 			$sP = new JudoIntranetSmarty();
@@ -1220,9 +1220,9 @@ class ProtocolView extends PageView {
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$GLOBALS['Error']->handle_error($errno);
-			return $GLOBALS['Error']->to_html($errno);
+			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+			$this->getError()->handle_error($errno);
+			return $this->getError()->to_html($errno);
 		}
 	}
 	
@@ -1290,8 +1290,8 @@ class ProtocolView extends PageView {
 				try {
 					$protocol->writeDb('update');
 				} catch(Exception $e) {
-					$GLOBALS['Error']->handle_error($e);
-					return $GLOBALS['Error']->to_html($e);
+					$this->getError()->handle_error($e);
+					return $this->getError()->to_html($e);
 				}
 			}
 			
@@ -1300,9 +1300,9 @@ class ProtocolView extends PageView {
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$GLOBALS['Error']->handle_error($errno);
-			return $GLOBALS['Error']->to_html($errno);
+			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+			$this->getError()->handle_error($errno);
+			return $this->getError()->to_html($errno);
 		}
 	}
 
@@ -1339,10 +1339,10 @@ class ProtocolView extends PageView {
 		$this->tpl->assign('tmce',$tmce);
 		
 		// check rights
-		if(Rights::check_rights($pid,'protocol',true) && (in_array($_SESSION['user']->get_id(),$correctable['correctors']) || $_SESSION['user']->get_userinfo('name') == $protocol->get_owner())) {
+		if(Rights::check_rights($pid,'protocol',true) && (in_array($this->getUser()->get_id(),$correctable['correctors']) || $this->getUser()->get_userinfo('name') == $protocol->get_owner())) {
 			
 			// check owner
-			if($_SESSION['user']->get_userinfo('name') == $protocol->get_owner()) {
+			if($this->getUser()->get_userinfo('name') == $protocol->get_owner()) {
 				
 				// smarty
 				$sPCo = new JudoIntranetSmarty();
@@ -1409,8 +1409,8 @@ class ProtocolView extends PageView {
 					$protocolTA->setLabel(parent::lang('class.ProtocolView#entry#form#protocol').':');
 					$protocolTA->addRule(
 									'regex',
-									parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('textarea.desc').']',
-									$_SESSION['GC']->get_config('textarea.regexp'));
+									parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
+									$this->getGc()->get_config('textarea.regexp'));
 					
 					// checkbox to mark correction as finished
 					$finished = $form->addElement('checkbox','finished');
@@ -1534,8 +1534,8 @@ class ProtocolView extends PageView {
 				$protocolTA->setLabel(parent::lang('class.ProtocolView#entry#form#protocol').':');
 				$protocolTA->addRule(
 								'regex',
-								parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('textarea.desc').']',
-								$_SESSION['GC']->get_config('textarea.regexp'));
+								parent::lang('class.ProtocolView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
+								$this->getGc()->get_config('textarea.regexp'));
 								
 				// submit-button
 				$form->addElement('submit','submit',array('value' => parent::lang('class.ProtocolView#entry#form#submitButton')));
@@ -1570,9 +1570,9 @@ class ProtocolView extends PageView {
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$GLOBALS['Error']->handle_error($errno);
-			return $GLOBALS['Error']->to_html($errno);
+			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+			$this->getError()->handle_error($errno);
+			return $this->getError()->to_html($errno);
 		}
 	}
 
@@ -1657,9 +1657,9 @@ class ProtocolView extends PageView {
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$GLOBALS['Error']->handle_error($errno);
-			return $GLOBALS['Error']->to_html($errno);
+			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+			$this->getError()->handle_error($errno);
+			return $this->getError()->to_html($errno);
 		}
 	}
 

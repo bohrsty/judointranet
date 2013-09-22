@@ -214,7 +214,7 @@ class Field extends Object {
 				
 				// field-group
 				$element = HTML_QuickForm2_Factory::createElement('group', $this->get_table().'-'.$this->get_id(),$options);
-				$element->setLabel($this->get_name().':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDTEXT));
+				$element->setLabel($this->get_name().':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDTEXT));
 				
 				// add select
 				$select = $element->addElement('select','defaults',array());
@@ -230,7 +230,7 @@ class Field extends Object {
 				
 				// textarea
 				$element = HTML_QuickForm2_Factory::createElement('textarea', $this->get_table().'-'.$this->get_id(),$options);
-				$element->setLabel($this->get_name().':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDTEXT));
+				$element->setLabel($this->get_name().':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDTEXT));
 				
 				// add rules
 				if($this->get_required() == 1) {
@@ -238,8 +238,8 @@ class Field extends Object {
 				}
 				$element->addRule(
 					'regex',
-					parent::lang('class.Field#element#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('textarea.desc').']',
-					$_SESSION['GC']->get_config('textarea.regexp'));
+					parent::lang('class.Field#element#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
+					$this->getGc()->get_config('textarea.regexp'));
 			}
 			
 			// add id to return
@@ -248,7 +248,7 @@ class Field extends Object {
 			
 			// date in input-text for use with jquery
 			$element = HTML_QuickForm2_Factory::createElement('text', $this->get_table().'-'.$this->get_id(),$options);
-			$element->setLabel($this->get_name().':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDDATE));
+			$element->setLabel($this->get_name().':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDATE));
 			
 			// add rules
 			if($this->get_required() == 1) {
@@ -262,7 +262,7 @@ class Field extends Object {
 			
 			// checkbox
 			$element = HTML_QuickForm2_Factory::createElement('checkbox', $this->get_table().'-'.$this->get_id(),$options);
-			$element->setLabel($this->get_name().':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDCHECKBOX));
+			$element->setLabel($this->get_name().':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDCHECKBOX));
 			
 			// add rules
 			if($this->get_required() == 1) {
@@ -281,7 +281,7 @@ class Field extends Object {
 			
 			// select
 			$element = HTML_QuickForm2_Factory::createElement('select', $this->get_table().'-'.$this->get_id(),$options);
-			$element->setLabel($this->get_name().':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDDBSELECT));
+			$element->setLabel($this->get_name().':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDBSELECT));
 			
 			// add rules
 			if($this->get_required() == 1) {
@@ -302,7 +302,7 @@ class Field extends Object {
 			
 			// select
 			$element = HTML_QuickForm2_Factory::createElement('hierselect', $this->get_table().'-'.$this->get_id(),$options);
-			$element->setLabel($this->get_name().':&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_FIELDDBHIERSELECT));
+			$element->setLabel($this->get_name().':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDBHIERSELECT));
 			
 			// add rules
 			if($this->get_required() == 1) {
@@ -572,14 +572,14 @@ class Field extends Object {
 			
 			// insert
 			$sql = "INSERT INTO value (id,table_name,table_id,field_id,value,defaults,modified_by)
-					VALUES (NULL,'".$this->get_table()."',".$this->get_table_id().",".$this->get_id().",'".$this->get_value()."',".$this->get_defaults().",".(int)$_SESSION['user']->get_id().")";
+					VALUES (NULL,'".$this->get_table()."',".$this->get_table_id().",".$this->get_id().",'".$this->get_value()."',".$this->get_defaults().",".(int)$this->getUser()->get_id().")";
 		} else {
 			
 			// update
 			$sql = "UPDATE value SET
 					value='".$this->get_value()."',
 					defaults=".$this->get_defaults().",
-					modified_by=".(int)$_SESSION['user']->get_id()."
+					modified_by=".(int)$this->getUser()->get_id()."
 					WHERE field_id = ".$this->get_id()."
 					AND table_id = ".$this->table_id."
 					AND table_name = '".$this->get_table()."'";

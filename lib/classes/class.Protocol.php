@@ -298,7 +298,7 @@ class Protocol extends Page {
 	public function details() {
 		
 //		// prepare rights
-//		$groups = $_SESSION['user']->return_all_groups('admin');
+//		$groups = $this->getUser()->return_all_groups('admin');
 //		$rights = $this->get_rights()->get_rights();
 //		$rights_string = '';
 //
@@ -456,7 +456,7 @@ class Protocol extends Page {
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('DbActionUnknown','write_protocol',$action);
+			$errno = $this->getError()->error_raised('DbActionUnknown','write_protocol',$action);
 			throw new Exception('DbActionUnknown',$errno);
 		}
 		

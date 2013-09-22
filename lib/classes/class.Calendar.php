@@ -215,7 +215,7 @@ class Calendar extends Page {
 					.$this->get_content().'",
 					0,'
 					.$this->get_valid().','.
-					(int)$_SESSION['user']->get_id().')';
+					(int)$this->getUser()->get_id().')';
 			
 			// execute
 			$db->query($sql);
@@ -246,7 +246,7 @@ class Calendar extends Page {
 						content = "'.$this->get_content().'",
 						preset_id = "'.$this->get_preset_id().'",
 						valid = '.$this->get_valid().',
-						modified_by = '.$_SESSION['user']->get_id().'
+						modified_by = '.$this->getUser()->get_id().'
 					WHERE id = "'.$this->get_id().'"';
 			
 			// execute
@@ -261,7 +261,7 @@ class Calendar extends Page {
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('DbActionUnknown','write_calendar',$action);
+			$errno = $this->getError()->error_raised('DbActionUnknown','write_calendar',$action);
 			throw new Exception('DbActionUnknown',$errno);
 		}
 		
@@ -280,7 +280,7 @@ class Calendar extends Page {
 	public function details_to_html() {
 		
 		// prepare rights
-		$groups = $_SESSION['user']->return_all_groups('admin');
+		$groups = $this->getUser()->return_all_groups('admin');
 		$rights = $this->get_rights()->get_rights();
 		$rights_string = '';
 

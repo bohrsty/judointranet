@@ -34,25 +34,59 @@ class Object {
 	 * class-variables
 	 */
 	
+	
 	/*
 	 * getter/setter
 	 */
+	public function getGc() {
+		return $GLOBALS['GC'];
+	}
+	public function setGc($gc) {
+		$GLOBALS['GC'] = $gc;
+	}
+	public function getUser() {
+		return $_SESSION['user'];
+	}
+	public function setUser($user=null) {
+		
+		if(is_null($user)) {
+			if(!isset($_SESSION['user'])) {
+				// initialize user
+				$_SESSION['user'] = new User();
+			}
+		} else {
+			$_SESSION['user'] = $user;
+		}
+	}
+	public function getError() {
+		return $GLOBALS['error'];
+	}
+	public function setError($error) {
+		$GLOBALS['error'] = $error;
+	}
+	public function getHelp() {
+		return $GLOBALS['help'];
+	}
+	public function setHelp($help) {
+		$GLOBALS['help'] = $help;
+	}
 	
 	/*
 	 * constructor/destructor
 	 */
 	public function __construct() {
 		
-		// set config if not exists
-		if(!isset($_SESSION['GC']) || isset($_GET['rc'])) {
-			$_SESSION['GC'] = new Config();
-		}
+		// set config
+		$GLOBALS['GC'] = new Config();
 		
 		// set default-time-zone
-		date_default_timezone_set($_SESSION['GC']->get_config('default_time_zone'));
+		date_default_timezone_set($this->getGc()->get_config('default_time_zone'));
 		
 		// set locale
-		setlocale(LC_ALL, $_SESSION['GC']->get_config('locale'));
+		setlocale(LC_ALL, $this->getGc()->get_config('locale'));
+		
+		// set user
+		$this->setUser();
 	}
 	
 	/*
@@ -110,10 +144,10 @@ class Object {
 		$i = explode('#',$string,4);
 		
 		// import lang-file
-		if(is_file('cnf/lang/lang.'.$_SESSION['user']->get_lang().'.php')) {
-			include('cnf/lang/lang.'.$_SESSION['user']->get_lang().'.php');
+		if(is_file('cnf/lang/lang.'.self::getUser()->get_lang().'.php')) {
+			include('cnf/lang/lang.'.self::getUser()->get_lang().'.php');
 		} else {
-			return '[language "'.$_SESSION['user']->get_lang().'" not found]';
+			return '[language "'.self::getUser()->get_lang().'" not found]';
 		}
 		
 		// check if is translated

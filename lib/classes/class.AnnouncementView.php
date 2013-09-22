@@ -49,7 +49,7 @@ class AnnouncementView extends PageView {
 		} catch(Exception $e) {
 			
 			// handle error
-			$GLOBALS['Error']->handle_error($e);
+			$this->getError()->handle_error($e);
 		}
 	}
 	
@@ -207,12 +207,12 @@ class AnnouncementView extends PageView {
 					default:
 						
 						// id set, but no functionality
-						$errno = $GLOBALS['Error']->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
-						$GLOBALS['Error']->handle_error($errno);
+						$errno = $this->getError()->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
+						$this->getError()->handle_error($errno);
 						
 						// smarty
 						$this->tpl->assign('title', '');
-						$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+						$this->tpl->assign('main', $this->getError()->to_html($errno));
 						$this->tpl->assign('jquery', true);
 						$this->tpl->assign('hierselect', false);
 					break;
@@ -221,12 +221,12 @@ class AnnouncementView extends PageView {
 				
 				// error not authorized
 				// main content
-				$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-				$GLOBALS['Error']->handle_error($errno);
+				$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+				$this->getError()->handle_error($errno);
 
 				// smarty
 				$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#Error#NotAuthorized')));
-				$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+				$this->tpl->assign('main', $this->getError()->to_html($errno));
 				$this->tpl->assign('jquery', true);
 				$this->tpl->assign('hierselect', false);
 			}
@@ -414,23 +414,23 @@ class AnnouncementView extends PageView {
 				} else {
 					
 					// error
-					$errno = $GLOBALS['Error']->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
-					$GLOBALS['Error']->handle_error($errno);
-					return $GLOBALS['Error']->to_html($errno);
+					$errno = $this->getError()->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
+					$this->getError()->handle_error($errno);
+					return $this->getError()->to_html($errno);
 				}
 			} else {
 				
 				// error
-				$errno = $GLOBALS['Error']->error_raised('MissingParams','entry:cid_or_pid','cid_or_pid');
-				$GLOBALS['Error']->handle_error($errno);
-				return $GLOBALS['Error']->to_html($errno);
+				$errno = $this->getError()->error_raised('MissingParams','entry:cid_or_pid','cid_or_pid');
+				$this->getError()->handle_error($errno);
+				return $this->getError()->to_html($errno);
 			}
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$GLOBALS['Error']->handle_error($errno);
-			return $GLOBALS['Error']->to_html($errno);
+			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+			$this->getError()->handle_error($errno);
+			return $this->getError()->to_html($errno);
 		}
 	}
 	
@@ -603,23 +603,23 @@ class AnnouncementView extends PageView {
 				} else {
 					
 					// error
-					$errno = $GLOBALS['Error']->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
-					$GLOBALS['Error']->handle_error($errno);
-					return $GLOBALS['Error']->to_html($errno);
+					$errno = $this->getError()->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
+					$this->getError()->handle_error($errno);
+					return $this->getError()->to_html($errno);
 				}
 			} else {
 				
 				// error
-				$errno = $GLOBALS['Error']->error_raised('MissingParams','entry:cid_or_pid','cid_or_pid');
-				$GLOBALS['Error']->handle_error($errno);
-				return $GLOBALS['Error']->to_html($errno);
+				$errno = $this->getError()->error_raised('MissingParams','entry:cid_or_pid','cid_or_pid');
+				$this->getError()->handle_error($errno);
+				return $this->getError()->to_html($errno);
 			}
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$GLOBALS['Error']->handle_error($errno);
-			return $GLOBALS['Error']->to_html($errno);
+			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+			$this->getError()->handle_error($errno);
+			return $this->getError()->to_html($errno);
 		}
 	}
 	
@@ -676,7 +676,7 @@ class AnnouncementView extends PageView {
 								);
 					$sConfirmation->assign('link', $link);
 					$sConfirmation->assign('spanparams', 'id="cancel"');
-					$sConfirmation->assign('message', parent::lang('class.AnnouncementView#delete#message#confirm').'&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_DELETE));
+					$sConfirmation->assign('message', parent::lang('class.AnnouncementView#delete#message#confirm').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_DELETE));
 					$sConfirmation->assign('form', $form);
 					
 					// validate
@@ -713,8 +713,8 @@ class AnnouncementView extends PageView {
 						try {
 							$calendar->write_db('update');
 						} catch(Exception $e) {
-							$GLOBALS['Error']->handle_error($e);
-							$output = $GLOBALS['Error']->to_html($e);
+							$this->getError()->handle_error($e);
+							$output = $this->getError()->to_html($e);
 						}
 					}
 					
@@ -723,23 +723,23 @@ class AnnouncementView extends PageView {
 				} else {
 					
 					// error
-					$errno = $GLOBALS['Error']->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
-					$GLOBALS['Error']->handle_error($errno);
-					return $GLOBALS['Error']->to_html($errno);
+					$errno = $this->getError()->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
+					$this->getError()->handle_error($errno);
+					return $this->getError()->to_html($errno);
 				}
 			} else {
 				
 				// error
-				$errno = $GLOBALS['Error']->error_raised('MissingParams','entry:cid_or_pid','cid_or_pid');
-				$GLOBALS['Error']->handle_error($errno);
-				return $GLOBALS['Error']->to_html($errno);
+				$errno = $this->getError()->error_raised('MissingParams','entry:cid_or_pid','cid_or_pid');
+				$this->getError()->handle_error($errno);
+				return $this->getError()->to_html($errno);
 			}
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$GLOBALS['Error']->handle_error($errno);
-			return $GLOBALS['Error']->to_html($errno);
+			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+			$this->getError()->handle_error($errno);
+			return $this->getError()->to_html($errno);
 		}
 	}
 	
@@ -812,23 +812,23 @@ class AnnouncementView extends PageView {
 				} else {
 					
 					// error
-					$errno = $GLOBALS['Error']->error_raised('AnnNotExists','entry:'.$this->get('cid').'|'.$this->get('pid'),$this->get('cid').'|'.$this->get('pid'));
-					$GLOBALS['Error']->handle_error($errno);
-					return $GLOBALS['Error']->to_html($errno);
+					$errno = $this->getError()->error_raised('AnnNotExists','entry:'.$this->get('cid').'|'.$this->get('pid'),$this->get('cid').'|'.$this->get('pid'));
+					$this->getError()->handle_error($errno);
+					return $this->getError()->to_html($errno);
 				}
 			} else {
 				
 				// error
-				$errno = $GLOBALS['Error']->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
-				$GLOBALS['Error']->handle_error($errno);
-				return $GLOBALS['Error']->to_html($errno);
+				$errno = $this->getError()->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
+				$this->getError()->handle_error($errno);
+				return $this->getError()->to_html($errno);
 			}
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('MissingParams','entry:cid_or_pid','cid_or_pid');
-			$GLOBALS['Error']->handle_error($errno);
-			return $GLOBALS['Error']->to_html($errno);
+			$errno = $this->getError()->error_raised('MissingParams','entry:cid_or_pid','cid_or_pid');
+			$this->getError()->handle_error($errno);
+			return $this->getError()->to_html($errno);
 		}
 	}
 	
@@ -906,23 +906,23 @@ class AnnouncementView extends PageView {
 				} else {
 					
 					// error
-					$errno = $GLOBALS['Error']->error_raised('AnnNotExists','entry:'.$this->get('cid').'|'.$this->get('pid'),$this->get('cid').'|'.$this->get('pid'));
-					$GLOBALS['Error']->handle_error($errno);
-					return $GLOBALS['Error']->to_html($errno);
+					$errno = $this->getError()->error_raised('AnnNotExists','entry:'.$this->get('cid').'|'.$this->get('pid'),$this->get('cid').'|'.$this->get('pid'));
+					$this->getError()->handle_error($errno);
+					return $this->getError()->to_html($errno);
 				}
 			} else {
 				
 				// error
-				$errno = $GLOBALS['Error']->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
-				$GLOBALS['Error']->handle_error($errno);
-				return $GLOBALS['Error']->to_html($errno);
+				$errno = $this->getError()->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
+				$this->getError()->handle_error($errno);
+				return $this->getError()->to_html($errno);
 			}
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('MissingParams','entry:cid_or_pid','cid_or_pid');
-			$GLOBALS['Error']->handle_error($errno);
-			return $GLOBALS['Error']->to_html($errno);
+			$errno = $this->getError()->error_raised('MissingParams','entry:cid_or_pid','cid_or_pid');
+			$this->getError()->handle_error($errno);
+			return $this->getError()->to_html($errno);
 		}
 	}
 }

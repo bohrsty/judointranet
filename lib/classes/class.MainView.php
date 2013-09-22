@@ -49,7 +49,7 @@ class MainView extends PageView {
 		} catch(Exception $e) {
 			
 			// handle error
-			$GLOBALS['Error']->handle_error($e);
+			$this->getError()->handle_error($e);
 		}
 	}
 	
@@ -81,7 +81,7 @@ class MainView extends PageView {
 					);
 		
 		// login or logout
-		if($_SESSION['user']->get_loggedin()) {
+		if(self::getUser()->get_loggedin()) {
 			
 			// add logout
 			array_unshift($navi['secondlevel'],
@@ -174,7 +174,7 @@ class MainView extends PageView {
 						
 						// smarty
 						$this->tpl->assign('title', $this->title(parent::lang('class.MainView#init#logout#title')));
-						$this->tpl->assign('main', $_SESSION['user']->logout());
+						$this->tpl->assign('main', $this->getUser()->logout());
 						$this->tpl->assign('jquery', false);
 						$this->tpl->assign('hierselect', false);
 						
@@ -193,13 +193,13 @@ class MainView extends PageView {
 					default:
 						
 						// id set, but no functionality
-						$errno = $GLOBALS['Error']->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
-						$GLOBALS['Error']->handle_error($errno);
-						$this->add_output(array('main' => $GLOBALS['Error']->to_html($errno)),true);
+						$errno = $this->getError()->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
+						$this->getError()->handle_error($errno);
+						$this->add_output(array('main' => $this->getError()->to_html($errno)),true);
 						
 						// smarty
 						$this->tpl->assign('title', '');
-						$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+						$this->tpl->assign('main', $this->getError()->to_html($errno));
 						$this->tpl->assign('jquery', true);
 						$this->tpl->assign('hierselect', false);
 					break;
@@ -207,12 +207,12 @@ class MainView extends PageView {
 			} else {
 				
 				// error not authorized
-				$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-				$GLOBALS['Error']->handle_error($errno);
+				$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+				$this->getError()->handle_error($errno);
 				
 				// smarty
 				$this->tpl->assign('title', $this->title(parent::lang('class.MainView#init#Error#NotAuthorized')));
-				$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+				$this->tpl->assign('main', $this->getError()->to_html($errno));
 				$this->tpl->assign('jquery', true);
 				$this->tpl->assign('hierselect', false);
 			}
@@ -296,13 +296,13 @@ class MainView extends PageView {
 		if($form->validate()) {
 			
 			// login and redirect
-			$_SESSION['user']->change_user($username->getValue(),true);
+			$this->getUser()->change_user($username->getValue(),true);
 			header('Location:'.$uri);
 			exit();
 		} else {
 			
 			// smarty message and form
-			$sLogin->assign('message', parent::lang($_SESSION['user']->get_login_message()).'&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_LOGIN, array($_SESSION['user']->get_login_message() => '')));
+			$sLogin->assign('message', parent::lang($this->getUser()->get_login_message()).'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_LOGIN, array($this->getUser()->get_login_message() => '')));
 			$sLogin->assign('form', $form->render($renderer));
 		}
 		
@@ -324,19 +324,19 @@ class MainView extends PageView {
 	public function callback_check_login($args) {
 		
 		// check if user exists
-		$user = $_SESSION['user']->check_login($args['username']);
+		$user = $this->getUser()->check_login($args['username']);
 		if($user !== false) {
 			
 			// check active and password
 			if($user['active'] == 0) {
 				
 				// set message and return false
-				$_SESSION['user']->set_login_message('class.MainView#callback_check_login#message#UserNotActive');
+				$this->getUser()->set_login_message('class.MainView#callback_check_login#message#UserNotActive');
 				return false;
 			} elseif($user['password'] != md5($args['password'])) {
 				
 				// set message and return false
-				$_SESSION['user']->set_login_message('class.MainView#callback_check_login#message#WrongPassword');
+				$this->getUser()->set_login_message('class.MainView#callback_check_login#message#WrongPassword');
 				return false;
 			} else {
 				
@@ -346,7 +346,7 @@ class MainView extends PageView {
 		} else {
 			
 			// set message and return false
-			$_SESSION['user']->set_login_message('class.MainView#callback_check_login#message#UserNotExist');
+			$this->getUser()->set_login_message('class.MainView#callback_check_login#message#UserNotExist');
 			return false;
 		}
 	}
@@ -370,10 +370,10 @@ class MainView extends PageView {
 		$return = '';
 		
 		// check login
-		if($_SESSION['user']->get_loggedin()) {
+		if($this->getUser()->get_loggedin()) {
 		
 			// smarty
-			$sUserPasswd->assign('pagecaption', parent::lang('class.MainView#user#caption#general').' '.$_SESSION['user']->get_userinfo('name'));
+			$sUserPasswd->assign('pagecaption', parent::lang('class.MainView#user#caption#general').' '.$this->getUser()->get_userinfo('name'));
 				
 			// check action
 			if($this->get('action') == 'passwd') {
@@ -419,7 +419,7 @@ class MainView extends PageView {
 					// prepare sql-statement
 					$sql = "UPDATE user
 							SET password='".md5($data['password']['password1'])."'
-							WHERE id=".$_SESSION['user']->get_id();
+							WHERE id=".$this->getUser()->get_id();
 					
 					// execute statement
 					$result = $db->query($sql);
@@ -438,9 +438,9 @@ class MainView extends PageView {
 		} else {
 			
 			// not authorized
-			$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$GLOBALS['Error']->handle_error($errno);
-			return $GLOBALS['Error']->to_html($errno);
+			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+			$this->getError()->handle_error($errno);
+			return $this->getError()->to_html($errno);
 		}
 	}
 	

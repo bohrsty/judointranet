@@ -49,7 +49,7 @@ class AdministrationView extends PageView {
 		} catch(Exception $e) {
 			
 			// handle error
-			$GLOBALS['Error']->handle_error($e);
+			$this->getError()->handle_error($e);
 		}
 	}
 	
@@ -162,12 +162,12 @@ class AdministrationView extends PageView {
 					default:
 						
 						// id set, but no functionality
-						$errno = $GLOBALS['Error']->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
-						$GLOBALS['Error']->handle_error($errno);
+						$errno = $this->getError()->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
+						$this->getError()->handle_error($errno);
 						
 						// smarty
 						$this->tpl->assign('title', '');
-						$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+						$this->tpl->assign('main', $this->getError()->to_html($errno));
 						$this->tpl->assign('jquery', true);
 						$this->tpl->assign('hierselect', false);
 					break;
@@ -175,12 +175,12 @@ class AdministrationView extends PageView {
 			} else {
 				
 				// error not authorized
-				$errno = $GLOBALS['Error']->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-				$GLOBALS['Error']->handle_error($errno);
+				$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+				$this->getError()->handle_error($errno);
 				
 				// smarty
 				$this->tpl->assign('title', $this->title(parent::lang('class.AdministrationView#init#Error#NotAuthorized')));
-				$this->tpl->assign('main', $GLOBALS['Error']->to_html($errno));
+				$this->tpl->assign('main', $this->getError()->to_html($errno));
 				$this->tpl->assign('jquery', true);
 				$this->tpl->assign('hierselect', false);
 			}
@@ -296,14 +296,14 @@ class AdministrationView extends PageView {
 						$content .= $this->list_table_content($this->get('field'),$this->get('page'));
 					}
 				} else {
-					$errno = $GLOBALS['Error']->error_raised('RowNotExists',$this->get('rid'));
-					$GLOBALS['Error']->handle_error($errno);
-					return $GLOBALS['Error']->to_html($errno);
+					$errno = $this->getError()->error_raised('RowNotExists',$this->get('rid'));
+					$this->getError()->handle_error($errno);
+					return $this->getError()->to_html($errno);
 				}
 			} else {
-				$errno = $GLOBALS['Error']->error_raised('UsertableNotExists',$this->get('field'));
-				$GLOBALS['Error']->handle_error($errno);
-				return $GLOBALS['Error']->to_html($errno);
+				$errno = $this->getError()->error_raised('UsertableNotExists',$this->get('field'));
+				$this->getError()->handle_error($errno);
+				return $this->getError()->to_html($errno);
 			}
 		} else {
 			
@@ -373,7 +373,7 @@ class AdministrationView extends PageView {
 				'title' => parent::lang('class.AdministrationView#create_table_links#toggleTable#title'),
 				'content' => parent::lang('class.AdministrationView#create_table_links#toggleTable#name'),
 				'params' => 'id="toggleTable"',
-				'help' => $GLOBALS['help']->getMessage(HELP_MSG_ADMINUSERTABLESELECT),
+				'help' => $this->getHelp()->getMessage(HELP_MSG_ADMINUSERTABLESELECT),
 			);
 		$sTl->assign('link', $link);
 		
@@ -406,7 +406,7 @@ class AdministrationView extends PageView {
 		
 		// get all fields to administer
 		// get systemtables
-		$systemtables = explode(',',$_SESSION['GC']->get_config('systemtables'));
+		$systemtables = explode(',',$this->getGc()->get_config('systemtables'));
 		
 		// get user tables
 		$usertables = array();
@@ -496,7 +496,7 @@ class AdministrationView extends PageView {
 		$sTc->assign('pagelinks', $pagelinks);
 		
 		// check if table has "usertableShow.$table" entry
-		$configUsertableCols = $_SESSION['GC']->get_config('usertableCols.'.$table_name);
+		$configUsertableCols = $this->getGc()->get_config('usertableCols.'.$table_name);
 		if($configUsertableCols === false || $configUsertableCols == '') {
 			$usertableCols = array();
 			$skipUsertableCols = false;
@@ -506,7 +506,7 @@ class AdministrationView extends PageView {
 		}
 				
 		// prepare statement
-		$pagesize = $_SESSION['GC']->get_config('pagesize');
+		$pagesize = $this->getGc()->get_config('pagesize');
 		$sql = "SELECT *
 				FROM $table_name
 				LIMIT ".$page * $pagesize.",$pagesize";
@@ -523,7 +523,7 @@ class AdministrationView extends PageView {
 		
 		// prepare th
 		$i = 1;
-		$data[0]['th'][0]['content'] = parent::lang('class.AdministrationView#list_table_content#table#tasks').'&nbsp;'.$GLOBALS['help']->getMessage(HELP_MSG_ADMINUSERTABLETASKS);
+		$data[0]['th'][0]['content'] = parent::lang('class.AdministrationView#list_table_content#table#tasks').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_ADMINUSERTABLETASKS);
 		foreach($tinfo as $col) {
 			
 			// check usertableCols
@@ -923,8 +923,8 @@ class AdministrationView extends PageView {
 						// add rule
 						$field->addRule(
 							'regex',
-							parent::lang('class.AdministrationView#edit_row#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('textarea.desc').']',
-							$_SESSION['GC']->get_config('textarea.regexp'));
+							parent::lang('class.AdministrationView#edit_row#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
+							$this->getGc()->get_config('textarea.regexp'));
 						// required
 						if($table == 'defaults') {
 							$field->addRule('required',parent::lang('class.AdministrationView#edit_row#rule#required'));
@@ -938,8 +938,8 @@ class AdministrationView extends PageView {
 						// add rule
 						$field->addRule(
 							'regex',
-							parent::lang('class.AdministrationView#edit_row#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('textarea.desc').']',
-							$_SESSION['GC']->get_config('textarea.regexp'));
+							parent::lang('class.AdministrationView#edit_row#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
+							$this->getGc()->get_config('textarea.regexp'));
 						// required
 						if($table == 'defaults') {
 							$field->addRule('required',parent::lang('class.AdministrationView#edit_row#rule#required'));
@@ -1128,8 +1128,8 @@ class AdministrationView extends PageView {
 						// add rules
 						$field->addRule(
 							'regex',
-							parent::lang('class.AdministrationView#new_row#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('textarea.desc').']',
-							$_SESSION['GC']->get_config('textarea.regexp'));
+							parent::lang('class.AdministrationView#new_row#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
+							$this->getGc()->get_config('textarea.regexp'));
 						// required
 						if($table == 'defaults') {
 							$field->addRule('required',parent::lang('class.AdministrationView#new_row#rule#required'));
@@ -1143,8 +1143,8 @@ class AdministrationView extends PageView {
 						// add rules
 						$field->addRule(
 							'regex',
-							parent::lang('class.AdministrationView#new_row#rule#regexp.allowedChars').' ['.$_SESSION['GC']->get_config('textarea.desc').']',
-							$_SESSION['GC']->get_config('textarea.regexp'));
+							parent::lang('class.AdministrationView#new_row#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
+							$this->getGc()->get_config('textarea.regexp'));
 						// required
 						if($table == 'defaults') {
 							$field->addRule('required',parent::lang('class.AdministrationView#new_row#rule#required'));
@@ -1299,9 +1299,9 @@ class AdministrationView extends PageView {
 					$content .= $this->list_table_content('defaults',$this->get('page'));
 				}
 			} else {
-				$errno = $GLOBALS['Error']->error_raised('RowNotExists',$this->get('rid'));
-				$GLOBALS['Error']->handle_error($errno);
-				return $GLOBALS['Error']->to_html($errno);
+				$errno = $this->getError()->error_raised('RowNotExists',$this->get('rid'));
+				$this->getError()->handle_error($errno);
+				return $this->getError()->to_html($errno);
 			}
 		} else {
 			

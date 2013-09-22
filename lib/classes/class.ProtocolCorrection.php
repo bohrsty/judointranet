@@ -84,7 +84,7 @@ class ProtocolCorrection extends Object {
 		
 		// check uid
 		if(is_null($uid)) {
-			$uid = $_SESSION['user']->get_id();
+			$uid = $this->getUser()->get_id();
 		}
 		$this->set_uid($uid);
 		
@@ -155,7 +155,7 @@ class ProtocolCorrection extends Object {
 		
 		// check uid
 		if(is_null($uid)) {
-			$uid = $_SESSION['user']->get_id();
+			$uid = self::getUser()->get_id();
 		}
 		
 		// prepare sql-statement
@@ -266,7 +266,7 @@ class ProtocolCorrection extends Object {
 		} else {
 			
 			// error
-			$errno = $GLOBALS['Error']->error_raised('DbActionUnknown','write_protocol_correction',$action);
+			$errno = $this->getError()->error_raised('DbActionUnknown','write_protocol_correction',$action);
 			throw new Exception('DbActionUnknown',$errno);
 		}
 		

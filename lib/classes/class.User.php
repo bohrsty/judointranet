@@ -270,7 +270,7 @@ class User extends Object {
 		}
 		
 		// read config again
-		$_SESSION['GC'] = new Config();
+		$this->setGc(new Config());
 		
 		// logout-message
 		// smarty
