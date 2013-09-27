@@ -87,6 +87,9 @@ class Object {
 		
 		// set user
 		$this->setUser();
+		
+		// set error
+		$this->setError(new Error());
 	}
 	
 	/*
@@ -143,11 +146,17 @@ class Object {
 		// split string
 		$i = explode('#',$string,4);
 		
+		// check user
+		$lang = 'de_DE';
+		if(self::getUser()) {
+			$lang = self::getUser()->get_lang();
+		}
+		
 		// import lang-file
-		if(is_file('cnf/lang/lang.'.self::getUser()->get_lang().'.php')) {
-			include('cnf/lang/lang.'.self::getUser()->get_lang().'.php');
+		if(is_file('cnf/lang/lang.'.$lang.'.php')) {
+			include('cnf/lang/lang.'.$lang.'.php');
 		} else {
-			return '[language "'.self::getUser()->get_lang().'" not found]';
+			return '[language "'.$lang.'" not found]';
 		}
 		
 		// check if is translated

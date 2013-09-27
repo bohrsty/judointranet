@@ -297,16 +297,6 @@ class Protocol extends Page {
 	 */
 	public function details() {
 		
-//		// prepare rights
-//		$groups = $this->getUser()->return_all_groups('admin');
-//		$rights = $this->get_rights()->get_rights();
-//		$rights_string = '';
-//
-//		foreach($rights as $right) {
-//			$rights_string .= $groups[(int) $right].', ';
-//		}
-//		$rights_string = substr($rights_string,0,-2);
-		
 		// prepare data
 		$correctable = $this->get_correctable(false);
 		$data = array(

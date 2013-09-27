@@ -319,21 +319,14 @@ class CalendarView extends PageView {
 		$output = $tr_out = $th_out = '';
 		
 		// read all entries
-		$calendars = $this->read_all_entries();
+		$entries = $this->readAllEntries();
 		// check sort
-		$entries = array();
-		if($this->get('sort') !== false) {
-			
-			// check if entry is in sort
-			foreach($calendars as $id => $entry) {
-				
-				if(in_array($this->get('sort'),$entry->get_rights()->get_rights())) {
-					$entries[$id] = $entry;
-				}
-			}
-		} else {
-			$entries = $calendars;
+		if($this->get('filter') !== false) {
+			$entries = Filter::filterItems($this->get('filter'), 'calendar');
 		}
+		
+		// sort calendarentries
+		usort($entries,array($this,'callback_compare_calendars'));
 		
 		// smarty-templates
 		$sListall = new JudoIntranetSmarty();
@@ -413,7 +406,7 @@ class CalendarView extends PageView {
 						
 					// add admin
 					// get intersection of user-groups and rights
-					$intersect = array_intersect(array_keys($this->getUser()->return_all_groups()),$entry->get_rights()->get_rights());
+					$intersect = array_intersect(array_keys($this->getUser()->allGroups()),$entry->get_rights()->get_rights());
 					$admin = false;
 					// check if $intersect has values other than 0
 					foreach($intersect as $num => $igroup) {
@@ -525,29 +518,27 @@ class CalendarView extends PageView {
 	
 	
 	/**
-	 * read_all_entries get all calendar-entries from db for that the actual
+	 * readAllEntries() get all calendar entries from db for that the actual
 	 * user has sufficient rights. returns an array with calendar-objects
 	 * 
-	 * @return array all entries as calendar-objects
+	 * @return array all entries as calendar objects
 	 */
-	private function read_all_entries() {
+	private function readAllEntries() {
 		
 		// prepare return
-		$calendar_entries = array();
+		$calendarEntries = array();
 				
 		// get ids
-		$calendar_ids = Calendar::return_calendars();
+// TODO: adapt new permission system
+		$calendarIds = Calendar::return_calendars();
 		
 		// create calendar-objects
-		foreach($calendar_ids as $index => $id) {
-			$calendar_entries[] = new Calendar($id);
+		foreach($calendarIds as $index => $id) {
+			$calendarEntries[] = new Calendar($id);
 		}
 		
-		// sort calendar-entries
-		usort($calendar_entries,array($this,'callback_compare_calendars'));
-		
 		// return calendar-objects
-		return $calendar_entries;
+		return $calendarEntries;
 	}
 	
 	
@@ -573,8 +564,8 @@ class CalendarView extends PageView {
 		
 		// if sort, attach sort
 		$sort = '';
-		if($this->get('sort') !== false) {
-			$sort = '&sort='.$this->get('sort');
+		if($this->get('filter') !== false) {
+			$sort = '&filter='.$this->get('filter');
 		}
 		// if from or to add from or to
 		$from = $to = '';
@@ -631,17 +622,18 @@ class CalendarView extends PageView {
 		$sS->assign('dateFilter', parent::lang('class.CalendarView#get_sort_links#toggleFilter#dateFilter'));
 		
 		// add group-links
-		$groups = $this->getUser()->return_all_groups('sort');
+		$allFilter = Filter::allExistingFilter();
 		
 		// create links
 		$gl = array();
-		foreach($groups as $g_id => $name) {
+//		foreach($groups as $g_id => $name) {
+		foreach($allFilter as $filter) {
 			
 			// smarty
 			$gl[] = array(
-					'href' => 'calendar.php?id='.$getid.'&sort='.$g_id.$from.$to,
-					'title' => $name,
-					'content' => $name
+					'href' => 'calendar.php?id='.$getid.'&sort='.$filter->getId().$from.$to,
+					'title' => $filter->getName(),
+					'content' => $filter->getName(),
 				);
 		}
 		usort($gl, array($this, 'callbackCompareFilter'));
@@ -775,10 +767,10 @@ class CalendarView extends PageView {
 						$this->getGc()->get_config('textarea.regexp'));
 		
 		
-		// select rights
-		$options = $this->getUser()->return_all_groups('sort');
-		$rights = $form->addElement('select','rights',array('multiple' => 'multiple','size' => 5));
-		$rights->setLabel(parent::lang('class.CalendarView#entry#form#rights').':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDSORT));
+		// filter
+		$options = Filter::allExistingFilter('name');
+		$rights = $form->addElement('select','filter',array('multiple' => 'multiple','size' => 5));
+		$rights->setLabel(parent::lang('class.CalendarView#entry#form#filter').':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDSORT));
 		$rights->loadOptions($options);
 		
 		
@@ -796,26 +788,18 @@ class CalendarView extends PageView {
 			// create calendar-object
 			$data = $form->getValue();
 				
-			// check $data['rights']
-			if(!isset($data['rights']))
-			{
-				$data['rights'] = array();
+			// check filter
+			if(!isset($data['filter'])) {
+				$data['filter'] = array();
 			}
 			
-			// merge with own groups, add admin
-			$data['rights'] = array_merge($data['rights'],$this->getUser()->get_groups(),array(1));
-			
-			// add public access
-			$kPublicAccess = array_search(0,$data['rights']);
-			if($kPublicAccess === false && isset($data['public']) && $data['public'] == 1) {
-				$data['rights'][] = 0;
-			} elseif($kPublicAccess !== false && !isset($data['public'])) {
-				unset($data['rights'][$kPublicAccess]);
-			}
-			
-			$right_array = array(
-								'action' => 'new',
-								'new' => $data['rights']);
+//			// add public access
+//			$kPublicAccess = array_search(0,$data['rights']);
+//			if($kPublicAccess === false && isset($data['public']) && $data['public'] == 1) {
+//				$data['rights'][] = 0;
+//			} elseif($kPublicAccess !== false && !isset($data['public'])) {
+//				unset($data['rights'][$kPublicAccess]);
+//			}
 			
 			$calendar = new Calendar(array(
 								'date' => $data['date'],
@@ -823,17 +807,17 @@ class CalendarView extends PageView {
 								'shortname' => $data['shortname'],
 								'type' => $data['type'],
 								'content' => $data['entry_content'],
-								'rights' => $right_array,
+								'filter' => $data['filter'],
 								'valid' => 1
 								)
 				);
 				
 			// write to db
-			$calendar->write_db();
+			$calendar->write_db('new');
 			
 			// smarty
 			$sCD = new JudoIntranetSmarty();
-			$sCD->assign('data', $calendar->details_to_html());
+			$sCD->assign('data', $calendar->detailsToHtml());
 			
 			// pagecaption
 			$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#new_entry'));
@@ -900,7 +884,7 @@ class CalendarView extends PageView {
 			$sCD = new JudoIntranetSmarty();
 			
 			// smarty
-			$sCD->assign('data', $calendar->details_to_html());
+			$sCD->assign('data', $calendar->detailsToHtml());
 			return $sCD->fetch('smarty.calendar.details.tpl');
 		} else {
 			
@@ -1034,10 +1018,10 @@ class CalendarView extends PageView {
 							$this->getGc()->get_config('textarea.regexp'));
 			
 			
-			// select rights
-			$options = $this->getUser()->return_all_groups('sort');
-			$rights = $form->addElement('select','rights',array('multiple' => 'multiple','size' => 5));
-			$rights->setLabel(parent::lang('class.CalendarView#entry#form#rights').':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDSORT));
+			// filter
+			$options = Filter::allExistingFilter('name');
+			$rights = $form->addElement('select','filter',array('multiple' => 'multiple','size' => 5));
+			$rights->setLabel(parent::lang('class.CalendarView#entry#form#filter').':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDSORT));
 			$rights->loadOptions($options);
 			
 		
@@ -1055,22 +1039,18 @@ class CalendarView extends PageView {
 				// create calendar-object
 				$data = $form->getValue();
 								
-				// check $data['rights']
-				if(!isset($data['rights']))
-				{
-					$data['rights'] = array();
+				// check filter
+				if(!isset($data['filter'])) {
+					$data['filter'] = array();
 				}
 				
-				// merge with own groups, add admin
-				$data['rights'] = array_merge($data['rights'],$this->getUser()->get_groups(),array(1));
-				
-				// add public access
-				$kPublicAccess = array_search(0,$data['rights']);
-				if($kPublicAccess === false && isset($data['public']) && $data['public'] == 1) {
-					$data['rights'][] = 0;
-				} elseif($kPublicAccess !== false && !isset($data['public'])) {
-					unset($data['rights'][$kPublicAccess]);
-				}
+//				// add public access
+//				$kPublicAccess = array_search(0,$data['rights']);
+//				if($kPublicAccess === false && isset($data['public']) && $data['public'] == 1) {
+//					$data['rights'][] = 0;
+//				} elseif($kPublicAccess !== false && !isset($data['public'])) {
+//					unset($data['rights'][$kPublicAccess]);
+//				}
 				
 				$calendar_new = array(
 						'date' => $data['date'],
@@ -1078,7 +1058,7 @@ class CalendarView extends PageView {
 						'shortname' => $data['shortname'],
 						'type' => $data['type'],
 						'content' => $data['entry_content'],
-						'rights' => $data['rights'],
+						'filter' => $data['filter'],
 						'valid' => 1
 					);
 					
@@ -1093,7 +1073,7 @@ class CalendarView extends PageView {
 				try {
 					$calendar->write_db('update');
 					// smarty
-					$sCD->assign('data', $calendar->details_to_html());
+					$sCD->assign('data', $calendar->detailsToHtml());
 					return $sCD->fetch('smarty.calendar.details.tpl');
 				} catch(Exception $e) {
 					$this->getError()->handle_error($e);
@@ -1211,7 +1191,7 @@ class CalendarView extends PageView {
 		
 		// check sort or from/to
 		$sort = $from = $to = '';
-		if($this->get('sort') !== false) {$sort = "&amp;sort=".$this->get('sort');}
+		if($this->get('filter') !== false) {$sort = "&amp;filter=".$this->get('filter');}
 		if($this->get('from') !== false) {$from = "&amp;from=".$this->get('from');}
 		if($this->get('to') !== false) {$to = "&amp;to=".$this->get('to');}
 		// form-object

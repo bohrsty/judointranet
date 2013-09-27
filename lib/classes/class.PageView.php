@@ -468,7 +468,7 @@ class PageView extends Object {
 		
 		// check if userinfo exists and set to output
 		$name = $this->getUser()->get_userinfo('name');
-		if($name !== false) {
+		if($this->getUser()->get_loggedin() !== false) {
 			
 			// smarty-link
 			$sUserLink->assign('params','id="toggleUsersettings"');

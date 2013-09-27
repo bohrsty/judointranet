@@ -73,7 +73,7 @@ class User extends Object {
 	public function set_login_message($login_message) {
 		$this->login_message = $login_message;
 	}
-	public function get_userinfo($name){
+	public function get_userinfo($name=''){
 		
 		// check name
 		if($name == '') {
@@ -104,6 +104,12 @@ class User extends Object {
 	 */
 	public function __construct() {
 		
+		// set error
+		$GLOBALS['error'] = new Error();
+		
+		// initalize $_SESSION
+		$_SESSION['user'] = null;
+		
 		// set userid default to 0
 		$this->set_id(0);
 		
@@ -111,13 +117,20 @@ class User extends Object {
 		$this->set_loggedin(false);
 		
 		// read groups
-		$this->set_groups($this->read_groups());
+		$this->set_groups($this->dbReadGroups());
 		
 		// set lang
 		$this->set_lang('de_DE');
 		
 		// set login_message
 		$this->set_login_message('class.User#login#message#default');
+		
+		// set userinfo
+		$userinfo = array(
+				'name' => 'Public',
+				'username' => 'public',
+			);
+		$this->set_userinfo($userinfo);
 	}
 	
 	/*
@@ -127,6 +140,7 @@ class User extends Object {
 	 * userid returns the id of this user-object
 	 * 
 	 * @return int id of the user
+	 * @deprecated - 23.09.2013
 	 */
 	public function userid() {
 		
@@ -144,79 +158,12 @@ class User extends Object {
 	 * groups returns an array of group-ids that is this user member of
 	 * 
 	 * @return array array containing group-ids this user is member of
+	 * @deprecated - 23.09.2013
 	 */
 	public function groups() {
 		
 		// return groups
 		return $this->get_groups();
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * read_groups reads the group-memberships from db and returns their ids
-	 * as an array
-	 * 
-	 * @return array array containing group-ids this user is member of
-	 */
-	private function read_groups() {
-		
-		// prepare return
-		$groups = array(0 => 0);
-		
-		// get db-object
-		$db = Db::newDb();
-		
-		// prepare sql-statement
-		$sql = "SELECT ug.group_id
-				FROM user2group AS ug
-				WHERE ug.user_id = '".$this->get_id()."'";
-		
-		// execute statement
-		$result = $db->query($sql);
-		
-		// if no result, only public access
-		if($result->num_rows != 0) {
-		
-			// fetch result
-			while(list($group) = $result->fetch_array(MYSQL_NUM)) {
-				$groups[] = (int) $group;
-			}
-			
-			// free result
-			$result->close();
-			
-			// get membergroups
-			$sql = "SELECT gg.g_id,gg.member_id
-					FROM group2group AS gg";
-			
-			// execute
-			$result = $db->query($sql);
-			
-			// fetch result
-			$rec_groups = $groups;
-			$members = array();
-			while(list($g_id,$member_id) = $result->fetch_array(MYSQL_NUM)) {
-				$members[$g_id][] = $member_id;
-			}
-			
-			// find members
-			for($i=1;$i<count($groups);$i++) {
-				$this->list_groups_rec($rec_groups,$members,$groups[$i]);
-			}
-			
-			// merge results
-			$groups = array_merge($groups,$rec_groups);
-			// unique array
-			$groups = array_values(array_unique($groups,SORT_NUMERIC));
-		}
-		
-		// return array
-		return $groups;
 	}
 	
 	
@@ -255,7 +202,7 @@ class User extends Object {
 		
 		// set user-properties to public access
 		$this->set_id(0);
-		$this->set_groups(array(0));
+		$this->set_groups(array());
 		$this->set_loggedin(false);
 		$this->set_login_message('class.User#login#message#default');
 		$this->set_userinfo(array());
@@ -353,7 +300,7 @@ class User extends Object {
 		$this->set_userinfo($db_result);
 		
 		// set groups
-		$this->set_groups($this->read_groups());
+		$this->set_groups($this->dbReadGroups());
 		
 		// set loginstatus
 		$this->set_loggedin($loggedin);
@@ -371,6 +318,7 @@ class User extends Object {
 	 * 
 	 * @param string $param returns all groups if admin, sortable if sort
 	 * @return array array containing all group-ids and names
+	 * @deprecated - 25.09.2013
 	 */
 	public function return_all_groups($param='') {
 		
@@ -446,33 +394,6 @@ class User extends Object {
 	
 	
 	/**
-	 * list_groups_rec sets the membergroups for the given $group using $members
-	 * into $groups using recursion
-	 * 
-	 * @param array $groups referenced array to add the membergroups
-	 * @param array $members array containing all memberships
-	 * @param int $group group to find membergroups
-	 */
-	private function list_groups_rec(&$groups,$members,$group) {
-		
-		// find $group in $members and recurse
-		if(isset($members[$group])) {
-			for($i=0;$i<count($members[$group]);$i++) {
-				$this->list_groups_rec($groups,$members,$members[$group][$i]);				
-				$groups[] = $members[$group][$i];
-			}
-		} else {
-			$groups[] = $group;
-		}
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
 	 * return_all_users returns all users from db as array containing
 	 * user-objects
 	 * 
@@ -510,6 +431,63 @@ class User extends Object {
 		
 		// return
 		return $users;
+	}
+	
+	
+	/**
+	 * allGroups() returns an array containing all groups this user is member from
+	 * with the id as key
+	 * 
+	 * @return array array containing all groups this user is member from
+	 */
+	public function allGroups() {
+		
+		// walk through groups
+		$allGroups = array(Group::fakePublic());
+		// check size of array (= no groups)
+		if(count($this->get_groups()) > 0) {
+			foreach($this->get_groups() as $group) {
+				$allGroups += $group->allGroups();
+			}
+		}
+		
+		// return
+		return $allGroups;
+	}
+	
+	
+	/**
+	 * dbReadGroups() reads the group-memberships from db and returns the corresponding
+	 * group objects as an array
+	 * 
+	 * @return array array containing group objects this user is member of
+	 */
+	private function dbReadGroups() {
+		
+		// get db object
+		$db = Db::newDb();
+		
+		// prepare sql statement to get group membership
+		$sql = 'SELECT group_id
+				FROM user2groups
+				WHERE user_id=\''.$db->real_escape_string($this->get_id()).'\'';
+		
+		// execute statement
+		$result = $db->query($sql);
+		
+		// get data
+		$groups = array();
+		if($result) {
+			while(list($id) = $result->fetch_array(MYSQL_NUM)) {
+				$groups[] = new Group($id);
+			}
+		} else {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
+		}
+		
+		// return
+		return $groups;
 	}
 }
 

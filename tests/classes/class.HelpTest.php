@@ -22,25 +22,6 @@
  * 
  * ********************************************************************************************/
 
-
-class TestObject extends Object {
-	
-	function __construct() {
-		parent::__construct();
-	}
-	
-	public static function lang($string) {
-		return parent::lang($string);
-	}
-}
-
-class TestView extends PageView {
-	
-	function __construct() {
-		parent::__construct();
-	}
-}
-
 class HelpTest extends PHPUnit_Framework_TestCase {
 	
 	// variables

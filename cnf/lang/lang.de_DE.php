@@ -127,7 +127,11 @@ $lang = array(
 				'ERROR.message' => 'Diese Tabellenzeile existiert nicht, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
 									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
 									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
-			)
+			),
+			'MysqlError' => array(
+				'ERROR.caption' => 'FEHLER',
+				'ERROR.message' => 'Es ist ein Fehler bei einer Datenbank-Abfrage aufgetreten, bitte geben Sie die nachfolgenden Informationen an den Systembetreuer weiter:<br />'
+			),
 		
 		)
 	
@@ -232,7 +236,7 @@ $lang = array(
 				'name' => 'Name',
 				'shortname' => 'Kurzbezeichnung',
 				'type' => 'Veranstaltungstyp',
-				'rights' => 'Filterbare Gruppen (mehrfache Auswahl: &lt;STRG&gt; gedr&uuml;ckt halten und Gruppen ausw&auml;hlen)',
+				'filter' => 'Filterbare Gruppen (mehrfache Auswahl: &lt;STRG&gt; gedr&uuml;ckt halten und Gruppen ausw&auml;hlen)',
 				'entry_content' => 'Inhalt/Beschreibung',
 				'announcement' => 'Ausschreibung',
 				'public' => '&Ouml;ffentlicher Zugriff'
@@ -424,7 +428,7 @@ $lang = array(
 				'date' => '<span>Datum:</span><br />',
 				'type' => '<span>Art:</span><br />',
 				'content' => '<span>Beschreibung:</span><br />',
-				'rights' => '<span>Berechtigte Gruppen:</span><br />'
+				'filter' => '<span>Filter:</span><br />'
 			)
 		)
 	),
@@ -1262,7 +1266,14 @@ $lang = array(
 				'imgTitle' => 'Hilfe',
 			),
 		),
-	)
+	),
+	'class.Group' => array(
+		'fakePublic' => array(
+			'public' => array(
+				'name' => '&Ouml;ffentlicher Zugriff',
+			),
+		),
+	),
 );
 
 

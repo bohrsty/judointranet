@@ -137,7 +137,7 @@ class Rights extends Object {
 	public static function get_authorized_entries($table) {
 		
 		// get groups
-		$group_ids = self::getUser()->groups();
+		$groups = self::getUser()->allGroups();
 				
 		// get db-object
 		$db = Db::newDb();
@@ -147,10 +147,10 @@ class Rights extends Object {
 				FROM rights AS r
 				WHERE r.table_name = "'.$table.'"
 				AND (';
-		for($i = 0;$i<count($group_ids);$i++) {
+		foreach($groups as $group) {
 			
 			// field
-			$sql .= 'r.g_id = '.$group_ids[$i].' OR ';
+			$sql .= 'r.g_id = '.$group->getId().' OR ';
 		}
 		$sql = substr($sql,0,-4);
 		$sql .= ')';	
@@ -331,7 +331,7 @@ class Rights extends Object {
 	public static function check_rights($table_id,$table,$public=false) {
 		
 		// get groups
-		$groups = self::getUser()->groups();
+		$groups = self::getUser()->allGroups();
 		
 		// get rights for given id and table
 		// get db-object
@@ -355,13 +355,13 @@ class Rights extends Object {
 		}
 		
 		// walk through groups and check if in rights
-		foreach($groups as $no => $group_id) {
+		foreach($groups as $group) {
 			if($public) {
-				if(in_array($group_id,$all_rights)) {
+				if(in_array($group->getId,$all_rights)) {
 					return true;
 				}
 			} else {
-				if(in_array($group_id,$all_rights) && $group_id != 0) {
+				if(in_array($group->getId(),$all_rights) && $group->getId() != 0) {
 					return true;
 				}
 			}

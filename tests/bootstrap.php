@@ -25,4 +25,25 @@
 // setup autoload
 require_once('lib/common.inc.php');
 
+// global test classes
+
+class TestObject extends Object {
+	
+	function __construct() {
+		parent::__construct();
+	}
+	
+	public static function lang($string) {
+		return parent::lang($string);
+	}
+}
+
+class TestView extends PageView {
+	
+	function __construct() {
+		parent::__construct();
+	}
+}
+
+
 ?>

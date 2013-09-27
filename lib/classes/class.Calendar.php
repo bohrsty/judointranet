@@ -42,6 +42,7 @@ class Calendar extends Page {
 	private $valid;
 	private $lastModified;
 	private $modifiedBy;
+	private $filter;
 	
 	/*
 	 * getter/setter
@@ -106,6 +107,12 @@ class Calendar extends Page {
 	public function setLastModified($lastModified) {
 		$this->lastModified = $lastModified;
 	}
+	public function getFilter(){
+		return $this->filter;
+	}
+	public function setFilter($filter) {
+		$this->filter = $filter;
+	}
 	
 	/*
 	 * constructor/destructor
@@ -124,6 +131,11 @@ class Calendar extends Page {
 				$shortname = strtoupper(substr($arg['name'],0,3));
 			}
 			
+			// get filter objects
+			$filter = array();
+			foreach($arg['filter'] as $filterId) {
+				$filter[$filterId] = new Filter($filterId);
+			}
 			// set variables to object
 			$this->set_id(null);
 			$this->set_name($arg['name']);
@@ -132,14 +144,15 @@ class Calendar extends Page {
 			$this->set_type($arg['type']);
 			$this->set_content($arg['content']);
 			$this->set_valid($arg['valid']);
+			$this->setFilter($filter);
 			
 			// set rights
-			$this->set_rights(new Rights('calendar',$arg['rights']));
+//			$this->set_rights(new Rights('calendar',$arg['rights']));
 		} else {
 			
 			// get field for given id
 			$this->get_from_db($arg);
-			$this->set_rights(new Rights('calendar',$arg));
+//			$this->set_rights(new Rights('calendar',$arg));
 		}
 	}
 	
@@ -167,19 +180,24 @@ class Calendar extends Page {
 		$result = $db->query($sql);
 		
 		// fetch result
-		list($name,$shortname,$date,$type,$content,$preset_id,$valid,$lastModified,$modifiedBy) = $result->fetch_array(MYSQL_NUM);
-		
-		// set variables to object
-		$this->set_id($id);
-		$this->set_name($name);
-		$this->set_shortname($shortname);
-		$this->set_date($date);
-		$this->set_type($type);
-		$this->set_content($content);
-		$this->set_preset_id($preset_id);
-		$this->set_valid($valid);
-		$this->setLastModified((strtotime($lastModified) < 0 ? 0 :strtotime($lastModified)));
-		$this->setModifiedBy($modifiedBy);
+		if($result) {
+			list($name,$shortname,$date,$type,$content,$preset_id,$valid,$lastModified,$modifiedBy) = $result->fetch_array(MYSQL_NUM);
+			
+			// set variables to object
+			$this->set_id($id);
+			$this->set_name($name);
+			$this->set_shortname($shortname);
+			$this->set_date($date);
+			$this->set_type($type);
+			$this->set_content($content);
+			$this->set_preset_id($preset_id);
+			$this->set_valid($valid);
+			$this->setLastModified((strtotime($lastModified) < 0 ? 0 :strtotime($lastModified)));
+			$this->setModifiedBy($modifiedBy);
+		} else {
+			$errno = self::getError()->error_raised('MysqlError', $db->error);
+			self::getError()->handle_error($errno);
+		}
 		
 		// close db
 		$db->close();
@@ -218,7 +236,11 @@ class Calendar extends Page {
 					(int)$this->getUser()->get_id().')';
 			
 			// execute
-			$db->query($sql);
+			$result = $db->query($sql);
+			if(!$result) {
+				$errno = self::getError()->error_raised('MysqlError', $db->error);
+				self::getError()->handle_error($errno);
+			}
 			
 			// get insert_id
 			$insert_id = $db->insert_id;
@@ -227,11 +249,10 @@ class Calendar extends Page {
 			$this->set_id($insert_id);
 			$this->set_preset_id(0);
 			
-			// write rights
-			try {
-				$this->get_rights()->write_db($insert_id);
-			} catch(Exception $e) {
-				throw new Exception('DbActionUnknown',$e->getCode());
+			// write filter
+			Filter::dbRemove('calendar', $insert_id);
+			foreach($this->getFilter() as $filter) {
+				$filter->dbWrite('calendar', $insert_id);
 			}
 		} elseif($action == 'update') {
 			
@@ -250,13 +271,16 @@ class Calendar extends Page {
 					WHERE id = "'.$this->get_id().'"';
 			
 			// execute
-			$db->query($sql);
+			$result = $db->query($sql);
+			if(!$result) {
+				$errno = self::getError()->error_raised('MysqlError', $db->error);
+				self::getError()->handle_error($errno);
+			}
 			
-			// write rights
-			try {
-				$this->get_rights()->write_db($this->get_id());
-			} catch(Exception $e) {
-				throw new Exception('DbActionUnknown',$e->getCode());
+			// write filter
+			Filter::dbRemove('calendar', $this->get_id());
+			foreach($this->getFilter() as $filter) {
+				$filter->dbWrite('calendar', $this->get_id());
 			}
 		} else {
 			
@@ -273,21 +297,21 @@ class Calendar extends Page {
 	
 	
 	/**
-	 * details_to_html returns the calendar-entry-details as array
+	 * detailsToHtml() returns the calendar-entry-details as array
 	 * 
-	 * @return array calendar-entry-details as array
+	 * @return array calendar entry details as array
 	 */
-	public function details_to_html() {
+	public function detailsToHtml() {
 		
-		// prepare rights
-		$groups = $this->getUser()->return_all_groups('admin');
-		$rights = $this->get_rights()->get_rights();
-		$rights_string = '';
+		// prepare filter
+		$groups = Group::allExistingGroups();
+		$ownFilter = $this->getFilter();
+		$filterNames = '';
 
-		foreach($rights as $right) {
-			$rights_string .= $groups[(int) $right].', ';
+		foreach($ownFilter as $filter) {
+			$filterNames .= $filter->getName().' ,';
 		}
-		$rights_string = substr($rights_string,0,-2);
+		$filterNames = substr($filterNames,0,-2);
 
 		// prepare data
 		$data = array(
@@ -296,7 +320,7 @@ class Calendar extends Page {
 					'date' => parent::lang('class.Calendar#details_to_html#data#date').$this->get_date('d.m.Y'),
 					'type' => parent::lang('class.Calendar#details_to_html#data#type').$this->return_type('translated'),
 					'content' => parent::lang('class.Calendar#details_to_html#data#content').nl2br($this->get_content()),
-					'rights' => parent::lang('class.Calendar#details_to_html#data#rights').$rights_string
+					'filter' => parent::lang('class.Calendar#details_to_html#data#filter').$filter,
 		);
 		
 		// return
@@ -394,8 +418,14 @@ class Calendar extends Page {
 				$this->set_type($value);
 			} elseif($name == 'content') {
 				$this->set_content($value);
-			} elseif($name == 'rights') {
-				$this->get_rights()->update($this->get_id(),$value);
+			} elseif($name == 'filter') {
+				
+				// get filter objects
+				$filter = array();
+				foreach($value as $filterId) {
+					$filter[$filterId] = new Field($filterId);
+				}
+				$this->setFilter($filter);
 			} elseif($name == 'valid') {
 				$this->set_valid($value);
 			} elseif($name == 'preset_id') {
