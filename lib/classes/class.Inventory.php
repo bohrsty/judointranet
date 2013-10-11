@@ -153,61 +153,53 @@ class Inventory extends Object {
 	
 	
 	/**
-	 * return_inventory returns an array containing all inventories the
-	 * user has rights to
+	 * returnInventories($all, $mode) returns an array containing all inventories the
+	 * user has permissions to and movements are in progress
 	 * 
-	 * @return array array containing the inventory_ids the user has rights to
+	 * @param bool $all if false only the own objects are returned, all otherwise
+	 * @param string $mode type of permission the user should have
+	 * @return array array containing the inventory objects the user has permissions to and has movements on it
 	 */
-	public static function return_inventories() {
+	public static function returnInventories($all=false, $mode='r') {
 		
-		// get ids
-		$return = Rights::get_authorized_entries('inventory');
+		// get inventories
+		$inventories = array();
+		$inventoryIds = self::getUser()->permittedItems('inventory', $mode);
+		foreach($inventoryIds as $inventoryId) {
+			$inventories[$inventoryId] = new Inventory($inventoryId);
+		}
 		
-		// return
-		return $return;
-	}
-	
-	
-	
-	
-	
-	
-	/**
-	 * return_my_inventory returns an array containing all inventories the
-	 * user has rights to and movements are in progress
-	 * 
-	 * @return array array containing the inventory_ids the user has rights to and has movements on it
-	 */
-	public static function return_my_inventories() {
+		// check all
+		if($all === true) {
+			return $inventories;
+		} else {
 		
-		// prepare return
-		$return = array();
-		
-		// get ids
-		$all = Rights::get_authorized_entries('inventory');
-		
-		// get db-object
-		$db = Db::newDb();
-		
-		// check movements on each entry
-		for($i=0;$i<count($all);$i++) {
+			// prepare return
+			$return = array();
 			
-			// get user_id and action
-			$action = Inventory::movement_last_row($db,$all[$i],'action');
-			$user_id = Inventory::movement_last_row($db,$all[$i],'user_id',3);
+			// get db-object
+			$db = Db::newDb();
 			
-			// check action
-			if($action[0] == 'taken') {
+			// check movements on each entry
+			foreach($inventories as $object){
 				
-				// check user_id
-				if($user_id[0] == self::getUser()->userid() || ($user_id[1] == self::getUser()->userid() && $user_id[0] != $user_id[2])) {
-					$return[] = $all[$i];
-				}
-			} else {
+				// get user_id and action
+				$action = Inventory::movement_last_row($db, $object->get_id(), 'action');
+				$user_id = Inventory::movement_last_row($db, $object->get_id(), 'user_id', 3);
 				
-				// check user_id
-				if($user_id[0] == self::getUser()->userid() || $user_id[1] == self::getUser()->userid()) {
-					$return[] = $all[$i];
+				// check action
+				if($action[0] == 'taken') {
+					
+					// check user_id
+					if($user_id[0] == self::getUser()->userid() || ($user_id[1] == self::getUser()->userid() && $user_id[0] != $user_id[2])) {
+						$return[$object->get_id()] = $object;
+					}
+				} else {
+					
+					// check user_id
+					if($user_id[0] == self::getUser()->userid() || $user_id[1] == self::getUser()->userid()) {
+						$return[$object->get_id()] = $object;
+					}
 				}
 			}
 		}
@@ -342,6 +334,16 @@ class Inventory extends Object {
 		
 		// return
 		return $return;
+	}
+	
+	
+	/**
+	 * __toString() returns an string representation of this object
+	 * 
+	 * @return string string representation of this object
+	 */
+	public function __toString() {
+		return 'Inventory';
 	}
 }
 

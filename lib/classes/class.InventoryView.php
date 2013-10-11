@@ -56,75 +56,75 @@ class InventoryView extends PageView {
 	/*
 	 * methods
 	 */
-	/**
-	 * navi knows about the functionalities used in navigation returns an array
-	 * containing first- and second-level-navientries
-	 * 
-	 * @return array contains first- and second-level-navientries
-	 */
-	public static function connectnavi() {
-		
-		// set first- and secondlevel names and set secondlevel $_GET['id']-values
-		static $navi = array();
-		
-		$navi = array(
-						'firstlevel' => array(
-							'name' => 'class.InventoryView#connectnavi#firstlevel#name',
-							'file' => 'inventory.php',
-							'position' => 3,
-							'class' => get_class(),
-							'id' => md5('InventoryView'), // f32d321bb51244f1e09cfd0f34c82bda
-							'show' => true
-						),
-						'secondlevel' => array(
-							1 => array(
-								'getid' => 'listall', 
-								'name' => 'class.InventoryView#connectnavi#secondlevel#listall',
-								'id' => md5('InventoryView|listall'), // 4c13dc7e14dd5fe1ade036aac60f64c4
-								'show' => true
-							),
-							0 => array(
-								'getid' => 'my', 
-								'name' => 'class.InventoryView#connectnavi#secondlevel#my',
-								'id' => md5('InventoryView|my'), // 1b7715352a02ff2cdd753e7b23fa46c4
-								'show' => true
-							),
-							2 => array(
-								'getid' => 'give', 
-								'name' => 'class.InventoryView#connectnavi#secondlevel#give',
-								'id' => md5('InventoryView|give'), // 1b26a57943c16402c4b206936e1fc44a
-								'show' => false
-							),
-							3 => array(
-								'getid' => 'take', 
-								'name' => 'class.InventoryView#connectnavi#secondlevel#take',
-								'id' => md5('InventoryView|take'), // e1181951b8950761f24c0d6c1dedb269
-								'show' => false
-							),
-							4 => array(
-								'getid' => 'cancel', 
-								'name' => 'class.InventoryView#connectnavi#secondlevel#cancel',
-								'id' => md5('InventoryView|cancel'), // 4a90ccaf9dd0b1359fa550eafa77e0e0
-								'show' => false
-							),
-							5 => array(
-								'getid' => 'details', 
-								'name' => 'class.InventoryView#connectnavi#secondlevel#details',
-								'id' => md5('InventoryView|details'), // 10fbb6433764f41e4d40b53a511da245
-								'show' => false
-							),
-							6 => array(
-								'getid' => 'movement', 
-								'name' => 'class.InventoryView#connectnavi#secondlevel#movement',
-								'id' => md5('InventoryView|movement'), // 237ff1df758a293404b01433488ed577
-								'show' => false
-							)
-						)
-					);
-		
-		// return array
-		return $navi;
-	}
+//	/**
+//	 * navi knows about the functionalities used in navigation returns an array
+//	 * containing first- and second-level-navientries
+//	 * 
+//	 * @return array contains first- and second-level-navientries
+//	 */
+//	public static function connectnavi() {
+//		
+//		// set first- and secondlevel names and set secondlevel $_GET['id']-values
+//		static $navi = array();
+//		
+//		$navi = array(
+//						'firstlevel' => array(
+//							'name' => 'class.InventoryView#connectnavi#firstlevel#name',
+//							'file' => 'inventory.php',
+//							'position' => 3,
+//							'class' => get_class(),
+//							'id' => md5('InventoryView'), // f32d321bb51244f1e09cfd0f34c82bda
+//							'show' => true
+//						),
+//						'secondlevel' => array(
+//							1 => array(
+//								'getid' => 'listall', 
+//								'name' => 'class.InventoryView#connectnavi#secondlevel#listall',
+//								'id' => md5('InventoryView|listall'), // 4c13dc7e14dd5fe1ade036aac60f64c4
+//								'show' => true
+//							),
+//							0 => array(
+//								'getid' => 'my', 
+//								'name' => 'class.InventoryView#connectnavi#secondlevel#my',
+//								'id' => md5('InventoryView|my'), // 1b7715352a02ff2cdd753e7b23fa46c4
+//								'show' => true
+//							),
+//							2 => array(
+//								'getid' => 'give', 
+//								'name' => 'class.InventoryView#connectnavi#secondlevel#give',
+//								'id' => md5('InventoryView|give'), // 1b26a57943c16402c4b206936e1fc44a
+//								'show' => false
+//							),
+//							3 => array(
+//								'getid' => 'take', 
+//								'name' => 'class.InventoryView#connectnavi#secondlevel#take',
+//								'id' => md5('InventoryView|take'), // e1181951b8950761f24c0d6c1dedb269
+//								'show' => false
+//							),
+//							4 => array(
+//								'getid' => 'cancel', 
+//								'name' => 'class.InventoryView#connectnavi#secondlevel#cancel',
+//								'id' => md5('InventoryView|cancel'), // 4a90ccaf9dd0b1359fa550eafa77e0e0
+//								'show' => false
+//							),
+//							5 => array(
+//								'getid' => 'details', 
+//								'name' => 'class.InventoryView#connectnavi#secondlevel#details',
+//								'id' => md5('InventoryView|details'), // 10fbb6433764f41e4d40b53a511da245
+//								'show' => false
+//							),
+//							6 => array(
+//								'getid' => 'movement', 
+//								'name' => 'class.InventoryView#connectnavi#secondlevel#movement',
+//								'id' => md5('InventoryView|movement'), // 237ff1df758a293404b01433488ed577
+//								'show' => false
+//							)
+//						)
+//					);
+//		
+//		// return array
+//		return $navi;
+//	}
 	
 	
 	
@@ -148,33 +148,16 @@ class InventoryView extends PageView {
 		// switch $_GET['id'] if set
 		if($this->get('id') !== false) {
 			
-			// check rights
-			// get class
-			$class = get_class();
-			// get naviitems
-			$navi = $class::connectnavi();
-			// get rights from db
-			$rights = Rights::get_authorized_entries('navi');
-			$naviid = 0;
-			// walk through secondlevel-entries to find actual entry
-			for($i=0;$i<count($navi['secondlevel']);$i++) {
-				if($navi['secondlevel'][$i]['getid'] == $this->get('id')) {
-					
-					// store id and  break
-					$naviid = $navi['secondlevel'][$i]['id'];
-					break;
-				}
-			}
-			
-			// check if naviid is member of authorized entries
-			if(in_array($naviid,$rights)) {
+			// check permissions
+			$naviId = Navi::idFromFileParam(basename($_SERVER['SCRIPT_FILENAME']), $this->get('id'));
+			if($this->getUser()->hasPermission('navi', $naviId)) {
 				
 				switch($this->get('id')) {
 					
 					case 'listall':
 						
 						// smarty
-						$this->tpl->assign('title', $this->title(parent::lang('class.CalendarView#init#listall#title')));
+						$this->tpl->assign('title', $this->title(parent::lang('class.InventoryView#init#listall#title')));
 						$this->tpl->assign('main', $this->listall());
 						$this->tpl->assign('jquery', true);
 						$this->tpl->assign('hierselect', false);
@@ -300,7 +283,7 @@ class InventoryView extends PageView {
 		$output = $tr_out = $th_out = '';
 		
 		// read all entries
-		$entries = $this->read_all_entries(true);
+		$entries = Inventory::returnInventories(true);
 		
 		// smarty-template
 		$sL = new JudoIntranetSmarty();
@@ -344,7 +327,7 @@ class InventoryView extends PageView {
 				}
 				
 				// get owner and status
-				$user = new User();
+				$user = new User(false);
 				$id = $entry->get_id();
 				$owner = '';
 				$status = '';
@@ -397,40 +380,6 @@ class InventoryView extends PageView {
 	
 	
 	/**
-	 * read_all_entries get all inventory-entries from db for that the actual
-	 * user has sufficient rights. returns an array with inventory-objects
-	 * 
-	 * @param bool $all all the user has rights to, if true, only owned, if false
-	 * @return array all entries as inventory-objects
-	 */
-	private function read_all_entries($all = false) {
-		
-		// prepare return
-		$inventory_entries = array();
-				
-		// get ids
-		if(!$all) {
-			$inventory_ids = Inventory::return_my_inventories();
-		} else {
-			$inventory_ids = Inventory::return_inventories();
-		}
-		
-		// create inventory-objects
-		foreach($inventory_ids as $index => $id) {
-			$inventory_entries[] = new Inventory($id);
-		}
-		
-		// return calendar-objects
-		return $inventory_entries;
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
 	 * my creates the "my"-form and handle its response
 	 * 
 	 * @return string html-string with the "my"-form
@@ -444,7 +393,7 @@ class InventoryView extends PageView {
 		$output = $tr_out = $th_out = '';
 		
 		// read all entries
-		$entries = $this->read_all_entries();
+		$entries = Inventory::returnInventories();
 		
 		// smarty-template
 		$sM = new JudoIntranetSmarty();
@@ -537,7 +486,7 @@ class InventoryView extends PageView {
 	private function give($did) {
 	
 		// check rights
-		if(Rights::check_rights($did,'inventory')) {
+		if($this->getUser()->hasPermission('inventory', $did)) {
 			
 			// pagecaption
 			$this->tpl->assign('pagecaption',parent::lang('class.InventoryView#page#caption#give'));
@@ -683,7 +632,7 @@ class InventoryView extends PageView {
 	private function take($did) {
 	
 		// check rights
-		if(Rights::check_rights($did,'inventory')) {
+		if($this->getUser()->hasPermission('inventory', $did)) {
 			
 			// pagecaption
 			$this->tpl->assign('pagecaption',parent::lang('class.InventoryView#page#caption#take'));
@@ -824,7 +773,7 @@ class InventoryView extends PageView {
 	private function cancel($did) {
 	
 		// check rights
-		if(Rights::check_rights($did,'inventory')) {
+		if($this->getUser()->hasPermission('inventory', $did)) {
 			
 			// pagecaption
 			$this->tpl->assign('pagecaption',parent::lang('class.InventoryView#page#caption#cancel'));
@@ -919,7 +868,7 @@ class InventoryView extends PageView {
 	private function details($did) {
 	
 		// check rights
-		if(Rights::check_rights($did,'inventory')) {
+		if($this->getUser()->hasPermission('inventory', $did)) {
 			
 			// pagecaption
 			$this->tpl->assign('pagecaption',parent::lang('class.InventoryView#page#caption#details'));
@@ -1003,7 +952,7 @@ class InventoryView extends PageView {
 		$fields = $preset->get_fields();
 		
 		// check rights
-		if(Rights::check_rights($inventory->get_id(),'inventory')) {
+		if($this->getUser()->hasPermission('inventory', $inventory->get_id())) {
 			
 			//smarty-template
 			$sM = new JudoIntranetSmarty();
@@ -1060,7 +1009,7 @@ class InventoryView extends PageView {
 			foreach($data as $movement) {
 				
 				// get user
-				$user = new User();
+				$user = new User(false);
 				$user->change_user($movement['user_id'],false,'id');
 				
 				// prepare fields

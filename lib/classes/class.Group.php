@@ -150,11 +150,13 @@ class Group extends Object {
 		$this->setParent($parent);
 		$this->setValid($valid);
 	}
+	
+	
 	/**
 	 * allGroups() returns an array containing arrays of the own id/name and the ids/names
 	 * of all subgroups
 	 * 
-	 * @return array array containing the own id/name and the ids/names of all subgroups
+	 * @return array array containing the own group object and the ids/names of all subgroup objects
 	 */
 	public function allGroups() {
 		

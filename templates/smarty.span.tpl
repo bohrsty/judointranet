@@ -20,4 +20,4 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-<span{if $params!=''} {$params}{/if} title="{$title}">{$content}</span>
+<span{if $span.params!=''} {$span.params}{/if}{if isset($span.title) && $span.title!=''} title="{$span.title}"{/if}>{$span.content}</span>

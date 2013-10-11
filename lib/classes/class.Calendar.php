@@ -192,8 +192,9 @@ class Calendar extends Page {
 			$this->set_content($content);
 			$this->set_preset_id($preset_id);
 			$this->set_valid($valid);
-			$this->setLastModified((strtotime($lastModified) < 0 ? 0 :strtotime($lastModified)));
+			$this->setLastModified((strtotime($lastModified) < 0 ? 0 : strtotime($lastModified)));
 			$this->setModifiedBy($modifiedBy);
+			$this->setFilter(Filter::allFilterOf('calendar', $id));
 		} else {
 			$errno = self::getError()->error_raised('MysqlError', $db->error);
 			self::getError()->handle_error($errno);
@@ -320,7 +321,7 @@ class Calendar extends Page {
 					'date' => parent::lang('class.Calendar#details_to_html#data#date').$this->get_date('d.m.Y'),
 					'type' => parent::lang('class.Calendar#details_to_html#data#type').$this->return_type('translated'),
 					'content' => parent::lang('class.Calendar#details_to_html#data#content').nl2br($this->get_content()),
-					'filter' => parent::lang('class.Calendar#details_to_html#data#filter').$filter,
+					'filter' => parent::lang('class.Calendar#details_to_html#data#filter').$filterNames,
 		);
 		
 		// return
@@ -438,24 +439,6 @@ class Calendar extends Page {
 	
 	
 	/**
-	 * return_calendars returns an array containing all calendar-id the
-	 * user has rights to
-	 * 
-	 * @return array array containing the calendar_ids the user has rights to
-	 */
-	public static function return_calendars() {
-		
-		// get ids
-		$return = Rights::get_authorized_entries('calendar');
-		
-		// return
-		return $return;
-	}
-	
-	
-	
-	
-	/**
 	 * check_ann_value checks if the given calendar-entry has values on the
 	 * given preset-id
 	 * 
@@ -499,7 +482,7 @@ class Calendar extends Page {
 		
 		// get version
 		$version = max(strtotime($announcement['version']), (int)$this->getLastModified());
-		$announcement['version'] = date('dmy', $version);
+		$announcement['version'] = date('d.m.Y', $version);
 
 		// add fields
 		// check html
@@ -522,6 +505,16 @@ class Calendar extends Page {
 			$announcement['calendar_type'] = $this->get_type();
 			$announcement['calendar_content'] = $this->get_content();
 		}
+	}
+	
+	
+	/**
+	 * __toString() returns an string representation of this object
+	 * 
+	 * @return string string representation of this object
+	 */
+	public function __toString() {
+		return 'Calendar';
 	}
 }
 

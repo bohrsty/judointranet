@@ -56,45 +56,45 @@ class AdministrationView extends PageView {
 	/*
 	 * methods
 	 */
-	/**
-	 * navi knows about the functionalities used in navigation returns an array
-	 * containing first- and second-level-navientries
-	 * 
-	 * @return array contains first- and second-level-navientries
-	 */
-	public static function connectnavi() {
-		
-		// set first- and secondlevel names and set secondlevel $_GET['id']-values
-		static $navi = array();
-		
-		$navi = array(
-						'firstlevel' => array(
-							'name' => 'class.AdministrationView#connectnavi#firstlevel#name',
-							'file' => 'administration.php',
-							'position' => 5,
-							'class' => get_class(),
-							'id' => md5('AdministrationView'), // 2a9bbf011365fd7d204f6eeca370468f
-							'show' => true
-						),
-						'secondlevel' => array(
-							0 => array(
-								'getid' => 'field', 
-								'name' => 'class.AdministrationView#connectnavi#secondlevel#field',
-								'id' => md5('AdministrationView|field'), // 8eb55c6f5a92a320407b1805b9ec01b4
-								'show' => true
-							),
-							1 => array(
-								'getid' => 'defaults', 
-								'name' => 'class.AdministrationView#connectnavi#secondlevel#defaults',
-								'id' => md5('AdministrationView|defaults'), // 172aec6f699d651e8dacbc09be10907a
-								'show' => true
-							)
-						)
-					);
-		
-		// return array
-		return $navi;
-	}
+//	/**
+//	 * navi knows about the functionalities used in navigation returns an array
+//	 * containing first- and second-level-navientries
+//	 * 
+//	 * @return array contains first- and second-level-navientries
+//	 */
+//	public static function connectnavi() {
+//		
+//		// set first- and secondlevel names and set secondlevel $_GET['id']-values
+//		static $navi = array();
+//		
+//		$navi = array(
+//						'firstlevel' => array(
+//							'name' => 'class.AdministrationView#connectnavi#firstlevel#name',
+//							'file' => 'administration.php',
+//							'position' => 5,
+//							'class' => get_class(),
+//							'id' => md5('AdministrationView'), // 2a9bbf011365fd7d204f6eeca370468f
+//							'show' => true
+//						),
+//						'secondlevel' => array(
+//							0 => array(
+//								'getid' => 'field', 
+//								'name' => 'class.AdministrationView#connectnavi#secondlevel#field',
+//								'id' => md5('AdministrationView|field'), // 8eb55c6f5a92a320407b1805b9ec01b4
+//								'show' => true
+//							),
+//							1 => array(
+//								'getid' => 'defaults', 
+//								'name' => 'class.AdministrationView#connectnavi#secondlevel#defaults',
+//								'id' => md5('AdministrationView|defaults'), // 172aec6f699d651e8dacbc09be10907a
+//								'show' => true
+//							)
+//						)
+//					);
+//		
+//		// return array
+//		return $navi;
+//	}
 	
 	
 	
@@ -118,26 +118,9 @@ class AdministrationView extends PageView {
 		// switch $_GET['id'] if set
 		if($this->get('id') !== false) {
 			
-			// check rights
-			// get class
-			$class = get_class();
-			// get naviitems
-			$navi = $class::connectnavi();
-			// get rights from db
-			$rights = Rights::get_authorized_entries('navi');
-			$naviid = 0;
-			// walk through secondlevel-entries to find actual entry
-			for($i=0;$i<count($navi['secondlevel']);$i++) {
-				if(isset($navi['secondlevel'][$i]['getid']) && $navi['secondlevel'][$i]['getid'] == $this->get('id')) {
-					
-					// store id and  break
-					$naviid = $navi['secondlevel'][$i]['id'];
-					break;
-				}
-			}
-			
-			// check if naviid is member of authorized entries
-			if(in_array($naviid,$rights)) {
+			// check permissions
+			$naviId = Navi::idFromFileParam(basename($_SERVER['SCRIPT_FILENAME']), $this->get('id'));
+			if($this->getUser()->hasPermission('navi', $naviId)) {
 				
 				switch($this->get('id')) {
 					

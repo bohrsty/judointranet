@@ -137,12 +137,12 @@ class Field extends Object {
 		// parent constructor
 		parent::__construct();
 		
-		// get field for given id
-		$this->get_from_db($id,$pid);
-		
 		// set class variables
 		$this->set_table($table);
 		$this->set_table_id($table_id);
+		
+		// get field for given id
+		$this->get_from_db($id,$pid);
 	}
 	
 	/*
@@ -161,17 +161,24 @@ class Field extends Object {
 		$db = Db::newDb();
 		
 		// prepare sql-statement
-		$sql = "SELECT f.name,f.type,f2p.required,f.category,f.config
-				FROM field AS f,fields2presets AS f2p
-				WHERE f.id = $id
-				AND f2p.field_id = $id
-				AND f2p.pres_id = $pid";
-		
+		$sql = 'SELECT f.name,f.type,f2p.required,f.category,f.config,v.last_modified
+				FROM field AS f,fields2presets AS f2p,value AS v
+				WHERE f.id=\''.$db->real_escape_string($id).'\'
+				AND f2p.field_id=\''.$db->real_escape_string($id).'\'
+				AND f2p.pres_id=\''.$db->real_escape_string($pid).'\'
+				AND v.table_name=\''.$db->real_escape_string($this->get_table()).'\'
+				AND v.table_id=\''.$db->real_escape_string($this->get_table_id()).'\'
+				AND v.field_id=\''.$db->real_escape_string($id).'\'';		
 		// execute
 		$result = $db->query($sql);
 		
-		// fetch result
-		list($name,$type,$required,$category,$config) = $result->fetch_array(MYSQL_NUM);
+		// get data
+		if($result) {
+			list($name, $type, $required, $category, $config, $lastModified) = $result->fetch_array(MYSQL_NUM);
+		} else {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
+		}
 		
 		// set variables to object
 		$this->set_id($id);
@@ -180,6 +187,7 @@ class Field extends Object {
 		$this->set_required($required);
 		$this->set_category($category);
 		$this->set_config(unserialize(stripcslashes($config)));
+		$this->setLastModified((strtotime($lastModified) < 0 ? 0 : strtotime($lastModified)));
 		
 		// close db
 		$db->close();
@@ -661,10 +669,6 @@ class Field extends Object {
 			$dOptgroup->addOption($truncName,'d'.$id,array('title' => $name));
 		}
 		
-		// get last-used
-		// get authorized calendar-ids
-		$ids = Rights::get_authorized_entries($this->get_table());
-		
 		// prepare sql
 		$sql = "SELECT v.id,v.table_id,v.value
 				FROM value AS v,field AS f
@@ -683,34 +687,30 @@ class Field extends Object {
 		$index = 0;
 		while(list($id,$table_id,$value) = $result->fetch_array(MYSQL_NUM)) {
 			
-			// check rights
-			if(in_array((int) $table_id,$ids)) {
-				
-				// replace linebreak
-				$value = str_replace(array("\r\n","\r","\n")," ",$value);
-				
-				// check value length
-				$truncValue = '';
-				if(strlen($value) > 30) {
-					$truncValue = substr($value,0,27).'...';
-				} else {
-					$truncValue = $value;
-				}
-				
-				// check if truncated value has already been added
-				$tempOptions = $lOptgroup->getOptions();
-				for($i=0; $i<count($tempOptions); $i++) {
-					if($tempOptions[$i]['text'] == $truncValue) {
-						continue 2;
-					}
-				}
-				
-				// add options
-				$lOptgroup->addOption($truncValue,'l'.$id);
-				
-				// increment index
-				$index++;
+			// replace linebreak
+			$value = str_replace(array("\r\n","\r","\n")," ",$value);
+			
+			// check value length
+			$truncValue = '';
+			if(strlen($value) > 30) {
+				$truncValue = substr($value,0,27).'...';
+			} else {
+				$truncValue = $value;
 			}
+			
+			// check if truncated value has already been added
+			$tempOptions = $lOptgroup->getOptions();
+			for($i=0; $i<count($tempOptions); $i++) {
+				if($tempOptions[$i]['text'] == $truncValue) {
+					continue 2;
+				}
+			}
+			
+			// add options
+			$lOptgroup->addOption($truncValue,'l'.$id);
+			
+			// increment index
+			$index++;
 			
 			// check count of options
 			if($index == 29) {

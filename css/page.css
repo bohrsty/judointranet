@@ -356,7 +356,7 @@ div#diffOut {
 	margin-bottom: 30px;
 }
 
-#toggleFilter {
+.spanLink {
 	text-decoration: underline;
 	font-size: 90%;
 	cursor: pointer;
@@ -552,6 +552,18 @@ div#tablelinks {
 	left: 200;
 	z-index: 10;
 	background-color: white;
+}
+
+img.iconRead {
+	margin-left: 20px;
+}
+
+img.iconEdit {
+	margin-left: 5px;
+}
+
+span.headlineText,span.groupName {
+	margin-left: 10px;
 }
 
 

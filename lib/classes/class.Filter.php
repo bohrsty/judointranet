@@ -192,46 +192,70 @@ class Filter extends Object {
 	 * 
 	 * @param int $filterId the id of the filter to match
 	 * @param string $table the table to apply the filter to
+	 * @param string $dateFrom if filtered by date the "from" date
+	 * @param string $dateTo if filtered by date the "to" date
 	 * @return array array containig all items that matches this filter
 	 */
-	public static function filterItems($filterId, $table) {
+	public static function filterItems($filterId, $table, $dateFrom=null, $dateTo=null) {
 		
-		// get db object
-		$db = Db::newDb();
+		// get permitted items
+		$permittedItems = self::getUser()->permittedItems($table, 'r', $dateFrom, $dateTo);
+		// prepare filtered items
+		$filteredItems = array();
 		
-		// prepare sql statement to get group details
-		$sql = 'SELECT item_id
-				FROM item2filter
-				WHERE item_table=\''.$db->real_escape_string($table).'\'
-					AND filter_id=\''.$db->real_escape_string($filterId).'\'';
-		
-		// execute statement
-		$result = $db->query($sql);
-		
-		// get data
-		$items = array();
-		if($result) {
-			while(list($id) = $result->fetch_array(MYSQL_NUM)) {
-				
-				// switch table to get correct objects
-				switch($table) {
-					
-					case 'calendar':
-						$items[$id] = new Calendar($id);
-					break;
-					
-					default:
-						return false;
-					break;
+		// filter items if filter given
+		if($filterId !== false) {
+			
+			// get db object
+			$db = Db::newDb();
+			
+			// prepare sql statement to get filtered itemIds
+			$sql = 'SELECT item_id
+					FROM item2filter
+					WHERE item_table=\''.$db->real_escape_string($table).'\'
+						AND filter_id=\''.$db->real_escape_string($filterId).'\'';
+			
+			// execute statement
+			$result = $db->query($sql);
+			
+			// close db
+			$db->close();
+			
+			// get filtered items
+			if($result) {
+			
+				while(list($id) = $result->fetch_array(MYSQL_NUM)) {
+					$filteredItems[] = $id;
 				}
+			} else {
+				$errno = self::getError()->error_raised('MysqlError', $db->error);
+				self::getError()->handle_error($errno);
 			}
-		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error);
-			self::getError()->handle_error($errno);
 		}
 		
-		// close db
-		$db->close();
+		// prepare return
+		$items = array();
+		
+		// intersect permitted and filtered items
+		if($filterId !== false) {
+			$intersectedItems = array_intersect($permittedItems, $filteredItems);
+		} else {
+			$intersectedItems = $permittedItems;
+		}
+		foreach($intersectedItems as $intersectedItem) {
+			
+			// switch table to get correct objects
+			switch($table) {
+				
+				case 'calendar':
+					$items[$intersectedItem] = new Calendar($intersectedItem);
+				break;
+				
+				default:
+					return false;
+				break;
+			}
+		}
 		
 		// return
 		return $items;

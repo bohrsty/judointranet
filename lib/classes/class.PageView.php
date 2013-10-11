@@ -307,121 +307,6 @@ class PageView extends Object {
 	
 	
 	
-	/**
-	 * navi
-	 */
-	protected function navi($file) {
-		
-		// read php-files from /
-		$filenames = array();
-		$dh = opendir($_SERVER['DOCUMENT_ROOT'].'/'.$this->getGc()->get_config('relative_path'));
-
-		while($entry = readdir($dh)) {
-
-			// check if file, .php-extension and !test.php
-			if(is_file($_SERVER['DOCUMENT_ROOT'].'/'.$this->getGc()->get_config('relative_path').$entry) 
-					&& substr($entry,-4) == '.php' 
-					&& $entry != 'test.php') {
-				$filenames[] = $entry;
-			}
-		}
-		closedir($dh);
-		
-		// get class-names from filelist
-		for($i=0;$i<count($filenames);$i++) {
-			
-			// only use files excluding "index.php"
-			if($filenames[$i] != 'index.php') {
-				
-				// remove extension and set naviitem
-				$classname = ucfirst(substr($filenames[$i],0,-4)).'View';
-				$navi = $classname::connectnavi();
-				// check if array
-				if(!is_array($navi)) {
-					$errno = $this->getError()->error_raised('CannotGetNavi','class:'.$classname);
-					$this->getError()->handle_error($errno);
-				}
-				$naviitems[$navi['firstlevel']['position']] = $navi;
-			} else {
-				
-				// set navi for index-page
-				$navi = MainView::connectnavi();
-				// check if array
-				if(!is_array($navi)) {
-					$errno = $this->getError()->error_raised('CannotGetNavi','class:MainView');
-					$this->getError()->handle_error($errno);
-				}
-				$naviitems[$navi['firstlevel']['position']] = $navi;
-			}
-		}
-
-		// firstlevel
-		// get authorized navi-entries
-		$navi_entries = Rights::get_authorized_entries('navi');
-		
-		// prepare data for smarty
-		$data = array();
-		
-		// walk through $naviitems and build navi
-		for($i=0;$i<count($naviitems);$i++) {
-			
-			// simplify
-			$firstlevel = $naviitems[$i]['firstlevel'];
-			
-			// check rights
-			if(!in_array(md5($firstlevel['class']),$navi_entries)) {
-				continue;
-			}
-			
-			// check visibility
-			if($firstlevel['show'] === false) {
-				continue;
-			}
-			
-			// set firstlevel
-			// smarty
-			$data[] = array(
-					'level' => 0,
-					'href' => $firstlevel['file'],
-					'title' => parent::lang('class.'.$firstlevel['class'].'#connectnavi#firstlevel#name'),
-					'content' => parent::lang($firstlevel['name'])
-				);
-			
-			// walk through secondlevel
-			$secondlevel = $naviitems[$i]['secondlevel'];
-			for($j=0;$j<count($secondlevel);$j++){
-				
-				// check rights
-				if(!in_array(md5($firstlevel['class'].'|'.$secondlevel[$j]['getid']),$navi_entries)) {
-					continue;
-				}
-				
-				// check visibility
-				if($secondlevel[$j]['show'] === false) {
-					continue;
-				}
-				
-				// smarty
-				$data[] = array(
-						'level' => 1,
-						'href' => ($secondlevel[$j]['getid'] == 'login' && $this->get('id') != 'login' && $this->get('id') != 'logout') ? $firstlevel['file'].'?id='.$secondlevel[$j]['getid'].'&amp;r='.base64_encode($_SERVER['REQUEST_URI']) : $firstlevel['file'].'?id='.$secondlevel[$j]['getid'],
-						'title' => parent::lang($secondlevel[$j]['name']),
-						'content' => parent::lang($secondlevel[$j]['name']),
-						'id' => $secondlevel[$j]['getid'],
-						'file' => $firstlevel['file']
-					);
-				
-			}
-		}
-		
-		// return
-		return $data;
-	}
-	
-	
-	
-	
-	
 	
 	
 	
@@ -471,9 +356,12 @@ class PageView extends Object {
 		if($this->getUser()->get_loggedin() !== false) {
 			
 			// smarty-link
-			$sUserLink->assign('params','id="toggleUsersettings"');
-			$sUserLink->assign('title', parent::lang('class.PageView#put_userinfo#logininfo#toggleUsersettings'));
-			$sUserLink->assign('content', $name);
+			$spanUserLink = array(
+					'params' => 'id="toggleUsersettings"',
+					'title' => parent::lang('class.PageView#put_userinfo#logininfo#toggleUsersettings'),
+					'content' => $name,	
+				);
+			$sUserLink->assign('span', $spanUserLink);
 			$link = $sUserLink->fetch('smarty.span.tpl');
 			
 			// smarty-usersettings
@@ -545,12 +433,21 @@ class PageView extends Object {
 		
 		// head
 		$this->tpl->assign('head', $this->get_head());
+		
 		// manualjquery
 		$this->tpl->assign('manualjquery', $this->get_jquery());
+		
 		// navi
-		$this->tpl->assign('data', $this->navi(basename($_SERVER['SCRIPT_FILENAME'])));
-		$this->tpl->assign('active', $this->get('id'));
-		$this->tpl->assign('file', basename($_SERVER['SCRIPT_FILENAME']));
+		$navi = '';
+		$file = basename($_SERVER['SCRIPT_FILENAME']);
+		$param = $this->get('id');
+		$naviItems = $this->naviFromDb();
+		// walk through $naviItems
+		foreach($naviItems as $naviItem) {
+			$navi .= $naviItem->output($file, $param).PHP_EOL;
+		}
+		$this->tpl->assign('navigation', $navi);
+		
 		// logininfo
 		$this->tpl->assign('logininfo', $this->put_userinfo());
 		
@@ -668,6 +565,183 @@ class PageView extends Object {
 		
 		// return
 		return array($page, $pagelinks);
+	}
+	
+	
+	/**
+	 * naviFromDb() reads all navigation trees from database
+	 * 
+	 * @return array array containing the navigation subtrees as objects
+	 */
+	private function naviFromDb() {
+		
+		// get db object
+		$db = Db::newDb();
+		
+		// prepare sql statement to get subgroups
+		$sql = 'SELECT id
+				FROM navi
+				WHERE `parent`=\''.$db->real_escape_string(0).'\'
+				AND `show`=\''.$db->real_escape_string(1).'\'';
+		
+		// execute statement
+		$result = $db->query($sql);
+		
+		// close db
+		$db->close();
+		
+		// get data
+		$naviItems = array();
+		if($result) {
+			
+			while(list($naviId) = $result->fetch_array(MYSQL_NUM)) {
+				$naviItems[] = new Navi($naviId);
+			}
+		} else {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
+		}
+		
+		// return
+		return $naviItems;
+	}
+	
+	
+	/**
+	 * quickform2AddPermissions($form) adds the choose-permissions dialog to the given $form
+	 * using jquery-ui dialog
+	 * 
+	 * @param object $form the quickform2 form object the permissions will be added
+	 * @return string HTML code to toggle permissions dialog
+	 */
+	protected function quickform2AddPermissions(&$form) {
+		
+		// prepare form group "id"
+		$formHtmlId = 'permissions';
+		
+		// prepare clear radio
+		$this->tpl->assign('permissionJs', true);
+		
+		// prepare dialog link
+		$sSpanLinkDialog = new JudoIntranetSmarty();
+		$link = array(
+				'params' => 'id="togglePermissions" class="spanLink"',
+				'title' => parent::lang('class.PageView#quickform2AddPermissions#togglePermissions#title'),
+				'content' => parent::lang('class.PageView#quickform2AddPermissions#togglePermissions#name'),
+//				'help' => $this->getHelp()->getMessage(HELP_MSG_CALENDARLISTSORTLINKS),
+			);
+		$sSpanLinkDialog->assign('link', $link);
+		
+		// prepare group element
+		$permission = $form->addElement('group', $formHtmlId, array());
+		$permission->setSeparator('<br />');
+		$permission->setLabel($sSpanLinkDialog->fetch('smarty.spanLinkHelp.tpl'));
+		
+		// add headlines
+		// prepare images
+		// read
+		$imgReadText = parent::lang('class.PageView#quickform2AddPermissions#permissions#read');
+		$imgRead = array(
+				'params' => 'class="iconRead" title="'.$imgReadText.'"',
+				'src' => 'img/permissions_read.png',
+				'alt' => $imgReadText,
+			);
+		$sImgReadTemplate = new JudoIntranetSmarty();
+		$sImgReadTemplate->assign('img', $imgRead);
+		// edit
+		$imgEditText = parent::lang('class.PageView#quickform2AddPermissions#permissions#edit');
+		$imgEdit = array(
+				'params' => 'class="iconEdit" title="'.$imgEditText.'"',
+				'src' => 'img/permissions_edit.png',
+				'alt' => $imgEditText,
+			);
+		$sImgEditTemplate = new JudoIntranetSmarty();
+		$sImgEditTemplate->assign('img', $imgEdit);
+		// prepare headline text
+		$headlineText = array(
+				'params' => 'class="headlineText"',
+				'content' => parent::lang('class.PageView#quickform2AddPermissions#permissions#headLine'),
+			);
+		$sHeadlineTextTemplate = new JudoIntranetSmarty();
+		$sHeadlineTextTemplate->assign('span', $headlineText);
+		// add to form/group
+		$groupHeadlines = $permission->addElement('group', 'headlines')
+										->setName('headLines');
+		$groupHeadlines->addElement('static', 'headlineRead')
+							->setContent($sImgReadTemplate->fetch('smarty.img.tpl'));
+		$groupHeadlines->addElement('static', 'headlineEdit')
+							->setContent($sImgEditTemplate->fetch('smarty.img.tpl'));
+		$groupHeadlines->addElement('static', 'headlineText')
+							->setContent($sHeadlineTextTemplate->fetch('smarty.span.tpl'));
+		
+		// get groups
+		$allGroups = $this->getUser()->allGroups();
+		$groups = $allGroups;
+		
+		// walk through groups
+		foreach($groups as $group) {
+			
+			// exclude public, admin and own groups if not admin
+			if(($this->getUser()->isAdmin() 
+					&& $group->getId() != 0 
+					&& $group->getId() != 1) 
+				|| ($group->getId() != 0 
+					&& $group->getId() != 1 
+					&& $this->getUser()->isMemberOf($group->getId()) === false)) {
+				
+				// set id name
+				$radioName = $group->getId();
+				
+				// prepare clear radio link
+				$sSpanLinkClearRadio = new JudoIntranetSmarty();
+				$link = array(
+						'params' => 'class="spanLink" onclick="clearRadio(\''.$radioName.'\')"',
+						'title' => parent::lang('class.PageView#quickform2AddPermissions#clearRadio#title'),
+						'content' => '<img src="img/permissions_delete.png" alt="'.parent::lang('class.PageView#quickform2AddPermissions#clearRadio#name').'" />',
+					);
+				$sSpanLinkClearRadio->assign('link', $link);
+				
+				// add group
+				$group1 = $permission->addElement('group', 'group-'.$radioName)
+										->setName($radioName);
+				
+				$group1->addElement('static', 'clear-'.$radioName)
+						->setContent($sSpanLinkClearRadio->fetch('smarty.spanLinkHelp.tpl'));
+						
+				$group1->addElement('radio', $radioName.'-r', array('value' => 'r'));
+				$group1->addElement('radio', $radioName.'-w', array('value' => 'w'));
+				
+				// prepare group name
+				$groupName = array(
+						'params' => 'class="groupName"',
+						'content' => $group->getName(),
+					);
+				$sGroupNameTemplate = new JudoIntranetSmarty();
+				$sGroupNameTemplate->assign('span', $groupName);
+				// set group name
+				$group1->addElement('static', 'name-'.$radioName)
+						->setContent($sGroupNameTemplate->fetch('smarty.span.tpl'));
+			}
+		}
+		
+		// add jquery-ui dialog
+		$dialog = array(
+			'dialogClass' => $formHtmlId.'-0',
+			'openerClass' => 'togglePermissions',
+			'autoOpen' => 'false',
+			'effect' => 'slide',
+			'duration' => 300,
+			'modal' => 'true',
+			'closeText' => parent::lang('class.PageView#quickform2AddPermissions#dialog#closeText'),
+			'height' => 400,
+			'maxHeight' => 400,
+			'width' => 750,
+			'title' => parent::lang('class.PageView#quickform2AddPermissions#dialog#title'),
+		);
+		// smarty jquery
+		$sJsToggleSlide = new JudoIntranetSmarty();
+		$sJsToggleSlide->assign('dialog', $dialog);
+		$this->add_jquery($sJsToggleSlide->fetch('smarty.js-dialog.tpl'));
 	}
 }
 

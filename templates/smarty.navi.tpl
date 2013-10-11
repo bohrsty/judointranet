@@ -20,21 +20,8 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-		$(function() {ldelim}
-			$( "#{$dialog.dialogClass}" ).dialog({ldelim}
-				autoOpen: {$dialog.autoOpen},
-				show: {ldelim}
-					effect: "{$dialog.effect}",
-					duration: {$dialog.duration}
-				{rdelim},
-				modal: {$dialog.modal},
-				closeText: "{$dialog.closeText}",
-				height: {$dialog.height},
-				maxHeight: {$dialog.maxHeight},
-				width: {$dialog.width}{if isset($dialog.title) && $dialog.title!=''},
-				title: "{$dialog.title}"{/if}
-			{rdelim});
-			$( "#{$dialog.openerClass}" ).click(function() {ldelim}
-				$( "#{$dialog.dialogClass}" ).dialog( "open" );
-			{rdelim});
-		{rdelim});
+{for $i=0 to (count($data)-1)}
+			<div class="navi_{$data.$i.level}{if $data.$i.level!=0}_{if $param==$data.$i.id && $file==$data.$i.file}a{else}i{/if}{/if}">
+				<a href="{$data.$i.href}" title="{$data.$i.name}">{$data.$i.name}</a>
+			</div>
+{/for}

@@ -56,64 +56,64 @@ class MainView extends PageView {
 	/*
 	 * methods
 	 */
-	/**
-	 * navi knows about the functionalities used in navigation returns an array
-	 * containing first- and second-level-navientries
-	 * 
-	 * @return array contains first- and second-level-navientries
-	 */
-	public static function connectnavi() {
-		
-		// set first- and secondlevel names and set secondlevel $_GET['id']-values
-		static $navi = array();
-		
-		$navi = array(
-						'firstlevel' => array(
-							'name' => 'class.MainView#connectnavi#firstlevel#name',
-							'file' => 'index.php',
-							'position' => 0,
-							'class' => 'MainView',
-							'id' => md5('MainView'), // ffe65f439f54bfbd4437df5967d4c173
-							'show' => true
-						),
-						'secondlevel' => array(
-						)
-					);
-		
-		// login or logout
-		if(self::getUser()->get_loggedin()) {
-			
-			// add logout
-			array_unshift($navi['secondlevel'],
-					array(
-						'getid' => 'logout', 
-						'name' => 'class.PageView#navi#secondlevel#logout',
-						'id' => md5('MainView|logout'), // 2440e505211f609c568a2a0e811b1636
-						'show' => true
-					),
-					array(
-						'getid' => 'user', 
-						'name' => 'class.PageView#navi#secondlevel#user',
-						'id' => md5('MainView|user'), // 23b195e85c4e452b9990b75f64d9a4a3
-						'show' => false
-					)
-				);
-		} else {
-			
-			// add login
-			array_unshift($navi['secondlevel'],
-					array(
-						'getid' => 'login', 
-						'name' => 'class.PageView#navi#secondlevel#login',
-						'id' => md5('MainView|login'), // a2f4f271c394ad7472ee4e600d3df345
-						'show' => true
-					)
-				);
-		}
-		
-		// return array
-		return $navi;
-	}
+//	/**
+//	 * navi knows about the functionalities used in navigation returns an array
+//	 * containing first- and second-level-navientries
+//	 * 
+//	 * @return array contains first- and second-level-navientries
+//	 */
+//	public static function connectnavi() {
+//		
+//		// set first- and secondlevel names and set secondlevel $_GET['id']-values
+//		static $navi = array();
+//		
+//		$navi = array(
+//						'firstlevel' => array(
+//							'name' => 'class.MainView#connectnavi#firstlevel#name',
+//							'file' => 'index.php',
+//							'position' => 0,
+//							'class' => 'MainView',
+//							'id' => md5('MainView'), // ffe65f439f54bfbd4437df5967d4c173
+//							'show' => true
+//						),
+//						'secondlevel' => array(
+//						)
+//					);
+//		
+//		// login or logout
+//		if(self::getUser()->get_loggedin()) {
+//			
+//			// add logout
+//			array_unshift($navi['secondlevel'],
+//					array(
+//						'getid' => 'logout', 
+//						'name' => 'class.PageView#navi#secondlevel#logout',
+//						'id' => md5('MainView|logout'), // 2440e505211f609c568a2a0e811b1636
+//						'show' => true
+//					),
+//					array(
+//						'getid' => 'user', 
+//						'name' => 'class.PageView#navi#secondlevel#user',
+//						'id' => md5('MainView|user'), // 23b195e85c4e452b9990b75f64d9a4a3
+//						'show' => false
+//					)
+//				);
+//		} else {
+//			
+//			// add login
+//			array_unshift($navi['secondlevel'],
+//					array(
+//						'getid' => 'login', 
+//						'name' => 'class.PageView#navi#secondlevel#login',
+//						'id' => md5('MainView|login'), // a2f4f271c394ad7472ee4e600d3df345
+//						'show' => true
+//					)
+//				);
+//		}
+//		
+//		// return array
+//		return $navi;
+//	}
 	
 	
 	
@@ -137,84 +137,51 @@ class MainView extends PageView {
 		// switch $_GET['id'] if set
 		if($this->get('id') !== false) {
 			
-			// check rights
-			// get class
-			$class = get_class();
-			// get naviitems
-			$navi = $class::connectnavi();
-			// get rights from db
-			$rights = Rights::get_authorized_entries('navi');
-			$naviid = 0;
-			// walk through secondlevel-entries to find actual entry
-			for($i=0;$i<count($navi['secondlevel']);$i++) {
-				if($navi['secondlevel'][$i]['getid'] == $this->get('id')) {
-					
-					// store id and  break
-					$naviid = $navi['secondlevel'][$i]['id'];
-					break;
-				}
-			}
-			
-			// check if naviid is member of authorized entries
-			if(in_array($naviid,$rights)) {
+			switch($this->get('id')) {
 				
-				switch($this->get('id')) {
+				case 'login':
 					
-					case 'login':
-						
-						// smarty
-						$this->tpl->assign('title', $this->title(parent::lang('class.MainView#init#login#title')));
-						$this->tpl->assign('main', $this->login());
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', false);
-						
-					break;
+					// smarty
+					$this->tpl->assign('title', $this->title(parent::lang('class.MainView#init#login#title')));
+					$this->tpl->assign('main', $this->login());
+					$this->tpl->assign('jquery', true);
+					$this->tpl->assign('hierselect', false);
 					
-					case 'logout':
-						
-						// smarty
-						$this->tpl->assign('title', $this->title(parent::lang('class.MainView#init#logout#title')));
-						$this->tpl->assign('main', $this->getUser()->logout());
-						$this->tpl->assign('jquery', false);
-						$this->tpl->assign('hierselect', false);
-						
-					break;
-					
-					case 'user':
-						
-						// smarty
-						$this->tpl->assign('title', $this->title(parent::lang('class.MainView#init#user#title')));
-						$this->tpl->assign('main', $this->user());
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', true);
-						
-					break;
-					
-					default:
-						
-						// id set, but no functionality
-						$errno = $this->getError()->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
-						$this->getError()->handle_error($errno);
-						$this->add_output(array('main' => $this->getError()->to_html($errno)),true);
-						
-						// smarty
-						$this->tpl->assign('title', '');
-						$this->tpl->assign('main', $this->getError()->to_html($errno));
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', false);
-					break;
-				}
-			} else {
+				break;
 				
-				// error not authorized
-				$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-				$this->getError()->handle_error($errno);
+				case 'logout':
+					
+					// smarty
+					$this->tpl->assign('title', $this->title(parent::lang('class.MainView#init#logout#title')));
+					$this->tpl->assign('main', $this->getUser()->logout());
+					$this->tpl->assign('jquery', false);
+					$this->tpl->assign('hierselect', false);
+					
+				break;
 				
-				// smarty
-				$this->tpl->assign('title', $this->title(parent::lang('class.MainView#init#Error#NotAuthorized')));
-				$this->tpl->assign('main', $this->getError()->to_html($errno));
-				$this->tpl->assign('jquery', true);
-				$this->tpl->assign('hierselect', false);
+				case 'user':
+					
+					// smarty
+					$this->tpl->assign('title', $this->title(parent::lang('class.MainView#init#user#title')));
+					$this->tpl->assign('main', $this->user());
+					$this->tpl->assign('jquery', true);
+					$this->tpl->assign('hierselect', true);
+					
+				break;
+				
+				default:
+					
+					// id set, but no functionality
+					$errno = $this->getError()->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
+					$this->getError()->handle_error($errno);
+					$this->add_output(array('main' => $this->getError()->to_html($errno)),true);
+					
+					// smarty
+					$this->tpl->assign('title', '');
+					$this->tpl->assign('main', $this->getError()->to_html($errno));
+					$this->tpl->assign('jquery', true);
+					$this->tpl->assign('hierselect', false);
+				break;
 			}
 		} else {
 			

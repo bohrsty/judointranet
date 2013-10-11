@@ -152,6 +152,60 @@ class UserTest extends PHPUnit_Framework_TestCase {
 			}
 		}
 	}
+	
+	
+	public function testPermissionsOnIds() {
+		
+		// reset user
+		$this->user = new User();
+		// test public reading
+		$this->assertFalse($this->user->hasPermission('calendar', -2));
+		$this->assertTrue($this->user->hasPermission('calendar', 1));
+		$this->user->change_user('admin', false);
+		// test reading (user admin)
+		$this->assertTrue($this->user->hasPermission('calendar', 1));
+	}
+	
+	
+	public function testGetAllPermittedItems() {
+		
+		// reset global user
+		$this->user = new User();
+		$this->user->change_user('admin', true);
+		// all items time independent
+		$permittedIds = $this->user->permittedItems('calendar', 'r');
+		$this->assertInternalType('array', $permittedIds);
+		$this->assertGreaterThanOrEqual(1, count($permittedIds));
+		// all items im time range
+		$permittedIds = $this->user->permittedItems('calendar', 'r', date('Y-m-d', 0), date('Y-m-d'));
+		$this->assertInternalType('array', $permittedIds);
+		$this->assertGreaterThanOrEqual(1, count($permittedIds));
+	}
+	
+	
+	public function testLocalUser() {
+		
+		// reset global user
+		$this->user = new User();
+		$this->user->change_user('admin', true);
+		// create local user
+		$localUser = new User(false);
+		// test user
+		$this->assertNotNull($_SESSION['user']);
+		
+	}
+	
+	
+	public function testMembership() {
+		
+		// reset global user
+		$this->user = new User();
+		$this->user->change_user('admin', true);
+		// admin needs to be member of admin group
+		$this->assertTrue($this->user->isMemberOf(1));
+		// is admin?
+		$this->assertTrue($this->user->isAdmin());
+	}
 }
 
 

@@ -280,11 +280,10 @@ class Preset extends Object {
 			
 			// read value
 			$field->read_value();
-			
 			// get version
 			$version = max(strtotime($announcement['version']), (int)$field->getLastModified());
-			$announcement['version'] = date('dmy', $version);
-			
+			$announcement['version'] = date('d.m.Y', $version);
+
 			// check html
 			if($html === true) {
 				$announcement['field_'.$field->get_id().'_name'] = nl2br(htmlentities($field->get_name(),ENT_QUOTES,'UTF-8'));

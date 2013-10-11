@@ -25,7 +25,6 @@
 class GroupTest extends PHPUnit_Framework_TestCase {
 	
 	// variables
-	private $group;
 	
 	// setup
 	public function setUp() {

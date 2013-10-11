@@ -184,15 +184,15 @@ $lang = array(
 				'title' => 'Kalender: Termin l&ouml;schen'
 			)
 		),
-		'connectnavi' => array(
-			'firstlevel' => array(
-				'name' => 'Kalender'
-			),
-			'secondlevel' => array(
-				'listall' => 'Listenansicht',
-				'new' => 'Neuen Eintrag erstellen'
-			)
-		),
+//		'connectnavi' => array(
+//			'firstlevel' => array(
+//				'name' => 'Kalender'
+//			),
+//			'secondlevel' => array(
+//				'listall' => 'Listenansicht',
+//				'new' => 'Neuen Eintrag erstellen'
+//			)
+//		),
 		'get_sort_links' => array(
 			'dates' => array(
 				'next_day' => 'Morgen',
@@ -321,16 +321,33 @@ $lang = array(
 				'closeText' => 'Schlie&szlig;en',
 			),
 		),
+		'quickform2AddPermissions' => array(
+			'dialog' => array(
+				'closeText' => 'Schlie&szlig;en',
+				'title' => 'Berechtigungen auswählen',
+			),
+			'togglePermissions' => array(
+				'title' => 'Berechtigungen anpassen',
+				'name' => 'Berechtigungen anpassen',
+			),
+			'form' => array(
+				'permissions' => 'Berechtigungen',
+			),
+			'clearRadio' => array(
+				'title' => 'Berechtigung entfernen',
+				'name' => 'Berechtigung entfernen',
+			),
+			'permissions' => array(
+				'read' => 'Berechtigung: Lesen/Auflisten',
+				'edit' => 'Berechtigung: Bearbeiten',
+				'headLine' => '<b>Name der zu berechtigenden Gruppe</b>',
+			),
+		),
 	),
 	'class.MainView' => array(
 		'page' => array(
 			'init' => array(
 				'name' => 'Judointranet'
-			)
-		),
-		'connectnavi' => array(
-			'firstlevel' => array(
-				'name' => 'Startseite'
 			)
 		),
 		'init' => array(
@@ -468,18 +485,6 @@ $lang = array(
 		)
 	),
 	'class.AnnouncementView' => array(
-		'connectnavi' => array(
-			'firstlevel' => array(
-				'name' => 'Ausschreibungen'
-			),
-			'secondlevel' => array(
-				'listall' => 'Listenansicht',
-				'new' => 'Neuen Eintrag erstellen',
-				'delete' => 'Eintrag l&ouml;schen',
-				'details' => 'Details',
-				'topdf' => 'Eintrag als PDF'
-			)
-		),
 		'init' => array(
 			'new' => array(
 				'title' => 'Ausschreibung: Neuer Eintrag'
@@ -537,27 +542,15 @@ $lang = array(
 		)
 	),
 	'class.InventoryView' => array(
-		'connectnavi' => array(
-			'firstlevel' => array(
-				'name' => 'Inventar'
-			),
-			'secondlevel' => array(
-				'listall' => 'Listenansicht',
-				'my' => 'Eigene verwalten',
-				'give' => 'Objekt abgeben',
-				'take' => 'Objekt annehmen',
-				'cancel' => 'Objekt zur&uuml;ckziehen',
-				'details' => 'Details',
-				'movement' => '&Uuml;bergaben'
-			)
-		),
 		'init' => array(
 			'my' => array(
 				'title' => 'Inventar: Eigene Objekte'
 			),
-
 			'default' => array(
 				'title' => 'Inventar'
+			),
+			'listall' => array(
+				'title' => 'Inventar: Listenansicht',
 			),
 			'Error' => array(
 				'NotAuthorized' => 'FEHLER - Nicht berechtigt'
@@ -723,15 +716,15 @@ $lang = array(
 				'email' => 'Emailadresse'
 			)
 		),
-		'connectnavi' => array(
-			'firstlevel' => array(
-				'name' => 'Administration'
-			),
-			'secondlevel' => array(
-				'field' => 'Ben. Tabellen verwalten',
-				'defaults' => 'Vorgaben verwalten'
-			)
-		),
+//		'connectnavi' => array(
+//			'firstlevel' => array(
+//				'name' => 'Administration'
+//			),
+//			'secondlevel' => array(
+//				'field' => 'Ben. Tabellen verwalten',
+//				'defaults' => 'Vorgaben verwalten'
+//			)
+//		),
 		'init' => array(
 			'default' => array(
 				'title' => 'Administration'
@@ -903,16 +896,16 @@ $lang = array(
 				'NotAuthorized' => 'FEHLER - Nicht berechtigt'
 			),
 		),
-		'connectnavi' => array(
-			'firstlevel' => array(
-				'name' => 'Protokolle'
-			),
-			'secondlevel' => array(
-				'listall' => 'Listenansicht',
-				'new' => 'Neues Protokoll erstellen',
-				'showdecisions' => 'Alle Beschl&uuml;sse anzeigen'
-			)
-		),
+//		'connectnavi' => array(
+//			'firstlevel' => array(
+//				'name' => 'Protokolle'
+//			),
+//			'secondlevel' => array(
+//				'listall' => 'Listenansicht',
+//				'new' => 'Neues Protokoll erstellen',
+//				'showdecisions' => 'Alle Beschl&uuml;sse anzeigen'
+//			)
+//		),
 		'defaultContent' => array(
 			'headline' => array(
 				'text' => 'Protokolle'
@@ -1271,6 +1264,48 @@ $lang = array(
 		'fakePublic' => array(
 			'public' => array(
 				'name' => '&Ouml;ffentlicher Zugriff',
+			),
+		),
+	),
+	'class.Navi' => array(
+		'item' => array(
+			'name' => array(
+				'mainPage' => 'Startseite',
+				'mainPage.login' => 'Login',
+				'mainPage.logout' => 'Logout',
+				'calendarPage' => 'Kalender',
+				'calendarPage.new' => 'Neuer Eintrag',
+				'calendarPage.listall' => 'Listenansicht',
+				'calendarPage.details' => 'Detailansicht',
+				'calendarPage.edit' => 'Eintrag editieren',
+				'calendarPage.delete' => 'Eintrag l&ouml;schen',
+				'inventoryPage' => 'Inventar',
+				'inventoryPage.my' => 'Eigene verwalten',
+				'inventoryPage.listall' => 'Listenansicht',
+				'inventoryPage.give' => 'Objekt abgeben',
+				'inventoryPage.take' => 'Objekt annehmen',
+				'inventoryPage.cancel' => 'Objekt zur&uuml;ckziehen',
+				'inventoryPage.details' => 'Details',
+				'inventoryPage.movement' => '&Uuml;bergaben',
+				'announcementPage' => 'Ausschreibungen',
+				'announcementPage.listall' => 'Listenansicht',
+				'announcementPage.new' => 'Neuen Eintrag erstellen',
+				'announcementPage.delete' => 'Eintrag l&ouml;schen',
+				'announcementPage.details' => 'Details',
+				'announcementPage.topdf' => 'Eintrag als PDF',
+				'protocolPage' => 'Protokolle',
+				'protocolPage.listall' => 'Listenansicht',
+				'protocolPage.new' => 'Neues Protokoll erstellen',
+				'protocolPage.details' => 'Details',
+				'protocolPage.edit' => 'Protokoll bearbeiten',
+				'protocolPage.show' => 'Protokoll anzeigen',
+				'protocolPage.topdf' => 'Protokoll als PDF',
+				'protocolPage.delete' => 'Protokoll l&ouml;schen',
+				'protocolPage.correct' => 'Protokoll korrigieren',
+				'protocolPage.showdecisions' => 'Alle Beschl&uuml;sse anzeigen',
+				'administrationPage' => 'Administration',
+				'administrationPage.field' => 'Ben. Tabellen verwalten',
+				'administrationPage.defaults' => 'Vorgaben verwalten',
 			),
 		),
 	),

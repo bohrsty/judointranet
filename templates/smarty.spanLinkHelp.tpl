@@ -20,21 +20,4 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-		$(function() {ldelim}
-			$( "#{$dialog.dialogClass}" ).dialog({ldelim}
-				autoOpen: {$dialog.autoOpen},
-				show: {ldelim}
-					effect: "{$dialog.effect}",
-					duration: {$dialog.duration}
-				{rdelim},
-				modal: {$dialog.modal},
-				closeText: "{$dialog.closeText}",
-				height: {$dialog.height},
-				maxHeight: {$dialog.maxHeight},
-				width: {$dialog.width}{if isset($dialog.title) && $dialog.title!=''},
-				title: "{$dialog.title}"{/if}
-			{rdelim});
-			$( "#{$dialog.openerClass}" ).click(function() {ldelim}
-				$( "#{$dialog.dialogClass}" ).dialog( "open" );
-			{rdelim});
-		{rdelim});
+<span{if $link.params!=''} {$link.params}{/if} title="{$link.title}">{$link.content}</span>{if isset($link.help) and $link.help!=''}&nbsp;{$link.help}{/if}

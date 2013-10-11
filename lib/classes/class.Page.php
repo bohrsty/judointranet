@@ -34,7 +34,6 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 	 * class-variables
 	 */
 	private $id;
-	private $rights;
 	
 	/*
 	 * getter/setter
@@ -44,12 +43,6 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 	}
 	public function set_id($id) {
 		$this->id = $id;
-	}
-	public function get_rights(){
-		return $this->rights;
-	}
-	public function set_rights($rights) {
-		$this->rights = $rights;
 	}
 	
 	
@@ -65,6 +58,50 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 	/*
 	 * methods
 	 */
+	/**
+	 * isPermittedFor($groupId) returns true if the group has permissions, false otherwise
+	 * 
+	 * @param int $groupId the id of the group to check
+	 * @return bool true if the group has permissions, false otherwise
+	 */
+	public function isPermittedFor($groupId) {
+		
+		// get db object
+		$db = Db::newDb();
+		
+		// prepare sql statement to get group details
+		$sql = 'SELECT *
+				FROM permissions
+				WHERE item_table=\''.$db->real_escape_string($this).'\'
+					AND item_id=\''.$db->real_escape_string($this->get_id()).'\'
+					AND group_id=\''.$db->real_escape_string($groupId).'\'
+					AND mode=\''.$db->real_escape_string('r').'\'';
+		
+		// execute statement
+		$result = $db->query($sql);
+		
+		// get data
+		$items = array();
+		if($result) {
+			return $result->num_rows == 1;
+		} else {
+			$errno = self::getError()->error_raised('MysqlError', $db->error);
+			self::getError()->handle_error($errno);
+		}
+		
+		// close db
+		$db->close();
+	}
+	
+	
+	/**
+	 * __toString() returns an string representation of this object
+	 * 
+	 * @return string string representation of this object
+	 */
+	public function __toString() {
+		return 'Page';
+	}
  	
  	
  }

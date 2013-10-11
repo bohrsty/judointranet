@@ -102,13 +102,17 @@ class User extends Object {
 	/*
 	 * constructor/destructor
 	 */
-	public function __construct() {
+	public function __construct($globalUser = true) {
 		
-		// set error
-		$GLOBALS['error'] = new Error();
-		
-		// initalize $_SESSION
-		$_SESSION['user'] = null;
+		// check if to create local user
+		if($globalUser === true) {
+			
+			// set error
+			$GLOBALS['error'] = new Error();
+			
+			// initalize $_SESSION
+			$_SESSION['user'] = null;
+		}
 		
 		// set userid default to 0
 		$this->set_id(0);
@@ -225,8 +229,7 @@ class User extends Object {
 		$sLogout->assign('message', parent::lang('class.User#logout#logout#message'));
 		$sLogout->assign('form', '');
 		
-//		// return
-		// smarty
+		// return
 		return $sLogout->fetch('smarty.login.tpl');
 	}
 	
@@ -419,7 +422,7 @@ class User extends Object {
 		while(list($username) = $result->fetch_array(MYSQL_NUM)) {
 			
 			// safe object in array
-			$user = new User();
+			$user = new User(false);
 			$user->change_user($username,false);
 			
 			// exclude
@@ -443,7 +446,7 @@ class User extends Object {
 	public function allGroups() {
 		
 		// walk through groups
-		$allGroups = array(Group::fakePublic());
+		$allGroups[0] = Group::fakePublic();
 		// check size of array (= no groups)
 		if(count($this->get_groups()) > 0) {
 			foreach($this->get_groups() as $group) {
@@ -488,6 +491,166 @@ class User extends Object {
 		
 		// return
 		return $groups;
+	}
+	
+	
+	/**
+	 * hasPermission($itemTable, $ItemId, $mode='r') returns true if the user has permission
+	 * (given in $mode [r=read, w=edit]), false otherwise
+	 * 
+	 * @param string $itemTable table of the item to be checked
+	 * @param int $itemId id of the item in the $table
+	 * @param string $mode which permission the user needs (r=read, w=edit)
+	 * @return boolean true if the user has permission, false otherwise
+	 */
+	public function hasPermission($itemTable, $itemId, $mode='r') {
+		
+		// get own groups
+		$ownGroups = $this->allGroups();
+		
+		// admin has allways permission
+		if(isset($ownGroups[1])) {
+			return true;
+		}
+		
+		// get db object
+		$db = Db::newDb();
+		
+		// get group ids
+		$groupIds = implode(',', array_keys($ownGroups));
+			
+		// prepare sql statement to get permission of the given entry
+		$sql = 'SELECT *
+				FROM permissions
+				WHERE item_table=\''.$db->real_escape_string($itemTable).'\'
+					AND item_id=\''.$db->real_escape_string($itemId).'\'
+					AND (user_id=\''.$db->real_escape_string($this->get_id()).'\'
+					OR (group_id IN ('.$db->real_escape_string($groupIds).')))
+					AND mode=\''.$db->real_escape_string($mode).'\'';
+		
+		// execute statement
+		$result = $db->query($sql);
+		
+		// close db
+		$db->close();
+		
+		// get data
+		$items = array();
+		if($result) {
+			return $result->num_rows > 0;
+		} else {
+			$errno = self::getError()->error_raised('MysqlError', $db->error);
+			self::getError()->handle_error($errno);
+		}
+		
+		// default return false
+		return false;
+	}
+	
+	
+	/**
+	 * permittedItems($itemTable, $mode='r') returns an array containing the
+	 * ids of the items the user has permission to
+	 * 
+	 * @param string $itemTable table of the item to be checked
+	 * @param string $mode which permission the user needs (r=read, w=edit)
+	 * @param string $dateFrom if filtered by date the "from" date
+	 * @param string $dateTo if filtered by date the "to" date
+	 * @return array array containing the item ids the user has permission to
+	 */
+	public function permittedItems($itemTable, $mode, $dateFrom=null, $dateTo=null) {
+		
+		// get own groups
+		$ownGroups = $this->allGroups();
+		
+		// get group ids
+		$groupIds = implode(',', array_keys($ownGroups));
+		
+		// get db object
+		$db = Db::newDb();
+		// prepare $sql
+		$sql = '';
+		
+		// prepare sql statement to get permission of the given entry
+		// prepare date
+		$sqlDate = '';
+		if(!is_null($dateFrom) && !is_null($dateTo)) {
+			$sqlDate = (isset($ownGroups[1]) ? ' WHERE' : ' AND').' t.date>=\''.$db->real_escape_string($dateFrom).'\' AND t.date<=\''.$db->real_escape_string($dateTo).'\'';
+		}
+		// admin is permitted to anything
+		if(isset($ownGroups[1])) {
+			$sql = 'SELECT t.id
+				FROM `'.$db->real_escape_string($itemTable).'` AS t'.$sqlDate;
+		} else {
+			$sql = 'SELECT t.id
+				FROM permissions AS p, `'.$db->real_escape_string($itemTable).'` AS t
+				WHERE p.item_table=\''.$db->real_escape_string($itemTable).'\'
+					AND (p.user_id=\''.$db->real_escape_string($this->get_id()).'\'
+					OR (p.group_id IN ('.$db->real_escape_string($groupIds).')))
+					AND p.mode=\''.$db->real_escape_string($mode).'\'
+					AND p.item_id=t.id'.$sqlDate;
+		}
+		
+		// execute statement
+		$result = $db->query($sql);
+		
+		// close db
+		$db->close();
+		
+		// get data
+		$itemIds = array();
+		if($result) {
+			while(list($itemId) = $result->fetch_array(MYSQL_NUM)) {
+				$itemIds[] = $itemId;
+			}
+		} else {
+			$errno = self::getError()->error_raised('MysqlError', $db->error);
+			self::getError()->handle_error($errno);
+		}
+		
+		// return
+		return $itemIds;
+	}
+	
+	
+	/**
+	 * isMemberOf($groupId) returns true if the user is member of the given $groupId
+	 * false otherwise
+	 * 
+	 * @param int $groupId the id of the group that membership is tested
+	 * @return bool true if the user is member of $groupId, false otherwise
+	 */
+	public function isMemberOf($groupId) {
+		
+		// get own groups
+		$ownGroups = $this->get_groups();
+		
+		// walk through own groups
+		foreach($ownGroups as $ownGroup) {
+			
+			// get group incl. subgroups as array
+			$allGroups = $ownGroup->allGroups();
+			
+			// return true if id is in array
+			if(isset($allGroups[$groupId])) {
+				return true;
+			}
+		}
+		
+		// return false if not in any array
+		return false;
+	}
+	
+	
+	/**
+	 * isAdmin() returns true if the user is member of admin group, false otherwise
+	 * 
+	 * @return bool true if the user is member of admin group, false otherwise
+	 */
+	public function isAdmin() {
+		
+		// check membership
+		return $this->isMemberOf(1);
 	}
 }
 

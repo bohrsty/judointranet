@@ -73,6 +73,13 @@
 				})
 			});{/literal}
 		</script>
+{if isset($permissionJs) && $permissionJs}
+		<script type="text/javascript">
+			{literal}function clearRadio(radioName) {
+				$('[name=' + radioName + ']').prop('checked', false)
+			}{/literal}
+		</script>
+{/if}
 {if $jquery}
 		<script type="text/javascript">
 			$(document).ready(function(){ldelim}
@@ -121,11 +128,7 @@
 			<div id="logo">
 				<p><img src="img/logo.png" alt="Logo" title="JudoIntranet" /></p>
 			</div>
-{for $i=0 to (count($data)-1)}
-			<div class="navi_{$data.$i.level}{if $data.$i.level!=0}_{if $active==$data.$i.id && $file==$data.$i.file}a{else}i{/if}{/if}">
-				<a href="{$data.$i.href}" title="{$data.$i.title}">{$data.$i.content}</a>
-			</div>
-{/for}
+{$navigation}
 		</div>
 		<div id="content">
 			<div class="headinfo">

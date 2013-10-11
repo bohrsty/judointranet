@@ -212,12 +212,12 @@ class Protocol extends Page {
 			$this->set_recorder($arg['recorder']);
 			
 			// set rights
-			$this->set_rights(new Rights('protocol',$arg['rights']));
+//			$this->set_rights(new Rights('protocol',$arg['rights']));
 		} else {
 		
 			// get field for given id
 			$this->get_from_db($arg);
-			$this->set_rights(new Rights('protocol',$arg));
+//			$this->set_rights(new Rights('protocol',$arg));
 		}
 	}
 	
@@ -265,26 +265,6 @@ class Protocol extends Page {
 		
 		// close db
 		$db->close();
-	}
-	
-	
-	
-	
-	
-	
-	/**
-	 * return_protocol returns an array containing all protocols the
-	 * user has rights to
-	 * 
-	 * @return array array containing the protocol_ids the user has rights to
-	 */
-	public static function return_protocols() {
-		
-		// get ids
-		$return = Rights::get_authorized_entries('protocol');
-		
-		// return
-		return $return;
 	}
 	
 	
@@ -411,12 +391,12 @@ class Protocol extends Page {
 			// set id and preset_id
 			$this->set_id($insert_id);
 			
-			// write rights
-			try {
-				$this->get_rights()->write_db($insert_id);
-			} catch(Exception $e) {
-				throw new Exception('DbActionUnknown',$e->getCode());
-			}
+//			// write rights
+//			try {
+//				$this->get_rights()->write_db($insert_id);
+//			} catch(Exception $e) {
+//				throw new Exception('DbActionUnknown',$e->getCode());
+//			}
 		} elseif($action == 'update') {
 			
 			// update
@@ -437,12 +417,12 @@ class Protocol extends Page {
 			// execute
 			$db->query($sql);
 			
-			// write rights
-			try {
-				$this->get_rights()->write_db($this->get_id());
-			} catch(Exception $e) {
-				throw new Exception('DbActionUnknown',$e->getCode());
-			}
+//			// write rights
+//			try {
+//				$this->get_rights()->write_db($this->get_id());
+//			} catch(Exception $e) {
+//				throw new Exception('DbActionUnknown',$e->getCode());
+//			}
 		} else {
 			
 			// error
@@ -525,8 +505,8 @@ class Protocol extends Page {
 				$this->set_protocol($value);
 			} elseif($name == 'preset') {
 				$this->set_preset($value);
-			} elseif($name == 'rights') {
-				$this->get_rights()->update($this->get_id(),$value);
+//			} elseif($name == 'rights') {
+//				$this->get_rights()->update($this->get_id(),$value);
 			} elseif($name == 'member') {
 				$this->set_member($value);
 			} elseif($name == 'owner') {
@@ -581,6 +561,16 @@ class Protocol extends Page {
 		} else {
 			return false;
 		}
+	}
+	
+	
+	/**
+	 * __toString() returns an string representation of this object
+	 * 
+	 * @return string string representation of this object
+	 */
+	public function __toString() {
+		return 'Protocol';
 	}
 }
 

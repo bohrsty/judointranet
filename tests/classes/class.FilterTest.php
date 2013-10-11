@@ -83,8 +83,19 @@ class FilterTest extends PHPUnit_Framework_TestCase {
 	
 	public function testFilterGettingFilteredItems() {
 		
+		// create global user
+		$_SESSION['user'] = new User();
+		
 		// all items of filter
 		$items = Filter::filterItems(1, 'calendar');
+		$this->assertArrayHasKey(1, $items);
+		$this->assertInstanceOf('Calendar', $items[1]);
+		// all items of date
+		$items = Filter::filterItems(false, 'calendar', date('Y-m-d', 0), date('Y-m-d'));
+		$this->assertArrayHasKey(1, $items);
+		$this->assertInstanceOf('Calendar', $items[1]);
+		// all items of filter and date
+		$items = Filter::filterItems(1, 'calendar', date('Y-m-d', 0), date('Y-m-d'));
 		$this->assertArrayHasKey(1, $items);
 		$this->assertInstanceOf('Calendar', $items[1]);
 	}

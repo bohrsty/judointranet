@@ -57,51 +57,51 @@ class ProtocolView extends PageView {
 	/*
 	 * methods
 	 */
-	/**
-	 * navi knows about the functionalities used in navigation returns an array
-	 * containing first- and second-level-navientries
-	 * 
-	 * @return array contains first- and second-level-navientries
-	 */
-	public static function connectnavi() {
-		
-		// set first- and secondlevel names and set secondlevel $_GET['id']-values
-		static $navi = array();
-		
-		$navi = array(
-						'firstlevel' => array(
-							'name' => 'class.ProtocolView#connectnavi#firstlevel#name',
-							'file' => 'protocol.php',
-							'position' => 4,
-							'class' => get_class(),
-							'id' => md5('ProtocolView'), // 3adfd8a4d24ba4849ddeb8d7f06e1828
-							'show' => true
-						),
-						'secondlevel' => array(
-							1 => array(
-								'getid' => 'listall', 
-								'name' => 'class.ProtocolView#connectnavi#secondlevel#listall',
-								'id' => md5('ProtocolView|listall'), // b98ac7ca180fa172d86affb97bda7590
-								'show' => true
-							),
-							0 => array(
-								'getid' => 'new', 
-								'name' => 'class.ProtocolView#connectnavi#secondlevel#new',
-								'id' => md5('ProtocolView|new'), // a2c6bee54b75fe9498fb32c75950cf61
-								'show' => true
-							),
-							2 => array(
-								'getid' => 'showdecisions', 
-								'name' => 'class.ProtocolView#connectnavi#secondlevel#showdecisions',
-								'id' => md5('ProtocolView|showdecisions'), // 7a3a2cfd86522105318cefe3928ecde8
-								'show' => true
-							)
-						)
-					);
-		
-		// return array
-		return $navi;
-	}
+//	/**
+//	 * navi knows about the functionalities used in navigation returns an array
+//	 * containing first- and second-level-navientries
+//	 * 
+//	 * @return array contains first- and second-level-navientries
+//	 */
+//	public static function connectnavi() {
+//		
+//		// set first- and secondlevel names and set secondlevel $_GET['id']-values
+//		static $navi = array();
+//		
+//		$navi = array(
+//						'firstlevel' => array(
+//							'name' => 'class.ProtocolView#connectnavi#firstlevel#name',
+//							'file' => 'protocol.php',
+//							'position' => 4,
+//							'class' => get_class(),
+//							'id' => md5('ProtocolView'), // 3adfd8a4d24ba4849ddeb8d7f06e1828
+//							'show' => true
+//						),
+//						'secondlevel' => array(
+//							1 => array(
+//								'getid' => 'listall', 
+//								'name' => 'class.ProtocolView#connectnavi#secondlevel#listall',
+//								'id' => md5('ProtocolView|listall'), // b98ac7ca180fa172d86affb97bda7590
+//								'show' => true
+//							),
+//							0 => array(
+//								'getid' => 'new', 
+//								'name' => 'class.ProtocolView#connectnavi#secondlevel#new',
+//								'id' => md5('ProtocolView|new'), // a2c6bee54b75fe9498fb32c75950cf61
+//								'show' => true
+//							),
+//							2 => array(
+//								'getid' => 'showdecisions', 
+//								'name' => 'class.ProtocolView#connectnavi#secondlevel#showdecisions',
+//								'id' => md5('ProtocolView|showdecisions'), // 7a3a2cfd86522105318cefe3928ecde8
+//								'show' => true
+//							)
+//						)
+//					);
+//		
+//		// return array
+//		return $navi;
+//	}
 	
 	
 	
@@ -125,26 +125,9 @@ class ProtocolView extends PageView {
 		// switch $_GET['id'] if set
 		if($this->get('id') !== false) {
 			
-			// check rights
-			// get class
-			$class = get_class();
-			// get naviitems
-			$navi = $class::connectnavi();
-			// get rights from db
-			$rights = Rights::get_authorized_entries('navi');
-			$naviid = 0;
-			// walk through secondlevel-entries to find actual entry
-			for($i=0;$i<count($navi['secondlevel']);$i++) {
-				if($navi['secondlevel'][$i]['getid'] == $this->get('id')) {
-					
-					// store id and  break
-					$naviid = $navi['secondlevel'][$i]['id'];
-					break;
-				}
-			}
-			
-			// check if naviid is member of authorized entries
-			if(in_array($naviid,$rights)) {
+			// check permissions
+			$naviId = Navi::idFromFileParam(basename($_SERVER['SCRIPT_FILENAME']), $this->get('id'));
+			if($this->getUser()->hasPermission('navi', $naviId)) {
 				
 				switch($this->get('id')) {
 					
@@ -499,21 +482,19 @@ class ProtocolView extends PageView {
 	private function read_all_entries() {
 		
 		// prepare return
-		$protocol_entries = array();
-				
-		// get ids
-		$protocol_ids = Protocol::return_protocols();
+		$protocols = array();
 		
-		// create protocol-objects
-		foreach($protocol_ids as $index => $id) {
-			$protocol_entries[] = new Protocol($id);
+		// get protocol objects
+		$protocol_entries = self::getUser()->permittedItems('protocol', 'r');
+		foreach($protocol_entries as $protocolId) {
+			$protocols[] = new Protocol($protocolId);
 		}
 		
 		// sort protocol-entries
-		usort($protocol_entries,array($this,'callback_compare_protocols'));
+		usort($protocols, array($this, 'callback_compare_protocols'));
 		
 		// return protocol-objects
-		return $protocol_entries;
+		return $protocols;
 	}
 	
 	
@@ -754,7 +735,7 @@ class ProtocolView extends PageView {
 		$this->tpl->assign('pagecaption',parent::lang('class.ProtocolView#page#caption#details'));
 		
 		// check rights
-		if(Rights::check_rights($pid,'protocol',true)) {
+		if($this->getUser()->hasPermission('protocol', $pid)) {
 				
 			// get protocol-object
 			$protocol = new Protocol($pid);
@@ -818,7 +799,7 @@ class ProtocolView extends PageView {
 	private function edit($pid) {
 	
 		// check rights
-		if(Rights::check_rights($pid,'protocol',true)) {
+		if($this->getUser()->hasPermission('protocol', $pid)) {
 			
 			// pagecaption
 			$this->tpl->assign('pagecaption',parent::lang('class.ProtocolView#page#caption#edit'));
@@ -828,16 +809,6 @@ class ProtocolView extends PageView {
 			
 			// smarty-templates
 			$sD = new JudoIntranetSmarty();
-			
-			// get rights
-			$pRights = $protocol->get_rights()->get_rights();
-			// check public access
-			$kPublicAccess = array_search(0,$pRights);
-			$publicAccess = false;
-			if($kPublicAccess !== false) {
-				$publicAccess = true;
-				unset($pRights[$kPublicAccess]);
-			}
 			
 			// formular
 			$form = new HTML_QuickForm2(
@@ -863,11 +834,11 @@ class ProtocolView extends PageView {
 					'correction' => $correctable['status'],
 					'correctors' => $correctable['correctors']
 				);
-			
 			// add public access
-			if($publicAccess) {
+			if($protocol->isPermittedFor(0)) {
 				$datasource['public'] = 1;
 			}
+			
 			// add datasource
 			$form->addDataSource(new HTML_QuickForm2_DataSource_Array($datasource));
 				
@@ -1092,7 +1063,7 @@ class ProtocolView extends PageView {
 		$correctable = $protocol->get_correctable(false);
 			
 		// check rights
-		if(Rights::check_rights($pid,'protocol',true) && ($correctable['status'] == 2 || $this->getUser()->get_userinfo('name') == $protocol->get_owner())) {
+		if($this->getUser()->hasPermission('protocol', $pid) && ($correctable['status'] == 2 || $this->getUser()->get_userinfo('name') == $protocol->get_owner())) {
 			
 			// smarty
 			$sP = new JudoIntranetSmarty();
@@ -1171,7 +1142,7 @@ class ProtocolView extends PageView {
 		$correctable = $protocol->get_correctable(false);
 			
 		// check rights
-		if(Rights::check_rights($pid,'protocol',true) && ($correctable['status'] == 2 || $this->getUser()->get_userinfo('name') == $protocol->get_owner())) {
+		if($this->getUser()->hasPermission('protocol', $pid) && ($correctable['status'] == 2 || $this->getUser()->get_userinfo('name') == $protocol->get_owner())) {
 			
 			// smarty
 			$sP = new JudoIntranetSmarty();
@@ -1244,7 +1215,7 @@ class ProtocolView extends PageView {
 		$this->tpl->assign('pagecaption',parent::lang('class.ProtocolView#page#caption#correct'));
 		
 		// check rights
-		if(Rights::check_rights($pid,'protocol',true)) {
+		if($this->getUser()->hasPermission('protocol', $pid)) {
 			
 			// smarty-templates
 			$sConfirmation = new JudoIntranetSmarty();
@@ -1339,7 +1310,7 @@ class ProtocolView extends PageView {
 		$this->tpl->assign('tmce',$tmce);
 		
 		// check rights
-		if(Rights::check_rights($pid,'protocol',true) && (in_array($this->getUser()->get_id(),$correctable['correctors']) || $this->getUser()->get_userinfo('name') == $protocol->get_owner())) {
+		if($this->getUser()->hasPermission('protocol', $pid) && (in_array($this->getUser()->get_id(),$correctable['correctors']) || $this->getUser()->get_userinfo('name') == $protocol->get_owner())) {
 			
 			// check owner
 			if($this->getUser()->get_userinfo('name') == $protocol->get_owner()) {
@@ -1472,7 +1443,7 @@ class ProtocolView extends PageView {
 					$corrections = ProtocolCorrection::listCorrections($pid);
 					// put information together
 					$list = array();
-					$user = new User();
+					$user = new User(false);
 					foreach($corrections as $correction) {
 						
 						// change user
@@ -1595,7 +1566,7 @@ class ProtocolView extends PageView {
 		$this->tpl->assign('pagecaption',parent::lang('class.ProtocolView#page#caption#decisions'));
 		
 		// check rights
-		if(Rights::check_rights($pid,'protocol',true) || $pid == false) {
+		if($this->getUser()->hasPermission('protocol', $pid) || $pid == false) {
 			
 			// prepare template
 			$sD = new JudoIntranetSmarty();
@@ -1603,13 +1574,11 @@ class ProtocolView extends PageView {
 			// check pid all or single
 			if($pid === false) {
 				
-				// get protocol ids
-				$pids = Protocol::return_protocols();
-				
-				// create protocol objects to sort
+				// get protocols
 				$protocols = array();
-				foreach($pids as $pid) {
-					$protocols[] = new Protocol($pid);
+				$protocolIds = self::getUser()->permittedItems('protocol', 'r');
+				foreach($protocolIds as $protocolId) {
+					$protocols[$protocolId] = new Protocol($protocolId);
 				}
 				
 				// sort array by protocols date

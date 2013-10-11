@@ -56,63 +56,63 @@ class CalendarView extends PageView {
 	/*
 	 * methods
 	 */
-	/**
-	 * navi knows about the functionalities used in navigation returns an array
-	 * containing first- and second-level-navientries
-	 * 
-	 * @return array contains first- and second-level-navientries
-	 */
-	public static function connectnavi() {
-		
-		// set first- and secondlevel names and set secondlevel $_GET['id']-values
-		static $navi = array();
-		
-		$navi = array(
-						'firstlevel' => array(
-							'name' => 'class.CalendarView#connectnavi#firstlevel#name',
-							'file' => 'calendar.php',
-							'position' => 1,
-							'class' => get_class(),
-							'id' => md5('CalendarView'), // 9163fef556569ffd1f18f8e3e2a9404d
-							'show' => true
-						),
-						'secondlevel' => array(
-							1 => array(
-								'getid' => 'listall', 
-								'name' => 'class.CalendarView#connectnavi#secondlevel#listall',
-								'id' => md5('CalendarView|listall'), // 49769d7048c1520f081c9de448f35de6
-								'show' => true
-							),
-							0 => array(
-								'getid' => 'new', 
-								'name' => 'class.CalendarView#connectnavi#secondlevel#new',
-								'id' => md5('CalendarView|new'), // 00638c249fae83ef1a03e92d291cf1a3
-								'show' => true
-							),
-							2 => array(
-								'getid' => 'details', 
-								'name' => 'class.CalendarView#connectnavi#secondlevel#details',
-								'id' => md5('CalendarView|details'), // e7d37edd6f90df7a8b47098b6c57ebf3 
-								'show' => false
-							),
-							3 => array(
-								'getid' => 'edit', 
-								'name' => 'class.CalendarView#connectnavi#secondlevel#edit',
-								'id' => md5('CalendarView|edit'), // fc3947ed132c20dd2e1681ce4cd12fe6
-								'show' => false
-							),
-							4 => array(
-								'getid' => 'delete', 
-								'name' => 'class.CalendarView#connectnavi#secondlevel#delete',
-								'id' => md5('CalendarView|delete'), //  1b35786f36c1601d20c9e86155363c7f
-								'show' => false
-							)
-						)
-					);
-		
-		// return array
-		return $navi;
-	}
+//	/**
+//	 * navi knows about the functionalities used in navigation returns an array
+//	 * containing first- and second-level-navientries
+//	 * 
+//	 * @return array contains first- and second-level-navientries
+//	 */
+//	public static function connectnavi() {
+//		
+//		// set first- and secondlevel names and set secondlevel $_GET['id']-values
+//		static $navi = array();
+//		
+//		$navi = array(
+//						'firstlevel' => array(
+//							'name' => 'class.CalendarView#connectnavi#firstlevel#name',
+//							'file' => 'calendar.php',
+//							'position' => 1,
+//							'class' => get_class(),
+//							'id' => md5('CalendarView'), // 9163fef556569ffd1f18f8e3e2a9404d
+//							'show' => true
+//						),
+//						'secondlevel' => array(
+//							1 => array(
+//								'getid' => 'listall', 
+//								'name' => 'class.CalendarView#connectnavi#secondlevel#listall',
+//								'id' => md5('CalendarView|listall'), // 49769d7048c1520f081c9de448f35de6
+//								'show' => true
+//							),
+//							0 => array(
+//								'getid' => 'new', 
+//								'name' => 'class.CalendarView#connectnavi#secondlevel#new',
+//								'id' => md5('CalendarView|new'), // 00638c249fae83ef1a03e92d291cf1a3
+//								'show' => true
+//							),
+//							2 => array(
+//								'getid' => 'details', 
+//								'name' => 'class.CalendarView#connectnavi#secondlevel#details',
+//								'id' => md5('CalendarView|details'), // e7d37edd6f90df7a8b47098b6c57ebf3 
+//								'show' => false
+//							),
+//							3 => array(
+//								'getid' => 'edit', 
+//								'name' => 'class.CalendarView#connectnavi#secondlevel#edit',
+//								'id' => md5('CalendarView|edit'), // fc3947ed132c20dd2e1681ce4cd12fe6
+//								'show' => false
+//							),
+//							4 => array(
+//								'getid' => 'delete', 
+//								'name' => 'class.CalendarView#connectnavi#secondlevel#delete',
+//								'id' => md5('CalendarView|delete'), //  1b35786f36c1601d20c9e86155363c7f
+//								'show' => false
+//							)
+//						)
+//					);
+//		
+//		// return array
+//		return $navi;
+//	}
 	
 	
 	
@@ -136,26 +136,9 @@ class CalendarView extends PageView {
 		// switch $_GET['id'] if set
 		if($this->get('id') !== false) {
 			
-			// check rights
-			// get class
-			$class = get_class();
-			// get naviitems
-			$navi = $class::connectnavi();
-			// get rights from db
-			$rights = Rights::get_authorized_entries('navi');
-			$naviid = 0;
-			// walk through secondlevel-entries to find actual entry
-			for($i=0;$i<count($navi['secondlevel']);$i++) {
-				if($navi['secondlevel'][$i]['getid'] == $this->get('id')) {
-					
-					// store id and  break
-					$naviid = $navi['secondlevel'][$i]['id'];
-					break;
-				}
-			}
-			
-			// check if naviid is member of authorized entries
-			if(in_array($naviid,$rights)) {
+			// check permissions
+			$naviId = Navi::idFromFileParam(basename($_SERVER['SCRIPT_FILENAME']), $this->get('id'));
+			if($this->getUser()->hasPermission('navi', $naviId)) {
 				
 				switch($this->get('id')) {
 					
@@ -167,8 +150,8 @@ class CalendarView extends PageView {
 						$this->tpl->assign('hierselect', false);
 						
 						// prepare dates
-						$from = strtotime('yesterday');
-						$to = strtotime('next year');
+						$from = date('Y-m-d', strtotime('yesterday'));
+						$to = '2100-01-01';
 
 						// check $_GET['from'] and $_GET['to']
 						if($this->get('from') !== false) {
@@ -319,11 +302,7 @@ class CalendarView extends PageView {
 		$output = $tr_out = $th_out = '';
 		
 		// read all entries
-		$entries = $this->readAllEntries();
-		// check sort
-		if($this->get('filter') !== false) {
-			$entries = Filter::filterItems($this->get('filter'), 'calendar');
-		}
+		$entries = Filter::filterItems($this->get('filter'), 'calendar', $timefrom, $timeto);
 		
 		// sort calendarentries
 		usort($entries,array($this,'callback_compare_calendars'));
@@ -354,147 +333,133 @@ class CalendarView extends PageView {
 			// check if valid
 			if($entry->get_valid() == 1) {
 					
-				// check timefrom and timeto
-				if($entry->get_date('U') > $timefrom && $entry->get_date('U') <= $timeto) {
+				// smarty
+				$sList[$counter] = array(
+						'name' => array(
+								'href' => 'calendar.php?id=details&cid='.$entry->get_id(),
+								'title' => $entry->get_name(),
+								'name' => $entry->get_name()
+							),
+						'date' => $entry->get_date('d.m.Y'),
+						
+					);
+				
+				// details and pdf if announcement
+				if($entry->get_preset_id() != 0 && Calendar::check_ann_value($entry->get_id(),$entry->get_preset_id()) === true) {
 					
+					$sList[$counter]['show'][] = array(
+							'href' => 'announcement.php?id=details&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
+							'title' => parent::lang('class.CalendarView#listall#title#AnnDetails'),
+							'src' => 'img/ann_details.png',
+							'alt' => parent::lang('class.CalendarView#listall#alt#AnnDetails'),
+							'show' => true
+						);
+					$sList[$counter]['show'][] = array(
+							'href' => 'announcement.php?id=topdf&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
+							'title' => parent::lang('class.CalendarView#listall#title#AnnPDF'),
+							'src' => 'img/ann_pdf.png',
+							'alt' => parent::lang('class.CalendarView#listall#alt#AnnPDF'),
+							'show' => true
+						);
+				} else {
+					
+					// smarty show
+					$sList[$counter]['show'][] = array(
+							'href' => '',
+							'title' => '',
+							'src' => '',
+							'alt' => '',
+							'show' => false
+						);
+					$sList[$counter]['show'][] = array(
+							'href' => '',
+							'title' => '',
+							'src' => '',
+							'alt' => '',
+							'show' => false
+						);
+				}
+					
+				// add admin
+				// logged in and write permissions
+				$admin = $this->getUser()->get_loggedin() && $this->getUser()->hasPermission('calendar', $entry->get_id(),'w'); 
+				if($admin === true) {
+					
+					// prepare admin help
+					$helpListAdmin = $this->getHelp()->getMessage(HELP_MSG_CALENDARLISTADMIN);
 					// smarty
-					$sList[$counter] = array(
-							'name' => array(
-									'href' => 'calendar.php?id=details&cid='.$entry->get_id(),
-									'title' => $entry->get_name(),
-									'name' => $entry->get_name()
-								),
-							'date' => $entry->get_date('d.m.Y'),
-							
+					// edit
+					$sList[$counter]['admin'][] = array(
+							'href' => 'calendar.php?id=edit&cid='.$entry->get_id(),
+							'title' => parent::lang('class.CalendarView#listall#title#edit'),
+							'src' => 'img/edit.png',
+							'alt' => parent::lang('class.CalendarView#listall#alt#edit'),
+							'admin' => $admin
+						);
+					// delete
+					$sList[$counter]['admin'][] = array(
+							'href' => 'calendar.php?id=delete&cid='.$entry->get_id(),
+							'title' => parent::lang('class.CalendarView#listall#title#delete'),
+							'src' => 'img/delete.png',
+							'alt' => parent::lang('class.CalendarView#listall#alt#delete'),
+							'admin' => $admin
 						);
 					
-					// details and pdf if announcement
-					if($entry->get_preset_id() != 0 && Calendar::check_ann_value($entry->get_id(),$entry->get_preset_id()) === true) {
+					if($entry->get_preset_id() == 0) {
 						
-						$sList[$counter]['show'][] = array(
-								'href' => 'announcement.php?id=details&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
-								'title' => parent::lang('class.CalendarView#listall#title#AnnDetails'),
-								'src' => 'img/ann_details.png',
-								'alt' => parent::lang('class.CalendarView#listall#alt#AnnDetails'),
-								'show' => true
-							);
-						$sList[$counter]['show'][] = array(
-								'href' => 'announcement.php?id=topdf&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
-								'title' => parent::lang('class.CalendarView#listall#title#AnnPDF'),
-								'src' => 'img/ann_pdf.png',
-								'alt' => parent::lang('class.CalendarView#listall#alt#AnnPDF'),
-								'show' => true
+						// smarty
+						$sList[$counter]['annadmin'][] = array(
+								'href' => '',
+								'title' => '',
+								'src' => '',
+								'alt' => '',
+								'preset' => $entry->get_preset_id(),
+								'form' => $this->read_preset_form($entry),
 							);
 					} else {
 						
-						// smarty show
-						$sList[$counter]['show'][] = array(
-								'href' => '',
-								'title' => '',
-								'src' => '',
-								'alt' => '',
-								'show' => false
-							);
-						$sList[$counter]['show'][] = array(
-								'href' => '',
-								'title' => '',
-								'src' => '',
-								'alt' => '',
-								'show' => false
-							);
-					}
-						
-					// add admin
-					// get intersection of user-groups and rights
-					$intersect = array_intersect(array_keys($this->getUser()->allGroups()),$entry->get_rights()->get_rights());
-					$admin = false;
-					// check if $intersect has values other than 0
-					foreach($intersect as $num => $igroup) {
-						if($igroup != 0) {
-							$admin = true;
-							break;
+						// get new or edit
+						$action = '';
+						if(Calendar::check_ann_value($entry->get_id(),$entry->get_preset_id()) === true) {
+							$action = 'edit';
+						} else {
+							$action = 'new';
 						}
-					}
-					
-					// if $admin is true add admin-links
-					if($admin === true) {
 						
-						// prepare admin help
-						$helpListAdmin = $this->getHelp()->getMessage(HELP_MSG_CALENDARLISTADMIN);
 						// smarty
-						// edit
-						$sList[$counter]['admin'][] = array(
-								'href' => 'calendar.php?id=edit&cid='.$entry->get_id(),
-								'title' => parent::lang('class.CalendarView#listall#title#edit'),
-								'src' => 'img/edit.png',
-								'alt' => parent::lang('class.CalendarView#listall#alt#edit'),
-								'admin' => $admin
+						// edit/new
+						$sList[$counter]['annadmin'][] = array(
+								'href' => 'announcement.php?id='.$action.'&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
+								'title' => parent::lang('class.CalendarView#listall#title#AnnEdit'),
+								'src' => 'img/ann_edit.png',
+								'alt' => parent::lang('class.CalendarView#listall#alt#AnnEdit'),
+								'preset' => $entry->get_preset_id(),
+								'form' => ''
 							);
 						// delete
-						$sList[$counter]['admin'][] = array(
-								'href' => 'calendar.php?id=delete&cid='.$entry->get_id(),
-								'title' => parent::lang('class.CalendarView#listall#title#delete'),
-								'src' => 'img/delete.png',
-								'alt' => parent::lang('class.CalendarView#listall#alt#delete'),
-								'admin' => $admin
-							);
-						
-						if($entry->get_preset_id() == 0) {
-							
-							// smarty
-							$sList[$counter]['annadmin'][] = array(
-									'href' => '',
-									'title' => '',
-									'src' => '',
-									'alt' => '',
-									'preset' => $entry->get_preset_id(),
-									'form' => $this->read_preset_form($entry),
-								);
-						} else {
-							
-							// get new or edit
-							$action = '';
-							if(Calendar::check_ann_value($entry->get_id(),$entry->get_preset_id()) === true) {
-								$action = 'edit';
-							} else {
-								$action = 'new';
-							}
-							
-							// smarty
-							// edit/new
-							$sList[$counter]['annadmin'][] = array(
-									'href' => 'announcement.php?id='.$action.'&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
-									'title' => parent::lang('class.CalendarView#listall#title#AnnEdit'),
-									'src' => 'img/ann_edit.png',
-									'alt' => parent::lang('class.CalendarView#listall#alt#AnnEdit'),
-									'preset' => $entry->get_preset_id(),
-									'form' => ''
-								);
-							// delete
-							$sList[$counter]['annadmin'][] = array(
-									'href' => 'announcement.php?id=delete&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
-									'title' => parent::lang('class.CalendarView#listall#title#AnnDelete'),
-									'src' => 'img/ann_delete.png',
-									'alt' => parent::lang('class.CalendarView#listall#alt#AnnDelete'),
-									'preset' => $entry->get_preset_id(),
-									'form' => ''
-								);
-						}
-					} else {
-						
-						// smarty
-						$sList[$counter]['admin'][] = array(
-								'href' => '',
-								'title' => '',
-								'src' => '',
-								'alt' => '',
-								'admin' => $admin
+						$sList[$counter]['annadmin'][] = array(
+								'href' => 'announcement.php?id=delete&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
+								'title' => parent::lang('class.CalendarView#listall#title#AnnDelete'),
+								'src' => 'img/ann_delete.png',
+								'alt' => parent::lang('class.CalendarView#listall#alt#AnnDelete'),
+								'preset' => $entry->get_preset_id(),
+								'form' => ''
 							);
 					}
+				} else {
 					
-					// increment counter
-					$counter++;
+					// smarty
+					$sList[$counter]['admin'][] = array(
+							'href' => '',
+							'title' => '',
+							'src' => '',
+							'alt' => '',
+							'admin' => $admin
+						);
 				}
+				
+				// increment counter
+				$counter++;
 			} else {
 				
 				// deleted items
@@ -509,36 +474,6 @@ class CalendarView extends PageView {
 		
 		// smarty-return
 		return $sListall->fetch('smarty.calendar.listall.tpl');
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * readAllEntries() get all calendar entries from db for that the actual
-	 * user has sufficient rights. returns an array with calendar-objects
-	 * 
-	 * @return array all entries as calendar objects
-	 */
-	private function readAllEntries() {
-		
-		// prepare return
-		$calendarEntries = array();
-				
-		// get ids
-// TODO: adapt new permission system
-		$calendarIds = Calendar::return_calendars();
-		
-		// create calendar-objects
-		foreach($calendarIds as $index => $id) {
-			$calendarEntries[] = new Calendar($id);
-		}
-		
-		// return calendar-objects
-		return $calendarEntries;
 	}
 	
 	
@@ -626,12 +561,11 @@ class CalendarView extends PageView {
 		
 		// create links
 		$gl = array();
-//		foreach($groups as $g_id => $name) {
 		foreach($allFilter as $filter) {
 			
 			// smarty
 			$gl[] = array(
-					'href' => 'calendar.php?id='.$getid.'&sort='.$filter->getId().$from.$to,
+					'href' => 'calendar.php?id='.$getid.'&filter='.$filter->getId().$from.$to,
 					'title' => $filter->getName(),
 					'content' => $filter->getName(),
 				);
@@ -642,7 +576,7 @@ class CalendarView extends PageView {
 		
 		// add slider-link
 		$link = array(
-				'params' => 'id="toggleFilter"',
+				'params' => 'id="toggleFilter" class="spanLink"',
 				'title' => parent::lang('class.CalendarView#get_sort_links#toggleFilter#title'),
 				'content' => parent::lang('class.CalendarView#get_sort_links#toggleFilter#name'),
 				'help' => $this->getHelp()->getMessage(HELP_MSG_CALENDARLISTSORTLINKS),
@@ -778,6 +712,8 @@ class CalendarView extends PageView {
 		$rights = $form->addElement('checkbox','public');
 		$rights->setLabel(parent::lang('class.CalendarView#entry#form#public').':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDISPUBLIC));
 		
+		// permissions
+		$this->quickform2AddPermissions($form);
 		
 		// submit-button
 		$form->addElement('submit','submit',array('value' => parent::lang('class.CalendarView#entry#form#submitButton')));
@@ -874,8 +810,8 @@ class CalendarView extends PageView {
 		// pagecaption
 		$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#details'));
 		
-		// check rights
-		if(Rights::check_rights($cid,'calendar',true)) {
+		// check permissions
+		if($this->getUser()->hasPermission('calendar', $cid)) {
 				
 			// get calendar-object
 			$calendar = new Calendar($cid);
@@ -910,7 +846,7 @@ class CalendarView extends PageView {
 	private function edit($cid) {
 		
 		// check rights
-		if(Rights::check_rights($cid,'calendar')) {
+		if($this->getUser()->hasPermission('calendar', $cid)) {
 			
 			// smarty-templates
 			$sD = new JudoIntranetSmarty();
@@ -921,16 +857,6 @@ class CalendarView extends PageView {
 			// pagecaption
 			$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#edit').": \"$cid\" (".$calendar->get_name().")");
 			
-			// get rights
-			$cRights = $calendar->get_rights()->get_rights();
-			// check public access
-			$kPublicAccess = array_search(0,$cRights);
-			$publicAccess = false;
-			if($kPublicAccess !== false) {
-				$publicAccess = true;
-				unset($cRights[$kPublicAccess]);
-			}
-					
 			// prepare return
 			$return = '';
 					
@@ -947,6 +873,13 @@ class CalendarView extends PageView {
 			$year_min = $now_year;
 			$year_max = $now_year + 3;
 			
+			// get filter
+			$allFilter = Filter::allFilterOf('calendar', $calendar->get_id());
+			$filterIds = array();
+			foreach($allFilter as $filter) {
+				$filterIds[] = $filter->getId();
+			}
+			
 			// get datasource
 			$datasource = array(
 					'date' => $calendar->get_date(),
@@ -954,10 +887,10 @@ class CalendarView extends PageView {
 					'shortname' => $calendar->get_shortname(),
 					'type' => $calendar->return_type(),
 					'entry_content' => $calendar->get_content(),
-					'rights' => $cRights
+					'filter' => $filterIds,
 				);
 			// add public access
-			if($publicAccess) {
+			if($calendar->isPermittedFor(0)) {
 				$datasource['public'] = 1;
 			}
 			
@@ -1109,7 +1042,7 @@ class CalendarView extends PageView {
 		$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#delete').": $cid");
 		
 		// check rights
-		if(Rights::check_rights($cid,'calendar')) {
+		if($this->getUser()->hasPermission('calendar', $cid)) {
 				
 			// prepare return
 			$output = '';

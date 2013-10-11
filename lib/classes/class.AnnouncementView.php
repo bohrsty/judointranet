@@ -56,63 +56,63 @@ class AnnouncementView extends PageView {
 	/*
 	 * methods
 	 */
-	/**
-	 * navi knows about the functionalities used in navigation returns an array
-	 * containing first- and second-level-navientries
-	 * 
-	 * @return array contains first- and second-level-navientries
-	 */
-	public static function connectnavi() {
-		
-		// set first- and secondlevel names and set secondlevel $_GET['id']-values
-		static $navi = array();
-		
-		$navi = array(
-						'firstlevel' => array(
-							'name' => 'class.AnnouncementView#connectnavi#firstlevel#name',
-							'file' => 'announcement.php',
-							'position' => 2,
-							'class' => get_class(),
-							'id' => md5('AnnouncementView'), // 703120e744fe3aee8e1ad24a2a1bcfcc
-							'show' => false
-						),
-						'secondlevel' => array(
-							0 => array(
-								'getid' => 'new', 
-								'name' => 'class.AnnouncementView#connectnavi#secondlevel#new',
-								'id' => md5('AnnouncementView|new'), // 1322c66e80ccc07b28a1ac0a55baceed
-								'show' => false
-							),
-							1 => array(
-								'getid' => 'edit', 
-								'name' => 'class.AnnouncementView#connectnavi#secondlevel#edit',
-								'id' => md5('AnnouncementView|edit'), // fc7e08b6b68d7c8892047d71482a3750
-								'show' => false
-							),
-							2 => array(
-								'getid' => 'delete', 
-								'name' => 'class.AnnouncementView#connectnavi#secondlevel#delete',
-								'id' => md5('AnnouncementView|delete'), // 3bc6ea59f9756ed16fc77d71d790439c 
-								'show' => false
-							),
-							3 => array(
-								'getid' => 'details', 
-								'name' => 'class.AnnouncementView#connectnavi#secondlevel#details',
-								'id' => md5('AnnouncementView|details'), // 6ff52a4c896d4c5ccba6726a6736f75e 
-								'show' => false
-							),
-							4 => array(
-								'getid' => 'topdf', 
-								'name' => 'class.AnnouncementView#connectnavi#secondlevel#topdf',
-								'id' => md5('AnnouncementView|topdf'), // 7f529045f2c8310b2e383ac4c789c62a
-								'show' => false
-							)
-						)
-					);
-		
-		// return array
-		return $navi;
-	}
+//	/**
+//	 * navi knows about the functionalities used in navigation returns an array
+//	 * containing first- and second-level-navientries
+//	 * 
+//	 * @return array contains first- and second-level-navientries
+//	 */
+//	public static function connectnavi() {
+//		
+//		// set first- and secondlevel names and set secondlevel $_GET['id']-values
+//		static $navi = array();
+//		
+//		$navi = array(
+//						'firstlevel' => array(
+//							'name' => 'class.AnnouncementView#connectnavi#firstlevel#name',
+//							'file' => 'announcement.php',
+//							'position' => 2,
+//							'class' => get_class(),
+//							'id' => md5('AnnouncementView'), // 703120e744fe3aee8e1ad24a2a1bcfcc
+//							'show' => false
+//						),
+//						'secondlevel' => array(
+//							0 => array(
+//								'getid' => 'new', 
+//								'name' => 'class.AnnouncementView#connectnavi#secondlevel#new',
+//								'id' => md5('AnnouncementView|new'), // 1322c66e80ccc07b28a1ac0a55baceed
+//								'show' => false
+//							),
+//							1 => array(
+//								'getid' => 'edit', 
+//								'name' => 'class.AnnouncementView#connectnavi#secondlevel#edit',
+//								'id' => md5('AnnouncementView|edit'), // fc7e08b6b68d7c8892047d71482a3750
+//								'show' => false
+//							),
+//							2 => array(
+//								'getid' => 'delete', 
+//								'name' => 'class.AnnouncementView#connectnavi#secondlevel#delete',
+//								'id' => md5('AnnouncementView|delete'), // 3bc6ea59f9756ed16fc77d71d790439c 
+//								'show' => false
+//							),
+//							3 => array(
+//								'getid' => 'details', 
+//								'name' => 'class.AnnouncementView#connectnavi#secondlevel#details',
+//								'id' => md5('AnnouncementView|details'), // 6ff52a4c896d4c5ccba6726a6736f75e 
+//								'show' => false
+//							),
+//							4 => array(
+//								'getid' => 'topdf', 
+//								'name' => 'class.AnnouncementView#connectnavi#secondlevel#topdf',
+//								'id' => md5('AnnouncementView|topdf'), // 7f529045f2c8310b2e383ac4c789c62a
+//								'show' => false
+//							)
+//						)
+//					);
+//		
+//		// return array
+//		return $navi;
+//	}
 	
 	
 	
@@ -136,26 +136,9 @@ class AnnouncementView extends PageView {
 		// switch $_GET['id'] if set
 		if($this->get('id') !== false) {
 			
-			// check rights
-			// get class
-			$class = get_class();
-			// get naviitems
-			$navi = $class::connectnavi();
-			// get rights from db
-			$rights = Rights::get_authorized_entries('navi');
-			$naviid = 0;
-			// walk through secondlevel-entries to find actual entry
-			for($i=0;$i<count($navi['secondlevel']);$i++) {
-				if(isset($navi['secondlevel'][$i]['getid']) && $navi['secondlevel'][$i]['getid'] == $this->get('id')) {
-					
-					// store id and  break
-					$naviid = $navi['secondlevel'][$i]['id'];
-					break;
-				}
-			}
-			
-			// check if naviid is member of authorized entries
-			if(in_array($naviid,$rights)) {
+			// check permissions
+			$naviId = Navi::idFromFileParam(basename($_SERVER['SCRIPT_FILENAME']), $this->get('id'));
+			if($this->getUser()->hasPermission('navi', $naviId)) {
 				
 				switch($this->get('id')) {
 					
@@ -256,38 +239,6 @@ class AnnouncementView extends PageView {
 	
 	
 	/**
-	 * read_all_entries get all calendar-entries from db for that the actual
-	 * user has sufficient rights. returns an array with calendar-objects
-	 * 
-	 * @return array all entries as calendar-objects
-	 */
-	private function read_all_entries() {
-		
-		// prepare return
-		$calendar_entries = array();
-				
-		// get ids
-		$calendar_ids = Calendar::return_calendars();
-		
-		// create calendar-objects
-		foreach($calendar_ids as $index => $id) {
-			$calendar_entries[] = new Calendar($id);
-		}
-		
-		// sort calendar-entries
-		usort($calendar_entries,array($this,'callback_compare_calendars'));
-		
-		// return calendar-objects
-		return $calendar_entries;
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
 	 * new_entry creates the "new-entry"-form and handle its response
 	 * 
 	 * @return string html-string with the "new-entry"-form
@@ -298,7 +249,7 @@ class AnnouncementView extends PageView {
 		$sD = new JudoIntranetSmarty();
 		
 		// check rights
-		if(Rights::check_rights($this->get('cid'),'calendar')) {
+		if($this->getUser()->hasPermission('calendar', $this->get('cid'))) {
 			
 			// check cid and pid given
 			if ($this->get('cid') !== false && $this->get('pid') !== false) {
@@ -451,7 +402,7 @@ class AnnouncementView extends PageView {
 		$sD = new JudoIntranetSmarty();
 		
 		// check rights
-		if(Rights::check_rights($this->get('cid'),'calendar')) {
+		if($this->getUser()->hasPermission('calendar', $this->get('cid'))) {
 			
 			// check cid and pid given
 			if ($this->get('cid') !== false && $this->get('pid') !== false) {
@@ -638,7 +589,7 @@ class AnnouncementView extends PageView {
 	private function delete() {
 	
 		// check rights
-		if(Rights::check_rights($this->get('cid'),'calendar')) {
+		if($this->getUser()->hasPermission('calendar', $this->get('cid'))) {
 			
 			// check cid and pid given
 			if ($this->get('cid') !== false && $this->get('pid') !== false) {
@@ -782,7 +733,7 @@ class AnnouncementView extends PageView {
 					
 					// prepare marker-array
 					$announcement = array(
-							'version' => 0
+							'version' => '01.01.1970 01:00'
 						);
 					
 					// add calendar-fields to array
@@ -868,7 +819,7 @@ class AnnouncementView extends PageView {
 					
 					// prepare marker-array
 					$announcement = array(
-							'version' => 0
+							'version' => '01.01.70 01:00'
 						);
 					
 					// add calendar-fields to array
