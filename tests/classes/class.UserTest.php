@@ -120,12 +120,17 @@ class UserTest extends PHPUnit_Framework_TestCase {
 		$this->assertContains(TestObject::lang('class.User#logout#logout#message'), $logout);
 		$this->assertNotContains('<form ', $logout);
 		
-		// check login
-		$login = $this->user->check_login('admin');
-		$this->assertArrayHasKey('password', $login);
-		$this->assertArrayHasKey('active', $login);
-		$login = $this->user->check_login('notExistingUser');
-		$this->assertEquals(false, $login);
+		// check login (correct credentials)
+		$login = $this->user->checkLogin('admin', 'admin');
+		$this->assertTrue($login);
+		// wrong password
+		$login = $this->user->checkLogin('admin', 'wrongPassword');
+		$this->assertFalse($login);
+		$this->assertEquals('class.MainView#callback_check_login#message#WrongPassword', $this->user->get_login_message());
+		// not existing user
+		$login = $this->user->checkLogin('notExistingUser', 'password');
+		$this->assertFalse($login);
+		$this->assertEquals('class.MainView#callback_check_login#message#UserNotExist', $this->user->get_login_message());
 	}
 	
 	

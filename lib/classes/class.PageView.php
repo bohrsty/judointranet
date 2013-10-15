@@ -39,6 +39,7 @@ class PageView extends Object {
 	private $head;
 	private $helpmessages;
 	private $helpids;
+	private $post;
 	// smarty
 	protected $tpl;
 	
@@ -85,6 +86,12 @@ class PageView extends Object {
 	}
 	public function setHelpids($helpids) {
 		$this->helpids = $helpids;
+	}
+	public function getPost(){
+		return $this->post;
+	}
+	public function setPost($post) {
+		$this->post = $post;
 	}
 	
 	/*
@@ -149,6 +156,30 @@ class PageView extends Object {
 		
 		// set class-variables
 		$this->set_get($get);
+		
+		// walk through $_POST if defined
+		$post = null;
+		if(isset($_POST)) {
+			
+			foreach($_POST as $postKey => $postValue) {
+				
+				// check the value
+				$value = $this->check_valid_chars('postvalue',$postValue);
+				if($value === false) {
+					
+					// handle error
+					$errno = $this->getError()->error_raised('POSTInvalidChars','entry:'.$postKey,$postKey);
+					throw new Exception('POSTInvalidChars',$errno);
+				} else {
+					
+					// store value
+					$post[$postKey] = array($postValue,null);
+				}
+			}
+		}
+		
+		// set class-variables
+		$this->setPost($post);
 	}
 	
 	
@@ -742,6 +773,25 @@ class PageView extends Object {
 		$sJsToggleSlide = new JudoIntranetSmarty();
 		$sJsToggleSlide->assign('dialog', $dialog);
 		$this->add_jquery($sJsToggleSlide->fetch('smarty.js-dialog.tpl'));
+	}
+	
+	
+	
+	/**
+	 * post() returns the value of $_POST[$var] if set
+	 * 
+	 * @param string $var text of key in $_POST array
+	 * @return string value of the $_POST key, or false if not set
+	 */
+	public function post($var) {
+		
+		// check if key is set
+		$post = $this->getPost();
+		if(isset($post[$var])) {
+			return $post[$var][0];
+		} else {
+			return false;
+		}
 	}
 }
 

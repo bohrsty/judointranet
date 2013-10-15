@@ -56,71 +56,6 @@ class MainView extends PageView {
 	/*
 	 * methods
 	 */
-//	/**
-//	 * navi knows about the functionalities used in navigation returns an array
-//	 * containing first- and second-level-navientries
-//	 * 
-//	 * @return array contains first- and second-level-navientries
-//	 */
-//	public static function connectnavi() {
-//		
-//		// set first- and secondlevel names and set secondlevel $_GET['id']-values
-//		static $navi = array();
-//		
-//		$navi = array(
-//						'firstlevel' => array(
-//							'name' => 'class.MainView#connectnavi#firstlevel#name',
-//							'file' => 'index.php',
-//							'position' => 0,
-//							'class' => 'MainView',
-//							'id' => md5('MainView'), // ffe65f439f54bfbd4437df5967d4c173
-//							'show' => true
-//						),
-//						'secondlevel' => array(
-//						)
-//					);
-//		
-//		// login or logout
-//		if(self::getUser()->get_loggedin()) {
-//			
-//			// add logout
-//			array_unshift($navi['secondlevel'],
-//					array(
-//						'getid' => 'logout', 
-//						'name' => 'class.PageView#navi#secondlevel#logout',
-//						'id' => md5('MainView|logout'), // 2440e505211f609c568a2a0e811b1636
-//						'show' => true
-//					),
-//					array(
-//						'getid' => 'user', 
-//						'name' => 'class.PageView#navi#secondlevel#user',
-//						'id' => md5('MainView|user'), // 23b195e85c4e452b9990b75f64d9a4a3
-//						'show' => false
-//					)
-//				);
-//		} else {
-//			
-//			// add login
-//			array_unshift($navi['secondlevel'],
-//					array(
-//						'getid' => 'login', 
-//						'name' => 'class.PageView#navi#secondlevel#login',
-//						'id' => md5('MainView|login'), // a2f4f271c394ad7472ee4e600d3df345
-//						'show' => true
-//					)
-//				);
-//		}
-//		
-//		// return array
-//		return $navi;
-//	}
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * init chooses the functionality by using $_GET['id']
 	 * 
@@ -144,8 +79,7 @@ class MainView extends PageView {
 					// smarty
 					$this->tpl->assign('title', $this->title(parent::lang('class.MainView#init#login#title')));
 					$this->tpl->assign('main', $this->login());
-					$this->tpl->assign('jquery', true);
-					$this->tpl->assign('hierselect', false);
+					$this->tpl->assign('zebraform', true);
 					
 				break;
 				
@@ -154,8 +88,6 @@ class MainView extends PageView {
 					// smarty
 					$this->tpl->assign('title', $this->title(parent::lang('class.MainView#init#logout#title')));
 					$this->tpl->assign('main', $this->getUser()->logout());
-					$this->tpl->assign('jquery', false);
-					$this->tpl->assign('hierselect', false);
 					
 				break;
 				
@@ -164,8 +96,7 @@ class MainView extends PageView {
 					// smarty
 					$this->tpl->assign('title', $this->title(parent::lang('class.MainView#init#user#title')));
 					$this->tpl->assign('main', $this->user());
-					$this->tpl->assign('jquery', true);
-					$this->tpl->assign('hierselect', true);
+					$this->tpl->assign('zebraform', true);
 					
 				break;
 				
@@ -179,8 +110,6 @@ class MainView extends PageView {
 					// smarty
 					$this->tpl->assign('title', '');
 					$this->tpl->assign('main', $this->getError()->to_html($errno));
-					$this->tpl->assign('jquery', true);
-					$this->tpl->assign('hierselect', false);
 				break;
 			}
 		} else {
@@ -190,10 +119,6 @@ class MainView extends PageView {
 			$this->tpl->assign('title', $this->title(parent::lang('class.MainView#init#default#title'))); 
 			// smarty-main
 			$this->tpl->assign('main', $this->defaultContent());
-			// smarty-jquery
-			$this->tpl->assign('jquery', true);
-			// smarty-hierselect
-			$this->tpl->assign('hierselect', false);
 		}
 		
 		// global smarty
@@ -224,98 +149,92 @@ class MainView extends PageView {
 			$uri = base64_decode($this->get('r'));
 			$r = '&r='.$this->get('r');
 		}
+		$loginUri = 'index.php?id=login'.$r;
 		
-		// formular		
-		$form = new HTML_QuickForm2(
-								'login',
-								'post',
-								array(
-									'name' => 'login',
-									'action' => 'index.php?id=login'.$r
-								)
-							);
-		
-		// renderer
-		$renderer = HTML_QuickForm2_Renderer::factory('default');
-		$renderer->setOption('required_note',parent::lang('class.MainView#login#form#requiredNote'));
+		$form = new Zebra_Form(
+				'login',					// id/name
+				'post',						// method
+				'index.php?id=login'.$r		// action
+			);
+		// set language
+		$form->language('deutsch');
+		// set docktype xhtml
+		$form->doctype('xhtml');
 		
 		// elements
 		// username
-		$username = $form->addElement('text','username')->setLabel(parent::lang('class.MainView#login#form#username').':');
-		$username->addRule('required',parent::lang('class.MainView#login#rule#required.username'));
-//		$username->addRule('regexp','');
+		$form->add(
+				'label',			// type
+				'labelUsername',	// id/name
+				'username',			// for
+				parent::lang('class.MainView#login#form#username'),	// label text
+				array('inside' => true,)	// label inside
+			);
+		$username = $form->add(
+				'text',			// type
+				'username'		// id/name
+			);
+		$username->set_rule(
+				array(
+					'required' => array(
+						'error', parent::lang('class.MainView#login#rule#required.username'),
+					),
+				)
+			);
 		
 		// password
-		$password = $form->addElement('password','password')->setLabel(parent::lang('class.MainView#login#form#password').':');		
-		$password->addRule('required',parent::lang('class.MainView#login#rule#required.password'));
-//		$password->addRule('regexp','');
+		$form->add(
+				'label',			// type
+				'labelPassword',	// id/name
+				'password',			// for
+				parent::lang('class.MainView#login#form#password'),	// label text
+				array('inside' => true,)	// label inside
+			);
+		$password = $form->add(
+				'password',		// type
+				'password'		// id/name
+			);
+		$password->set_rule(
+				array(
+					'required' => array(
+						'error', parent::lang('class.MainView#login#rule#required.password'),
+					),
+				)
+			);
 		
 		// submit-button
-		$form->addElement('submit','submit',array('value' => parent::lang('class.MainView#login#form#loginButton')));
-		
-		// callback
-		$form->addRule('callback','Authentifizierung fehlgeschlagen',array('callback' => array($this,'callback_check_login')));
+		$form->add(
+				'submit',		// type
+				'buttonSubmit',	// id/name
+				parent::lang('class.MainView#login#form#loginButton')	// value
+			);
 		
 		// smarty-mesage
 		$sLogin->assign('caption', parent::lang('class.MainView#login#message#caption'));
 		
 		// validate
 		if($form->validate()) {
-			
-			// login and redirect
-			$this->getUser()->change_user($username->getValue(),true);
-			header('Location:'.$uri);
-			exit();
+			if($this->getUser()->checkLogin($this->post('username'), $this->post('password'))) {
+				
+				// login and redirect
+				$this->getUser()->change_user($this->post('username'),true);
+				header('Location:'.$uri);
+				exit();
+			} else {
+				
+				// login failed and redirect
+				header('Location:'.$loginUri);
+				exit();
+			}
 		} else {
 			
 			// smarty message and form
 			$sLogin->assign('message', parent::lang($this->getUser()->get_login_message()).'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_LOGIN, array($this->getUser()->get_login_message() => '')));
-			$sLogin->assign('form', $form->render($renderer));
-		}
-		
+			$sLogin->assign('form', $form->render('', true));
+		}		
 		
 		// return smarty
 		return $sLogin->fetch('smarty.login.tpl');
-	}
-	
-	
-	
-	
-	
-	
-	/**
-	 * callback_check_login checks the given infos against the user
-	 * 
-	 * @param array $args data from quickform to check
-	 */
-	public function callback_check_login($args) {
-		
-		// check if user exists
-		$user = $this->getUser()->check_login($args['username']);
-		if($user !== false) {
-			
-			// check active and password
-			if($user['active'] == 0) {
-				
-				// set message and return false
-				$this->getUser()->set_login_message('class.MainView#callback_check_login#message#UserNotActive');
-				return false;
-			} elseif($user['password'] != md5($args['password'])) {
-				
-				// set message and return false
-				$this->getUser()->set_login_message('class.MainView#callback_check_login#message#WrongPassword');
-				return false;
-			} else {
-				
-				// username and password correct, return true
-				return true;
-			}
-		} else {
-			
-			// set message and return false
-			$this->getUser()->set_login_message('class.MainView#callback_check_login#message#UserNotExist');
-			return false;
-		}
 	}
 	
 	
@@ -349,54 +268,90 @@ class MainView extends PageView {
 				$sUserPasswd->assign('section', parent::lang('class.MainView#user#caption#passwd'));
 				
 				// prepare form
-				$form = new HTML_QuickForm2(
-						'passwd',
-						'post',
+				$form = new Zebra_Form(
+					'passwd',					// id/name
+					'post',						// method
+					'index.php?id=user&action=passwd'	// action
+				);
+				
+		// TODO: add complexity check
+				// password
+				$form->add(
+						'label',			// type
+						'labelPassword',	// id/name
+						'password',			// for
+						parent::lang('class.MainView#user#passwd#label'),	// label text
+						array('inside' => true,)	// label inside
+					);
+				$password = $form->add(
+						'password',		// type
+						'password'		// id/name
+					);
+				$password->set_rule(
 						array(
-							'name' => 'passwd',
-							'action' => 'index.php?id=user&action=passwd'
+							'required' => array(
+								'error', parent::lang('class.MainView#user#rule#required'),
+							),
+						)
+					);
+				// passwordConfirm
+				$form->add(
+						'label',				// type
+						'labelPasswordConfirm',	// id/name
+						'passwordConfirm',				// for
+						parent::lang('class.MainView#user#passwd#labelConfirm'),	// label text
+						array('inside' => true,)	// label inside
+					);
+				$passwordConfirm = $form->add(
+						'password',			// type
+						'passwordConfirm'	// id/name
+					);
+				$passwordConfirm->set_rule(
+						array(
+							'required' => array(
+								'error', parent::lang('class.MainView#user#rule#required'),
+							),
+							'compare' => array(
+								'password', 'error', parent::lang('class.MainView#user#rule#checkPasswd'),
+								
+							),
 						)
 					);
 				
-				// add elementgroup
-				$passwd = $form->addElement('group','password',array());
-				// add fields
-				$passwd1 = $passwd->addElement('password','password1',array());
-				$passwd2 = $passwd->addElement('password','password2',array());
-				// add label
-				$passwd->setLabel(parent::lang('class.MainView#user#passwd#label').':');
 				// submit-button
-				$form->addSubmit('submit',array('value' => parent::lang('class.MainView#user#passwd#submitButton')));
-				// renderer
-				$renderer = HTML_QuickForm2_Renderer::factory('default');
-				$renderer->setOption('required_note',parent::lang('class.MainView#user#form#requiredNote'));
-				// add rules
-				$passwd->addRule('required',parent::lang('class.MainView#user#rule#required'));
-				$passwd->addRule('callback',parent::lang('class.MainView#user#rule#checkPasswd'),array($this,'callback_check_passwd'));			
+				$form->add(
+						'submit',		// type
+						'buttonSubmit',	// id/name
+						parent::lang('class.MainView#user#passwd#submitButton')	// value
+					);
+				
 				
 				// validate
 				if($form->validate()) {
-					
-					// get values
-					$data = $form->getValue();
 					
 					// get db-object
 					$db = Db::newDb();
 					
 					// prepare sql-statement
-					$sql = "UPDATE user
-							SET password='".md5($data['password']['password1'])."'
-							WHERE id=".$this->getUser()->get_id();
+					$sql = 'UPDATE user
+							SET password=\''.md5($db->real_escape_string($this->post('password'))).'\'
+							WHERE id=\''.$db->real_escape_string($this->getUser()->get_id()).'\'';
 					
 					// execute statement
 					$result = $db->query($sql);
+					
+					// get data
+					if(!$result) {
+						$errno = self::getError()->error_raised('MysqlError', $db->error);
+						self::getError()->handle_error($errno);
+					}
 					
 					// smarty message
 					$sUserPasswd->assign('message', parent::lang('class.MainView#user#validate#passwdChanged'));
 				} else {
 					
 					// smarty form and return
-					$sUserPasswd->assign('form', $form->render($renderer));
+					$sUserPasswd->assign('form', $form->render('', true));
 				}
 				return $sUserPasswd->fetch('smarty.user.passwd.tpl');
 			} else {
@@ -409,27 +364,6 @@ class MainView extends PageView {
 			$this->getError()->handle_error($errno);
 			return $this->getError()->to_html($errno);
 		}
-	}
-	
-	
-	
-	
-	
-	
-	/**
-	 * callback_check_passwd checks the given passwords for identity
-	 * 
-	 * @param array $args data from quickform to check
-	 */
-	public function callback_check_passwd($args) {
-		
-		// check passwords
-		if($args['password1'] === $args['password2']) {
-			return true;
-		} else {
-			return false;
-		}
-		
 	}
 }
 

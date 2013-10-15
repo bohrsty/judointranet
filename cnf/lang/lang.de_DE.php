@@ -398,7 +398,8 @@ $lang = array(
 				'passwd' => 'Kennwort &auml;ndern'
 			),
 			'passwd' => array(
-				'label' => 'Neues Kennwort und Wiederholung eingeben',
+				'label' => 'Neues Kennwort',
+				'labelConfirm' => 'Kennwort wiederholen',
 				'submitButton' => 'Kennwort ändern'
 			),
 			'form' => array(

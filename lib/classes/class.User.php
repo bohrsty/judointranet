@@ -240,31 +240,59 @@ class User extends Object {
 	
 	
 	/**
-	 * check_login checks username and password against db
+	 * checkLogin($username, $password) checks username and password against db
 	 * 
 	 * @param string $username the given username
-	 * @return mixed false if login failed, userid of loggedin user if successful
+	 * @param string $password the password to check
+	 * @return bool false if login failed (reason in $this->login_message), true if successful
 	 */
-	public function check_login($username) {
-		
-		// prepare return
-		$return = '';
+	public function checkLogin($username, $password) {
 		
 		// get db-object
 		$db = Db::newDb();
 		
 		// prepare sql-statement
-		$sql = "SELECT u.password,u.active
+		$sql = 'SELECT u.password,u.active
 				FROM user AS u
-				WHERE u.username = '$username'";
+				WHERE u.username = \''.$db->real_escape_string($username).'\'';
 		
 		// execute statement
 		$result = $db->query($sql);
 		
-		// get result
-		if($result->num_rows > 0) {
-			return $result->fetch_array(MYSQL_ASSOC);
+		// get data
+		$user = array();
+		if($result) {
+			if($result->num_rows > 0) {
+				$user = $result->fetch_array(MYSQL_ASSOC);
+			}
 		} else {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
+		}
+		
+		// check if user exists
+		if(count($user) !== 0) {
+			
+			// check active and password
+			if($user['active'] == 0) {
+				
+				// set message and return false
+				$this->set_login_message('class.MainView#callback_check_login#message#UserNotActive');
+				return false;
+			} elseif($user['password'] != md5($password)) {
+				
+				// set message and return false
+				$this->set_login_message('class.MainView#callback_check_login#message#WrongPassword');
+				return false;
+			} else {
+				
+				// username and password correct, return true
+				return true;
+			}
+		} else {
+			
+			// set message and return false
+			$this->set_login_message('class.MainView#callback_check_login#message#UserNotExist');
 			return false;
 		}
 	}

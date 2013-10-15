@@ -25,14 +25,16 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 		<title>{$title}</title>
-		<link rel="stylesheet" type="text/css" href="css/start/jquery-ui-1.10.3.custom.css" />
-		<link rel="stylesheet" type="text/css" href="css/page.css" />
 		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 		<script type="text/javascript" src="js/jquery-ui-1.10.3.custom.min.js"></script>
 		<script type="text/javascript" src="js/jquery.ui.datepicker-de.js"></script>
-{if $hierselect}
+{if isset($hierselect) && $hierselect}
 		<script type="text/javascript" src="js/quickform.js"></script>
 		<script type="text/javascript" src="js/quickform-hierselect.js"></script>
+{/if}
+{if isset($zebraform) and $zebraform}
+		<link rel="stylesheet" type="text/css" href="css/zebra_form/zebra_form.css" />
+		<script type="text/javascript" src="js/zebra_form.js"></script>
 {/if}
 {if isset($tinymce) and $tinymce}
 		<script type="text/javascript" src="js/tiny_mce/tiny_mce.js"></script>
@@ -41,6 +43,8 @@
 		<script type="text/javascript" src="js/difflib.js"></script>
 		<script type="text/javascript" src="js/diffview.js"></script>
 {/if}
+		<link rel="stylesheet" type="text/css" href="css/start/jquery-ui-1.10.3.custom.css" />
+		<link rel="stylesheet" type="text/css" href="css/page.css" />
 		<script type="text/javascript">
 			{literal}$(function() {
 				$({/literal}{$helpids}{literal}).each(function() {
@@ -80,7 +84,7 @@
 			}{/literal}
 		</script>
 {/if}
-{if $jquery}
+{if $manualjquery!=''}
 		<script type="text/javascript">
 			$(document).ready(function(){ldelim}
 				// jQuery functions go here...

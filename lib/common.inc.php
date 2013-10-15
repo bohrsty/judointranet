@@ -53,10 +53,16 @@ spl_autoload_register(
 		// load HTML2PDF
 		if($class == 'HTML2PDF') {
 			include_once('lib/html2pdf/html2pdf.class.php');
+		// load smarty
 		} elseif($class == 'Smarty') {
 			include_once('lib/smarty/libs/Smarty.class.php');
+		// load smarty plugins
 		} elseif(substr($class,0,6) == 'Smarty') {
 			include_once('lib/smarty/libs/sysplugins/'.strtolower($class).'.php');
+		// load Zebra_Form
+		} elseif($class == 'Zebra_Form') {
+			include_once('lib/zebra_form/Zebra_Form.php');
+		// load QuickForm2
 		} elseif(substr($class,0,4) == 'HTML') {
 			
 			// load quickform

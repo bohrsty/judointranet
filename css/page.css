@@ -566,6 +566,31 @@ span.headlineText,span.groupName {
 	margin-left: 10px;
 }
 
+.Zebra_Form_error_message .message {
+	background: #b6d6e4;
+	color: black;
+}
+
+.Zebra_Form_error_message .arrow {
+    border-color: #b6d6e4 transparent transparent transparent;
+}
+
+.Zebra_Form div.error {
+	background-color: #b6d6e4;
+}
+
+.Zebra_Form div.error div.container div.close {
+	background-color: #3a9ec8;
+}
+
+.Zebra_Form div.error div.container span {
+	color: black;
+}
+
+.Zebra_Form div.error div.container {
+	border-color: #3a9ec8;
+}
+
 
 
 
