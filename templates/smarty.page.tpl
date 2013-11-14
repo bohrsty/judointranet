@@ -44,7 +44,7 @@
 		<script type="text/javascript" src="js/diffview.js"></script>
 {/if}
 		<script type="text/javascript" src="js/page.js"></script>
-		<link rel="stylesheet" type="text/css" href="css/start/jquery-ui-1.10.3.custom.css" />
+		<link rel="stylesheet" type="text/css" href="css/start/jquery-ui-1.10.3.custom.min.css" />
 		<link rel="stylesheet" type="text/css" href="css/page.css" />
 		<script type="text/javascript">
 {literal}
