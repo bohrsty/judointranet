@@ -184,15 +184,6 @@ $lang = array(
 				'title' => 'Kalender: Termin l&ouml;schen'
 			)
 		),
-//		'connectnavi' => array(
-//			'firstlevel' => array(
-//				'name' => 'Kalender'
-//			),
-//			'secondlevel' => array(
-//				'listall' => 'Listenansicht',
-//				'new' => 'Neuen Eintrag erstellen'
-//			)
-//		),
 		'get_sort_links' => array(
 			'dates' => array(
 				'next_day' => 'Morgen',
@@ -226,7 +217,11 @@ $lang = array(
 				'dateFilter' => 'Datumsfilter',
 				'groupFilter' => 'Gruppenfilter',
 				'dialogTitle' => 'Filter ausw&auml;hlen'
-			)
+			),
+			'choose' => array(
+				'date' => 'Zeitraum ausw&auml;hlen',
+				'group' => 'Gruppe ausw&auml;hlen',
+			),
 		),
 		'entry' => array(
 			'form' => array(
@@ -252,7 +247,7 @@ $lang = array(
 		),
 		'delete' => array(
 			'form' => array(
-				'yes' => 'Ja',
+				'yes' => '  Ja  ',
 				'cancel' => 'Abbrechen'
 			),
 			'message' => array(
@@ -260,10 +255,11 @@ $lang = array(
 				'done' => 'Der Eintrag wurde erfolgreich gel&ouml;scht.'
 			),
 			'title' => array(
-				'cancel' => 'Bricht den L&ouml;schvorgang ab'
+				'cancel' => 'Bricht den L&ouml;schvorgang ab',
+				'yes' => 'L&ouml;scht den Eintrag',
 			)
 		),
-		'read_preset_form' => array(
+		'readPresetForm' => array(
 			'select' => array(
 				'choosePreset' => 'Ausschreibungsvorlage ausw&auml;hlen',
 				'submit' => '+'
@@ -279,11 +275,16 @@ $lang = array(
 			'caption' => array(
 				'edit' => 'Editiere Eintrag',
 				'listall' => 'Listenansicht',
-				'new_entry' => 'Neuen Eintrag erstellen',
+				'newEntry' => 'Neuen Eintrag erstellen',
 				'details' => 'Details',
 				'delete' => 'L&ouml;sche Eintrag'
 			)
-		)
+		),
+		'global' => array(
+			'info' => array(
+				'help' => 'Hilfe'
+			),
+		),
 	),
 	'class.PageView' => array(
 		'title' => array(
@@ -321,14 +322,10 @@ $lang = array(
 				'closeText' => 'Schlie&szlig;en',
 			),
 		),
-		'quickform2AddPermissions' => array(
+		'zebraAddPermissions' => array(
 			'dialog' => array(
 				'closeText' => 'Schlie&szlig;en',
 				'title' => 'Berechtigungen auswählen',
-			),
-			'togglePermissions' => array(
-				'title' => 'Berechtigungen anpassen',
-				'name' => 'Berechtigungen anpassen',
 			),
 			'form' => array(
 				'permissions' => 'Berechtigungen',
@@ -336,6 +333,7 @@ $lang = array(
 			'clearRadio' => array(
 				'title' => 'Berechtigung entfernen',
 				'name' => 'Berechtigung entfernen',
+				'note' => 'Berechtigung f&uuml;r diese Gruppe vollst&auml;ndig entfernen',
 			),
 			'permissions' => array(
 				'read' => 'Berechtigung: Lesen/Auflisten',
@@ -446,7 +444,10 @@ $lang = array(
 				'date' => '<span>Datum:</span><br />',
 				'type' => '<span>Art:</span><br />',
 				'content' => '<span>Beschreibung:</span><br />',
-				'filter' => '<span>Filter:</span><br />'
+				'filter' => '<span>Filter:</span><br />',
+				'public' => '<span>&Ouml;ffentlicher Zugriff:</span><br />',
+				'publicYes' => 'Ja',
+				'publicNo' => 'Nein',
 			)
 		)
 	),
@@ -897,16 +898,6 @@ $lang = array(
 				'NotAuthorized' => 'FEHLER - Nicht berechtigt'
 			),
 		),
-//		'connectnavi' => array(
-//			'firstlevel' => array(
-//				'name' => 'Protokolle'
-//			),
-//			'secondlevel' => array(
-//				'listall' => 'Listenansicht',
-//				'new' => 'Neues Protokoll erstellen',
-//				'showdecisions' => 'Alle Beschl&uuml;sse anzeigen'
-//			)
-//		),
 		'defaultContent' => array(
 			'headline' => array(
 				'text' => 'Protokolle'
@@ -1092,7 +1083,7 @@ $lang = array(
 					FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 					OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 					DEALINGS IN THE SOFTWARE.</p>',
-				'fieldDate' => '<p><b>Format</b>: <i>yyyy-mm-dd</i><br />
+				'fieldDate' => '<p><b>Format</b>: <i>dd.mm.yyyy</i><br />
 					<b>Standardwert</b>: <i>das heutige Datum</i></p>
 					<p>Dieses Feld legt ein Datum f&uuml;r diesen Datensatz fest, das Feld
 					hat eine Datumsauswahl zur Unterst&uuml;tzung, dieses sollte zur Sicherstellung
@@ -1307,6 +1298,14 @@ $lang = array(
 				'administrationPage' => 'Administration',
 				'administrationPage.field' => 'Ben. Tabellen verwalten',
 				'administrationPage.defaults' => 'Vorgaben verwalten',
+			),
+		),
+	),
+	'zebraTemplate' => array(
+		'tabs' => array(
+			'name' => array(
+				'elements' => 'Daten',
+				'permissions' => 'Berechtigungen',
 			),
 		),
 	),

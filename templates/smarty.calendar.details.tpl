@@ -27,4 +27,5 @@
 	<p class="details">{$data.type}</p>
 	<p class="details">{$data.content}</p>
 	<p class="details">{$data.filter}</p>
+	<p class="details">{$data.public}</p>
 </div>

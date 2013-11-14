@@ -56,70 +56,6 @@ class CalendarView extends PageView {
 	/*
 	 * methods
 	 */
-//	/**
-//	 * navi knows about the functionalities used in navigation returns an array
-//	 * containing first- and second-level-navientries
-//	 * 
-//	 * @return array contains first- and second-level-navientries
-//	 */
-//	public static function connectnavi() {
-//		
-//		// set first- and secondlevel names and set secondlevel $_GET['id']-values
-//		static $navi = array();
-//		
-//		$navi = array(
-//						'firstlevel' => array(
-//							'name' => 'class.CalendarView#connectnavi#firstlevel#name',
-//							'file' => 'calendar.php',
-//							'position' => 1,
-//							'class' => get_class(),
-//							'id' => md5('CalendarView'), // 9163fef556569ffd1f18f8e3e2a9404d
-//							'show' => true
-//						),
-//						'secondlevel' => array(
-//							1 => array(
-//								'getid' => 'listall', 
-//								'name' => 'class.CalendarView#connectnavi#secondlevel#listall',
-//								'id' => md5('CalendarView|listall'), // 49769d7048c1520f081c9de448f35de6
-//								'show' => true
-//							),
-//							0 => array(
-//								'getid' => 'new', 
-//								'name' => 'class.CalendarView#connectnavi#secondlevel#new',
-//								'id' => md5('CalendarView|new'), // 00638c249fae83ef1a03e92d291cf1a3
-//								'show' => true
-//							),
-//							2 => array(
-//								'getid' => 'details', 
-//								'name' => 'class.CalendarView#connectnavi#secondlevel#details',
-//								'id' => md5('CalendarView|details'), // e7d37edd6f90df7a8b47098b6c57ebf3 
-//								'show' => false
-//							),
-//							3 => array(
-//								'getid' => 'edit', 
-//								'name' => 'class.CalendarView#connectnavi#secondlevel#edit',
-//								'id' => md5('CalendarView|edit'), // fc3947ed132c20dd2e1681ce4cd12fe6
-//								'show' => false
-//							),
-//							4 => array(
-//								'getid' => 'delete', 
-//								'name' => 'class.CalendarView#connectnavi#secondlevel#delete',
-//								'id' => md5('CalendarView|delete'), //  1b35786f36c1601d20c9e86155363c7f
-//								'show' => false
-//							)
-//						)
-//					);
-//		
-//		// return array
-//		return $navi;
-//	}
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * init chooses the functionality by using $_GET['id']
 	 * 
@@ -147,7 +83,7 @@ class CalendarView extends PageView {
 						// smarty
 						$this->tpl->assign('title', $this->title(parent::lang('class.CalendarView#init#listall#title')));
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', false);
+						$this->tpl->assign('zebraform', true);
 						
 						// prepare dates
 						$from = date('Y-m-d', strtotime('yesterday'));
@@ -167,9 +103,9 @@ class CalendarView extends PageView {
 						
 						// smarty
 						$this->tpl->assign('title', $this->title(parent::lang('class.CalendarView#init#new#title')));
-						$this->tpl->assign('main', $this->new_entry());
+						$this->tpl->assign('main', $this->newEntry());
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', true);
+						$this->tpl->assign('zebraform', true);
 					break;
 					
 					case 'details':
@@ -198,12 +134,12 @@ class CalendarView extends PageView {
 						// smarty
 						$this->tpl->assign('title', $this->title(parent::lang('class.CalendarView#init#edit#title')));
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', true);
+						$this->tpl->assign('zebraform', true);
 						
 						// if cid does not exist, error
 						if(Calendar::check_id($this->get('cid'))) {
 							// smarty
-							$this->tpl->assign('main', $this->edit($this->get('cid')));$this->add_output(array('main' => $this->edit($this->get('cid'))));
+							$this->tpl->assign('main', $this->edit($this->get('cid')));
 						} else {
 							
 							// error
@@ -219,7 +155,7 @@ class CalendarView extends PageView {
 						// smarty
 						$this->tpl->assign('title', $this->title(parent::lang('class.CalendarView#init#delete#title')));
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', true);
+						$this->tpl->assign('zebraform', true);
 						
 						// if cid does not exist, error
 						if(Calendar::check_id($this->get('cid'))) {
@@ -305,12 +241,12 @@ class CalendarView extends PageView {
 		$entries = Filter::filterItems($this->get('filter'), 'calendar', $timefrom, $timeto);
 		
 		// sort calendarentries
-		usort($entries,array($this,'callback_compare_calendars'));
+		usort($entries,array($this,'callbackCompareCalendars'));
 		
 		// smarty-templates
 		$sListall = new JudoIntranetSmarty();
 		// sortlinks
-		$sListall->assign('sortlinks', $this->get_sort_links($this->get('id')));
+		$sListall->assign('filterlinks', $this->getFilterLinks($this->get('id')));
 		
 		// smarty
 		$sTh = array(
@@ -414,7 +350,7 @@ class CalendarView extends PageView {
 								'src' => '',
 								'alt' => '',
 								'preset' => $entry->get_preset_id(),
-								'form' => $this->read_preset_form($entry),
+								'form' => $this->readPresetForm($entry),
 							);
 					} else {
 						
@@ -483,13 +419,13 @@ class CalendarView extends PageView {
 	
 	
 	/**
-	 * get_sort_links returns links to list "week" "month" "year" etc
-	 * and sortable groups
+	 * getFilterLinks($getid) returns links to list "week" "month" "year" etc
+	 * and filter
 	 * 
 	 * @param string $getid $_GET['get'] to use in links
 	 * @return string html-string with the links
 	 */
-	private function get_sort_links($getid) {
+	private function getFilterLinks($getid) {
 		
 		// prepare output
 		$date_links = $group_links = $output = $reset_links = '';
@@ -497,10 +433,10 @@ class CalendarView extends PageView {
 		// smarty-template
 		$sS = new JudoIntranetSmarty();
 		
-		// if sort, attach sort
-		$sort = '';
+		// if filter, attach filter
+		$filter = '';
 		if($this->get('filter') !== false) {
-			$sort = '&filter='.$this->get('filter');
+			$filter = '&filter='.$this->get('filter');
 		}
 		// if from or to add from or to
 		$from = $to = '';
@@ -519,7 +455,7 @@ class CalendarView extends PageView {
 						'content' => parent::lang('class.CalendarView#get_sort_links#reset#all')
 					),
 				array( // dates
-						'href' => 'calendar.php?id='.$getid.$sort,
+						'href' => 'calendar.php?id='.$getid.$filter,
 						'title' => parent::lang('class.CalendarView#get_sort_links#title#resetDate'),
 						'content' => parent::lang('class.CalendarView#get_sort_links#reset#date')
 					),
@@ -543,12 +479,11 @@ class CalendarView extends PageView {
 					);
 		
 		// create links
-		$dl = array();
 		foreach($dates as $name => $date) {
 			
 			// smarty
 			$dl[] = array(
-					'href' => 'calendar.php?id='.$getid.'&from='.date('Y-m-d',time()).'&to='.date('Y-m-d',strtotime($date)).$sort,
+					'href' => 'calendar.php?id='.$getid.'&from='.date('Y-m-d',time()).'&to='.date('Y-m-d',strtotime($date)).$filter,
 					'title' => parent::lang('class.CalendarView#get_sort_links#title#'.$name),
 					'content' => parent::lang('class.CalendarView#get_sort_links#dates#'.$name)
 				);
@@ -573,6 +508,8 @@ class CalendarView extends PageView {
 		usort($gl, array($this, 'callbackCompareFilter'));
 		$sS->assign('gl', $gl);
 		$sS->assign('groupFilter', parent::lang('class.CalendarView#get_sort_links#toggleFilter#groupFilter'));
+		$sS->assign('chooseDate', parent::lang('class.CalendarView#get_sort_links#choose#date'));
+		$sS->assign('chooseGroup', parent::lang('class.CalendarView#get_sort_links#choose#group'));
 		
 		// add slider-link
 		$link = array(
@@ -588,24 +525,25 @@ class CalendarView extends PageView {
 		
 		// add jquery-ui dialog
 		$dialog = array(
-			'dialogClass' => 'filter',
+			'dialogClass' => 'filterDialog',
 			'openerClass' => 'toggleFilter',
 			'autoOpen' => 'false',
-			'effect' => 'slide',
+			'effect' => 'fade',
 			'duration' => 300,
 			'modal' => 'true',
 			'closeText' => parent::lang('class.CalendarView#get_sort_links#toggleFilter#closeText'),
-			'height' => 400,
-			'maxHeight' => 400,
-			'width' => 750,
+			'height' => 500,
+			'maxHeight' => 500,
+			'width' => 500,
 		);
 		// smarty jquery
 		$sJsToggleSlide = new JudoIntranetSmarty();
 		$sJsToggleSlide->assign('dialog', $dialog);
 		$this->add_jquery($sJsToggleSlide->fetch('smarty.js-dialog.tpl'));
+		$this->add_jquery('$( "#filterTabs" ).tabs();');
 		
 		// return
-		return $sS->fetch('smarty.calendar.sortlinks.tpl');
+		return $sS->fetch('smarty.calendar.filterlinks.tpl');
 	}
 	
 	
@@ -615,11 +553,11 @@ class CalendarView extends PageView {
 	
 	
 	/**
-	 * new_entry creates the "new-entry"-form and handle its response
+	 * newEntry() creates the "new-entry"-form and handle its response
 	 * 
 	 * @return string html-string with the "new-entry"-form
 	 */
-	private function new_entry() {
+	private function newEntry() {
 		
 		// smarty-templates
 		$sD = new JudoIntranetSmarty();
@@ -627,142 +565,286 @@ class CalendarView extends PageView {
 		// prepare return
 		$return = '';
 		
-		// formular
-		$form = new HTML_QuickForm2(
-								'new_calendar_entry',
-								'post',
-								array(
-									'name' => 'new_calendar_entry',
-									'action' => 'calendar.php?id=new'
-								)
-							);
-		
-		$now_year = (int) date('Y');
-		$now_month = (int) date('m');
-		$now_day = (int) date('d');
-		$now = date('Y-m-d');
-		$year_min = $now_year;
-		$year_max = $now_year + 3;
-		$form->addDataSource(new HTML_QuickForm2_DataSource_Array(array('rights' => '0',
-																		'date' => $now)));
-		
-		// renderer
-		$renderer = HTML_QuickForm2_Renderer::factory('default');
-		$renderer->setOption('required_note',parent::lang('class.CalendarView#entry#form#requiredNote'));
+		// form
+		$form = new Zebra_Form(
+				'newCalendarEntry',			// id/name
+				'post',						// method
+				'calendar.php?id=new'		// action
+			);
+		// set language
+		$form->language('deutsch');
+		// set docktype xhtml
+		$form->doctype('xhtml');
 		
 		// elements
 		// date
-		$date = $form->addElement('text','date',array());
-		$date->setLabel(parent::lang('class.CalendarView#entry#form#date').':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDATE));
-		// rule
-		$date->addRule('required',parent::lang('class.CalendarView#entry#rule#required.date'));
-		$date->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.date'),array($this,'callback_check_date'));
-		// add jquery-datepicker
-		// smarty
-		$sD->assign('elementid', 'date-0');
-		$sD->assign('dateFormat', 'yy-mm-dd');
-		$sD->assign('dateValue', $now);
-		$this->add_jquery($sD->fetch('smarty.js-datepicker.tpl'));
+		$formIds['date'] = array('valueType' => 'string', 'type' => 'date',);
+		$form->add(
+				'label',		// type
+				'labelDate',	// id/name
+				'date',			// for
+				parent::lang('class.CalendarView#entry#form#date')	// label text
+			);
+		$date = $form->add(
+						$formIds['date']['type'],			// type
+						'date',			// id/name
+						date('d.m.Y')	// default
+			);
+		// format/position
+		$date->format('d.m.Y');
+		$date->inside(false);
+		// rules
+		$date->set_rule(
+			array(
+				'required' => array(
+						'error', parent::lang('class.CalendarView#entry#rule#required.date'),
+					),
+				'date' => array(
+						'error', parent::lang('class.CalendarView#entry#rule#check.date')
+					),
+				)
+			);
+		$form->add(
+				'note',			// type
+				'noteDate',		// id/name
+				'date',			// for
+				parent::lang('class.CalendarView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDATE)	// note text
+			);
+		
 		
 		// name
-		$name = $form->addElement('text','name');
-		$name->setLabel(parent::lang('class.CalendarView#entry#form#name').':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDNAME));
-		$name->addRule('required',parent::lang('class.CalendarView#entry#rule#required.name'));
-		$name->addRule(
-					'regex',
-					parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('name.desc').']',
-					$this->getGc()->get_config('name.regexp'));
+		$formIds['name'] = array('valueType' => 'string', 'type' => 'text',);
+		$form->add(
+				'label',		// type
+				'labelName',	// id/name
+				'name',			// for
+				parent::lang('class.CalendarView#entry#form#name'),	// label text
+				array('inside' => true,)	// label inside
+			);
+		$name = $form->add(
+						$formIds['name']['type'],		// type
+						'name'		// id/name
+			);
+		$name->set_rule(
+				array(
+						'required' => array(
+								'error', parent::lang('class.CalendarView#entry#rule#required.name'),
+							),
+						'regexp' => array(
+								$this->getGc()->get_config('name.regexp.zebra'),	// regexp
+								'error',	// error variable
+								parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+							),
+					)
+			);
+		$form->add(
+				'note',			// type
+				'noteName',		// id/name
+				'name',			// for
+				parent::lang('class.CalendarView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDNAME)	// note text
+			);
 		
 		
 		// shortname
-		$shortname = $form->addElement('text','shortname');
-		$shortname->setLabel(parent::lang('class.CalendarView#entry#form#shortname').':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDSHORTNAME));
-		$shortname->addRule(
-						'regex',
-						parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('name.desc').']',
-						$this->getGc()->get_config('name.regexp'));
-	
-	
+		$formIds['shortname'] = array('valueType' => 'string', 'type' => 'text',);
+		$form->add(
+				'label',		// type
+				'labelShortname',	// id/name
+				'shortname',			// for
+				parent::lang('class.CalendarView#entry#form#shortname'),	// label text
+				array('inside' => true,)	// label inside
+			);
+		$shortname = $form->add(
+						$formIds['shortname']['type'],		// type
+						'shortname'		// id/name
+			);
+		$shortname->set_rule(
+				array(
+						'regexp' => array(
+								$this->getGc()->get_config('name.regexp.zebra'),	// regexp
+								'error',	// error variable
+								parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+							),
+					)
+			);
+		$form->add(
+				'note',				// type
+				'noteShortname',	// id/name
+				'shortname',		// for
+				parent::lang('class.CalendarView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDSHORTNAME)	// note text
+			);
+		
+		
 		// type
-		$options = array_merge(array(0 => '--'),Calendar::return_types());
-		$type = $form->addElement('select','type');
-		$type->setLabel(parent::lang('class.CalendarView#entry#form#type').':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE));
-		$type->loadOptions($options);
-		$type->addRule('required',parent::lang('class.CalendarView#entry#rule#required.type'));
-		$type->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.select'),array($this,'callback_check_select'));
+		$options = Calendar::return_types();
+		$formIds['type'] = array('valueType' => 'int', 'type' => 'select',);
+		$form->add(
+				'label',		// type
+				'labelType',	// id/name
+				'type',			// for
+				parent::lang('class.CalendarView#entry#form#type')	// label text
+			);
+		$type = $form->add(
+				$formIds['type']['type'],	// type
+				'type',		// id/name
+				'',			// default
+				array(		// attributes
+					)
+			);
+		$type->add_options($options);
+		$type->set_rule(
+				array(
+						'required' => array(
+								'error', parent::lang('class.CalendarView#entry#rule#required.type')
+							),
+					)
+			);
+		$form->add(
+				'note',		// type
+				'noteType',	// id/name
+				'type',		// for
+				parent::lang('class.CalendarView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
+			);
 		
 		
 		// entry_content
-		$content = $form->addElement('textarea','entry_content');
-		$content->setLabel(parent::lang('class.CalendarView#entry#form#entry_content').':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDCONTENT));
-		$content->addRule(
-						'regex',
-						parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
-						$this->getGc()->get_config('textarea.regexp'));
+		$formIds['entryContent'] = array('valueType' => 'string', 'type' => 'textarea',);
+		$form->add(
+				'label',		// type
+				'labelContent',	// id/name
+				'entryContent',	// for
+				parent::lang('class.CalendarView#entry#form#entry_content'),	// label text
+				array('inside' => true)
+			);
+		$content = $form->add(
+				$formIds['entryContent']['type'],		// type
+				'entryContent'	// id/name
+			);
+		$content->set_rule(
+				array(
+						'regexp' => array(
+								$this->getGc()->get_config('textarea.regexp.zebra'),
+								'error',
+								parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
+							),
+					)
+			);
+		$form->add(
+				'note',			// type
+				'noteContent',	// id/name
+				'content',		// for
+				parent::lang('class.CalendarView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDCONTENT)	// note text
+			);
 		
 		
 		// filter
 		$options = Filter::allExistingFilter('name');
-		$rights = $form->addElement('select','filter',array('multiple' => 'multiple','size' => 5));
-		$rights->setLabel(parent::lang('class.CalendarView#entry#form#filter').':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDSORT));
-		$rights->loadOptions($options);
+		$formIds['filter'] = array('valueType' => 'array', 'type' => 'select',);
+		$form->add(
+				'label',		// type
+				'labelFilter',	// id/name
+				'filter',		// for
+				parent::lang('class.CalendarView#entry#form#filter')	// label text
+			);
+		$filter = $form->add(
+				$formIds['filter']['type'],	// type
+				'filter[]',					// id/name
+				'',							// default
+				array(						// attributes
+						'multiple' => 'multiple',
+						'size' => 5,
+					)
+			);
+		$filter->add_options($options, true);
+		$form->add(
+				'note',			// type
+				'noteFilter',	// id/name
+				'filter',		// for
+				parent::lang('class.CalendarView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDSORT)	// note text
+			);
 		
 		
 		// checkbox public
-		$rights = $form->addElement('checkbox','public');
-		$rights->setLabel(parent::lang('class.CalendarView#entry#form#public').':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDISPUBLIC));
+		$formIds['public'] = array('valueType' => 'int', 'type' => 'checkbox', 'default' => 1);
+		$form->add(
+				'label',		// type
+				'labelPublic',	// id/name
+				'public',		// for
+				parent::lang('class.CalendarView#entry#form#public')	// label text
+			);
+		$public = $form->add(
+				$formIds['public']['type'],		// type
+				'public',						// id/name
+				'1',							// value
+				null							// default
+			);
+		$form->add(
+				'note',			// type
+				'notePublic',	// id/name
+				'public',		// for
+				parent::lang('class.CalendarView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDISPUBLIC)	// note text
+			);
 		
 		// permissions
-		$this->quickform2AddPermissions($form);
+		$result = $this->zebraAddPermissions($form, 'calendar');
+		$form = $result['form'];
+		$permissionConfig['ids'] = $result['formIds'];
+		$permissionConfig['iconRead'] = $result['iconRead'];
+		$permissionConfig['iconEdit'] = $result['iconEdit'];
+		
 		
 		// submit-button
-		$form->addElement('submit','submit',array('value' => parent::lang('class.CalendarView#entry#form#submitButton')));
+		$form->add(
+				'submit',		// type
+				'buttonSubmit',	// id/name
+				parent::lang('class.CalendarView#entry#form#submitButton')	// value
+			);
 		
 		// validate
 		if($form->validate()) {
 			
-			// create calendar-object
-			$data = $form->getValue();
-				
-			// check filter
-			if(!isset($data['filter'])) {
-				$data['filter'] = array();
+			// get form data
+			$data = $this->getFormValues($formIds);
+			// get form permissions
+			$permissions = $this->getFormPermissions($permissionConfig['ids']);
+			
+			// add public access
+			if($data['public'] == 1) {
+				$permissions[0]['group'] = Group::fakePublic();
+				$permissions[0]['value'] = 'r';
 			}
 			
-//			// add public access
-//			$kPublicAccess = array_search(0,$data['rights']);
-//			if($kPublicAccess === false && isset($data['public']) && $data['public'] == 1) {
-//				$data['rights'][] = 0;
-//			} elseif($kPublicAccess !== false && !isset($data['public'])) {
-//				unset($data['rights'][$kPublicAccess]);
-//			}
-			
+			// create calendar
 			$calendar = new Calendar(array(
 								'date' => $data['date'],
 								'name' => $data['name'],
 								'shortname' => $data['shortname'],
 								'type' => $data['type'],
-								'content' => $data['entry_content'],
+								'content' => $data['entryContent'],
 								'filter' => $data['filter'],
-								'valid' => 1
+								'valid' => 1,
 								)
 				);
-				
+							
 			// write to db
 			$calendar->write_db('new');
+			
+			// write permissions
+			$calendar->dbDeletePermission();
+			$calendar->dbWritePermission($permissions);
 			
 			// smarty
 			$sCD = new JudoIntranetSmarty();
 			$sCD->assign('data', $calendar->detailsToHtml());
 			
 			// pagecaption
-			$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#new_entry'));
+			$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#newEntry'));
 			
 			return $sCD->fetch('smarty.calendar.details.tpl');
 		} else {
 			// pagecaption
-			$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#new_entry').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_CALENDARNEW));
-			return $form->render($renderer);
+			$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#newEntry').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_CALENDARNEW));
+			return $form->render('lib/zebraTemplate.php', true, array($formIds, 'smarty.zebra.permissions.tpl', $permissionConfig,));
 		}
 	}
 	
@@ -773,13 +855,13 @@ class CalendarView extends PageView {
 	
 	
 	/**
-	 * callback_compare_calendars compares two calendar-objects by date (for uksort)
+	 * callbackCompareCalendars($first, $second) compares two calendar-objects by date (for uksort)
 	 * 
 	 * @param object $first first calendar-objects
 	 * @param object $second second calendar-object
 	 * @return int -1 if $first<$second, 0 if equal, 1 if $first>$second
 	 */
-	public function callback_compare_calendars($first,$second) {
+	public function callbackCompareCalendars($first,$second) {
 	
 		// compare dates
 		if($first->get_date() < $second->get_date()) {
@@ -859,15 +941,17 @@ class CalendarView extends PageView {
 			
 			// prepare return
 			$return = '';
-					
-			$form = new HTML_QuickForm2(
-									'edit_calendar_entry',
-									'post',
-									array(
-										'name' => 'edit_calendar_entry',
-										'action' => 'calendar.php?id=edit&cid='.$cid
-									)
-								);
+			
+			// form
+			$form = new Zebra_Form(
+				'editCalendarEntry',			// id/name
+				'post',				// method
+				'calendar.php?id=edit&cid='.$cid		// action
+			);
+			// set language
+			$form->language('deutsch');
+			// set docktype xhtml
+			$form->doctype('xhtml');
 			
 			$now_year = (int) date('Y');
 			$year_min = $now_year;
@@ -880,117 +964,258 @@ class CalendarView extends PageView {
 				$filterIds[] = $filter->getId();
 			}
 			
-			// get datasource
-			$datasource = array(
-					'date' => $calendar->get_date(),
-					'name' => $calendar->get_name(),
-					'shortname' => $calendar->get_shortname(),
-					'type' => $calendar->return_type(),
-					'entry_content' => $calendar->get_content(),
-					'filter' => $filterIds,
-				);
-			// add public access
-			if($calendar->isPermittedFor(0)) {
-				$datasource['public'] = 1;
-			}
-			
-			$form->addDataSource(new HTML_QuickForm2_DataSource_Array($datasource));
-			
-			// renderer
-			$renderer = HTML_QuickForm2_Renderer::factory('default');
-			$renderer->setOption('required_note',parent::lang('class.CalendarView#entry#form#requiredNote'));
-			
 			// elements
 			// date
-			$date = $form->addElement('text','date',array());
-			$date->setLabel(parent::lang('class.CalendarView#entry#form#date').':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDATE));
-			// rule
-			$date->addRule('required',parent::lang('class.CalendarView#entry#rule#required.date'));
-			$date->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.date'),array($this,'callback_check_date'));
-			// add jquery-datepicker
-			// smarty
-			$sD->assign('elementid', 'date-0');
-			$sD->assign('dateFormat', 'yy-mm-dd');
-			$sD->assign('dateValue', $calendar->get_date());
-			$this->add_jquery($sD->fetch('smarty.js-datepicker.tpl'));
+			$formIds['date'] = array('valueType' => 'string', 'type' => 'date',);
+			$form->add(
+					'label',		// type
+					'labelDate',	// id/name
+					'date',			// for
+					parent::lang('class.CalendarView#entry#form#date')	// label text
+				);
+			$date = $form->add(
+							$formIds['date']['type'],			// type
+							'date',			// id/name
+							$calendar->get_date('d.m.Y')	// default
+				);
+			// format/position
+			$date->format('d.m.Y');
+			$date->inside(false);
+			// rules
+			$date->set_rule(
+				array(
+					'required' => array(
+							'error', parent::lang('class.CalendarView#entry#rule#required.date'),
+						),
+					'date' => array(
+							'error', parent::lang('class.CalendarView#entry#rule#check.date')
+						),
+					)
+				);
+			$form->add(
+					'note',			// type
+					'noteDate',		// id/name
+					'date',			// for
+					parent::lang('class.CalendarView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDATE)	// note text
+				);
+			
 			
 			// name
-			$name = $form->addElement('text','name');
-			$name->setLabel(parent::lang('class.CalendarView#entry#form#name').':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDNAME));
-			$name->addRule('required',parent::lang('class.CalendarView#entry#rule#required.name'));
-			$name->addRule(
-						'regex',
-						parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('name.desc').']',
-						$this->getGc()->get_config('name.regexp'));
+			$formIds['name'] = array('valueType' => 'string', 'type' => 'text',);
+			$form->add(
+					'label',		// type
+					'labelName',	// id/name
+					'name',			// for
+					parent::lang('class.CalendarView#entry#form#name'),	// label text
+					array('inside' => true,)	// label inside
+				);
+			$name = $form->add(
+							$formIds['name']['type'],		// type
+							'name',		// id/name
+							$calendar->get_name()	// default
+				);
+			$name->set_rule(
+					array(
+							'required' => array(
+									'error', parent::lang('class.CalendarView#entry#rule#required.name'),
+								),
+							'regexp' => array(
+									$this->getGc()->get_config('name.regexp.zebra'),	// regexp
+									'error',	// error variable
+									parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+								),
+						)
+				);
+			$form->add(
+					'note',			// type
+					'noteName',		// id/name
+					'name',			// for
+					parent::lang('class.CalendarView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDNAME)	// note text
+				);
 			
 			
 			// shortname
-			$shortname = $form->addElement('text','shortname');
-			$shortname->setLabel(parent::lang('class.CalendarView#entry#form#shortname').':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDSHORTNAME));
-			$shortname->addRule(
-							'regex',
-							parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('name.desc').']',
-							$this->getGc()->get_config('name.regexp'));
-		
-		
+			$formIds['shortname'] = array('valueType' => 'string', 'type' => 'text',);
+			$form->add(
+					'label',		// type
+					'labelShortname',	// id/name
+					'shortname',			// for
+					parent::lang('class.CalendarView#entry#form#shortname'),	// label text
+					array('inside' => true,)	// label inside
+				);
+			$shortname = $form->add(
+							$formIds['shortname']['type'],		// type
+							'shortname',		// id/name
+							$calendar->get_shortname()	// default
+				);
+			$shortname->set_rule(
+					array(
+							'regexp' => array(
+									$this->getGc()->get_config('name.regexp.zebra'),	// regexp
+									'error',	// error variable
+									parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+								),
+						)
+				);
+			$form->add(
+					'note',				// type
+					'noteShortname',	// id/name
+					'shortname',		// for
+					parent::lang('class.CalendarView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDSHORTNAME)	// note text
+				);
+			
+			
 			// type
-			$options = array_merge(array(0 => '--'),Calendar::return_types());
-			$type = $form->addElement('select','type');
-			$type->setLabel(parent::lang('class.CalendarView#entry#form#type').':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE));
-			$type->loadOptions($options);
-			$type->addRule('required',parent::lang('class.CalendarView#entry#rule#required.type'));
-			$type->addRule('callback',parent::lang('class.CalendarView#entry#rule#check.select'),array($this,'callback_check_select'));
+			$options = Calendar::return_types();
+			$formIds['type'] = array('valueType' => 'int', 'type' => 'select',);
+			$form->add(
+					'label',		// type
+					'labelType',	// id/name
+					'type',			// for
+					parent::lang('class.CalendarView#entry#form#type')	// label text
+				);
+			$type = $form->add(
+					$formIds['type']['type'],	// type
+					'type',		// id/name
+					$calendar->return_type(),	// default
+					array(		// attributes
+						)
+				);
+			$type->add_options($options);
+			$type->set_rule(
+					array(
+							'required' => array(
+									'error', parent::lang('class.CalendarView#entry#rule#required.type')
+								),
+						)
+				);
+			$form->add(
+					'note',		// type
+					'noteType',	// id/name
+					'type',		// for
+					parent::lang('class.CalendarView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
+				);
 			
 			
 			// entry_content
-			$content = $form->addElement('textarea','entry_content');
-			$content->setLabel(parent::lang('class.CalendarView#entry#form#entry_content').':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDCONTENT));
-			$content->addRule(
-							'regex',
-							parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
-							$this->getGc()->get_config('textarea.regexp'));
+			$formIds['entryContent'] = array('valueType' => 'string', 'type' => 'textarea',);
+			$form->add(
+					'label',		// type
+					'labelContent',	// id/name
+					'entryContent',	// for
+					parent::lang('class.CalendarView#entry#form#entry_content'),	// label text
+					array('inside' => true)
+				);
+			$content = $form->add(
+					$formIds['entryContent']['type'],		// type
+					'entryContent',	// id/name
+					$calendar->get_content()	// default
+				);
+			$content->set_rule(
+					array(
+							'regexp' => array(
+									$this->getGc()->get_config('textarea.regexp.zebra'),
+									'error',
+									parent::lang('class.CalendarView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
+								),
+						)
+				);
+			$form->add(
+					'note',			// type
+					'noteContent',	// id/name
+					'content',		// for
+					parent::lang('class.CalendarView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDCONTENT)	// note text
+				);
 			
 			
 			// filter
 			$options = Filter::allExistingFilter('name');
-			$rights = $form->addElement('select','filter',array('multiple' => 'multiple','size' => 5));
-			$rights->setLabel(parent::lang('class.CalendarView#entry#form#filter').':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDSORT));
-			$rights->loadOptions($options);
+			$formIds['filter'] = array('valueType' => 'array', 'type' => 'select',);
+			$form->add(
+					'label',		// type
+					'labelFilter',	// id/name
+					'filter',		// for
+					parent::lang('class.CalendarView#entry#form#filter')	// label text
+				);
+			$filter = $form->add(
+					$formIds['filter']['type'],	// type
+					'filter[]',					// id/name
+					$filterIds,					// default
+					array(						// attributes
+							'multiple' => 'multiple',
+							'size' => 5,
+						)
+				);
+			$filter->add_options($options, true);
+			$form->add(
+					'note',			// type
+					'noteFilter',	// id/name
+					'filter',		// for
+					parent::lang('class.CalendarView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDSORT)	// note text
+				);
 			
-		
+			
 			// checkbox public
-			$rights = $form->addElement('checkbox','public');
-			$rights->setLabel(parent::lang('class.CalendarView#entry#form#public').':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDISPUBLIC));
+			$formIds['public'] = array('valueType' => 'int', 'type' => 'checkbox', 'default' => 1);
+			$form->add(
+					'label',		// type
+					'labelPublic',	// id/name
+					'public',		// for
+					parent::lang('class.CalendarView#entry#form#public')	// label text
+				);
+			$public = $form->add(
+					$formIds['public']['type'],		// type
+					'public',						// id/name
+					'1',							// value
+					($calendar->isPermittedFor(0) ? array('checked' => 'checked') : null)
+				);
+			$form->add(
+					'note',			// type
+					'notePublic',	// id/name
+					'public',		// for
+					parent::lang('class.CalendarView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDISPUBLIC)	// note text
+				);
+			
+			// permissions
+			$result = $this->zebraAddPermissions($form, 'calendar', $calendar->get_id());
+			$form = $result['form'];
+			$permissionConfig['ids'] = $result['formIds'];
+			$permissionConfig['iconRead'] = $result['iconRead'];
+			$permissionConfig['iconEdit'] = $result['iconEdit'];
 			
 			
 			// submit-button
-			$form->addElement('submit','submit',array('value' => parent::lang('class.CalendarView#entry#form#submitButton')));
+			$form->add(
+					'submit',		// type
+					'buttonSubmit',	// id/name
+					parent::lang('class.CalendarView#entry#form#submitButton')	// value
+			);
 			
 			// validate
 			if($form->validate()) {
 				
-				// create calendar-object
-				$data = $form->getValue();
+				// get form data
+				$data = $this->getFormValues($formIds);
+				// get form permissions
+				$permissions = $this->getFormPermissions($permissionConfig['ids']);
 								
 				// check filter
 				if(!isset($data['filter'])) {
 					$data['filter'] = array();
 				}
 				
-//				// add public access
-//				$kPublicAccess = array_search(0,$data['rights']);
-//				if($kPublicAccess === false && isset($data['public']) && $data['public'] == 1) {
-//					$data['rights'][] = 0;
-//				} elseif($kPublicAccess !== false && !isset($data['public'])) {
-//					unset($data['rights'][$kPublicAccess]);
-//				}
+				// add public access
+				if($data['public'] == '1') {
+					$permissions[0]['group'] = Group::fakePublic();
+					$permissions[0]['value'] = 'r';
+				}
 				
 				$calendar_new = array(
 						'date' => $data['date'],
 						'name' => $data['name'],
 						'shortname' => $data['shortname'],
 						'type' => $data['type'],
-						'content' => $data['entry_content'],
+						'content' => $data['entryContent'],
 						'filter' => $data['filter'],
 						'valid' => 1
 					);
@@ -1005,6 +1230,11 @@ class CalendarView extends PageView {
 				// write entry
 				try {
 					$calendar->write_db('update');
+				
+					// write permissions
+					$calendar->dbDeletePermission();
+					$calendar->dbWritePermission($permissions);
+					
 					// smarty
 					$sCD->assign('data', $calendar->detailsToHtml());
 					return $sCD->fetch('smarty.calendar.details.tpl');
@@ -1013,7 +1243,7 @@ class CalendarView extends PageView {
 					return $this->getError()->to_html($e);
 				}
 			} else {
-				return $form->render($renderer);
+				return $form->render('lib/zebraTemplate.php', true, array($formIds, 'smarty.zebra.permissions.tpl', $permissionConfig,));
 			}
 		} else {
 			
@@ -1042,7 +1272,7 @@ class CalendarView extends PageView {
 		$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#delete').": $cid");
 		
 		// check rights
-		if($this->getUser()->hasPermission('calendar', $cid)) {
+		if($this->getUser()->hasPermission('calendar', $cid, 'w')) {
 				
 			// prepare return
 			$output = '';
@@ -1050,21 +1280,28 @@ class CalendarView extends PageView {
 			// smarty-templates
 			$sConfirmation = new JudoIntranetSmarty();
 			
-			$form = new HTML_QuickForm2(
-									'confirm',
-									'post',
-									array(
-										'name' => 'confirm',
-										'action' => 'calendar.php?id=delete&cid='.$this->get('cid')
-									)
-								);
+			// form
+			$form = new Zebra_Form(
+				'formConfirm',			// id/name
+				'post',				// method
+				'calendar.php?id=delete&cid='.$this->get('cid')		// action
+			);
+			// set language
+			$form->language('deutsch');
+			// set docktype xhtml
+			$form->doctype('xhtml');
 			
 			// add button
-			$form->addElement('submit','yes',array('value' => parent::lang('class.CalendarView#delete#form#yes')));
+			$form->add(
+				'submit',		// type
+				'buttonSubmit',	// id/name
+				parent::lang('class.CalendarView#delete#form#yes'),	// value
+				array('title' => parent::lang('class.CalendarView#delete#title#yes'))
+			);
 			
 			// smarty-link
 			$link = array(
-							'params' => '',
+							'params' => 'class="submit"',
 							'href' => 'calendar.php?id=listall',
 							'title' => parent::lang('class.CalendarView#delete#title#cancel'),
 							'content' => parent::lang('class.CalendarView#delete#form#cancel')
@@ -1072,7 +1309,7 @@ class CalendarView extends PageView {
 			$sConfirmation->assign('link', $link);
 			$sConfirmation->assign('spanparams', 'id="cancel"');
 			$sConfirmation->assign('message', parent::lang('class.CalendarView#delete#message#confirm').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_DELETE));
-			$sConfirmation->assign('form', $form);
+			$sConfirmation->assign('form', $form->render('', true));
 			
 			// validate
 			if($form->validate()) {
@@ -1114,44 +1351,66 @@ class CalendarView extends PageView {
 	
 	
 	/**
-	 * read_preset_form generates a quickform-object to choose the announcement-preset,
+	 * readPresetForm($calendar) generates a quickform-object to choose the announcement-preset,
 	 * if validated redirect to announcement.php?id=new&cid=$id
 	 * 
 	 * @param object $calendar the actual calendarentry
 	 * @return object quickform-object to choose the preset, if validated redirect to new announcement
 	 */
-	private function read_preset_form(&$calendar) {
+	private function readPresetForm(&$calendar) {
 		
 		// check sort or from/to
-		$sort = $from = $to = '';
-		if($this->get('filter') !== false) {$sort = "&amp;filter=".$this->get('filter');}
-		if($this->get('from') !== false) {$from = "&amp;from=".$this->get('from');}
-		if($this->get('to') !== false) {$to = "&amp;to=".$this->get('to');}
-		// form-object
-		$form = new HTML_QuickForm2(
-									'choose_preset_'.$calendar->get_id(),
-									'post',
-									array(
-										'name' => 'choose_preset_'.$calendar->get_id(),
-										'action' => 'calendar.php?id=listall'.$sort.$from.$to
-									)
-								);
+		$sort = ($this->get('filter') !== false ? "&amp;filter=".$this->get('filter') : '');
+		$from = ($this->get('from') !== false ? "&amp;from=".$this->get('from') : '');
+		$to = ($this->get('to') !== false ? "&amp;to=".$this->get('to') : '');
+		
+		// form
+		$form = new Zebra_Form(
+				'choose_preset_'.$calendar->get_id(),	 	// id/name
+				'post',						// method
+				'calendar.php?id=listall'.$sort.$from.$to	// action
+			);
+		// set language
+		$form->language('deutsch');
+		// set docktype xhtml
+		$form->doctype('xhtml');
 		
 		// add selectfield
-		$select = $form->addSelect('preset',array());
-		$options = array(0 => parent::lang('class.CalendarView#read_preset_form#select#choosePreset'));
-		$options = $options + Preset::read_all_presets('calendar');
-		$select->loadOptions($options);
-		$select->addRule('callback',parent::lang('class.CalendarView#read_preset_form#rule#select'),array($this,'callback_check_select'));
+		$formIds['preset'] = array('valueType' => 'int', 'type' => 'select',);
+		$options = Preset::read_all_presets('calendar');
+		$preset = $form->add(
+				$formIds['preset']['type'],	// type
+				'preset',		// id/name
+				'',			// default
+				array(		// attributes
+					)
+			);
+		$preset->add_options($options);
+		$preset->set_rule(
+				array(
+					'custom' => array(
+						array(
+							array($this, 'callbackCheckSelect'),	// callback
+							null,		// optional argument
+							'error',	// error variable
+							parent::lang('class.CalendarView#readPresetForm#rule#select'),	// error message
+						)
+					)
+				)
+			);
 		
 		// add submit
-		$submit = $form->addSubmit('submit',array('value' => parent::lang('class.CalendarView#read_preset_form#select#submit')));
+		$form->add(
+				'submit',		// type
+				'submitPreset',	// id/name
+				parent::lang('class.CalendarView#readPresetForm#select#submit')	// value
+			);
 		
 		// validate
 		if($form->validate()) {
 			
 			// get data
-			$data = $form->getValue();
+			$data = $this->getFormValues($formIds);
 			
 			// insert preset_id in calendar-entry
 			$update = array('preset_id' => $data['preset']);
@@ -1162,7 +1421,7 @@ class CalendarView extends PageView {
 			header('Location: calendar.php?id=listall'.$sort.$from.$to);
 			exit;
 		} else {
-			return $form;
+			return $form->render('', true);
 		}
 	}
 	

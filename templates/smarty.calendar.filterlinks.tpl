@@ -20,7 +20,37 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-<div id="confirm">
-	<p>{$message}</p>
-	{if $form!=''}<div class="confirmForm">{$form}<div class="Zebra_Form"><div class="row last"><span{if $spanparams!=''} {$spanparams}{/if}><input type="button"{if $link.params!=''} {$link.params}{/if} onclick="window.location='{$link.href|escape}'" title="{$link.title}" value="{$link.content|escape}" /></span></div></div></div>{/if}
+<p><span{if $link.params!=''} {$link.params}{/if} title="{$link.title}">{$link.content}</span>{if isset($link.help) and $link.help!=''}&nbsp;{$link.help}{/if}</p>
+<div id="filterDialog" title="{$dialogTitle}">
+	<div class="resetFilter">
+		<p class="filterEntry center">{$resetFilter}</p>
+{for $i=0 to (count($r)-1)}
+		<p class="filterEntry">
+			<a href="{$r.$i.href|escape}" title="{$r.$i.title}">{$r.$i.content}</a>
+		</p>
+{/for}
+	</div>
+	<div id="filterTabs">
+		<ul>
+			<li><a href="#filterTabs-1" title="{$chooseDate}">{$dateFilter}</a></li>
+			<li><a href="#filterTabs-2" title="{$chooseGroup}">{$groupFilter}</a></li>
+		</ul>
+		<div id="filterTabs-1">
+			
+			<p class="filterEntry center">{$chooseDate}</p>
+{for $i=0 to (count($dl)-1)}
+			<p class="filterEntry">
+				<a href="{$dl.$i.href|escape}" title="{$dl.$i.title}">{$dl.$i.content}</a>
+			</p>
+{/for}
+		</div>
+		<div id="filterTabs-2">
+			<p class="filterEntry center">{$chooseGroup}</p>
+{for $i=0 to (count($gl)-1)}
+			<p class="filterEntry">
+				<a href="{$gl.$i.href|escape}" title="{$gl.$i.title}">{$gl.$i.content}</a>
+			</p>
+{/for}
+		</div>
+	</div>
 </div>

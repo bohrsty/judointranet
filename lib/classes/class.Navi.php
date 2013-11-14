@@ -41,6 +41,7 @@ class Navi extends Object {
 	private $position;
 	private $show;
 	private $valid;
+	private $requiredPermission;
 	private $subItems;
 	
 	/*
@@ -88,6 +89,12 @@ class Navi extends Object {
 	public function setValid($valid) {
 		$this->valid = $valid;
 	}
+	public function getRequiredPermission(){
+		return $this->requiredPermission;
+	}
+	public function setRequiredPermission($requiredPermission) {
+		$this->requiredPermission = $requiredPermission;
+	}
 	public function getSubItems(){
 		return $this->subItems;
 	}
@@ -127,7 +134,7 @@ class Navi extends Object {
 		$db = Db::newDb();
 		
 		// prepare sql statement to get group details
-		$sql = 'SELECT `name`,`parent`,`file_param`,`position`,`show`,`valid`
+		$sql = 'SELECT `name`,`parent`,`file_param`,`position`,`show`,`valid`,`required_permission`
 				FROM navi
 				WHERE id=\''.$db->real_escape_string($this->getId()).'\'';
 		
@@ -136,7 +143,7 @@ class Navi extends Object {
 		
 		// get data
 		if($result) {
-			list($name, $parent, $fileParam, $position, $show, $valid) = $result->fetch_array(MYSQL_NUM);
+			list($name, $parent, $fileParam, $position, $show, $valid, $requiredPermission) = $result->fetch_array(MYSQL_NUM);
 		} else {
 			$errno = $this->getError()->error_raised('MysqlError', $db->error);
 			$this->getError()->handle_error($errno);
@@ -172,6 +179,7 @@ class Navi extends Object {
 		$this->setPosition($position);
 		$this->setShow($show);
 		$this->setValid($valid);
+		$this->setRequiredPermission($requiredPermission);
 		$this->setSubItems($subItems);
 	}
 	
@@ -239,7 +247,7 @@ class Navi extends Object {
 					foreach($subItems as $subItem) {
 						
 						// check permission
-						if(!$this->getUser()->hasPermission('navi', $subItem->getId())){
+						if(!$this->getUser()->hasPermission('navi', $subItem->getId(), $subItem->getRequiredPermission())){
 							continue;
 						}
 						
@@ -276,7 +284,7 @@ class Navi extends Object {
 						for($i=2; $i<count($subItems); $i++) {
 							
 							// check permission
-							if(!$this->getUser()->hasPermission('navi', $subItems[$i]->getId())){
+							if(!$this->getUser()->hasPermission('navi', $subItems[$i]->getId(), $subItem->getRequiredPermission())){
 								continue;
 							}
 							

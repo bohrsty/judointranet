@@ -20,7 +20,43 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-<div id="confirm">
-	<p>{$message}</p>
-	{if $form!=''}<div class="confirmForm">{$form}<div class="Zebra_Form"><div class="row last"><span{if $spanparams!=''} {$spanparams}{/if}><input type="button"{if $link.params!=''} {$link.params}{/if} onclick="window.location='{$link.href|escape}'" title="{$link.title}" value="{$link.content|escape}" /></span></div></div></div>{/if}
+{$error}
+<div id="tabs">
+	<ul>
+		<li><a href="#tab-1" title="{$tabElements}">{$tabElements}</a></li>
+		<li><a href="#tab-2" title="{$tabPermissions}">{$tabPermissions}</a></li>
+	</ul>
+	<div id="tab-1">
+{foreach $elements as $element}
+		<div class="row{cycle values=", even"}">
+{if isset($element.label) && $element.label!=''}
+			{$element.label}
+{/if}
+{if isset($element.element) && $element.element!=''}
+			{$element.element}
+{/if}
+{if isset($element.note) && $element.note!=''}
+			{$element.note}
+{/if}
+		</div>
+{/foreach}
+	</div>
+	<div id="tab-2">
+{foreach $permissions as $permissionName => $permission}
+		<div class="row{cycle values=", even"}">
+{if isset($permission.element) && $permission.element!=''}
+			{$iconRead.$permissionName}{$permission.element.r}&nbsp;{$iconEdit.$permissionName}{$permission.element.w}
+{/if}
+{if isset($permission.label) && $permission.label!=''}
+			{$permission.label}
+{/if}
+{if isset($permission.note) && $permission.note!=''}
+			{$permission.note}
+{/if}
+		</div>
+{/foreach}
+	</div>
+</div>
+<div class="row last">
+	{$buttonSubmit}
 </div>

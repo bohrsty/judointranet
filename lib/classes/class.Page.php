@@ -102,6 +102,98 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 	public function __toString() {
 		return 'Page';
 	}
+	
+	
+	/**
+	 * dbDeletePermissions() removes all permissions that are directly given to $this object
+	 * from database
+	 * 
+	 * @return void
+	 */
+	public function dbDeletePermission() {
+		
+		// get db object
+		$db = Db::newDb();
+		
+		// prepare sql statement to delete permissions
+		$sql = 'DELETE FROM permissions
+				WHERE item_table=\''.$db->real_escape_string(strtolower($this)).'\'
+					AND item_id=\''.$db->real_escape_string($this->get_id()).'\'';
+		
+		// execute statement
+		$result = $db->query($sql);
+		
+		// get data
+		$items = array();
+		if(!$result) {
+			$errno = self::getError()->error_raised('MysqlError', $db->error);
+			self::getError()->handle_error($errno);
+		}
+		
+		// close db
+		$db->close();
+	}
+	
+	
+	/**
+	 * dbWritePermissions($permissions) writes the permissions given in the $permissions array
+	 * to database
+	 * 
+	 * @param array $permissions array containing group objects and the given permission value
+	 * 		that should be granted to the corresponding group
+	 * @return void 
+	 */
+	public function dbWritePermission($permissions) {
+		
+		// get db object
+		$db = Db::newDb();
+		
+		// create values
+		$values = '';
+		foreach($permissions as $groupId => $permission) {
+			
+			// set groups w/o admin
+			if($groupId != 1) {
+				if($permission['value'] != '0') {
+					$values .= '(
+								\''.$db->real_escape_string(strtolower($this)).'\',
+								\''.$db->real_escape_string($this->get_id()).'\',
+								\''.$db->real_escape_string('-1').'\',
+								\''.$db->real_escape_string($groupId).'\',
+								\''.$db->real_escape_string($permission['value']).'\',
+								CURRENT_TIMESTAMP,
+								\''.$db->real_escape_string($this->getUser()->get_id()).'\'
+								),';
+				}
+			}
+		}
+		
+		// if values to insert
+		if(strlen($values) > 0) {
+			
+			// remove last ","
+			$values = substr($values, 0, -1);
+			
+			// prepare sql statement to get group details
+			$sql = 'INSERT IGNORE INTO permissions
+						(`item_table`, `item_id`, `user_id`, `group_id`, `mode`, `last_modified`, `modified_by`)
+					VALUES
+						'.$values;
+			
+			// execute statement
+			$result = $db->query($sql);
+			
+			// get data
+			$items = array();
+			if(!$result) {
+				$errno = self::getError()->error_raised('MysqlError', $db->error);
+				self::getError()->handle_error($errno);
+			}
+		}
+		
+		// close db
+		$db->close();
+	}
  	
  	
  }

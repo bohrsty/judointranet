@@ -76,6 +76,8 @@ layout
 
 html, body {
 	font-family: verdana, sans-serif;
+	font-size: 12pt;
+	font-weight: normal;
 	background-color: #ffffff;
 	color: #000000;
 	height: 99%;
@@ -155,12 +157,12 @@ th.location {
 }
 
 div.filterPart {
-	width: 32%;
-	float: left;
-	margin-right: 4px;
+	width: 32.6%;
+	margin-right: 2px;
+	margin-left: 2px;
 }
 
-p.filterEntry {
+.filterEntry {
 	width: 100%;
 	border-bottom: 1px solid #3a9ec8;
 	border-right: 1px solid #3a9ec8;
@@ -171,6 +173,9 @@ p.filterEntry {
 
 td.admin div.row {
 	float: left;
+	padding: 0;
+	background-color: inherit !important;
+	border: 0 !important;
 }
 
 td.admin div.row select {
@@ -555,15 +560,29 @@ div#tablelinks {
 }
 
 img.iconRead {
-	margin-left: 20px;
-}
-
-img.iconEdit {
-	margin-left: 5px;
+	margin-left: 10px;
 }
 
 span.headlineText,span.groupName {
-	margin-left: 10px;
+	margin-left: 5px;
+}
+
+div.resetFilter {
+	width: 100%;
+	height: 100px;
+	margin-bottom: 3px;
+}
+
+.floatLeft {
+	float: left;
+}
+
+.clickable {
+	cursor: pointer;
+}
+
+.confirmForm .last {
+	float: left;
 }
 
 .Zebra_Form_error_message .message {
@@ -589,6 +608,56 @@ span.headlineText,span.groupName {
 
 .Zebra_Form div.error div.container {
 	border-color: #3a9ec8;
+	border-radius: 3px;
+}
+
+img.Zebra_Form_Input_Prefix {
+	height: 16px;
+	width: 16px;
+}
+
+.Zebra_DatePicker {
+	background: #b6d6e4;
+	border-color: #3a9ec8;
+	border-width: 1px;
+}
+
+.Zebra_DatePicker .dp_header td,
+.Zebra_DatePicker .dp_today,
+.Zebra_DatePicker .dp_clear {
+	color: black;
+}
+
+.Zebra_DatePicker td.dp_hover,
+.Zebra_DatePicker .dp_footer .dp_hover,
+.Zebra_DatePicker .dp_header .dp_hover,
+.Zebra_DatePicker td.dp_selected {
+	background-color: #3a9ec8;
+}
+
+.Zebra_Form label {
+	cursor: auto;
+}
+
+.Zebra_Form #tab-2 .row label {
+	display: inline;
+	margin-left: 10px;
+}
+
+.Zebra_Form,
+.Zebra_Form label,
+.Zebra_Form input,
+.Zebra_Form select,
+.Zebra_Form textarea
+{
+    font-size: 12pt !important;
+	font-weight: normal !important;
+}
+
+.Zebra_Form input.submit,
+.Zebra_Form input.text,
+.Zebra_Form select {
+	padding: 3px 3px 3px 3px;
 }
 
 

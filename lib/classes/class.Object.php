@@ -109,23 +109,26 @@ class Object {
 		$regexp = array(
 		//					'userpass' => '/^[a-zA-Z0-9\.\-_]+$/',
 	  						'getvalue' => '/^[a-zA-Z0-9\.\-_\+\/=]*$/',
-	  						'postvalue' => '{^[a-zA-Z0-9äöüÄÖÜß\.\-_\+!§\$%&/()=`´;:\*#~\?ß<>| ]*$}'
+	  						'postvalue' => '/^[a-zA-Z0-9äöüÄÖÜß\.,\-_\+!§\$%&\/()\[\]\{\}=`´;:\*#~\?<>|"@ \n\r\t]*$/'
 	  	//					'text' => '{^[a-zA-Z0-9äöüÄÖÜß\.,\-_\+!§\$%&/()=`´;:\*#~\?ß<>| ]*$}',
 	  	//					'text_nt' => '{^[a-zA-Z0-9äöüÄÖÜß\.,\-_\+!§\$%&/()=`´;:\*#~\?ß<>| \n\r\t]*$}s',
 	  	//					'datum' => '/^[0123]?\d\.[012]?\d\.\d{4}$/',
 	  	//					'zahl' => '/^[0-9]*$/'
 		);
-	  
-		// check if not permitted chars
-		if(!preg_match($regexp[$type],$value)) {
-	
-			// nonconform return false
-			return false;
-		} else {
-	
-			// correct return value
-			return $value;
+		
+		// check if $value is string
+		if(is_string($value) || is_numeric($value)) {
+			
+			// check if not permitted chars
+			if(!preg_match($regexp[$type],$value)) {
+		
+				// nonconform return false
+				return false;
+			}
 		}
+	
+		// correct return value
+		return $value;
 	}
 	
 	
@@ -141,7 +144,7 @@ class Object {
 	 * @param string $string string to be parsed and "translated", splitmarker "#"
 	 * @return string translated value of the string
 	 */
-	protected static function lang($string) {
+	public static function lang($string) {
 		
 		// split string
 		$i = explode('#',$string,4);
@@ -205,6 +208,7 @@ class Object {
 	 * 
 	 * @param array $args arguments to check
 	 * @return bool true, if ok, false otherwise
+	 * @deprecated 13.11.2013
 	 */
 	public function callback_check_select($args) {
 		
@@ -216,9 +220,20 @@ class Object {
 	}
 	
 	
-	
-	
-	
+	/**
+	 * callbackCheckSelect($args) checks if a value other than '' is selected
+	 * 
+	 * @param array $args arguments to check
+	 * @return bool true, if $args is not empty, false otherwise
+	 */
+	public function callbackCheckSelect($args) {
+		
+		// check values
+		if($args == '') {
+			return false;
+		}
+		return true;
+	}
 	
 	
 	/**

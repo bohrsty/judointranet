@@ -117,7 +117,8 @@ class Filter extends Object {
 		
 		// prepare sql statement to get group details
 		$sql = 'SELECT id
-				FROM filter';
+				FROM filter
+				ORDER BY name';
 		
 		// execute statement
 		$result = $db->query($sql);

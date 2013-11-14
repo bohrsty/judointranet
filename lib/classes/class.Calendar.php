@@ -305,7 +305,6 @@ class Calendar extends Page {
 	public function detailsToHtml() {
 		
 		// prepare filter
-		$groups = Group::allExistingGroups();
 		$ownFilter = $this->getFilter();
 		$filterNames = '';
 
@@ -322,6 +321,7 @@ class Calendar extends Page {
 					'type' => parent::lang('class.Calendar#details_to_html#data#type').$this->return_type('translated'),
 					'content' => parent::lang('class.Calendar#details_to_html#data#content').nl2br($this->get_content()),
 					'filter' => parent::lang('class.Calendar#details_to_html#data#filter').$filterNames,
+					'public' => parent::lang('class.Calendar#details_to_html#data#public').($this->isPermittedFor(0) ? parent::lang('class.Calendar#details_to_html#data#publicYes') : parent::lang('class.Calendar#details_to_html#data#publicNo')),
 		);
 		
 		// return
@@ -424,7 +424,7 @@ class Calendar extends Page {
 				// get filter objects
 				$filter = array();
 				foreach($value as $filterId) {
-					$filter[$filterId] = new Field($filterId);
+					$filter[$filterId] = new Filter($filterId);
 				}
 				$this->setFilter($filter);
 			} elseif($name == 'valid') {

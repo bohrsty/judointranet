@@ -246,6 +246,47 @@ class Group extends Object {
 		// return
 		return $group; 
 	}
+	
+	
+	/**
+	 * permissionFor($table, $tableId) returns the permission mode for the given $table/$tableId
+	 * or empty string if no permission
+	 * 
+	 * @param string $table the table name of the permission to get
+	 * @param int $tableId the id of the table entry to get the permission from
+	 * @return string the permission mode (r/w) or empty string
+	 */
+	public function permissionFor($table, $tableId) {
+		
+		// get db object
+		$db = Db::newDb();
+		
+		// prepare sql statement to get group details
+		$sql = 'SELECT mode
+				FROM permissions
+				WHERE item_table=\''.$db->real_escape_string(strtolower($table)).'\'
+				AND item_id=\''.$db->real_escape_string($tableId).'\'
+				AND user_id=\''.$db->real_escape_string('-1').'\'
+				AND group_id=\''.$db->real_escape_string($this->getId()).'\'';
+		
+		// execute statement
+		$result = $db->query($sql);
+		
+		// get data
+		if($result) {
+			list($mode) = $result->fetch_array(MYSQL_NUM);
+		} else {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
+		}
+		
+		// return
+		if($result->num_rows == 0) {
+			return '';
+		} else {
+			return $mode;
+		}
+	}
 }
 
 ?>

@@ -50,6 +50,7 @@ class NaviTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(0, $navi->getPosition());
 		$this->assertEquals(1, $navi->getShow());
 		$this->assertEquals(1, $navi->getValid());
+		$this->assertEquals('r', $navi->getRequiredPermission());
 		$subItems = $navi->getSubItems();
 		$this->assertInternalType('array', $subItems);
 		$this->assertInstanceOf('Navi', $subItems[0]);
@@ -96,6 +97,12 @@ class NaviTest extends PHPUnit_Framework_TestCase {
 		
 		$navi->setValid($data);
 		$this->assertEquals($data, $navi->getValid());
+		
+		// required_permission
+		$data = 'w';
+		
+		$navi->setRequiredPermission($data);
+		$this->assertEquals($data, $navi->getRequiredPermission());
 		
 		// subGroups
 		$data = array(1,2,3);

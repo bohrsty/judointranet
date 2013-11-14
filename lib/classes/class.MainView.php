@@ -172,7 +172,9 @@ class MainView extends PageView {
 			);
 		$username = $form->add(
 				'text',			// type
-				'username'		// id/name
+				'username',		// id/name
+				'',				// value
+				array('data-prefix' => 'img:img/iconTextboxUser.png')
 			);
 		$username->set_rule(
 				array(
@@ -192,7 +194,9 @@ class MainView extends PageView {
 			);
 		$password = $form->add(
 				'password',		// type
-				'password'		// id/name
+				'password',		// id/name
+				'',				// value
+				array('data-prefix' => 'img:img/iconTextboxPassword.png')
 			);
 		$password->set_rule(
 				array(
@@ -285,7 +289,9 @@ class MainView extends PageView {
 					);
 				$password = $form->add(
 						'password',		// type
-						'password'		// id/name
+						'password',		// id/name
+						'',				// value
+						array('data-prefix' => 'img:img/iconTextboxPassword.png')
 					);
 				$password->set_rule(
 						array(
@@ -304,7 +310,9 @@ class MainView extends PageView {
 					);
 				$passwordConfirm = $form->add(
 						'password',			// type
-						'passwordConfirm'	// id/name
+						'passwordConfirm',	// id/name
+						'',					// value
+						array('data-prefix' => 'img:img/iconTextboxPassword.png')
 					);
 				$passwordConfirm->set_rule(
 						array(

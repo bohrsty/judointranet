@@ -43,10 +43,12 @@
 		<script type="text/javascript" src="js/difflib.js"></script>
 		<script type="text/javascript" src="js/diffview.js"></script>
 {/if}
+		<script type="text/javascript" src="js/page.js"></script>
 		<link rel="stylesheet" type="text/css" href="css/start/jquery-ui-1.10.3.custom.css" />
 		<link rel="stylesheet" type="text/css" href="css/page.css" />
 		<script type="text/javascript">
-			{literal}$(function() {
+{literal}
+			$(function() {
 				$({/literal}{$helpids}{literal}).each(function() {
 					var i = this;
 					$( '#{/literal}{$help.dialogClass}{literal}-'+i ).dialog({
@@ -75,15 +77,26 @@
 						}
 					});
 				})
-			});{/literal}
-		</script>
+			});
+{/literal}
 {if isset($permissionJs) && $permissionJs}
-		<script type="text/javascript">
-			{literal}function clearRadio(radioName) {
+{literal}
+			function clearRadio(radioName) {
 				$('[name=' + radioName + ']').prop('checked', false)
-			}{/literal}
-		</script>
+			}
+			function selectRadio(radioId) {
+				$('[id=' + radioId + ']').prop('checked', true)
+			}
+{/literal}
 {/if}
+{if isset($permissionJs) && $permissionJs}
+{literal}
+			$(function() {
+				$( "#tabs" ).tabs();
+			});
+{/literal}
+{/if}
+		</script>
 {if $manualjquery!=''}
 		<script type="text/javascript">
 			$(document).ready(function(){ldelim}

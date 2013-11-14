@@ -1,0 +1,63 @@
+SOFTWARE 
+
+Name:				judointranet (http://bohrs.net/judointranet)
+Copyright by:		Nils Bohrs
+License:			MIT (see MIT.txt)
+Code:				https://github.com/bohrsty/judointranet
+
+
+
+
+
+
+
+THIRD PARTY LICENSES
+
+Icons:
+
+Name:				Icons – Matte Set by Momentum Design Lab
+Copyright by:		Momentum Design Lab
+License:			CC-BY-SA 3.0
+
+
+
+
+Javascript/CSS:
+
+Name:				jQuery
+Copyright by:		jQuery Foundation
+License:			MIT
+
+
+Name:				jQuery UI
+Copyright by:		jQuery Foundation and other contributors
+License:			MIT
+
+
+Name:				jsdifflib
+Copyright by:		Snowtide Informatics Systems, Inc.
+License:			BSD
+
+
+Name:				TinyMCE
+Copyright by:		Moxiecode Systems AB
+License:			LGPL v2.1
+
+
+
+
+PHP libraries:
+
+Name:				HTML2PDF
+Copyright by:		Laurent Minguet
+License:			LGPL v3
+
+
+Name:				Smarty
+Copyright by:		New Digital Group, Inc.
+License:			LGPL v3
+
+
+Name:				Zebra_Form
+Copyright by:		Stefan Gabos
+License:			LGPL v3

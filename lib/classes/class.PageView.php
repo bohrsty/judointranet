@@ -639,71 +639,25 @@ class PageView extends Object {
 	
 	
 	/**
-	 * quickform2AddPermissions($form) adds the choose-permissions dialog to the given $form
-	 * using jquery-ui dialog
+	 * zebraAddPermissions($form, $values) adds the choose-permissions dialog to the
+	 * given $form and sets their values if any
 	 * 
-	 * @param object $form the quickform2 form object the permissions will be added
-	 * @return string HTML code to toggle permissions dialog
+	 * @param object $form the zebra_form object the permissions will be added
+	 * @param string $itemTable name of the table (object type)
+	 * @param int $itemId id of the item the permissions will be added
+	 * @return array containing the modified $form object and an array containing the header etc.
 	 */
-	protected function quickform2AddPermissions(&$form) {
+	protected function zebraAddPermissions(&$form, $itemTable, $itemId=0) {
 		
-		// prepare form group "id"
-		$formHtmlId = 'permissions';
+		// prepare return
+		$return = array();
+		$formIds = array();
 		
 		// prepare clear radio
 		$this->tpl->assign('permissionJs', true);
+		// prepare tabs
+		$this->tpl->assign('tabsJs', true);
 		
-		// prepare dialog link
-		$sSpanLinkDialog = new JudoIntranetSmarty();
-		$link = array(
-				'params' => 'id="togglePermissions" class="spanLink"',
-				'title' => parent::lang('class.PageView#quickform2AddPermissions#togglePermissions#title'),
-				'content' => parent::lang('class.PageView#quickform2AddPermissions#togglePermissions#name'),
-//				'help' => $this->getHelp()->getMessage(HELP_MSG_CALENDARLISTSORTLINKS),
-			);
-		$sSpanLinkDialog->assign('link', $link);
-		
-		// prepare group element
-		$permission = $form->addElement('group', $formHtmlId, array());
-		$permission->setSeparator('<br />');
-		$permission->setLabel($sSpanLinkDialog->fetch('smarty.spanLinkHelp.tpl'));
-		
-		// add headlines
-		// prepare images
-		// read
-		$imgReadText = parent::lang('class.PageView#quickform2AddPermissions#permissions#read');
-		$imgRead = array(
-				'params' => 'class="iconRead" title="'.$imgReadText.'"',
-				'src' => 'img/permissions_read.png',
-				'alt' => $imgReadText,
-			);
-		$sImgReadTemplate = new JudoIntranetSmarty();
-		$sImgReadTemplate->assign('img', $imgRead);
-		// edit
-		$imgEditText = parent::lang('class.PageView#quickform2AddPermissions#permissions#edit');
-		$imgEdit = array(
-				'params' => 'class="iconEdit" title="'.$imgEditText.'"',
-				'src' => 'img/permissions_edit.png',
-				'alt' => $imgEditText,
-			);
-		$sImgEditTemplate = new JudoIntranetSmarty();
-		$sImgEditTemplate->assign('img', $imgEdit);
-		// prepare headline text
-		$headlineText = array(
-				'params' => 'class="headlineText"',
-				'content' => parent::lang('class.PageView#quickform2AddPermissions#permissions#headLine'),
-			);
-		$sHeadlineTextTemplate = new JudoIntranetSmarty();
-		$sHeadlineTextTemplate->assign('span', $headlineText);
-		// add to form/group
-		$groupHeadlines = $permission->addElement('group', 'headlines')
-										->setName('headLines');
-		$groupHeadlines->addElement('static', 'headlineRead')
-							->setContent($sImgReadTemplate->fetch('smarty.img.tpl'));
-		$groupHeadlines->addElement('static', 'headlineEdit')
-							->setContent($sImgEditTemplate->fetch('smarty.img.tpl'));
-		$groupHeadlines->addElement('static', 'headlineText')
-							->setContent($sHeadlineTextTemplate->fetch('smarty.span.tpl'));
 		
 		// get groups
 		$allGroups = $this->getUser()->allGroups();
@@ -721,58 +675,74 @@ class PageView extends Object {
 					&& $this->getUser()->isMemberOf($group->getId()) === false)) {
 				
 				// set id name
-				$radioName = $group->getId();
+				$radioName = 'group_'.$group->getId();
+				$formIds[$radioName] = array('valueType' => 'int', 'type' => 'radios', 'default' => 1);
+				
+				// prepare images
+				// read
+				$imgReadText = parent::lang('class.PageView#zebraAddPermissions#permissions#read');
+				$imgRead = array(
+						'params' => 'class="iconRead clickable" title="'.$imgReadText.'" onclick="selectRadio(\''.$radioName.'_r\')"',
+						'src' => 'img/permissions_read.png',
+						'alt' => $imgReadText,
+					);
+				$sImgReadTemplate = new JudoIntranetSmarty();
+				$sImgReadTemplate->assign('img', $imgRead);
+				// add to $return
+				$return['iconRead'][$radioName] = $sImgReadTemplate->fetch('smarty.img.tpl');
+				
+				// edit
+				$imgEditText = parent::lang('class.PageView#zebraAddPermissions#permissions#edit');
+				$imgEdit = array(
+						'params' => 'class="iconEdit clickable" title="'.$imgEditText.'" onclick="selectRadio(\''.$radioName.'_w\')"',
+						'src' => 'img/permissions_edit.png',
+						'alt' => $imgEditText,
+					);
+				$sImgEditTemplate = new JudoIntranetSmarty();
+				$sImgEditTemplate->assign('img', $imgEdit);
+				// add to $return
+				$return['iconEdit'][$radioName] = $sImgEditTemplate->fetch('smarty.img.tpl');
 				
 				// prepare clear radio link
-				$sSpanLinkClearRadio = new JudoIntranetSmarty();
-				$link = array(
-						'params' => 'class="spanLink" onclick="clearRadio(\''.$radioName.'\')"',
-						'title' => parent::lang('class.PageView#quickform2AddPermissions#clearRadio#title'),
-						'content' => '<img src="img/permissions_delete.png" alt="'.parent::lang('class.PageView#quickform2AddPermissions#clearRadio#name').'" />',
+				$sImgClearRadio = new JudoIntranetSmarty();
+				$img = array(
+						'params' => 'class="clickable" onclick="clearRadio(\''.$radioName.'\')" title="'.parent::lang('class.PageView#zebraAddPermissions#clearRadio#title').'"',
+						'src' => 'img/permissions_delete.png',
+						'alt' => parent::lang('class.PageView#zebraAddPermissions#clearRadio#name'),
 					);
-				$sSpanLinkClearRadio->assign('link', $link);
+				$sImgClearRadio->assign('img', $img);
 				
-				// add group
-				$group1 = $permission->addElement('group', 'group-'.$radioName)
-										->setName($radioName);
-				
-				$group1->addElement('static', 'clear-'.$radioName)
-						->setContent($sSpanLinkClearRadio->fetch('smarty.spanLinkHelp.tpl'));
-						
-				$group1->addElement('radio', $radioName.'-r', array('value' => 'r'));
-				$group1->addElement('radio', $radioName.'-w', array('value' => 'w'));
-				
-				// prepare group name
-				$groupName = array(
-						'params' => 'class="groupName"',
-						'content' => $group->getName(),
+				// add radios
+				$form->add(
+						'label',		// type
+						'label'.ucfirst($radioName),	// id/name
+						$radioName,		// for
+						$group->getName()	// label text
 					);
-				$sGroupNameTemplate = new JudoIntranetSmarty();
-				$sGroupNameTemplate->assign('span', $groupName);
-				// set group name
-				$group1->addElement('static', 'name-'.$radioName)
-						->setContent($sGroupNameTemplate->fetch('smarty.span.tpl'));
+				$public = $form->add(
+						$formIds[$radioName]['type'],	// type
+						$radioName,						// id/name
+						array(
+								'r' => 'r',
+								'w' => 'w',
+							),
+						$group->permissionFor($itemTable, $itemId)
+					);
+				$form->add(
+						'note',			// type
+						'note'.ucfirst($radioName),	// id/name
+						$radioName,		// for
+						parent::lang('class.PageView#zebraAddPermissions#clearRadio#note').':&nbsp;'.$sImgClearRadio->fetch('smarty.img.tpl')	// note text
+					);
 			}
 		}
 		
-		// add jquery-ui dialog
-		$dialog = array(
-			'dialogClass' => $formHtmlId.'-0',
-			'openerClass' => 'togglePermissions',
-			'autoOpen' => 'false',
-			'effect' => 'slide',
-			'duration' => 300,
-			'modal' => 'true',
-			'closeText' => parent::lang('class.PageView#quickform2AddPermissions#dialog#closeText'),
-			'height' => 400,
-			'maxHeight' => 400,
-			'width' => 750,
-			'title' => parent::lang('class.PageView#quickform2AddPermissions#dialog#title'),
-		);
-		// smarty jquery
-		$sJsToggleSlide = new JudoIntranetSmarty();
-		$sJsToggleSlide->assign('dialog', $dialog);
-		$this->add_jquery($sJsToggleSlide->fetch('smarty.js-dialog.tpl'));
+		// add to $return
+		$return['form'] = $form;
+		$return['formIds'] = $formIds;
+		
+		// return
+		return $return;
 	}
 	
 	
@@ -792,6 +762,94 @@ class PageView extends Object {
 		} else {
 			return false;
 		}
+	}
+	
+	
+	/**
+	 * getFormValues($formIds) extracts the values for the given keys in $formIds out of $_POST
+	 * 
+	 * @param array $formIds array containing the form element ids to get from $_POST
+	 * @return array array containing $key => $value of $_POST
+	 */
+	protected function getFormValues($formIds) {
+		
+		// prepare return
+		$data = array();
+			
+		// walk through keys
+		foreach($formIds as $formId => $settings) {
+			
+			// check if id is set
+			if($this->post($formId) === false) {
+				
+				// switch type to set default
+				switch($settings['valueType']) {
+					
+					case 'int':
+						$data[$formId] = 0;
+					break;
+					
+					case 'array';
+						$data[$formId] = array();
+					break;
+					
+					case 'string':
+					default:
+						$data[$formId] = '';
+					break;	
+				}
+			} else {
+				$data[$formId] = $this->post($formId);
+			}
+		}
+		
+		// return
+		return $data;
+	}
+	
+	
+	/**
+	 * getFormPermissions($permissionIds) extracts the values for the given keys in 
+	 * $permisstionIds out of $_POST
+	 * 
+	 * @param array $permissionIds array containing the form element ids to get from $_POST
+	 * @return array array containing $key => $value of $_POST
+	 */
+	protected function getFormPermissions($permissionIds) {
+		
+		// prepare return
+		$permissions = array();
+			
+		// walk through keys (post)
+		foreach($permissionIds as $permissionId => $settings) {
+			
+			// get group id
+			list($temp, $groupId) = explode('_', $permissionId);
+			
+			// check if id is set
+			if($this->post($permissionId) === false) {
+				
+				// set default value
+				$permissions[$groupId]['group'] = new Group($groupId);
+				$permissions[$groupId]['value'] = 0;
+			} else {
+				
+				// set permission
+				$permissions[$groupId]['group'] = new Group($groupId);
+				$permissions[$groupId]['value'] = $this->post($permissionId);
+			}
+		}
+		
+		// walk throught own groups
+		foreach($this->getUser()->get_groups() as $group) {
+			
+			// set permission
+			$permissions[$group->getId()]['group'] = $group;
+			$permissions[$group->getId()]['value'] = 'w';
+		}
+		
+		// return
+		return $permissions;
 	}
 }
 

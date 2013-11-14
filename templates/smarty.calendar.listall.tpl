@@ -20,7 +20,7 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-{$sortlinks}
+{$filterlinks}
 <table id="calendar.listall" class="content">
 	<tr>
 		<th class="date">

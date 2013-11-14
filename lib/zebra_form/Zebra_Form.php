@@ -3040,7 +3040,12 @@ class Zebra_Form
                             foreach ($rule_attributes as $custom_rule_attributes) {
 
                                 // if custom function exists
-                                if (function_exists($custom_rule_attributes[0])) {
+                                if (is_array($custom_rule_attributes[0])) {
+                                	$custom_function_exists = method_exists($custom_rule_attributes[0][0],$custom_rule_attributes[0][1]);
+                                } else {
+                                	$custom_function_exists = function_exists($custom_rule_attributes[0]);
+                                }
+                                if ($custom_function_exists) {
 
                                     // the arguments that we are passing to the custom function are the control's
                                     // submitted value and all other arguments passed when setting the custom rule
