@@ -29,7 +29,7 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 /**
  * class Navi implements the properties of a navigation subtree
  */
-class Navi extends Object {
+class Navi extends PageView {
 	
 	/*
 	 * class-variables
@@ -318,7 +318,7 @@ class Navi extends Object {
 		
 		// add redirect
 		$r = '';
-		if($param == 'login') {
+		if($param == 'login' && $this->get('id') != 'logout') {
 			$r = '&amp;r='.base64_encode($_SERVER['REQUEST_URI']);
 		}
 		

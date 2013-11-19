@@ -129,7 +129,7 @@ class AdministrationView extends PageView {
 						// smarty
 						$this->tpl->assign('title', $this->title(parent::lang('class.AdministrationView#init#title#field')));
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', true);
+						$this->tpl->assign('zebraform', true);
 						$this->tpl->assign('main', $this->field());
 					break;
 					
@@ -138,7 +138,7 @@ class AdministrationView extends PageView {
 						// smarty
 						$this->tpl->assign('title', $this->title(parent::lang('class.AdministrationView#init#title#defaults')));
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', true);
+						$this->tpl->assign('zebraform', true);
 						$this->tpl->assign('main', $this->defaults());
 					break;
 					
@@ -152,7 +152,7 @@ class AdministrationView extends PageView {
 						$this->tpl->assign('title', '');
 						$this->tpl->assign('main', $this->getError()->to_html($errno));
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', false);
+						$this->tpl->assign('zebraform', false);
 					break;
 				}
 			} else {
@@ -165,7 +165,7 @@ class AdministrationView extends PageView {
 				$this->tpl->assign('title', $this->title(parent::lang('class.AdministrationView#init#Error#NotAuthorized')));
 				$this->tpl->assign('main', $this->getError()->to_html($errno));
 				$this->tpl->assign('jquery', true);
-				$this->tpl->assign('hierselect', false);
+				$this->tpl->assign('zebraform', false);
 			}
 		} else {
 			
@@ -177,7 +177,7 @@ class AdministrationView extends PageView {
 			// smarty-jquery
 			$this->tpl->assign('jquery', true);
 			// smarty-hierselect
-			$this->tpl->assign('hierselect', false);
+			$this->tpl->assign('zebraform', false);
 		}
 		
 		// global smarty
@@ -214,27 +214,27 @@ class AdministrationView extends PageView {
 			$this->tpl->assign('caption', parent::lang('class.AdministrationView#field#caption#name.table').$translatedField.' ("'.$this->get('field').'")');
 			
 			// check if 'field' exists
-			if($this->check_usertable($this->get('field')) !== false) {
+			if($this->checkUsertable($this->get('field')) !== false) {
 				
 				// check if row exists
 				$rid = $this->get('rid');
-				if($this->row_exists($this->get('field'),$rid)) {
+				if($this->rowExists($this->get('field'),$rid)) {
 					
 					// check $_GET['action']
 					if($this->get('action') == 'new') {
-						$content .= $this->new_row($this->get('field'));				
+						$content .= $this->newRow($this->get('field'));				
 					} elseif($this->get('action') == 'edit') {
-						$content .= $this->edit_row($this->get('field'),$rid);				
+						$content .= $this->editRow($this->get('field'),$rid);				
 					} elseif($this->get('action') == 'disable') {
 						
 						// check if row is enabled
-						if($this->is_valid($this->get('field'),$rid)) {
+						if($this->isValid($this->get('field'),$rid)) {
 							
 							// set valid 0
-							$this->set_valid($this->get('field'),$rid,0);
+							$this->setValid($this->get('field'),$rid,0);
 							
 							// list table content
-							$content .= $this->list_table_content($this->get('field'),$this->get('page'));
+							$content .= $this->listTableContent($this->get('field'),$this->get('page'));
 						} else {
 							
 							// give link to enable
@@ -250,13 +250,13 @@ class AdministrationView extends PageView {
 					} elseif($this->get('action') == 'enable') {
 						
 						// check if row is disabled
-						if(!$this->is_valid($this->get('field'),$rid)) {
+						if(!$this->isValid($this->get('field'),$rid)) {
 							
 							// set valid 1
-							$this->set_valid($this->get('field'),$rid,1);
+							$this->setValid($this->get('field'),$rid,1);
 							
 							// list table content
-							$content .= $this->list_table_content($this->get('field'),$this->get('page'));
+							$content .= $this->listTableContent($this->get('field'),$this->get('page'));
 						} else {
 							
 							// give link to enable
@@ -272,11 +272,11 @@ class AdministrationView extends PageView {
 					} elseif($this->get('action') == 'delete') {
 						
 						// add form and message
-						$content .= $this->delete_row($this->get('field'),$rid);
+						$content .= $this->deleteRow($this->get('field'),$rid);
 					} else {
 						
 						// list table content
-						$content .= $this->list_table_content($this->get('field'),$this->get('page'));
+						$content .= $this->listTableContent($this->get('field'),$this->get('page'));
 					}
 				} else {
 					$errno = $this->getError()->error_raised('RowNotExists',$this->get('rid'));
@@ -295,7 +295,7 @@ class AdministrationView extends PageView {
 		}
 		
 		// smarty
-		$this->tpl->assign('tablelinks', $this->create_table_links());
+		$this->tpl->assign('tablelinks', $this->createTableLinks());
 		
 		// return
 		return $content;
@@ -308,11 +308,11 @@ class AdministrationView extends PageView {
 	
 	
 	/**
-	 * create_table_links creates the links to choose the table to manage
+	 * createTableLinks() creates the links to choose the table to manage
 	 * 
 	 * @return string html-string with the table-links
 	 */
-	private function create_table_links() {
+	private function createTableLinks() {
 		
 		// smarty-templates
 		$sTl = new JudoIntranetSmarty();
@@ -321,7 +321,7 @@ class AdministrationView extends PageView {
 		$return = '';
 		
 		// get usertables
-		$usertables = $this->get_usertables();
+		$usertables = $this->getUsertables();
 		
 		// create links
 		$a_out = '';
@@ -342,8 +342,8 @@ class AdministrationView extends PageView {
 				$data[] = array(
 						'params' => 'class="usertable"',
 						'href' => 'administration.php?id='.$this->get('id').'&field='.$table,
-						'title' => $translatedTable.' '.parent::lang('class.AdministrationView#create_table_links#title#manage'),
-						'content' => $translatedTable.' '.parent::lang('class.AdministrationView#create_table_links#name#manage')
+						'title' => $translatedTable.' '.parent::lang('class.AdministrationView#createTableLinks#title#manage'),
+						'content' => $translatedTable.' '.parent::lang('class.AdministrationView#createTableLinks#name#manage')
 					);
 			}
 		}
@@ -353,8 +353,8 @@ class AdministrationView extends PageView {
 		// add slider-link
 		// smarty
 		$link = array(
-				'title' => parent::lang('class.AdministrationView#create_table_links#toggleTable#title'),
-				'content' => parent::lang('class.AdministrationView#create_table_links#toggleTable#name'),
+				'title' => parent::lang('class.AdministrationView#createTableLinks#toggleTable#title'),
+				'content' => parent::lang('class.AdministrationView#createTableLinks#toggleTable#name'),
 				'params' => 'id="toggleTable"',
 				'help' => $this->getHelp()->getMessage(HELP_MSG_ADMINUSERTABLESELECT),
 			);
@@ -378,11 +378,11 @@ class AdministrationView extends PageView {
 	
 	
 	/**
-	 * get_usertables returns an array containing all usertables
+	 * getUsertables() returns an array containing all usertables
 	 * 
 	 * @return array array containing all user-editable tables
 	 */
-	private function get_usertables() {
+	private function getUsertables() {
 		
 		// get db-object
 		$db = Db::newDb();
@@ -393,14 +393,24 @@ class AdministrationView extends PageView {
 		
 		// get user tables
 		$usertables = array();
-		$sql = "SHOW TABLES";
+		
+		// prepare statement
+		$sql = 'SHOW TABLES';
+		
+		// execute query
 		$result = $db->query($sql);
-		while(list($table) = $result->fetch_array(MYSQL_NUM)) {
-			
-			// check systemtable
-			if(!in_array($table,$systemtables)) {
-				$usertables[] = $table;
+		
+		// check result
+		if($result) {
+			while(list($table) = $result->fetch_array(MYSQL_NUM)) {
+				// check systemtable
+				if(!in_array($table,$systemtables)) {
+					$usertables[] = $table;
+				}
 			}
+		} else {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
 		}
 		
 		// return
@@ -414,14 +424,14 @@ class AdministrationView extends PageView {
 	
 	
 	/**
-	 * check_usertable checks if the given tablename exists in db
+	 * checkUsertable() checks if the given tablename exists in db
 	 * 
 	 * @return boolean true if given table exists, false otherwise
 	 */
-	private function check_usertable($table) {
+	private function checkUsertable($table) {
 		
 		// get tables
-		$usertables = $this->get_usertables();
+		$usertables = $this->getUsertables();
 		
 		// check if $table in $usertable
 		if(in_array($table,$usertables,true)) {
@@ -438,13 +448,13 @@ class AdministrationView extends PageView {
 	
 	
 	/**
-	 * list_table_content returns the content of the table as HTML-string 
+	 * listTableContent($table_name, $page) returns the content of the table as HTML-string 
 	 * 
 	 * @param string $table name of the table to list
 	 * @param int $page number of page to list
 	 * @return string table content as HTML
 	 */
-	private function list_table_content($table_name,$page) {
+	private function listTableContent($table_name,$page) {
 		
 		// smarty-template
 		$sTc = new JudoIntranetSmarty();
@@ -464,8 +474,8 @@ class AdministrationView extends PageView {
 		$newlink = array(
 				'params' => 'id="newLink"',
 				'href' => $preface.'&action=new',
-				'title' => parent::lang('class.AdministrationView#list_table_content#new#title'),
-				'content' => parent::lang('class.AdministrationView#list_table_content#new#name')
+				'title' => parent::lang('class.AdministrationView#listTableContent#new#title'),
+				'content' => parent::lang('class.AdministrationView#listTableContent#new#name')
 			);
 		$sTc->assign('newlink', $newlink);
 		
@@ -490,9 +500,10 @@ class AdministrationView extends PageView {
 				
 		// prepare statement
 		$pagesize = $this->getGc()->get_config('pagesize');
-		$sql = "SELECT *
-				FROM $table_name
-				LIMIT ".$page * $pagesize.",$pagesize";
+		$limit = $page * $pagesize;
+		$sql = 'SELECT *
+				FROM '.$db->real_escape_string($table_name).'
+				LIMIT '.$db->real_escape_string($limit).','.$db->real_escape_string($pagesize);
 		
 		// execute
 		$result = $db->query($sql);
@@ -500,110 +511,116 @@ class AdministrationView extends PageView {
 		// fetch result
 		$index = $index2 = 0;
 		$data = array();
-		
-		// get table info
-		$tinfo = $result->fetch_fields();
-		
-		// prepare th
-		$i = 1;
-		$data[0]['th'][0]['content'] = parent::lang('class.AdministrationView#list_table_content#table#tasks').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_ADMINUSERTABLETASKS);
-		foreach($tinfo as $col) {
+		if($result) {
+			// get table info
+			$tinfo = $result->fetch_fields();
 			
-			// check usertableCols
-			if(!in_array($col->name, $usertableCols) && $skipUsertableCols) {
-				continue;
-			}
-			// check translation
-			$translated_name = '';
-			if(parent::lang('class.AdministrationView#tableRows#name#'.$col->name) != "class.AdministrationView#tableRows#name#$col->name not translated") {
-				$translated_name = parent::lang('class.AdministrationView#tableRows#name#'.$col->name);
-			} else {
-				$translated_name = $col->name;
-			}
-			// smarty
-			$data[0]['th'][$i]['content'] = $translated_name;
-						
-			// increment counter
-			$i++;
-		}
-		
-		while($row = $result->fetch_array(MYSQL_ASSOC)) {
-			
-			$index2 = 1;
-			
-			// add edit
-			// smarty
-			$data[$index]['td'][0]['edit'] = array(
-					'src' => 'img/admin_edit.png',
-					'alt' => parent::lang('class.AdministrationView#list_table_content#table#edit'),
-					'href' => $preface.'&action=edit&rid='.$row['id'],
-					'title' => parent::lang('class.AdministrationView#list_table_content#table#edit').': '.$row['id']
-				);
-			
-			// add disable/enable
-			// check status
-			$status = '';
-			if($row['valid'] == 0) {
-				$status = 'enable';
-				$actualStatus = 'disabled';
-			} else {
-				$status = 'disable';
-				$actualStatus = 'enabled';
-			}
-			// smarty
-			$data[$index]['td'][0]['disenable'] = array(
-					'src' => 'img/admin_'.$status.'.png',
-					'alt' => parent::lang('class.AdministrationView#list_table_content#table#'.$status),
-					'href' => $preface.'&action='.$status.'&rid='.$row['id'],
-					'title' => parent::lang('class.AdministrationView#list_table_content#table#'.$status).': '.$row['id']
-				);
-			// add delete
-			// smarty
-			$data[$index]['td'][0]['delete'] = array(
-					'src' => 'img/admin_delete.png',
-					'alt' => parent::lang('class.AdministrationView#list_table_content#table#delete'),
-					'href' => $preface.'&action=delete&rid='.$row['id'],
-					'title' => parent::lang('class.AdministrationView#list_table_content#table#delete').': '.$row['id']
-				);
-			
-			// walk through $row
-			foreach($row as $name => $value) {
+			// prepare th
+			$i = 1;
+			$data[0]['th'][0]['content'] = parent::lang('class.AdministrationView#listTableContent#table#tasks').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_ADMINUSERTABLETASKS);
+			foreach($tinfo as $col) {
 				
 				// check usertableCols
-				if(!in_array($name, $usertableCols) && $skipUsertableCols) {
+				if(!in_array($col->name, $usertableCols) && $skipUsertableCols) {
 					continue;
 				}
-				
-				// set escape to true maybe overridden later
-				$data[$index]['td'][$index2]['escape'] = true;
-				
-				// check category
-				if($name == 'category') {
-					
-					// get name for category
-					$cat_sql = "SELECT name FROM category WHERE id=$value";
-					$cat_result = $db->query($cat_sql);
-					list($value) = $cat_result->fetch_array(MYSQL_NUM);
-				} elseif($name == 'valid') {
-					
-					// set value to according img
-					$validImg = new JudoIntranetSmarty();
-					$validImg->assign('status', $actualStatus);
-					$validImg->assign('statusTranslated', parent::lang('class.AdministrationView#list_table_content#table#'.$actualStatus));
-					$value = $validImg->fetch('smarty.admin.valid_img.tpl');
-					$data[$index]['td'][$index2]['escape'] = false;
+				// check translation
+				$translated_name = '';
+				if(parent::lang('class.AdministrationView#tableRows#name#'.$col->name) != "class.AdministrationView#tableRows#name#$col->name not translated") {
+					$translated_name = parent::lang('class.AdministrationView#tableRows#name#'.$col->name);
+				} else {
+					$translated_name = $col->name;
 				}
-				
 				// smarty
-				$data[$index]['td'][$index2]['content'] = $value;
-				
-				// increment index2
-				$index2++;
+				$data[0]['th'][$i]['content'] = $translated_name;
+							
+				// increment counter
+				$i++;
 			}
 			
-			// increment index
-			$index++;
+			while($row = $result->fetch_array(MYSQL_ASSOC)) {
+				
+				$index2 = 1;
+				
+				// add edit
+				// smarty
+				$data[$index]['td'][0]['edit'] = array(
+						'src' => 'img/admin_edit.png',
+						'alt' => parent::lang('class.AdministrationView#listTableContent#table#edit'),
+						'href' => $preface.'&action=edit&rid='.$row['id'],
+						'title' => parent::lang('class.AdministrationView#listTableContent#table#edit').': '.$row['id']
+					);
+				
+				// add disable/enable
+				// check status
+				$status = '';
+				if($row['valid'] == 0) {
+					$status = 'enable';
+					$actualStatus = 'disabled';
+				} else {
+					$status = 'disable';
+					$actualStatus = 'enabled';
+				}
+				// smarty
+				$data[$index]['td'][0]['disenable'] = array(
+						'src' => 'img/admin_'.$status.'.png',
+						'alt' => parent::lang('class.AdministrationView#listTableContent#table#'.$status),
+						'href' => $preface.'&action='.$status.'&rid='.$row['id'],
+						'title' => parent::lang('class.AdministrationView#listTableContent#table#'.$status).': '.$row['id']
+					);
+				// add delete
+				// smarty
+				$data[$index]['td'][0]['delete'] = array(
+						'src' => 'img/admin_delete.png',
+						'alt' => parent::lang('class.AdministrationView#listTableContent#table#delete'),
+						'href' => $preface.'&action=delete&rid='.$row['id'],
+						'title' => parent::lang('class.AdministrationView#listTableContent#table#delete').': '.$row['id']
+					);
+				
+				// walk through $row
+				foreach($row as $name => $value) {
+					
+					// check usertableCols
+					if(!in_array($name, $usertableCols) && $skipUsertableCols) {
+						continue;
+					}
+					
+					// set escape to true maybe overridden later
+					$data[$index]['td'][$index2]['escape'] = true;
+					
+					// check category
+					if($name == 'category') {
+						
+						// get name for category
+						$cat_sql = "SELECT name FROM category WHERE id=$value";
+						$cat_result = $db->query($cat_sql);
+						list($value) = $cat_result->fetch_array(MYSQL_NUM);
+					} elseif($name == 'valid') {
+						
+						// set value to according img
+						$validImg = new JudoIntranetSmarty();
+						$validImg->assign('status', $actualStatus);
+						$validImg->assign('statusTranslated', parent::lang('class.AdministrationView#listTableContent#table#'.$actualStatus));
+						$value = $validImg->fetch('smarty.admin.valid_img.tpl');
+						$data[$index]['td'][$index2]['escape'] = false;
+					}
+					
+					// smarty
+					$data[$index]['td'][$index2]['content'] = $value;
+					
+					// increment index2
+					$index2++;
+				}
+				
+				// increment index
+				$index++;
+			}
+		} else {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
 		}
+		
+		
 		$sTc->assign('data', $data);
 		
 		// return
@@ -617,25 +634,33 @@ class AdministrationView extends PageView {
 	
 	
 	/**
-	 * is_valid returns true if given row is valid, false otherwise
+	 * isValid($table, $rid) returns true if given row is valid, false otherwise
 	 * 
 	 * @param string $table table to check
 	 * @param int $rid id of row to check
 	 * @return boolean true if row->valid == 1, false otherwise
 	 */
-	private function is_valid($table,$rid) {
+	private function isValid($table,$rid) {
 		
 		// get db-object
 		$db = Db::newDb();
 		
 		// prepare statement
-		$sql = "SELECT valid FROM $table WHERE id=$rid";
+		$sql = 'SELECT valid
+				FROM '.$db->real_escape_string($table).'
+				WHERE id='.$db->real_escape_string($rid);
 		
 		// execute
 		$result = $db->query($sql);
 		
 		// fetch result
-		list($valid) = $result->fetch_array(MYSQL_NUM);
+		$valid = '';
+		if($result) {
+			list($valid) = $result->fetch_array(MYSQL_NUM);
+		} else {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
+		}
 		
 		// return
 		if($valid == 1) {
@@ -652,13 +677,13 @@ class AdministrationView extends PageView {
 	
 	
 	/**
-	 * row_exists returns true if given row exists, false otherwise
+	 * rowExists($table, $rid) returns true if given row exists, false otherwise
 	 * 
 	 * @param string $table table to work on
 	 * @param int $rid id of row to check
 	 * @return boolean true if row exists, false otherwise
 	 */
-	private function row_exists($table,$rid) {
+	private function rowExists($table,$rid) {
 		
 		// check if $rid given
 		if($rid !== false) {
@@ -667,16 +692,24 @@ class AdministrationView extends PageView {
 			$db = Db::newDb();
 			
 			// prepare statement
-			$sql = "SELECT * FROM $table WHERE id=$rid";
+			$sql = 'SELECT *
+					FROM '.$db->real_escape_string($table).'
+					WHERE id='.$db->real_escape_string($rid);
 			
 			// execute
 			$result = $db->query($sql);
 			
-			// get num_rows
-			if($result->num_rows == 1) {
-				return true;
+			// check result
+			if($result) {
+				// get num_rows
+				if($result->num_rows == 1) {
+					return true;
+				} else {
+					return false;
+				}
 			} else {
-				return false;
+				$errno = $this->getError()->error_raised('MysqlError', $db->error);
+				$this->getError()->handle_error($errno);
 			}
 		} else {
 			return true;
@@ -690,22 +723,30 @@ class AdministrationView extends PageView {
 	
 	
 	/**
-	 * set_valid sets valid for the given rid
+	 * setValid($table, $rid, $valid) sets valid for the given rid
 	 * 
 	 * @param string $table table to work on
 	 * @param int $rid id of row to set valid
 	 * @param int $valid the value to set valid to
 	 */
-	private function set_valid($table,$rid,$valid) {
+	private function setValid($table,$rid,$valid) {
 		
 		// get db-object
 		$db = Db::newDb();
 		
 		// prepare statement
-		$sql = "UPDATE $table SET valid=$valid WHERE id=$rid";
+		$sql = 'UPDATE '.$db->real_escape_string($table).'
+				SET valid=\''.$db->real_escape_string($valid).'\'
+				WHERE id='.$db->real_escape_string($rid);
 		
 		// execute
 		$result = $db->query($sql);
+		
+		// check result
+		if(!$result) {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
+		}
 	}
 	
 	
@@ -715,13 +756,13 @@ class AdministrationView extends PageView {
 	
 	
 	/**
-	 * delete_row deletes the row for the given rid
+	 * deleteRow($table, $rid) deletes the row for the given rid
 	 * 
 	 * @param string $table table to work on
 	 * @param int $rid id of row to be deleted
 	 * @return string HTML-String containing the confirmation form or message
 	 */
-	private function delete_row($table,$rid) {
+	private function deleteRow($table,$rid) {
 		
 		// smarty-templates
 		$sConfirmation = new JudoIntranetSmarty();
@@ -735,29 +776,35 @@ class AdministrationView extends PageView {
 		}
 		
 		// create form
-		$form = new HTML_QuickForm2(
-								'confirm',
-								'post',
-								array(
-									'name' => 'confirm',
-									'action' => $link.'&action=delete&rid='.$rid
-								)
-							);
+		$form = new Zebra_Form(
+				'formConfirm',	// id/name
+				'post',					// method
+				$link.'&action=delete&rid='.$rid		// action
+			);
+		// set language
+		$form->language('deutsch');
+		// set docktype xhtml
+		$form->doctype('xhtml');
 		
 		// add button
-		$form->addElement('submit','yes',array('value' => parent::lang('class.AdministrationView#delete_row#form#yes')));
+		$form->add(
+				'submit',		// type
+				'buttonSubmit',	// id/name
+				parent::lang('class.AdministrationView#deleteRow#form#yes'),	// value
+				array('title' => parent::lang('class.AdministrationView#deleteRow#title#yes'))
+			);
 		
 		// smarty-link
-			$cancellink = array(
-							'params' => '',
-							'href' => $link,
-							'title' => parent::lang('class.AdministrationView#delete_row#cancel#title'),
-							'content' => parent::lang('class.AdministrationView#delete_row#cancel#form')
-						);
-			$sConfirmation->assign('link', $cancellink);
-			$sConfirmation->assign('spanparams', 'id="cancel"');
-			$sConfirmation->assign('message', parent::lang('class.AdministrationView#delete_row#message#confirm'));
-			$sConfirmation->assign('form', $form);
+		$cancellink = array(
+						'params' => 'class="submit"',
+						'href' => $link,
+						'title' => parent::lang('class.AdministrationView#deleteRow#cancel#title'),
+						'content' => parent::lang('class.AdministrationView#deleteRow#cancel#form')
+					);
+		$sConfirmation->assign('link', $cancellink);
+		$sConfirmation->assign('spanparams', 'id="cancel"');
+		$sConfirmation->assign('message', parent::lang('class.AdministrationView#deleteRow#message#confirm'));
+		$sConfirmation->assign('form', $form->render('', true));
 		
 		// validate
 		if($form->validate()) {
@@ -766,20 +813,26 @@ class AdministrationView extends PageView {
 			$db = Db::newDb();
 			
 			// prepare statement
-			$sql = "DELETE FROM $table WHERE id=$rid";
+			$sql = 'DELETE FROM '.$db->real_escape_string($table).' WHERE id=\''.$db->real_escape_string($rid).'\'';
 			
 			// execute
 			$result = $db->query($sql);
 			
+			// check result
+			if(!$result) {
+				$errno = $this->getError()->error_raised('MysqlError', $db->error);
+				$this->getError()->handle_error($errno);
+			}
+			
 			// smarty
-			$sConfirmation->assign('message', parent::lang('class.AdministrationView#delete_row#message#done'));
+			$sConfirmation->assign('message', parent::lang('class.AdministrationView#deleteRow#message#done'));
 			$sConfirmation->assign('form', '');
 			
 			// smarty return
 			$return = $sConfirmation->fetch('smarty.confirmation.tpl');
 			
 			// add table content
-			$return .= $this->list_table_content($table,$this->get('page'));
+			$return .= $this->listTableContent($table,$this->get('page'));
 			
 			// return
 			return $return;
@@ -797,13 +850,13 @@ class AdministrationView extends PageView {
 	
 	
 	/**
-	 * edit_row edits the row for the given rid
+	 * editRow($table, $rid) edits the row for the given rid
 	 * 
 	 * @param string $table table to work on
 	 * @param int $rid id of row to edit
 	 * @return string HTML-string for the form or message
 	 */
-	private function edit_row($table,$rid) {
+	private function editRow($table,$rid) {
 		
 		// prepare return
 		$return = '';
@@ -820,181 +873,249 @@ class AdministrationView extends PageView {
 		$db = Db::newDb();
 		
 		// prepare statement
-		$sql = "SELECT * FROM $table WHERE id=$rid";
+		$sql = 'SELECT *
+				FROM '.$db->real_escape_string($table).'
+				WHERE id='.$db->real_escape_string($rid).'
+				LIMIT 1';
 		
 		// execute
 		$result = $db->query($sql);
 		
-		// fetch result
-		$row = $result->fetch_array(MYSQL_ASSOC);
+		// table info and row
+		$row = array();
+		$tinfo = null;
+		if($result) {
+			$row = $result->fetch_array(MYSQL_ASSOC);
+			$tinfo = $result->fetch_fields();
+		} else {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
+		}
+		
+		// extract tinfo
+		$tableInfo = array();
+		foreach($tinfo as $col) {
+			$tableInfo[$col->name] = $col;
+		}
 		
 		// prepare form
-		$form = new HTML_QuickForm2(
-						'edit_field',
-						'post',
-						array(
-							'name' => 'edit_field',
-							'action' => $link.'&action=edit&rid='.$rid
-						)
-					);
-		
-		// renderer
-		$renderer = HTML_QuickForm2_Renderer::factory('default');
-		$renderer->setOption('required_note',parent::lang('class.AdministrationView#edit_row#form#requiredNote'));
+		$form = new Zebra_Form(
+				'edit'.ucfirst($table),	// id/name
+				'post',					// method
+				$link.'&action=edit&rid='.$rid		// action
+			);
+		// set language
+		$form->language('deutsch');
+		// set docktype xhtml
+		$form->doctype('xhtml');
 		
 		// get values and fields
-		$i = 0;
-		$datasource = array();
-		$fields = array();
 		foreach($row as $col => $value) {
 			
 			// check translation
-			$translated_name = '';
-			if(parent::lang('class.AdministrationView#tableRows#name#'.$col) != "class.AdministrationView#tableRows#name#$col not translated") {
+			$translated_col = '';
+			if(parent::lang('class.AdministrationView#tableRows#name#'.$col) != 'class.AdministrationView#tableRows#name#'.$col.' not translated') {
 				$translated_col = parent::lang('class.AdministrationView#tableRows#name#'.$col);
 			} else {
 				$translated_col = $col;
 			}
 			
-			// check category
-			if($col == 'category') {
+			// check id
+			if($col != 'id') {
 				
-				// get options
-				$cat_sql = "SELECT id,name FROM category WHERE valid=1";
-				$cat_result = $db->query($cat_sql);
-				$options = array('--');
-				while(list($id,$name) = $cat_result->fetch_array(MYSQL_NUM)) {
-					$options[$id] = $name;
-				}
+				// col->type
+				// 252 = text, 253 = varchar; 1 = tinyint(boolean); 3 = int
 				
-				// add value
-				$datasource[$col] = $value;
-				
-				// select
-				$field = $form->addElement('select',$col,array());
-				$field->setLabel($translated_col.':');
-				
-				// load options
-				$field->loadOptions($options);
-				
-				// add rules
-				if($table == 'defaults') {
-					$field->addRule('required',parent::lang('class.AdministrationView#edit_row#rule#requiredSelect'));
-					$field->addRule('callback',parent::lang('class.AdministrationView#edit_row#rule#checkSelect'),array($this,'callback_check_select'));
-				}
-			} else {
-				
-				// check id or valid
-				if($col != 'id' && $col != 'valid') {
+				// add field
+				$field = null;
+				// check category
+				if($col == 'category') {
 					
-					// get fieldconfig
-					// 252 = text, 253 = varchar; 1 = tinyint(boolean); 3 = int
-					$field_config = $result->fetch_field_direct($i);
+					// get options
+					$cat_sql = 'SELECT id,name
+								FROM category
+								WHERE valid=1';
 					
-					// add value
-					$datasource[$col] = $value;
+					// execute
+					$result = $db->query($cat_sql);
 					
-					// add field
-					$field = null;
+					// get data
+					$options = array();
+					if($result) {
+						while(list($id,$name) = $result->fetch_array(MYSQL_NUM)) {
+							$options[$id] = $name;
+						}
+					} else {
+						$errno = $this->getError()->error_raised('MysqlError', $db->error);
+						$this->getError()->handle_error($errno);
+					}
+					
+					// select
+					$formIds[$col] = array('valueType' => 'int', 'type' => 'select',);
+					$form->add(
+							'label',		// type
+							'label'.ucfirst($col),	// id/name
+							$col,		// for
+							$translated_col.':'	// label text
+						);
+					$field = $form->add(
+							$formIds[$col]['type'],	// type
+							$col,	// id/name
+							$row[$col],			// default
+							array(		// attributes
+								)
+						);
+					$field->add_options($options);
+					if($table == 'defaults') {
+						$field->set_rule(
+								array(
+										'required' => array(
+												'error', parent::lang('class.AdministrationView#editRow#rule#requiredSelect')
+											),
+									)
+							);
+					}
+				} else {
+					
 					// check type
-					if($field_config->type == 252) {
+					if($tableInfo[$col]->type == 252) {
 						
 						// textarea
-						$field = HTML_QuickForm2_Factory::createElement('textarea',$col,array());
-						$field->setLabel($translated_col.':');
-						
-						// add rule
-						$field->addRule(
-							'regex',
-							parent::lang('class.AdministrationView#edit_row#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
-							$this->getGc()->get_config('textarea.regexp'));
-						// required
+						$formIds[$col] = array('valueType' => 'string', 'type' => 'textarea',);
+						$form->add(
+								'label',		// type
+								'label'.ucfirst($col),	// id/name
+								$col,				// for
+								$translated_col,	// label text
+								array('inside' => true)
+							);
+						$field = $form->add(
+								$formIds[$col]['type'],		// type
+								$col,	// id/name
+								$row[$col]	// default
+							);
+						$rules['regexp'] = 
+							array(
+									$this->getGc()->get_config('textarea.regexp.zebra'),
+									'error',
+									parent::lang('class.AdministrationView#newRow#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
+								);
 						if($table == 'defaults') {
-							$field->addRule('required',parent::lang('class.AdministrationView#edit_row#rule#required'));
+							$rules['required'] = 
+								array(
+										'error',
+										parent::lang('class.AdministrationView#newRow#rule#required'),
+									);
 						}
-					} elseif($field_config->type == 253 || $field_config->type == 3) {
+						$field->set_rule($rules);
+					} elseif($tableInfo[$col]->type == 253 || $tableInfo[$col]->type == 3) {
 						
 						// input
-						$field = HTML_QuickForm2_Factory::createElement('text',$col,array());
-						$field->setLabel($translated_col.':');
+						$formIds[$col] = array('valueType' => 'string', 'type' => 'text',);
+						$form->add(
+								'label',		// type
+								'label'.ucfirst($col),	// id/name
+								$col,			// for
+								$translated_col,	// label text
+								array('inside' => true,)	// label inside
+							);
+						$field = $form->add(
+										$formIds[$col]['type'],		// type
+										$col,		// id/name
+										$row[$col]	// defaults
+							);
 						
-						// add rule
-						$field->addRule(
-							'regex',
-							parent::lang('class.AdministrationView#edit_row#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
-							$this->getGc()->get_config('textarea.regexp'));
-						// required
+						// add rules
+						$rules['regexp'] = 
+							array(
+									$this->getGc()->get_config('textarea.regexp.zebra'),
+									'error',
+									parent::lang('class.AdministrationView#newRow#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
+								);
 						if($table == 'defaults') {
-							$field->addRule('required',parent::lang('class.AdministrationView#edit_row#rule#required'));
+							$rules['required'] = 
+								array(
+										'error',
+										parent::lang('class.AdministrationView#newRow#rule#required'),
+									);
 						}
-					} elseif($field_config->type == 1) {
+						$field->set_rule($rules);
+					} elseif($tableInfo[$col]->type == 1) {
 						
 						// input
-						$field = HTML_QuickForm2_Factory::createElement('checkbox',$col,array());
-						$field->setLabel($translated_col.':');
+						$formIds[$col] = array('valueType' => 'int', 'type' => 'checkbox', 'default' => 1);
+						$form->add(
+								'label',		// type
+								'label'.ucfirst($col),	// id/name
+								$col,			// for
+								$translated_col.':'	// label text
+							);
+						$public = $form->add(
+								$formIds[$col]['type'],		// type
+								$col,						// id/name
+								'1',							// value
+								($row[$col] == 1 ? array('checked' => 'checked') : null)	// default
+							);
 					}
-					$fields[] = $field;
 				}
 			}
-			
-			// increment field-counter
-			$i++;
-		}
-			
-		// add datasource
-		$form->addDataSource(new HTML_QuickForm2_DataSource_Array($datasource));
-		
-		// add fields
-		foreach($fields as $field) {
-			$form->appendChild($field);
 		}
 		
 		// submit-button
-		$form->addSubmit('submit',array('value' => parent::lang('class.AdministrationView#edit_row#form#submitButton')));
+		$form->add(
+				'submit',		// type
+				'buttonSubmit',	// id/name
+				parent::lang('class.AdministrationView#editRow#form#submitButton')	// value
+			);
 		
 		// validate
 		if($form->validate()) {
 			
 			// set output
-			$return .= $this->p(' class="edit_caption"',parent::lang('class.AdministrationView#edit_row#caption#done').': "'.$rid.'"');
+			$return .= $this->p('class="edit_caption"',parent::lang('class.AdministrationView#editRow#caption#done'));
 			
 			// get data
-			$data = $form->getValue();
+			$data = $this->getFormValues($formIds);
 			
 			// prepare statement
-			$sql = "UPDATE $table SET ";
+			$sql = 'UPDATE '.$db->real_escape_string($table).' SET ';
 			foreach($data as $field => $value) {
 				
 				// check translation
 				$translated_field = '';
-				if(parent::lang('class.AdministrationView#tableRows#name#'.$field) != "class.AdministrationView#tableRows#name#$field not translated") {
+				if(parent::lang('class.AdministrationView#tableRows#name#'.$field) != 'class.AdministrationView#tableRows#name#'.$field.' not translated') {
 					$translated_field = parent::lang('class.AdministrationView#tableRows#name#'.$field);
 				} else {
 					$translated_field = $field;
 				}
 				
-				// check field
-				if(substr($field,0,5) != '_qf__' && $field != 'submit') {
-					
-					// add fields to sql
-					$sql .= "$field='$value', ";
-					
-					// add fields to output
-					$return .= $this->p('',"$translated_field = '".nl2br(htmlentities(utf8_decode($value)))."'");
-				}
+				// add fields to sql
+				$sql .= $db->real_escape_string($field).'=\''.$db->real_escape_string($value).'\', ';
+				
+				// add fields to output
+				$return .= $this->p('',"$translated_field = '".nl2br(htmlentities(utf8_decode($value)))."'");
 			}
-			$sql = substr($sql,0,-2);
-			$sql .= " WHERE id=$rid";
+			
+			$sql = substr($sql,0,-2).' WHERE id='.$db->real_escape_string($rid);
 			
 			// execute
 			$result = $db->query($sql);
 			
+			// check result
+			if(!$result) {
+				$errno = $this->getError()->error_raised('MysqlError', $db->error);
+				$this->getError()->handle_error($errno);
+			}
+			
 			// add table content
-			$return .= $this->list_table_content($table,$this->get('page'));
+			$return .= $this->listTableContent($table,$this->get('page'));
 		} else {
-			$return .= $this->p('',parent::lang('class.AdministrationView#edit_row#caption#edit').': "'.$rid.'"');
-			$return .= $form->render($renderer);
+			$return .= $this->p('',parent::lang('class.AdministrationView#newRow#caption#edit'));
+			$return .= $form->render('', true);
 		}
+		
+		// close db
+		$db->close();
 		
 		// return
 		return $return;
@@ -1007,12 +1128,12 @@ class AdministrationView extends PageView {
 	
 	
 	/**
-	 * new_row inserts a new row in $table
+	 * newRow($table) inserts a new row in $table
 	 * 
 	 * @param string $table table to insert row
 	 * @return string HTML-string for the form or message
 	 */
-	private function new_row($table) {
+	private function newRow($table) {
 		
 		// prepare return
 		$return = '';
@@ -1029,35 +1150,34 @@ class AdministrationView extends PageView {
 		$db = Db::newDb();
 		
 		// prepare statement
-		$sql = "SELECT * FROM $table";
+		$sql = 'SELECT *
+				FROM '.$db->real_escape_string($table).'
+				LIMIT 1';
 		
 		// execute
 		$result = $db->query($sql);
 		
 		// table info
-		$tinfo = $result->fetch_fields();
+		$tinfo = null;
+		if($result) {
+			$tinfo = $result->fetch_fields();
+		} else {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
+		}
 		
 		// prepare form
-		$form = new HTML_QuickForm2(
-						'new_'.$table,
-						'post',
-						array(
-							'name' => 'new_'.$table,
-							'action' => $link.'&action=new'
-						)
-					);
-		// add datasource (valid = 1)
-		$datasource['valid'] = 1;
-		$form->addDataSource(new HTML_QuickForm2_DataSource_Array($datasource));
-		
-		// renderer
-		$renderer = HTML_QuickForm2_Renderer::factory('default');
-		$renderer->setOption('required_note',parent::lang('class.AdministrationView#new_row#form#requiredNote'));
+		$form = new Zebra_Form(
+				'new'.ucfirst($table),	// id/name
+				'post',					// method
+				$link.'&action=new'		// action
+			);
+		// set language
+		$form->language('deutsch');
+		// set docktype xhtml
+		$form->doctype('xhtml');
 		
 		// get values and fields
-		$i = 0;
-		$fields = array();
-		
 		foreach($tinfo as $col) {
 			
 			// check translation
@@ -1080,24 +1200,48 @@ class AdministrationView extends PageView {
 				if($col->name == 'category') {
 					
 					// get options
-					$cat_sql = "SELECT id,name FROM category WHERE valid=1";
-					$cat_result = $db->query($cat_sql);
-					$options = array('--');
-					while(list($id,$name) = $cat_result->fetch_array(MYSQL_NUM)) {
-						$options[$id] = $name;
+					$cat_sql = 'SELECT id,name
+								FROM category
+								WHERE valid=1';
+					
+					// execute
+					$result = $db->query($cat_sql);
+					
+					// get data
+					$options = array();
+					if($result) {
+						while(list($id,$name) = $result->fetch_array(MYSQL_NUM)) {
+							$options[$id] = $name;
+						}
+					} else {
+						$errno = $this->getError()->error_raised('MysqlError', $db->error);
+						$this->getError()->handle_error($errno);
 					}
 					
 					// select
-					$field = $form->addElement('select',$col->name,array());
-					$field->setLabel($translated_col.':');
-					
-					// load options
-					$field->loadOptions($options);
-					
-					// add rules
+					$formIds[$col->name] = array('valueType' => 'int', 'type' => 'select',);
+					$form->add(
+							'label',		// type
+							'label'.ucfirst($col->name),	// id/name
+							$col->name,		// for
+							$translated_col.':'	// label text
+						);
+					$field = $form->add(
+							$formIds[$col->name]['type'],	// type
+							$col->name,	// id/name
+							'',			// default
+							array(		// attributes
+								)
+						);
+					$field->add_options($options);
 					if($table == 'defaults') {
-						$field->addRule('required',parent::lang('class.AdministrationView#new_row#rule#requiredSelect'));
-						$field->addRule('callback',parent::lang('class.AdministrationView#new_row#rule#checkSelect'),array($this,'callback_check_select'));
+						$field->set_rule(
+								array(
+										'required' => array(
+												'error', parent::lang('class.AdministrationView#newRow#rule#requiredSelect')
+											),
+									)
+							);
 					}
 				} else {
 					
@@ -1105,62 +1249,104 @@ class AdministrationView extends PageView {
 					if($col->type == 252) {
 						
 						// textarea
-						$field = $form->addElement('textarea',$col->name,array());
-						$field->setLabel($translated_col.':');
-						
-						// add rules
-						$field->addRule(
-							'regex',
-							parent::lang('class.AdministrationView#new_row#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
-							$this->getGc()->get_config('textarea.regexp'));
-						// required
+						$formIds[$col->name] = array('valueType' => 'string', 'type' => 'textarea',);
+						$form->add(
+								'label',		// type
+								'label'.ucfirst($col->name),	// id/name
+								$col->name,				// for
+								$translated_col,	// label text
+								array('inside' => true)
+							);
+						$field = $form->add(
+								$formIds[$col->name]['type'],		// type
+								$col->name	// id/name
+							);
+						$rules['regexp'] = 
+							array(
+									$this->getGc()->get_config('textarea.regexp.zebra'),
+									'error',
+									parent::lang('class.AdministrationView#newRow#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
+								);
 						if($table == 'defaults') {
-							$field->addRule('required',parent::lang('class.AdministrationView#new_row#rule#required'));
+							$rules['required'] = 
+								array(
+										'error',
+										parent::lang('class.AdministrationView#newRow#rule#required'),
+									);
 						}
+						$field->set_rule($rules);
 					} elseif($col->type == 253 || $col->type == 3) {
 						
 						// input
-						$field = $form->addElement('text',$col->name,array());
-						$field->setLabel($translated_col.':');
+						$formIds[$col->name] = array('valueType' => 'string', 'type' => 'text',);
+						$form->add(
+								'label',		// type
+								'label'.ucfirst($col->name),	// id/name
+								$col->name,			// for
+								$translated_col,	// label text
+								array('inside' => true,)	// label inside
+							);
+						$field = $form->add(
+										$formIds[$col->name]['type'],		// type
+										$col->name		// id/name
+							);
 						
 						// add rules
-						$field->addRule(
-							'regex',
-							parent::lang('class.AdministrationView#new_row#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
-							$this->getGc()->get_config('textarea.regexp'));
-						// required
+						$rules['regexp'] = 
+							array(
+									$this->getGc()->get_config('textarea.regexp.zebra'),
+									'error',
+									parent::lang('class.AdministrationView#newRow#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
+								);
 						if($table == 'defaults') {
-							$field->addRule('required',parent::lang('class.AdministrationView#new_row#rule#required'));
+							$rules['required'] = 
+								array(
+										'error',
+										parent::lang('class.AdministrationView#newRow#rule#required'),
+									);
 						}
+						$field->set_rule($rules);
 					} elseif($col->type == 1) {
 						
 						// input
-						$field = $form->addElement('checkbox',$col->name,array());
-						$field->setLabel($translated_col.':');
+						$formIds[$col->name] = array('valueType' => 'int', 'type' => 'checkbox', 'default' => 1);
+						$form->add(
+								'label',		// type
+								'label'.ucfirst($col->name),	// id/name
+								$col->name,			// for
+								$translated_col.':'	// label text
+							);
+						$public = $form->add(
+								$formIds[$col->name]['type'],		// type
+								$col->name,						// id/name
+								'1',							// value
+								($col->name == 'valid' ? array('checked' => 'checked') : null)	// default
+							);
 					}
 				}
 			}
-			
-			// increment field-counter
-			$i++;
 		}
 		
 		// submit-button
-		$form->addSubmit('submit',array('value' => parent::lang('class.AdministrationView#new_row#form#submitButton')));
+		$form->add(
+				'submit',		// type
+				'buttonSubmit',	// id/name
+				parent::lang('class.AdministrationView#newRow#form#submitButton')	// value
+			);
 		
 		// validate
 		if($form->validate()) {
 			
 			// set output
-			$return .= $this->p('class="edit_caption"',parent::lang('class.AdministrationView#new_row#caption#done'));
+			$return .= $this->p('class="edit_caption"',parent::lang('class.AdministrationView#newRow#caption#done'));
 			
 			// get data
-			$data = $form->getValue();
+			$data = $this->getFormValues($formIds);
 			
 			// prepare statement
-			$sql = "INSERT INTO $table ";
-			$sql_field = "(id,";
-			$sql_value = " VALUES (NULL,";
+			$sql = 'INSERT INTO '.$db->real_escape_string($table).' ';
+			$sql_field = '(id,';
+			$sql_value = ' VALUES (NULL,';
 			foreach($data as $field => $value) {
 				
 				// check translation
@@ -1171,30 +1357,35 @@ class AdministrationView extends PageView {
 					$translated_field = $field;
 				}
 				
-				// check field
-				if(substr($field,0,5) != '_qf__' && $field != 'submit') {
-					
-					// add fields to sql
-					$sql_field .= "$field,";
-					$sql_value .= "'$value',";
-					
-					// add fields to output
-					$return .= $this->p('',"$translated_field = '".nl2br(htmlentities(utf8_decode($value)))."'");
-				}
+				// add fields to sql
+				$sql_field .= $db->real_escape_string($field).',';
+				$sql_value .= '\''.$db->real_escape_string($value).'\',';
+				
+				// add fields to output
+				$return .= $this->p('',"$translated_field = '".nl2br(htmlentities(utf8_decode($value)))."'");
 			}
-			$sql_field = substr($sql_field,0,-1).")";
-			$sql_value = substr($sql_value,0,-1).")";
+			$sql_field = substr($sql_field,0,-1).')';
+			$sql_value = substr($sql_value,0,-1).')';
 			$sql .= $sql_field.$sql_value;
 			
 			// execute
 			$result = $db->query($sql);
 			
+			// check result
+			if(!$result) {
+				$errno = $this->getError()->error_raised('MysqlError', $db->error);
+				$this->getError()->handle_error($errno);
+			}
+			
 			// add table content
-			$return .= $this->list_table_content($table,$this->get('page'));
+			$return .= $this->listTableContent($table,$this->get('page'));
 		} else {
-			$return .= $this->p('',parent::lang('class.AdministrationView#new_row#caption#edit'));
-			$return .= $form->render($renderer);
+			$return .= $this->p('',parent::lang('class.AdministrationView#newRow#caption#edit'));
+			$return .= $form->render('', true);
 		}
+		
+		// close db
+		$db->close();
 		
 		// return
 		return $return;
@@ -1225,23 +1416,23 @@ class AdministrationView extends PageView {
 			$this->tpl->assign('pagecaption',parent::lang('class.AdministrationView#page#caption#defaults'));
 			
 			// check if row exists
-			if($this->row_exists('defaults',$rid) || $this->get('action') == 'new') {
+			if($this->rowExists('defaults',$rid) || $this->get('action') == 'new') {
 				
 				// check $_GET['action']
 				if($this->get('action') == 'new') {
-					$content .= $this->new_row('defaults');				
+					$content .= $this->newRow('defaults');				
 				} elseif($this->get('action') == 'edit') {
-					$content .= $this->edit_row('defaults',$rid);
+					$content .= $this->editRow('defaults',$rid);
 				} elseif($this->get('action') == 'disable') {
 						
 					// check if row is enabled
-					if($this->is_valid('defaults',$rid)) {
+					if($this->isValid('defaults',$rid)) {
 						
 						// set valid 0
-						$this->set_valid('defaults',$rid,0);
+						$this->setValid('defaults',$rid,0);
 						
 						// list table content
-						$content .= $this->list_table_content('defaults',$this->get('page'));
+						$content .= $this->listTableContent('defaults',$this->get('page'));
 					} else {
 						
 						// give link to enable
@@ -1257,13 +1448,13 @@ class AdministrationView extends PageView {
 				} elseif($this->get('action') == 'enable') {
 					
 					// check if row is disabled
-					if(!$this->is_valid('defaults',$rid)) {
+					if(!$this->isValid('defaults',$rid)) {
 						
 						// set valid 1
-						$this->set_valid('defaults',$rid,1);
+						$this->setValid('defaults',$rid,1);
 						
 						// list table content
-						$content .= $this->list_table_content('defaults',$this->get('page'));
+						$content .= $this->listTableContent('defaults',$this->get('page'));
 					} else {
 						
 						// give link to disable
@@ -1277,9 +1468,9 @@ class AdministrationView extends PageView {
 						$content .= $sE->fetch('smarty.admin.dis-enable.tpl');
 					}				
 				} elseif($this->get('action') == 'delete') {
-					$content .= $this->delete_row('defaults',$rid);
+					$content .= $this->deleteRow('defaults',$rid);
 				} else {
-					$content .= $this->list_table_content('defaults',$this->get('page'));
+					$content .= $this->listTableContent('defaults',$this->get('page'));
 				}
 			} else {
 				$errno = $this->getError()->error_raised('RowNotExists',$this->get('rid'));
@@ -1289,7 +1480,7 @@ class AdministrationView extends PageView {
 		} else {
 			
 			// add default content
-			$content .= $this->list_table_content('defaults',$this->get('page'));
+			$content .= $this->listTableContent('defaults',$this->get('page'));
 		
 		}
 		

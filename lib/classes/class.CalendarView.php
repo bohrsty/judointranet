@@ -113,7 +113,7 @@ class CalendarView extends PageView {
 						// smarty
 						$this->tpl->assign('title', $this->title(parent::lang('class.CalendarView#init#details#title')));
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', true);
+						$this->tpl->assign('zebraform', false);
 						
 						// if cid does not exist, error
 						if(Calendar::check_id($this->get('cid'))) {
@@ -181,7 +181,7 @@ class CalendarView extends PageView {
 						$this->tpl->assign('title', '');
 						$this->tpl->assign('main', $this->getError()->to_html($errno));
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', false);
+						$this->tpl->assign('zebraform', false);
 					break;
 				}
 			} else {

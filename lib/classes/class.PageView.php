@@ -566,7 +566,7 @@ class PageView extends Object {
 			$pagelinks['links'][] = array(
 					'params' => $params,
 					'href' => '&page='.$i,
-					'title' => parent::lang('class.AdministrationView#list_table_content#pages#page').' '.$i,
+					'title' => parent::lang('class.AdministrationView#listTableContent#pages#page').' '.$i,
 					'content' => $i
 				);
 		}
@@ -588,11 +588,11 @@ class PageView extends Object {
 		
 		// assign "from - to - of"
 		$pagelinks['toof'] = " (".($page * $pagesize + 1)." ".
-				parent::lang('class.AdministrationView#list_table_content#pages#to')." $last ".
-				parent::lang('class.AdministrationView#list_table_content#pages#of')." $rows)";
+				parent::lang('class.AdministrationView#listTableContent#pages#to')." $last ".
+				parent::lang('class.AdministrationView#listTableContent#pages#of')." $rows)";
 		
 		// assign "pages"
-		$pagelinks['pages'] = parent::lang('class.AdministrationView#list_table_content#pages#pages');
+		$pagelinks['pages'] = parent::lang('class.AdministrationView#listTableContent#pages#pages');
 		
 		// return
 		return array($page, $pagelinks);

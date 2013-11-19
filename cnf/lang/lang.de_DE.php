@@ -718,15 +718,6 @@ $lang = array(
 				'email' => 'Emailadresse'
 			)
 		),
-//		'connectnavi' => array(
-//			'firstlevel' => array(
-//				'name' => 'Administration'
-//			),
-//			'secondlevel' => array(
-//				'field' => 'Ben. Tabellen verwalten',
-//				'defaults' => 'Vorgaben verwalten'
-//			)
-//		),
 		'init' => array(
 			'default' => array(
 				'title' => 'Administration'
@@ -739,7 +730,7 @@ $lang = array(
 				'defaults' => 'Administration: Vorgaben verwalten'
 			)
 		),
-		'create_table_links' => array(
+		'createTableLinks' => array(
 			'title' => array(
 				'manage' => ' verwalten'
 			),
@@ -765,7 +756,7 @@ $lang = array(
 				'rowNotDisabled.disable' => 'Zeile deaktivieren'
 			)
 		),
-		'list_table_content' => array(
+		'listTableContent' => array(
 			'pages' => array(
 				'page' => 'Seite',
 				'pages' => 'Seiten',
@@ -786,9 +777,12 @@ $lang = array(
 				'name' => 'Neuer Eintrag'
 			)
 		),
-		'delete_row' => array(
+		'deleteRow' => array(
 			'form' => array(
-				'yes' => 'Ja'
+				'yes' => '  Ja  '
+			),
+			'title' => array(
+				'yes' => 'L&ouml;scht den Eintrag'
 			),
 			'cancel' => array(
 				'title' => 'Abbrechen',
@@ -799,7 +793,7 @@ $lang = array(
 				'done' => 'Die Zeile wurde endg&uuml;tig gel&ouml;scht!'
 			)
 		),
-		'edit_row' => array(
+		'editRow' => array(
 			'rule' => array(
 				'regexp.allowedChars' => 'Es k&ouml;nnen nur folgende Zeichen eingegeben werden!',
 				'requiredSelect' => 'Feld muss ausgew&auml;hlt werden!',
@@ -815,7 +809,7 @@ $lang = array(
 				'done' => 'Zeile erfolgreich ge&auml;ndert'
 			)
 		),
-		'new_row' => array(
+		'newRow' => array(
 			'rule' => array(
 				'regexp.allowedChars' => 'Es k&ouml;nnen nur folgende Zeichen eingegeben werden!',
 				'requiredSelect' => 'Feld muss ausgew&auml;hlt werden!',
