@@ -867,7 +867,7 @@ $lang = array(
 				'show' => 'Protokoll anzeigen',
 				'topdf' => 'PDF anzeigen',
 				'correct' => 'Protokoll korrigieren',
-				'new_entry' => 'Neues Protokoll',
+				'newEntry' => 'Neues Protokoll',
 				'edit' => 'Protokoll bearbeiten',
 				'decisions' => 'Beschl&uuml;sse anzeigen'
 			),
@@ -971,7 +971,7 @@ $lang = array(
 				'required.recorder' => 'Protokollant muss eingetragen werden!'
 			)
 		),
-		'new_entry' => array(
+		'newEntry' => array(
 			'tmce' => array(
 				'item' => 'TOP',
 				'decision' => 'Beschluss'
@@ -979,7 +979,10 @@ $lang = array(
 		),
 		'delete' => array(
 			'form' => array(
-				'yes' => 'Ja'
+				'yes' => '  Ja  '
+			),
+			'title' => array(
+				'yes' => 'Protokoll l&ouml;schen',
 			),
 			'cancel' => array(
 				'title' => 'Bricht den L&ouml;schvorgang ab',
@@ -1010,7 +1013,11 @@ $lang = array(
 			'diff' => array(
 				'baseCaption' => 'Originaltext',
 				'newCaption' => 'Korrektur'
-			)
+			),
+			'tmceClass' => array(
+				'tmceItem' => 'TOP',
+				'tmceDecision' => 'Beschluss',
+			),
 		)
 	),
 	'class.Protocol' => array(

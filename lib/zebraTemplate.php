@@ -37,12 +37,27 @@ $permissionConfig = $variables[2];
 // prepare elements
 $elements = array();
 $permissions = array();
+
+// prepare multi-elements and -labels
+$vars = get_defined_vars();
+
 // walk through $formIds
 foreach($formIds as $elementName => $settings) {
 	
 	$elements[$elementName]['label'] = (isset(${'label'.ucfirst($elementName)}) ? ${'label'.ucfirst($elementName)} : '');
 	// check if checkbox or radio
-	if($settings['type'] == 'checkbox' || $settings['type'] == 'checkboxex' || $settings['type'] == 'radio' || $settings['type'] == 'radios') {
+	if($settings['type'] == 'checkboxes' || $settings['type'] == 'radios') {
+		
+		// get elements and labels
+		foreach($vars as $name => $content) {
+			if(preg_match('/^'.$elementName.'_(\d?)$/', $name, $matches)) {
+				$elements[$elementName]['element'][$matches[1]]['element'] = ${$name};
+			}
+			if(preg_match('/^label_'.$elementName.'_(\d?)$/', $name, $matches)) {
+				$elements[$elementName]['element'][$matches[1]]['label'] = ${$name};
+			}
+		}
+	} elseif($settings['type'] == 'checkbox' || $settings['type'] == 'radio') {	
 		$elements[$elementName]['element'] = (isset(${$elementName.'_'.$settings['default']}) ? ${$elementName.'_'.$settings['default']} : '');
 	} else {
 		$elements[$elementName]['element'] = (isset(${$elementName}) ? ${$elementName} : '');

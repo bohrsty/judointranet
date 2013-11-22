@@ -328,29 +328,31 @@ div.protocolDetailLinks a {
 	padding: 0 5px 0 7px;
 }
 
-div.element textarea#protocol-0 {
-	width: 85%;
-	height: 400px;
+.row textarea#protocol {
+	width: 90%;
+	height: 500px;
 }
 
-div.element input#member0-0 {
+.row input#member0 {
 	width: 700px;
 }
 
-div.element input#member1-0 {
+.row input#member1 {
 	width: 700px;
 }
 
-div.element input#member2-0 {
+.row input#member2 {
 	width: 700px;
 }
 
-div.element textarea#protDiffBase-0 {
-	display: none;
+.row textarea#protDiffBase {
+	/* display: none;
+	   styled via jquery in js/page.js to hide their parent elements as well */
 }
 
-div.element textarea#protDiffNew-0 {
-	display: none;
+.row textarea#protDiffNew {
+	/* display: none;
+	   styled via jquery in js/page.js to hide their parent elements as well */
 }
 
 div#diffOut {
@@ -697,7 +699,8 @@ or implied, of Chas Emerick.
 table.diff {
 	border-collapse:collapse;
 	border:1px solid darkgray;
-	white-space:pre-wrap
+	white-space:pre-wrap;
+	width: 100%;
 }
 table.diff tbody { 
 	font-family:Courier, monospace
@@ -711,7 +714,8 @@ table.diff tbody th {
 	color:#886;
 	padding:.3em .5em .1em 2em;
 	text-align:right;
-	vertical-align:top
+	vertical-align:top;
+	width: .9em;
 }
 table.diff thead {
 	border-bottom:1px solid #BBC;
@@ -720,6 +724,7 @@ table.diff thead {
 }
 table.diff thead th.texttitle {
 	text-align:left
+	width: 50%;
 }
 table.diff tbody td {
 	padding:0px .4em;

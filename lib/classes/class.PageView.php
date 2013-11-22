@@ -719,14 +719,14 @@ class PageView extends Object {
 						$radioName,		// for
 						$group->getName()	// label text
 					);
-				$public = $form->add(
+				$form->add(
 						$formIds[$radioName]['type'],	// type
 						$radioName,						// id/name
-						array(
+						array(				// values
 								'r' => 'r',
 								'w' => 'w',
 							),
-						$group->permissionFor($itemTable, $itemId)
+						$group->permissionFor($itemTable, $itemId)	// default
 					);
 				$form->add(
 						'note',			// type

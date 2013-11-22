@@ -33,7 +33,13 @@
 			{$element.label}
 {/if}
 {if isset($element.element) && $element.element!=''}
+{if is_array($element.element)}
+{foreach $element.element as $multiElement}
+			<div class="cell">{$multiElement.element}</div><div class="cell">{$multiElement.label}</div><div class="clear"></div>
+{/foreach}
+{else}
 			{$element.element}
+{/if}
 {/if}
 {if isset($element.note) && $element.note!=''}
 			{$element.note}

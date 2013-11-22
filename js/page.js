@@ -21,16 +21,16 @@
  * 
  * ********************************************************************************************/
  
- / *************************************************************
-   * callback functions for clientside validation (zebra_form) *
-   ************************************************************* /
+/*************************************************************
+ * callback functions for clientside validation (zebra_form) *
+ ************************************************************* 
  
- /**
-  * callbackCheckSelect(args) checks if a value other than '' is selected
-  * 
-  * @param array args arguments to check
-  * @return bool true, if args is not empty, false otherwise
-  */
+/**
+ * callbackCheckSelect(args) checks if a value other than '' is selected
+ * 
+ * @param array args arguments to check
+ * @return bool true, if args is not empty, false otherwise
+ */
 function callbackCheckSelect(args) {
 	
 	// check values
@@ -38,4 +38,23 @@ function callbackCheckSelect(args) {
 		return false;
 	}
 	return true;
+}
+
+
+
+
+/***************************************************
+ * functions to style some elements via javascript *
+ ***************************************************
+
+/**
+ * hideJsdiffTextareas() hides the "value" textareas by hiding their parents
+ *
+ * @return void
+ */
+function hideJsdiffTextareas() {
+
+	// style parent element of the hidden jsdiff textareas
+	$("#protDiffBase").parent().css("display", "none");
+	$("#protDiffNew").parent().css("display", "none");
 }
