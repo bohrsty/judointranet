@@ -121,6 +121,9 @@ class PageView extends Object {
 		
 		// initialize help
 		$GLOBALS['help'] = new Help($this);
+		
+		// set logo
+		$this->tpl->assign('systemLogo', 'img/'.$this->getGc()->get_config('global.systemLogo'));
 	}
 	
 	/*

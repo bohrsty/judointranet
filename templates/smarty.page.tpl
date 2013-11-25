@@ -143,7 +143,7 @@
 	<body>
 		<div id="navi">
 			<div id="logo">
-				<p><img src="img/logo.png" alt="Logo" title="JudoIntranet" /></p>
+				<p><img src="{$systemLogo}" alt="Logo" title="JudoIntranet" /></p>
 			</div>
 {$navigation}
 		</div>
