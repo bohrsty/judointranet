@@ -252,6 +252,53 @@ class Object {
 	}
 	
 	
+	/**
+	 * callbackCheckHierselect($value, $arg) checks if a value other than '' in post($arg)
+	 * is selected, if some value is selected, check if $value is other than ''
+	 * 
+	 * @param string $value value of the second select element
+	 * @param string $arg id of the first select element
+	 * @return bool true, if post($arg) is other than '' and $value not '', false otherwise
+	 */
+	public function callbackCheckHierselect($value, $arg='') {
+		
+		// check if first is selected
+		if($this->post($arg) != '') {
+			// if is, second has to have value other than ''
+			if($value != '') {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return true;
+		}
+	}
+	
+	
+	/**
+	 * callbackCheckRequired($value, $arg) checks if $value and post($arg) not ''
+	 * 
+	 * @param string $value value of the textarea element
+	 * @param string $arg id of the select element
+	 * @return bool true, if $value and post($arg) is not ''
+	 */
+	public function callbackCheckRequired($value, $arg) {
+		
+		// check if select id is set
+		if($this->post($arg) !== false) {
+			// if is, both needs to be other than ''
+			if($value != '' && $this->post($arg) != '') {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+	
+	
 	
 	
 	

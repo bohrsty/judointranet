@@ -785,21 +785,39 @@ class PageView extends Object {
 			// check if id is set
 			if($this->post($formId) === false) {
 				
-				// switch type to set default
-				switch($settings['valueType']) {
+				// check for post values with name addition
+				// check hierselect
+				if($settings['type'] == 'hierselect') {
 					
-					case 'int':
-						$data[$formId] = 0;
-					break;
+					// first
+					$data[$formId][0] = ($this->post($formId.'-1') !== false ? $this->post($formId.'-1') : '');
+					// second
+					$data[$formId][1] = ($this->post($formId.'-2') !== false ? $this->post($formId.'-2') : '');
+				// check text with defaults
+				} elseif($settings['type'] == 'fieldtext') {
 					
-					case 'array';
-						$data[$formId] = array();
-					break;
-					
-					case 'string':
-					default:
-						$data[$formId] = '';
-					break;	
+					// manual
+					$data[$formId]['manual'] = ($this->post($formId.'-manual') !== false ? $this->post($formId.'-manual') : '');
+					// defaults
+					$data[$formId]['defaults'] = ($this->post($formId.'-defaults') !== false ? $this->post($formId.'-defaults') : '');
+				} else {
+				
+					// switch type to set default
+					switch($settings['valueType']) {
+						
+						case 'int':
+							$data[$formId] = 0;
+						break;
+						
+						case 'array';
+							$data[$formId] = array();
+						break;
+						
+						case 'string':
+						default:
+							$data[$formId] = '';
+						break;	
+					}
 				}
 			} else {
 				$data[$formId] = $this->post($formId);

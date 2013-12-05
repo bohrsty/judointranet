@@ -11,3 +11,4 @@
 /templates/smarty/compile/*tpl.php
 /templates/smarty/compile/*string.php
 /cnf/config.ini
+/lib/classes/class.Test*.php

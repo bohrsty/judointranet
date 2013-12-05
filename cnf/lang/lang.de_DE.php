@@ -452,13 +452,20 @@ $lang = array(
 		)
 	),
 	'class.Field' => array(
+		'global' => array(
+			'info' => array(
+				'help' => 'Hilfe',
+			),
+		),
 		'element' => array(
 			'rule' => array(
 				'required.date' => 'Datum muss ausgew&auml;hlt werden!',
 				'check.date' => 'Korrektes Datum muss ausgew&auml;hlt werden!',
 				'required.text' => 'Feld muss ausgef&uuml;llt werden!',
 				'regexp.allowedChars' => 'Es k&ouml;nnen nur folgende Zeichen eingegeben werden!',
-				'required.checkbox' => 'Auswahlfeld muss angehakt werden!'
+				'required.checkbox' => 'Auswahlfeld muss angehakt werden!',
+				'check.select' => 'Feld muss ausgew&auml;ht werden!',
+				'check.hierselect' => 'Felder m&uuml;ssen ausgew&auml;ht werden!',
 			),
 			'label' => array(
 				'textarea.manual' => 'eintragen...',
@@ -471,20 +478,12 @@ $lang = array(
 				'unchecked' => 'Nein'
 			)
 		),
-		'read_defaults' => array(
-			'defaults' => array(
-				'separator' => 'Vorgaben'
+		'readDefaults' => array(
+			'separator' => array(
+				'defaults' => 'Vorgaben',
+				'lastUsed' => 'zuletzt verwendet',
 			),
-			'lastUsed' => array(
-				'separator' => 'zuletzt verwendet'
-			)
 		),
-		'entry' => array(
-			'rule' => array(
-				'check.select' => 'Feld muss ausgew&auml;ht werden!',
-				'check.hierselect' => 'Felder m&uuml;ssen ausgew&auml;ht werden!'
-			)
-		)
 	),
 	'class.AnnouncementView' => array(
 		'init' => array(

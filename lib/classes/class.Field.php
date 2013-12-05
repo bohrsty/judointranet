@@ -36,7 +36,7 @@ class Field extends Object {
 	private $id;
 	private $name;
 	private $type;
-	private $quickform;
+	private $form;
 	private $value;
 	private $table;
 	private $table_id;
@@ -68,11 +68,11 @@ class Field extends Object {
 	public function set_type($type) {
 		$this->type = $type;
 	}
-	public function get_quickform(){
-		return $this->quickform;
+	public function getForm(){
+		return $this->form;
 	}
-	public function set_quickform($quickform) {
-		$this->quickform = $quickform;
+	public function setForm($form) {
+		$this->form = $form;
 	}
 	public function get_value(){
 		return $this->value;
@@ -132,7 +132,7 @@ class Field extends Object {
 	/*
 	 * constructor/destructor
 	 */
-	public function __construct($id,$table,$table_id,$pid) {
+	public function __construct(&$form, $id, $table, $table_id, $pid) {
 		
 		// parent constructor
 		parent::__construct();
@@ -140,22 +140,23 @@ class Field extends Object {
 		// set class variables
 		$this->set_table($table);
 		$this->set_table_id($table_id);
+		$this->setForm($form);
 		
 		// get field for given id
-		$this->get_from_db($id,$pid);
+		$this->getFromDb($id,$pid);
 	}
 	
 	/*
 	 * methods
 	 */
 	/**
-	 * get_from_db gets the fieldconfig for the given fieldid
+	 * getFromDb($id, $pid) gets the fieldconfig for the given field id
 	 * 
 	 * @param int $id id of the fieldentry
 	 * @param int $pid id of the preset
 	 * @return void
 	 */
-	private function get_from_db($id,$pid) {
+	private function getFromDb($id,$pid) {
 		
 		// get db-object
 		$db = Db::newDb();
@@ -194,92 +195,118 @@ class Field extends Object {
 	}
 	
 	
-	
-	
-	
-	
 	/**
-	 * read_quickform set a HTML_Quickform2_Element-object to $quickform according
-	 * to the $type
+	 * addFormElement($options, $defaults, &$formIds) adds an element to $this->form according 
+	 * to $this->type
 	 * 
 	 * @param array $options array containing parameters for the input-tag
 	 * @param bool $defaults text-fields with default-values if true
-	 * @return string the value of the "id"-parameter of the input-tag
+	 * @param array $formIds array containing the form ids for later getting the values
 	 */
-	public function read_quickform($options = array(),$defaults = false) {
+	public function addFormElement($options = array(),$defaults = false, &$formIds) {
 		
-		// prepare return
-		$element = null;
-		
-		// prepare ids
-		$element_ids = '';
+		// get and simplify $this->form
+		$form = &$this->getForm();
+		// simplify id
+		$elementId = $this->get_table().'-'.$this->get_id();
 		
 		// check type
 		if($this->get_type() == 'text') {
 			
-			// check defaults
-			if($defaults === true) {
-				
-				// field-group
-				$element = HTML_QuickForm2_Factory::createElement('group', $this->get_table().'-'.$this->get_id(),$options);
-				$element->setLabel($this->get_name().':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDTEXT));
-				
-				// add select
-				$select = $element->addElement('select','defaults',array());
-				$select->setLabel(parent::lang('class.Field#element#label#textarea.defaults'));
-				
-				// add textarea
-				$textarea = $element->addElement('textarea','manual',array());
-				$textarea->setLabel(parent::lang('class.Field#element#label#textarea.manual'));
-								
-				// add options
-				$this->read_defaults($select);
-			} else {
-				
-				// textarea
-				$element = HTML_QuickForm2_Factory::createElement('textarea', $this->get_table().'-'.$this->get_id(),$options);
-				$element->setLabel($this->get_name().':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDTEXT));
-				
-				// add rules
-				if($this->get_required() == 1) {
-					$element->addRule('required',parent::lang('class.Field#element#rule#required.text'));
-				}
-				$element->addRule(
-					'regex',
-					parent::lang('class.Field#element#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
-					$this->getGc()->get_config('textarea.regexp'));
-			}
+			// set form id
+			$formIds[$elementId] = array('valueType' => 'string', 'type' => 'fieldtext',);
 			
-			// add id to return
-			$element_ids = $this->get_table().'-'.$this->get_id();
+			// add elements
+			$this->fieldText($form, true);
 		} elseif($this->get_type() == 'date') {
 			
-			// date in input-text for use with jquery
-			$element = HTML_QuickForm2_Factory::createElement('text', $this->get_table().'-'.$this->get_id(),$options);
-			$element->setLabel($this->get_name().':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDATE));
+			// set form id
+			$formIds[$elementId] = array('valueType' => 'string', 'type' => 'date',);
 			
-			// add rules
+			// add label
+			$form->add(
+				'label',			// type
+				'label'.ucfirst($elementId),	// id/name
+				$elementId,			// for
+				$this->get_name().':'	// label text
+			);
+			
+			// add date
+			$element = $form->add(
+					$formIds[$elementId]['type'],			// type
+					$elementId,			// id/name
+					date('d.m.Y')	// default
+				);
+			// format/position
+			$element->format('d.m.Y');
+			$element->inside(false);
+			
+			// define regexp rule for the textarea
+			$rules['date'] = array(
+					'error',
+					parent::lang('class.Field#element#rule#check.date'),
+				);
+			// define custom required rule
 			if($this->get_required() == 1) {
-				$element->addRule('required',parent::lang('class.Field#element#rule#required.date'));
+				$rules['required'] = array(
+						'error',
+						parent::lang('class.Field#element#rule#required.date'),
+					);
 			}
-			$element->addRule('callback',parent::lang('class.Field#element#rule#check.date'),array($this,'callback_check_date'));
 			
-			// add id to return
-			$element_ids = $this->get_table().'-'.$this->get_id();
+			// add rules for textarea
+			$element->set_rule($rules);
+			
+			// add note
+			$form->add(
+					'note',			// type
+					'note'.ucfirst($elementId),	// id/name
+					$elementId,		// for
+					parent::lang('class.Field#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDATE)	// note text
+				);
 		} elseif($this->get_type() == 'checkbox') {
 			
-			// checkbox
-			$element = HTML_QuickForm2_Factory::createElement('checkbox', $this->get_table().'-'.$this->get_id(),$options);
-			$element->setLabel($this->get_name().':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDCHECKBOX));
+			// set form id
+			$formIds[$elementId] = array('valueType' => 'string', 'type' => 'checkbox',);
 			
-			// add rules
+			// add label
+			$form->add(
+				'label',			// type
+				'label'.ucfirst($elementId),	// id/name
+				$elementId,			// for
+				$this->get_name().':'	// label text
+			);
+			
+			// add checkbox
+			$element = $form->add(
+				$formIds[$elementId]['type'],		// type
+				$elementId,						// id/name
+				'1',							// value
+				null							// default
+			);
+			
+			// define custom required rule
 			if($this->get_required() == 1) {
-				$element->addRule('required',parent::lang('class.Field#element#rule#required.checkbox'));
+				$rules['required'] = array(
+						'error',
+						parent::lang('class.Field#element#rule#required.checkbox'),
+					);
 			}
 			
-			// add id to return
-			$element_ids = $this->get_table().'-'.$this->get_id();
+			// add rules for textarea
+			$element->set_rule($rules);
+			
+			// add note
+			$form->add(
+					'note',			// type
+					'note'.ucfirst($elementId),	// id/name
+					$elementId,		// for
+					parent::lang('class.Field#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDCHECKBOX)	// note text
+				);
 		} elseif($this->get_type() == 'dbselect') {
+			
+			// set form id
+			$formIds[$elementId] = array('valueType' => 'string', 'type' => 'select',);
 			
 			// read config
 			$config = $this->get_config();
@@ -287,54 +314,56 @@ class Field extends Object {
 			// merge options
 			$options = array_merge($options,$config['options']);
 			
-			// select
-			$element = HTML_QuickForm2_Factory::createElement('select', $this->get_table().'-'.$this->get_id(),$options);
-			$element->setLabel($this->get_name().':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDBSELECT));
+			// add label
+			$form->add(
+				'label',			// type
+				'label'.ucfirst($elementId),	// id/name
+				$elementId,			// for
+				$this->get_name().':'	// label text
+			);
 			
-			// add rules
+			// add element
+			$element = $form->add(
+				'select',	// type
+				$elementId,		// id/name
+				null,		// default
+				$options	// attributes
+			);
+			
+			// define custom required rule
 			if($this->get_required() == 1) {
-				$element->addRule('required',parent::lang('class.Field#element#rule#required.checkbox'));
-				$element->addRule('callback',parent::lang('class.Field#entry#rule#check.select'),array($this,'callback_check_select'));
+				$rules['required'] = array(
+						'error',
+						parent::lang('class.Field#element#rule#required.select'),
+					);
 			}
 			
-			// add id to return
-			$element_ids = $this->get_table().'-'.$this->get_id();
+			// add rules for textarea
+			$element->set_rule($rules);
 			
-			// get options from field-config
-			$field_options = array('--');
-			$this->dbselect_options($field_options);
+			// add select options
+			$element->add_options($this->dbselectOptions());
 			
-			// load options
-			$element->loadOptions($field_options);
+			// add note
+			$form->add(
+					'note',			// type
+					'note'.ucfirst($elementId),	// id/name
+					$elementId,		// for
+					parent::lang('class.Field#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDBSELECT)	// note text
+				);
 		} elseif($this->get_type() == 'dbhierselect') {
 			
-			// select
-			$element = HTML_QuickForm2_Factory::createElement('hierselect', $this->get_table().'-'.$this->get_id(),$options);
-			$element->setLabel($this->get_name().':&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDBHIERSELECT));
-			
-			// add rules
-			if($this->get_required() == 1) {
-				$element->addRule('required',parent::lang('class.Field#element#rule#required.checkbox'));
-				$element->addRule('callback',parent::lang('class.Field#entry#rule#check.hierselect'),array($this,'callback_check_hierselect'));
-			}
-			
-			// add id to return
-			$element_ids = $this->get_table().'-'.$this->get_id();
+			// set form id
+			$formIds[$elementId] = array('valueType' => 'string', 'type' => 'hierselect',);
 			
 			// get options from field-config
-			$field_options_first[0] = '--';
-			$field_options_second[0][0] = '--';
-			$this->dbhierselect_options($field_options_first,$field_options_second);
+			$optionsFirst = array();
+			$optionsSecond = array();
+			$this->dbhierselectOptions($optionsFirst,$optionsSecond);
 						
-			// load options
-			$element->loadOptions(array($field_options_first,$field_options_second));
+			// add hierselect
+			$this->hierselect($form, $optionsFirst, $optionsSecond, $elementId.'-1', $elementId.'-2');
 		}
-		
-		// set
-		$this->set_quickform($element);
-		
-		// return
-		return $element_ids;
 	}
 	
 	
@@ -343,12 +372,12 @@ class Field extends Object {
 	
 	
 	/**
-	 * read_value reads the actual value from the db
+	 * readValue($data) reads the actual value from the db
 	 * 
 	 * @param array $data values (table, table_id, field_id) can override the instancevariables
 	 * @return void
 	 */
-	public function read_value($data = null) {
+	public function readValue($data = null) {
 		
 		// prepare return
 		$value = '';
@@ -369,19 +398,25 @@ class Field extends Object {
 		}
 		
 		// prepare sql-statement
-		$sql = "SELECT v.value,v.defaults,v.last_modified,v.modified_by
+		$sql = 'SELECT v.value,v.defaults,v.last_modified,v.modified_by
 				FROM value AS v
-				WHERE v.table_name = '$table'
-				AND v.table_id = $table_id
-				AND v.field_id = $field_id";
+				WHERE v.table_name = \''.$db->real_escape_string($table).'\'
+				AND v.table_id = '.$db->real_escape_string($table_id).'
+				AND v.field_id = '.$db->real_escape_string($field_id);
 		
 		// execute
 		$result = $db->query($sql);
 		
-		// check if value is set
-		if($result->num_rows != 0) {
-			// fetch result
-			list($value,$defaults,$lastModified,$modifiedBy) = $result->fetch_array(MYSQL_NUM);
+		// check result
+		if($result) {
+			// check if value is set
+			if($result->num_rows != 0) {
+				// fetch result
+				list($value,$defaults,$lastModified,$modifiedBy) = $result->fetch_array(MYSQL_NUM);
+			}
+		} else {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
 		}
 		
 		// close db
@@ -465,11 +500,11 @@ class Field extends Object {
 	
 	
 	/**
-	 * value_to_html returns the field and its $value as array
+	 * valueToHtml() returns the field and its $value as array
 	 * 
 	 * @return array array containing name and value of the field
 	 */
-	public function value_to_html() {
+	public function valueToHtml() {
 		
 		// get values
 		$value = $this->get_value();
@@ -507,7 +542,7 @@ class Field extends Object {
 				
 				// get default-value
 				if($defaults != '') {
-					$checked_value = $this->return_defaults_value($defaults);
+					$checked_value = $this->returnDefaultsValue($defaults);
 				} else {
 					$checked_value = '';
 				}
@@ -524,7 +559,7 @@ class Field extends Object {
 		} elseif($this->get_type() == 'dbselect') {
 			
 			// get values
-			$values = $this->dbselect_value();
+			$values = $this->dbselectValue();
 			
 			// check multiple
 			if(isset($values[0])) {
@@ -547,7 +582,7 @@ class Field extends Object {
 		} elseif($this->get_type() == 'dbhierselect') {
 			
 			// get values
-			$values = $this->dbhierselect_value();
+			$values = $this->dbhierselectValue();
 			
 			$checked_value = $values['value1'].'/'.$values['value2'];
 			
@@ -565,12 +600,12 @@ class Field extends Object {
 	
 	
 	/**
-	 * write_db writes the actual objectdata to the db
+	 * writeDb() writes the actual objectdata to the db
 	 * 
 	 * @param string $action insert inserts new values, update updates existing
 	 * @return void
 	 */
-	public function write_db($action) {
+	public function writeDb($action) {
 		
 		// get db-object
 		$db = Db::newDb();
@@ -579,22 +614,38 @@ class Field extends Object {
 		if($action == 'insert') {
 			
 			// insert
-			$sql = "INSERT INTO value (id,table_name,table_id,field_id,value,defaults,modified_by)
-					VALUES (NULL,'".$this->get_table()."',".$this->get_table_id().",".$this->get_id().",'".$this->get_value()."',".$this->get_defaults().",".(int)$this->getUser()->get_id().")";
+			$sql = 'INSERT INTO value (id,table_name,table_id,field_id,value,defaults,modified_by)
+					VALUES (
+						NULL,'.
+						'\''.$db->real_escape_string($this->get_table()).'\','.
+						$db->real_escape_string($this->get_table_id()).','.
+						$db->real_escape_string($this->get_id()).','.
+						'\''.$db->real_escape_string($this->get_value()).'\','.
+						$db->real_escape_string($this->get_defaults()).','.
+						$db->real_escape_string((int)$this->getUser()->get_id()).')';
 		} else {
 			
 			// update
-			$sql = "UPDATE value SET
-					value='".$this->get_value()."',
-					defaults=".$this->get_defaults().",
-					modified_by=".(int)$this->getUser()->get_id()."
-					WHERE field_id = ".$this->get_id()."
-					AND table_id = ".$this->table_id."
-					AND table_name = '".$this->get_table()."'";
+			$sql = 'UPDATE value SET
+					value=\''.$db->real_escape_string($this->get_value()).'\',
+					defaults='.$db->real_escape_string($this->get_defaults()).',
+					modified_by='.$db->real_escape_string((int)$this->getUser()->get_id()).'
+					WHERE field_id='.$db->real_escape_string($this->get_id()).'
+					AND table_id='.$db->real_escape_string($this->get_table_id()).'
+					AND table_name=\''.$db->real_escape_string($this->get_table()).'\'';
 		}
 		
 		// execute
-		$db->query($sql);
+		$result = $db->query($sql);
+		
+		// check result
+		if(!$result) {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
+		}
+		
+		// close db
+		$db->close();
 	}
 	
 	
@@ -603,23 +654,32 @@ class Field extends Object {
 	
 	
 	/**
-	 * delete_value deletes the value in db
+	 * deleteValue() deletes the value in db
 	 * 
 	 * @param int $table_id id of the value in $table
 	 */
-	public function delete_value() {
+	public function deleteValue() {
 		
 		// get db-object
 		$db = Db::newDb();
 		
 		// prepare sql
-		$sql = "DELETE FROM value
-				WHERE field_id = ".$this->get_id()."
-				AND table_id = ".$this->get_table_id()."
-				AND table_name = '".$this->get_table()."'";
+		$sql = 'DELETE FROM value
+				WHERE field_id = '.$db->real_escape_string($this->get_id()).'
+				AND table_id='.$db->real_escape_string($this->get_table_id()).'
+				AND table_name=\''.$db->real_escape_string($this->get_table()).'\'';
 		
 		// execute
-		$db->query($sql);
+		$result = $db->query($sql);
+		
+		// check result
+		if(!$result) {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
+		}
+		
+		// close db
+		$db->close();
 	}
 	
 	
@@ -628,95 +688,107 @@ class Field extends Object {
 	
 	
 	/**
-	 * read_defaults adds the default-values and last-used-value to the
-	 * given array
+	 * getOptions() returns an array containing the default values and last-used values
+	 * for the defaults select element
 	 * 
-	 * @param array $options array to add default- and last-used-values
+	 * @return array array containig the optgroups for the defaults select element
 	 */
-	public function read_defaults(&$element) {
+	public function getOptions() {
+		
+		// prepare optgroups
+		$optionDefaults = array();
+		$optionLastUsed = array();
 		
 		// get db-object
 		$db = Db::newDb();
 		
 		// get defaults
 		// prepare sql
-		$sql = "SELECT d.id,d.name
+		$sql = 'SELECT d.id,d.name
 				FROM defaults AS d
-				WHERE category='".$this->get_category()."'
+				WHERE category=\''.$db->real_escape_string($this->get_category()).'\'
 				AND d.valid=1		
-				ORDER BY d.name ASC";
+				ORDER BY d.name ASC';
 		
 		// execute
 		$result = $db->query($sql);
 		
-		// add first option
-		$element->addOption('--',0);
-		
-		// add default-optgroup
-		$dOptgroup = $element->addOptgroup(parent::lang('class.Field#read_defaults#defaults#separator'));
-		
-		while(list($id,$name) = $result->fetch_array(MYSQL_NUM)) {
-			
-			// check name length
-			$truncName = '';
-			if(strlen($name) > 30) {
-				$truncName = substr($name,0,27).'...';
-			} else {
-				$truncName = $name;
+		// get data
+		if($result) {
+			while(list($id,$name) = $result->fetch_array(MYSQL_NUM)) {
+				
+				// check name length
+				$truncName = '';
+				if(strlen($name) > 30) {
+					$truncName = substr($name,0,27).'...';
+				} else {
+					$truncName = $name;
+				}
+				
+				// add options
+				$optionDefaults['d'.$id] = $truncName;
 			}
-			
-			// add options
-			$dOptgroup->addOption($truncName,'d'.$id,array('title' => $name));
+		} else {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
 		}
 		
 		// prepare sql
-		$sql = "SELECT v.id,v.table_id,v.value
+		$sql = 'SELECT v.id,v.table_id,v.value
 				FROM value AS v,field AS f
-				WHERE v.table_name='".$this->get_table()."'
-				AND f.type='".$this->get_type()."'
+				WHERE v.table_name=\''.$db->real_escape_string($this->get_table()).'\'
+				AND f.type=\''.$db->real_escape_string($this->get_type()).'\'
 				AND f.id=v.field_id
-				ORDER BY v.id DESC";
+				ORDER BY v.id DESC';
 		
 		// execute
 		$result = $db->query($sql);
 		
-		// add last-optgroup
-		$lOptgroup = $element->addOptgroup(parent::lang('class.Field#read_defaults#lastUsed#separator'));
-		
-		// set index
-		$index = 0;
-		while(list($id,$table_id,$value) = $result->fetch_array(MYSQL_NUM)) {
-			
-			// replace linebreak
-			$value = str_replace(array("\r\n","\r","\n")," ",$value);
-			
-			// check value length
-			$truncValue = '';
-			if(strlen($value) > 30) {
-				$truncValue = substr($value,0,27).'...';
-			} else {
-				$truncValue = $value;
-			}
-			
-			// check if truncated value has already been added
-			$tempOptions = $lOptgroup->getOptions();
-			for($i=0; $i<count($tempOptions); $i++) {
-				if($tempOptions[$i]['text'] == $truncValue) {
-					continue 2;
+		// get data
+		if($result) {
+			// set index
+			$index = 0;
+			while(list($id,$table_id,$value) = $result->fetch_array(MYSQL_NUM)) {
+				
+				// replace linebreak
+				$value = str_replace(array("\r\n","\r","\n")," ",$value);
+				
+				// check value length
+				$truncValue = '';
+				if(strlen($value) > 30) {
+					$truncValue = substr($value,0,27).'...';
+				} else {
+					$truncValue = $value;
+				}
+				
+				// check if truncated value has already been added
+				for($i=0; $i<count($optionLastUsed); $i++) {
+					if(isset($optionLastUsed[$i]) && $optionLastUsed[$i] == $truncValue) {
+						continue 2;
+					}
+				}
+				
+				// add options
+				$optionLastUsed['l'.$id] = $truncValue;
+				
+				// increment index
+				$index++;
+				
+				// check count of options
+				if($index == 29) {
+					break;
 				}
 			}
-			
-			// add options
-			$lOptgroup->addOption($truncValue,'l'.$id);
-			
-			// increment index
-			$index++;
-			
-			// check count of options
-			if($index == 29) {
-				break;
-			}
+		} else {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
 		}
+		
+		// return optgroups
+		return array(
+			parent::lang('class.Field#readDefaults#separator#defaults') => $optionDefaults,
+			parent::lang('class.Field#readDefaults#separator#lastUsed') => $optionLastUsed,
+		);
 	}
 	
 	
@@ -725,18 +797,33 @@ class Field extends Object {
 	
 	
 	/**
-	 * return_defaults_value reads the value of the given defaults-id
+	 * returnDefaultsValue($defaults) reads the value of the given defaults-id
 	 * from db and returns it
 	 * 
 	 * @param int $defaults id of the defaults to get the value from
 	 */
-	public function return_defaults_value($defaults) {
+	public function returnDefaultsValue($defaults) {
 		
 		// get db-object
 		$db = Db::newDb();
 		
-		$result = $db->query("SELECT value FROM defaults WHERE id=$defaults");
-		list($value) = $result->fetch_array(MYSQL_NUM);
+		// prepare statement
+		$sql = 'SELECT value
+				FROM defaults
+				WHERE id='.$defaults;
+		
+		$result = $db->query($sql);
+		
+		// check result
+		if($result) {
+			list($value) = $result->fetch_array(MYSQL_NUM);
+		} else {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
+		}
+		
+		// close db
+		$db->close();
 		
 		// return
 		return $value;
@@ -748,12 +835,15 @@ class Field extends Object {
 	
 	
 	/**
-	 * dbselect_options gets the options for the quickform from
-	 * db using the field-config (select_list#select_value)
+	 * dbselectOptions returns the options for the select dbelement
+	 * db using the field-config
 	 * 
-	 * @param array $options array to add the options
+	 * @return array array containing the options
 	 */
-	private function dbselect_options(&$options) {
+	private function dbselectOptions() {
+		
+		// prepare return
+		$options = array();
 		
 		// get db-object
 		$db = Db::newDb();
@@ -765,9 +855,17 @@ class Field extends Object {
 		$result = $db->query($config['sql'][0]);
 		
 		// fetch result
-		while(list($id,$name) = $result->fetch_array(MYSQL_NUM)) {
-			$options[$id] = $name;
+		if($result) {
+			while(list($id,$name) = $result->fetch_array(MYSQL_NUM)) {
+				$options[$id] = $name;
+			}
+		} else {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
 		}
+		
+		// return
+		return $options;
 		
 	}
 	
@@ -777,12 +875,12 @@ class Field extends Object {
 	
 	
 	/**
-	 * dbselect_value the text value for this field from
+	 * dbselectValue() the text value for this field from
 	 * db using the field-config (select_list#select_value)
 	 * 
 	 * @return string value from db
 	 */
-	public function dbselect_value() {
+	public function dbselectValue() {
 		
 		// get db-object
 		$db = Db::newDb();
@@ -801,21 +899,36 @@ class Field extends Object {
 			for($i=0;$i<count($values);$i++) {
 				
 				// execute single query
-				$sql = str_replace('|',$values[$i],$config['sql'][1]);		
+				$sql = str_replace('|',$db->real_escape_string($values[$i]),$config['sql'][1]);		
 				$result = $db->query($sql);
 				
-				// fetch result
-				$field_values[] = $result->fetch_array(MYSQL_ASSOC);
+				// check result
+				if($result) {
+					// fetch result
+					$field_values[] = $result->fetch_array(MYSQL_ASSOC);
+				} else {
+					$errno = $this->getError()->error_raised('MysqlError', $db->error);
+					$this->getError()->handle_error($errno);
+				}
 			}
 		} else {
 			
 			// execute single query
-			$value = str_replace('|',$this->get_value(),$config['sql'][1]);		
+			$value = str_replace('|',$db->real_escape_string($this->get_value()),$config['sql'][1]);		
 			$result = $db->query($value);
 			
-			// fetch result
-			$field_values = $result->fetch_array(MYSQL_ASSOC);
+			// check result
+			if($result) {
+				// fetch result
+				$field_values = $result->fetch_array(MYSQL_ASSOC);
+			} else {
+					$errno = $this->getError()->error_raised('MysqlError', $db->error);
+					$this->getError()->handle_error($errno);
+				}
 		}
+		
+		// close db
+		$db->close();
 		
 		// return
 		return $field_values;
@@ -828,13 +941,13 @@ class Field extends Object {
 	
 	
 	/**
-	 * dbhierselect_options gets the options for the quickform from
-	 * db using the field-config (select_list#select_value)
+	 * dbhierselectOptions($optionsFirst, $optionsSecond) adds the options for the 
+	 * hierselect element to the given array using the field-config
 	 * 
-	 * @param array $options_first array to add the options for first select
-	 * @param array $options_second array to add the options for second select
+	 * @param array $optionsFirst array to add the options for first select
+	 * @param array $optionsSecond array to add the options for second select
 	 */
-	private function dbhierselect_options(&$options_first,&$options_second) {
+	private function dbhierselectOptions(&$optionsFirst,&$optionsSecond) {
 		
 		// get db-object
 		$db = Db::newDb();
@@ -846,22 +959,29 @@ class Field extends Object {
 		$result = $db->query($config['sql'][0]);
 		
 		// fetch result
-		while(list($id,$second_id,$name) = $result->fetch_array(MYSQL_NUM)) {
-			
-			// set first options
-			$options_first[$id] = $name;
-			
-			// set second option 0
-			$options_second[$id][0] = '--';
-			
-			// set second options
-			$second = str_replace('|',(int) $second_id,$config['sql'][1]);
-			$result_second = $db->query($second);
-			
-			// fetch result
-			while(list($id2,$name2) = $result_second->fetch_array(MYSQL_NUM)) {
-				$options_second[$id][$id2] = $name2;				
+		if($result) {
+			while(list($id,$secondId,$name) = $result->fetch_array(MYSQL_NUM)) {
+				
+				// set first options
+				$optionsFirst[$id] = $name;
+				
+				// set second options
+				$second = str_replace('|',(int) $secondId,$config['sql'][1]);
+				$resultSecond = $db->query($second);
+				
+				// fetch result
+				if($resultSecond) {
+					while(list($id2,$name2) = $resultSecond->fetch_array(MYSQL_NUM)) {
+						$optionsSecond[$id][$id2] = $name2;				
+					}
+				} else {
+					$errno = $this->getError()->error_raised('MysqlError', $db->error);
+					$this->getError()->handle_error($errno);
+				}
 			}
+		} else {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
 		}	
 	}
 	
@@ -871,12 +991,12 @@ class Field extends Object {
 	
 	
 	/**
-	 * dbselect_value the text value for this field from
+	 * dbselectValue() the text value for this field from
 	 * db using the field-config (select_list#select_value)
 	 * 
 	 * @return string value from db
 	 */
-	public function dbhierselect_value() {
+	public function dbhierselectValue() {
 		
 		// get db-object
 		$db = Db::newDb();
@@ -886,18 +1006,187 @@ class Field extends Object {
 		$sql = explode('|',$config['sql'][2],3);
 		
 		// separate value
-		list($v_first,$v_second) = explode('|',$this->get_value(),2);
+		list($v_first,$v_second) = explode('|',$db->real_escape_string($this->get_value()),2);
 		
 		// execute query
 		$value = $sql[0].$v_first.$sql[1].$v_second.$sql[2];
 		$result = $db->query($value);
 		
-		// fetch result
-		$field_values = $result->fetch_array(MYSQL_ASSOC);
+		// check result
+		if($result) {
+			// fetch result
+			$field_values = $result->fetch_array(MYSQL_ASSOC);
+		} else {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
+		}
+		
+		// close db
+		$db->close();
 		
 		// return
 		return $field_values;
 		
+	}
+	
+	/**
+	 * hierselect(&$form, $select1Array, $select2Array, $select1Id, $select2Id) adds the
+	 * hierselect element to the given $form
+	 * 
+	 * @param object $form the zebra_form object to add the hierselect element to
+	 * @param array $select1Array array containing the options of the first select element
+	 * @param array $select2Array array containing the options of the second select element according to the first one
+	 * @param string $select1Id DOM id of the first select element
+	 * @param string $select2Id DOM id of the second select element
+	 */
+	private function hierselect(&$form, $select1Array, $select2Array, $select1Id, $select2Id) {
+		
+		// add label and selects
+		$form->add(
+				'label',			// type
+				'label'.ucfirst($select1Id),	// id/name
+				$select1Id,			// for
+				$this->get_name().':'	// label text
+			);
+		$select1 = $form->add(
+				'select',	// type
+				$select1Id		// id/name
+			);
+		$select2 = $form->add(
+				'select',	// type
+				$select2Id		// id/name
+			);
+		// add dummy select (hidden and disabled) to keep odd/even in default template
+		$dummySelectId = 'dummyHierselect'; 
+		$form->add(
+				'select',	// type
+				$dummySelectId		// id/name
+			);
+		
+		// add note
+		$form->add(
+				'note',			// type
+				'note'.ucfirst($select1Id),	// id/name
+				$select1Id,		// for
+				parent::lang('class.Field#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDBHIERSELECT)	// note text
+			);
+		
+		// add rule to check second select to be selected if first is
+		$select2->set_rule(
+				array(
+						'custom' => array(array(
+								array($this, 'callbackCheckHierselect'),
+								$select1Id,
+								'error',
+								parent::lang('class.Field#element#rule#check.hierselect'),
+							),),
+					)
+			);
+		
+		// disable spamfilter on hierselects, because of changeing the option per jquery
+		$select1->disable_spam_filter();
+		$select2->disable_spam_filter();
+		
+		// add options to first select
+		$select1->add_options($select1Array);
+		
+		// get option array for second select as json array
+		$select2Json = json_encode($select2Array);
+		
+		// create smarty template and add variables
+		$sJsHierselect = new JudoIntranetSmarty();
+		$sJsHierselect->assign('select1', $select1Id);
+		$sJsHierselect->assign('select2', $select2Id);
+		$sJsHierselect->assign('dummySelect', $dummySelectId);
+		$sJsHierselect->assign('select2Array', $select2Json);
+		
+		// add completed javascript to jquery
+		$this->add_jquery($sJsHierselect->fetch('smarty.js-zebraHierselect.tpl'));
+	}
+	
+	
+	/**
+	 * fieldText(&$form, $defaults) adds the text element and default select to the
+	 * given $form
+	 * 
+	 * @param object $form the form object to add the element to
+	 * @param bool $defaults whether to add the defaults select element or not
+	 */
+	private function fieldText(&$form, $defaults) {
+		
+		// set $elementId
+		$elementId = $this->get_name().'-'.$this->get_id();
+		
+		// add label
+		$form->add(
+			'label',			// type
+			'label'.ucfirst($elementId),	// id/name
+			$elementId.'-manual',			// for
+			$this->get_name().':'.($this->get_required() == 1 ? '<span class="required">*</span>' : '')	// label text
+		);
+		
+		// check defaults
+		if($defaults === true) {
+			
+			// add select
+			$select = $form->add(
+					'select',	// type
+					$elementId.'-defaults'	// id/name
+				);
+			// add options
+			$select->add_options($this->getOptions());
+		}	
+		
+		// add textarea
+		$textarea = $form->add(
+			'textarea',		// type
+			$elementId.'-manual'	// id/name
+		);
+		
+		// define regexp rule for the textarea
+		$rules['regexp'] = array(
+				$this->getGc()->get_config('textarea.regexp.zebra'),
+				'error',
+				parent::lang('class.Field#element#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
+			);
+		// define custom required rule
+		if($this->get_required() == 1) {
+			$rules['custom'] = array(
+					array(
+							array($this, 'callbackCheckRequired'),
+							$elementId.'-defaults',
+							'error',
+							parent::lang('class.Field#element#rule#required.text'),
+						),
+				);
+		}
+		
+		// add rules for textarea
+		$textarea->set_rule($rules);	
+		
+		// add dummy element (hidden and disabled) to keep odd/even in default template
+		$dummyId = 'dummy'; 
+		$form->add(
+				'select',	// type
+				$dummyId	// id/name
+			);
+			
+		// add note
+		$form->add(
+				'note',			// type
+				'note'.ucfirst($elementId),	// id/name
+				$elementId,		// for
+				parent::lang('class.Field#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDTEXT)	// note text
+			);
+		
+		// create smarty template and add variables
+		$sJsFieldText = new JudoIntranetSmarty();
+		$sJsFieldText->assign('manual', $elementId.'-manual');
+		$sJsFieldText->assign('defaults', $elementId.'-defaults');
+		$sJsFieldText->assign('dummy', $dummyId);
+		
+		// add completed javascript to jquery
+		$this->add_jquery($sJsFieldText->fetch('smarty.js-zebraFieldText.tpl'));
 	} 
 }
 

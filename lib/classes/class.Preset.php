@@ -187,7 +187,7 @@ class Preset extends Object {
 		// walk through fields
 		foreach($this->get_fields() as $field) {
 			
-			$field->read_value();
+			$field->readValue();
 		}
 	}
 	
@@ -279,7 +279,7 @@ class Preset extends Object {
 		foreach($fields as $field) {
 			
 			// read value
-			$field->read_value();
+			$field->readValue();
 			// get version
 			$version = max(strtotime($announcement['version']), (int)$field->getLastModified());
 			$announcement['version'] = date('d.m.Y', $version);
@@ -295,9 +295,9 @@ class Preset extends Object {
 			if($field->get_value() == '' && $field->get_defaults() != 0) {
 				// check html
 				if($html === true) {
-					$announcement['field_'.$field->get_id().'_value'] = nl2br(htmlentities($field->return_defaults_value($field->get_defaults()),ENT_QUOTES,'UTF-8'));
+					$announcement['field_'.$field->get_id().'_value'] = nl2br(htmlentities($field->returnDefaultsValue($field->get_defaults()),ENT_QUOTES,'UTF-8'));
 				} else {
-					$announcement['field_'.$field->get_id().'_value'] = $field->return_defaults_value($field->get_defaults());
+					$announcement['field_'.$field->get_id().'_value'] = $field->returnDefaultsValue($field->get_defaults());
 				}
 			} else {
 				
@@ -308,7 +308,7 @@ class Preset extends Object {
 					$config = $field->get_config();
 					
 					// get value
-					$values = $field->dbselect_value();
+					$values = $field->dbselectValue();
 					// check multiple
 					$all = array();
 					if(isset($values[0])) {
@@ -380,8 +380,8 @@ class Preset extends Object {
 					
 					// walk through values
 					// check if value is set
-					if(!is_null($field->dbhierselect_value())) {
-						foreach($field->dbhierselect_value() as $name => $value) {
+					if(!is_null($field->dbhierselectValue())) {
+						foreach($field->dbhierselectValue() as $name => $value) {
 							// check html
 							if($html === true) {
 								$announcement['field_'.$field->get_id().'_value_'.$name] = nl2br(htmlentities($value,ENT_QUOTES,'UTF-8'));

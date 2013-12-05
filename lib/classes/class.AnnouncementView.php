@@ -297,6 +297,7 @@ class AnnouncementView extends PageView {
 						
 						// generate quickform
 						$field_id = $field->read_quickform(array(),true);
+//						$field->addFormElement(array(), true, $formIds);
 						
 						// check $field_id
 						if($field_id != '' && $field->get_type() == 'date') {
@@ -334,7 +335,7 @@ class AnnouncementView extends PageView {
 							
 							// values to db
 							$field->value($data[$field->get_table().'-'.$field->get_id()]);
-							$field->write_db('insert');
+							$field->writeDb('insert');
 						}
 						
 						// add calendar-fields to array
@@ -346,7 +347,7 @@ class AnnouncementView extends PageView {
 						// get field name and value
 						$values = array();
 						foreach($fields as $field) {
-							$values[] = $field->value_to_html();
+							$values[] = $field->valueToHtml();
 						}
 						// smarty
 						$sAe = new JudoIntranetSmarty();
@@ -437,7 +438,7 @@ class AnnouncementView extends PageView {
 					foreach($fields as $field) {
 						
 						// read values
-						$field->read_value();
+						$field->readValue();
 						
 						// check type
 						if($field->get_type() == 'text') {
@@ -486,6 +487,7 @@ class AnnouncementView extends PageView {
 						
 						// generate quickform
 						$field_id = $field->read_quickform(array(),true);
+//						$field->addFormElement(array(), true, $formIds);
 						
 						// check $field_id
 						if($field_id != '' && $field->get_type() == 'date') {
@@ -523,7 +525,7 @@ class AnnouncementView extends PageView {
 							
 							// values to db
 							$field->value($data[$field->get_table().'-'.$field->get_id()]);
-							$field->write_db('update');
+							$field->writeDb('update');
 						}
 						
 						// add calendar-fields to array
@@ -535,7 +537,7 @@ class AnnouncementView extends PageView {
 						// get field name and value
 						$values = array();
 						foreach($fields as $field) {
-							$values[] = $field->value_to_html();
+							$values[] = $field->valueToHtml();
 						}
 						// smarty
 						$sAe = new JudoIntranetSmarty();
@@ -649,7 +651,7 @@ class AnnouncementView extends PageView {
 							foreach($fields as $field) {
 								
 								// delete value
-								$field->delete_value();
+								$field->deleteValue();
 							}
 						}
 						

@@ -550,6 +550,7 @@ class InventoryView extends PageView {
 					
 					// generate quickform
 					$field->read_quickform();
+//					$field->addFormElement(array(), false, $formIds);
 					
 					// add to form
 					$form->appendChild($field->get_quickform());
@@ -591,7 +592,7 @@ class InventoryView extends PageView {
 						}
 						// return field and value as HTML
 						$field->value($field_value);
-						$data[] = $field->value_to_html();
+						$data[] = $field->valueToHtml();
 					}
 					$sG->assign('form', '');
 					$sG->assign('data', $data);
@@ -690,10 +691,12 @@ class InventoryView extends PageView {
 					
 						// generate quickform
 						$field->read_quickform();
+//						$field->addFormElement(array(), false, $formIds);
 					} else {
 						
 						// generate quickform
 						$field->read_quickform(array('disabled' => 'disabled'));
+//						$field->addFormElement(array('disabled' => 'disabled'), false, $formIds);
 					}
 					
 					// add to form
@@ -732,7 +735,7 @@ class InventoryView extends PageView {
 						}
 						// return field and value as HTML
 						$field->value($field_value);
-						$data[] = $field->value_to_html();
+						$data[] = $field->valueToHtml();
 					}
 					$sT->assign('form', '');
 					$sT->assign('data', $data);
@@ -1021,8 +1024,8 @@ class InventoryView extends PageView {
 							'table' => 'inventory_movement',
 							'table_id' => $movement['id'],
 							'field_id' => $field->get_id());
-					$field->read_value($data);
-					$fields_out[] = $field->value_to_html();
+					$field->readValue($data);
+					$fields_out[] = $field->valueToHtml();
 				}
 				$sM->assign('data', $fields_out);
 				$sM->assign('user', parent::lang('class.InventoryView#movement#fields#'.$movement['action']).' '.$user->get_userinfo('name'));

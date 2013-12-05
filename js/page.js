@@ -23,7 +23,7 @@
  
 /*************************************************************
  * callback functions for clientside validation (zebra_form) *
- ************************************************************* 
+ *************************************************************/ 
  
 /**
  * callbackCheckSelect(args) checks if a value other than '' is selected
@@ -45,7 +45,7 @@ function callbackCheckSelect(args) {
 
 /***************************************************
  * functions to style some elements via javascript *
- ***************************************************
+ ***************************************************/
 
 /**
  * hideJsdiffTextareas() hides the "value" textareas by hiding their parents
@@ -57,4 +57,76 @@ function hideJsdiffTextareas() {
 	// style parent element of the hidden jsdiff textareas
 	$("#protDiffBase").parent().css("display", "none");
 	$("#protDiffNew").parent().css("display", "none");
+}
+
+
+/**
+ * elementsOneRow(firstSelector, secondSelector, dummySelector, display) moves the second 
+ * select element into the row of the first and changes the position
+ *
+ * @param string firstSelector DOM selector for the first select element
+ * @param string secondSelector DOM selector for the second select element
+ * @param string dummySelector DOM selector for the hidden dummy element to keep odd/even view
+ * @param string display CSS value for the display attribute (block or inline)
+ */
+function elementsOneRow(firstSelector, secondSelector, dummySelector, display) {
+	
+	// get parent of second
+	var secondParent = $(secondSelector).parent();
+	// get second
+	var second = $(secondSelector);
+	// remove second
+	$(secondSelector).remove();
+	// append to parent of the first
+	$(firstSelector).parent().append(second);
+	// remove parent of second
+	secondParent.remove();
+	
+	// style elements to be block
+	$(firstSelector).css('display', display);
+	second.css('display', display);
+	
+	// hide dummy select to correct odd/even look
+	$(dummySelector).parent().css("display", "none");
+	$(dummySelector).attr('disabled', true);
+}
+
+
+
+
+/***********************************************************************
+ * functions to implement the hierselect functionality for zebra_forms *
+ ***********************************************************************/
+ 
+ /**
+  * zebraHierselect(select1Selector, select1Array, select2Selector, select2Array)
+  * generates the hierselect functionality in zebra_forms
+  *
+  * @param string select1Selector DOM selector for the first select element
+  * @param string select2Selector DOM selector for the second select element
+  * @param array select2Array array containing the values and texts for the second select element in relation to the first value
+  */
+function zebraHierselect(select1Selector, select2Selector, select2Array) {
+
+	// get value of the first select element
+	var value = $(select1Selector).val();
+
+	// save first option and reset value
+	var optionFirst = $(select2Selector).find('option:first');
+	optionFirst.attr('value', '');
+	// remove all options
+	$(select2Selector).children().remove();
+	// read first option
+	$(select2Selector).append(optionFirst);
+	
+	// walk through array[value] and append options if value != ''
+	if(value != '') {
+		$.each(select2Array[value], function(newValue, name) {
+			$(select2Selector).append(
+				'<option value="' + newValue + '">' + name +'</option>'
+			);
+		});
+	} else {
+		$(select2Selector).append(optionFirst);
+	}
 }
