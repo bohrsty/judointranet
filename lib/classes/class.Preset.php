@@ -39,6 +39,7 @@ class Preset extends Object {
 	private $fields;
 	private $path;
 	private $filename;
+	private $view;
 	
 	/*
 	 * getter/setter
@@ -79,15 +80,24 @@ class Preset extends Object {
 	public function set_filename($filename) {
 		$this->filename = $filename;
 	}
+	public function getView(){
+		return $this->view;
+	}
+	public function setView(&$view) {
+		$this->view = $view;
+	}
 	
 	
 	/*
 	 * constructor/destructor
 	 */
-	public function __construct($id,$table,$table_id) {
-		
+	public function __construct($id,$table,$table_id, &$view) {
+	
 		// parent constructor
 		parent::__construct();
+		
+		// set view
+		$this->setView($view);
 		
 		// get field for given id
 		$this->get_from_db($id);
@@ -163,7 +173,7 @@ class Preset extends Object {
 		// fetch result
 		while(list($field_id) = $result->fetch_array(MYSQL_NUM)) {
 			
-			$fields[] = new Field($field_id,$table,$table_id,$this->get_id());
+			$fields[] = new Field($field_id,$table,$table_id,$this->get_id(), $this->getView());
 		}
 		
 		// close db

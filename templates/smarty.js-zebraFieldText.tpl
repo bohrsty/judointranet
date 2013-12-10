@@ -21,7 +21,9 @@
  * 
  * ********************************************************************************************}
 {if $manual != '' && $defaults != ''}
-elementsOneRow('#{$manual}', '#{$defaults}', '#{$dummy}', 'block');
+				elementsOneRow('{$manual}', '{$defaults}', '{$dummy}', 'block');
 {/if}
+				if($('#{$manual}').val().length!=0) {ldelim}$('#{$defaults}').attr('disabled', true);$('#{$defaults}').slideUp();{rdelim} else {ldelim}$('#{$defaults}').attr('disabled', false);$('#{$defaults}').slideDown();{rdelim}
+				if($('#{$defaults}').val() != '') {ldelim}$('#{$manual}').attr('disabled', true);$('#{$manual}').slideUp();{rdelim} else {ldelim}$('#{$manual}').attr('disabled', false);$('#{$manual}').slideDown();{rdelim}
 				$('#{$manual}').on('input propertychange', function() {ldelim}if(this.value.length!=0) {ldelim}$('#{$defaults}').attr('disabled', true);$('#{$defaults}').slideUp();{rdelim} else {ldelim}$('#{$defaults}').attr('disabled', false);$('#{$defaults}').slideDown();{rdelim}{rdelim});
-				$('#{$defaults}').change(function() {ldelim}if($('#{$defaults}').val() != '') {ldelim}$('#{$manual}').attr('disabled', true);$('#{$manual}').slideToggle();{rdelim} else {ldelim}$('#{$manual}').attr('disabled', false);$('#{$manual}').slideToggle();{rdelim}{rdelim});
+				$('#{$defaults}').change(function() {ldelim}if($('#{$defaults}').val() != '') {ldelim}$('#{$manual}').attr('disabled', true);$('#{$manual}').slideUp();{rdelim} else {ldelim}$('#{$manual}').attr('disabled', false);$('#{$manual}').slideDown();{rdelim}{rdelim});

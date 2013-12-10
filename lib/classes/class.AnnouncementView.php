@@ -56,70 +56,6 @@ class AnnouncementView extends PageView {
 	/*
 	 * methods
 	 */
-//	/**
-//	 * navi knows about the functionalities used in navigation returns an array
-//	 * containing first- and second-level-navientries
-//	 * 
-//	 * @return array contains first- and second-level-navientries
-//	 */
-//	public static function connectnavi() {
-//		
-//		// set first- and secondlevel names and set secondlevel $_GET['id']-values
-//		static $navi = array();
-//		
-//		$navi = array(
-//						'firstlevel' => array(
-//							'name' => 'class.AnnouncementView#connectnavi#firstlevel#name',
-//							'file' => 'announcement.php',
-//							'position' => 2,
-//							'class' => get_class(),
-//							'id' => md5('AnnouncementView'), // 703120e744fe3aee8e1ad24a2a1bcfcc
-//							'show' => false
-//						),
-//						'secondlevel' => array(
-//							0 => array(
-//								'getid' => 'new', 
-//								'name' => 'class.AnnouncementView#connectnavi#secondlevel#new',
-//								'id' => md5('AnnouncementView|new'), // 1322c66e80ccc07b28a1ac0a55baceed
-//								'show' => false
-//							),
-//							1 => array(
-//								'getid' => 'edit', 
-//								'name' => 'class.AnnouncementView#connectnavi#secondlevel#edit',
-//								'id' => md5('AnnouncementView|edit'), // fc7e08b6b68d7c8892047d71482a3750
-//								'show' => false
-//							),
-//							2 => array(
-//								'getid' => 'delete', 
-//								'name' => 'class.AnnouncementView#connectnavi#secondlevel#delete',
-//								'id' => md5('AnnouncementView|delete'), // 3bc6ea59f9756ed16fc77d71d790439c 
-//								'show' => false
-//							),
-//							3 => array(
-//								'getid' => 'details', 
-//								'name' => 'class.AnnouncementView#connectnavi#secondlevel#details',
-//								'id' => md5('AnnouncementView|details'), // 6ff52a4c896d4c5ccba6726a6736f75e 
-//								'show' => false
-//							),
-//							4 => array(
-//								'getid' => 'topdf', 
-//								'name' => 'class.AnnouncementView#connectnavi#secondlevel#topdf',
-//								'id' => md5('AnnouncementView|topdf'), // 7f529045f2c8310b2e383ac4c789c62a
-//								'show' => false
-//							)
-//						)
-//					);
-//		
-//		// return array
-//		return $navi;
-//	}
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * init chooses the functionality by using $_GET['id']
 	 * 
@@ -146,9 +82,9 @@ class AnnouncementView extends PageView {
 						
 						// smarty
 						$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#new#title')));
-						$this->tpl->assign('main', $this->new_entry());
+						$this->tpl->assign('main', $this->newEntry());
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', true);
+						$this->tpl->assign('zebraform', true);
 					break;
 					
 					case 'edit':
@@ -157,7 +93,7 @@ class AnnouncementView extends PageView {
 						$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#edit#title')));
 						$this->tpl->assign('main', $this->edit());
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', true);
+						$this->tpl->assign('zebraform', true);
 					break;
 					
 					case 'delete':
@@ -166,7 +102,7 @@ class AnnouncementView extends PageView {
 						$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#delete#title')));
 						$this->tpl->assign('main', $this->delete());
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', true);
+						$this->tpl->assign('zebraform', true);
 					break;
 					
 					case 'details':
@@ -175,7 +111,7 @@ class AnnouncementView extends PageView {
 						$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#details#title')));
 						$this->tpl->assign('main', $this->details());
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', false);
+						$this->tpl->assign('zebraform', false);
 					break;
 					
 					case 'topdf':
@@ -184,7 +120,7 @@ class AnnouncementView extends PageView {
 						$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#topdf#title')));
 						$this->tpl->assign('main', $this->topdf());
 						$this->tpl->assign('jquery', false);
-						$this->tpl->assign('hierselect', false);
+						$this->tpl->assign('zebraform', false);
 					break;
 					
 					default:
@@ -197,7 +133,7 @@ class AnnouncementView extends PageView {
 						$this->tpl->assign('title', '');
 						$this->tpl->assign('main', $this->getError()->to_html($errno));
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', false);
+						$this->tpl->assign('zebraform', false);
 					break;
 				}
 			} else {
@@ -211,7 +147,7 @@ class AnnouncementView extends PageView {
 				$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#Error#NotAuthorized')));
 				$this->tpl->assign('main', $this->getError()->to_html($errno));
 				$this->tpl->assign('jquery', true);
-				$this->tpl->assign('hierselect', false);
+				$this->tpl->assign('zebraform', false);
 			}
 		} else {
 			
@@ -225,7 +161,7 @@ class AnnouncementView extends PageView {
 			// smarty-jquery
 			$this->tpl->assign('jquery', true);
 			// smarty-hierselect
-			$this->tpl->assign('hierselect', false);
+			$this->tpl->assign('zebraform', false);
 		}
 		
 		// global smarty
@@ -239,11 +175,11 @@ class AnnouncementView extends PageView {
 	
 	
 	/**
-	 * new_entry creates the "new-entry"-form and handle its response
+	 * newEntry() creates the "new-entry"-form and handle its response
 	 * 
 	 * @return string html-string with the "new-entry"-form
 	 */
-	private function new_entry() {
+	private function newEntry() {
 		
 		// smarty-templates
 		$sD = new JudoIntranetSmarty();
@@ -261,60 +197,42 @@ class AnnouncementView extends PageView {
 					$return = '';
 					
 					// get preset
-					$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'));
+					$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'), $this);
 					
 					// get fields
 					$fields = $preset->get_fields();
 					
 					// formular
-					$form = new HTML_QuickForm2(
-											'new_announcement',
-											'post',
-											array(
-												'name' => 'new_announcement',
-												'action' => 'announcement.php?id=new&cid='.$this->get('cid').'&pid='.$this->get('pid')
-											)
-										);
+					$form = new Zebra_Form(
+							'newAnnouncement',			// id/name
+							'post',				// method
+							'announcement.php?id=new&cid='.$this->get('cid').'&pid='.$this->get('pid')	// action
+						);
+					// set language
+					$form->language('deutsch');
+					// set docktype xhtml
+					$form->doctype('xhtml');
 					
-					// get fieldtype "date" for values
-					$datevalue = array();
-					foreach($fields as $field) {
-						
-						// check type
-						if($field->get_type() == 'date') {
-							$datevalue['calendar-'.$field->get_id()] = date('Y-m-d'); 
-						}
-					}
-					
-					$form->addDataSource(new HTML_QuickForm2_DataSource_Array($datevalue));
-					
-					// renderer
-					$renderer = HTML_QuickForm2_Renderer::factory('default');
-					$renderer->setOption('required_note',parent::lang('class.AnnouncementView#entry#form#requiredNote'));
+					// prepare formIds
+					$formIds = array();
 					
 					// generate field-quickform and add to form
 					foreach($fields as $field) {
 						
-						// generate quickform
-						$field_id = $field->read_quickform(array(),true);
-//						$field->addFormElement(array(), true, $formIds);
+						// set form
+						$field->setForm($form);
 						
-						// check $field_id
-						if($field_id != '' && $field->get_type() == 'date') {
-							
-							// smarty
-							$sD->assign('elementid', $field_id.'-0');
-							$sD->assign('dateFormat', 'yy-mm-dd');
-							$sD->assign('dateValue', date('Y-m-d'));
-							$this->add_jquery($sD->fetch('smarty.js-datepicker.tpl'));
-						}
+						// generate zebra_form
+						$field->addFormElement(array(), true, $formIds);
 						
-						// add to form
-						$form->appendChild($field->get_quickform());
 					}
 					
 					// submit-button
-					$form->addSubmit('submit',array('value' => parent::lang('class.AnnouncementView#new_entry#form#submitButton')));
+					$form->add(
+						'submit',		// type
+						'buttonSubmit',	// id/name
+						parent::lang('class.AnnouncementView#new_entry#form#submitButton')	// value
+					);
 					
 					// validate
 					if($form->validate()) {
@@ -328,7 +246,7 @@ class AnnouncementView extends PageView {
 							);
 						
 						// get data
-						$data = $form->getValue();
+						$data = $this->getFormValues($formIds);
 						
 						// insert values
 						foreach($fields as $field) {
@@ -361,7 +279,7 @@ class AnnouncementView extends PageView {
 						return $sAe->fetch('smarty.announcement.edit.tpl');
 						
 					} else {
-						return $form->render($renderer);
+						return $form->render('', true);
 					}
 				} else {
 					
@@ -418,93 +336,41 @@ class AnnouncementView extends PageView {
 					$return = '';
 					
 					// get preset
-					$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'));
+					$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'), $this);
 					
 					// get fields
 					$fields = $preset->get_fields();
 					
 					// formular
-					$form = new HTML_QuickForm2(
-											'edit_announcement',
-											'post',
-											array(
-												'name' => 'edit_announcement',
-												'action' => 'announcement.php?id=edit&cid='.$this->get('cid').'&pid='.$this->get('pid')
-											)
-										);
+					$form = new Zebra_Form(
+							'editAnnouncement',			// id/name
+							'post',				// method
+							'announcement.php?id=edit&cid='.$this->get('cid').'&pid='.$this->get('pid')	// action
+						);
+					// set language
+					$form->language('deutsch');
+					// set docktype xhtml
+					$form->doctype('xhtml');
 					
-					// values
-					$datasource = array();
-					foreach($fields as $field) {
-						
-						// read values
-						$field->readValue();
-						
-						// check type
-						if($field->get_type() == 'text') {
-							
-							// check defaults
-							$datasource['calendar-'.$field->get_id()]['manual'] = '';
-							$datasource['calendar-'.$field->get_id()]['defaults'] = 0;
-							if($field->get_value() == '') {
-								$datasource['calendar-'.$field->get_id()]['defaults'] = 'd'.$field->get_defaults();
-							} else {
-								$datasource['calendar-'.$field->get_id()]['manual'] = $field->get_value();
-							}
-						} elseif($field->get_type() == 'dbhierselect') {
-							
-							// explode value
-							list($v_first,$v_second) = explode('|',$field->get_value(),2);
-							
-							// set values
-							$datasource['calendar-'.$field->get_id()][0] = $v_first;
-							$datasource['calendar-'.$field->get_id()][1] = $v_second;
-						} elseif($field->get_type() == 'dbselect') {
-							
-							// check multiple
-							if(strpos($field->get_value(),'|') !== false) {
-								// separate value
-								$values = explode('|',$field->get_value());
-								foreach($values as $i => $value) {
-									$datasource['calendar-'.$field->get_id()][$i] = $value;
-								}
-							} else {
-								$datasource['calendar-'.$field->get_id()] = $field->get_value();
-							}
-						} else {
-							$datasource['calendar-'.$field->get_id()] = $field->get_value();
-						}
-					}
-					
-					$form->addDataSource(new HTML_QuickForm2_DataSource_Array($datasource));
-					
-					// renderer
-					$renderer = HTML_QuickForm2_Renderer::factory('default');
-					$renderer->setOption('required_note',parent::lang('class.AnnouncementView#entry#form#requiredNote'));
+					// prepare formIds
+					$formIds = array();
 					
 					// generate field-quickform and add to form
 					foreach($fields as $field) {
 						
+						// set form
+						$field->setForm($form);
+						
 						// generate quickform
-						$field_id = $field->read_quickform(array(),true);
-//						$field->addFormElement(array(), true, $formIds);
-						
-						// check $field_id
-						if($field_id != '' && $field->get_type() == 'date') {
-							
-							// smarty
-							$sD->assign('elementid', $field_id.'-0');
-							$sD->assign('dateFormat', 'yy-mm-dd');
-							$sD->assign('dateValue', $field->get_value());
-							$this->add_jquery($sD->fetch('smarty.js-datepicker.tpl'));
-						}
-						
-						// add to form
-						$form->appendChild($field->get_quickform());
+						$field->addFormElement(array(), true, $formIds);
 					}
 					
 					// submit-button
-					$form->addSubmit('submit',array('value' => parent::lang('class.AnnouncementView#edit#form#submitButton')));
+					$form->add(
+						'submit',		// type
+						'buttonSubmit',	// id/name
+						parent::lang('class.AnnouncementView#new_entry#form#submitButton')	// value
+					);
 					
 					// validate
 					if($form->validate()) {
@@ -518,7 +384,7 @@ class AnnouncementView extends PageView {
 							);
 						
 						// get data
-						$data = $form->getValue();
+						$data = $this->getFormValues($formIds);
 						
 						// insert values
 						foreach($fields as $field) {
@@ -551,7 +417,7 @@ class AnnouncementView extends PageView {
 						return $sAe->fetch('smarty.announcement.edit.tpl');
 						
 					} else {
-						return $form->render($renderer);
+						return $form->render('', true);
 					}
 				} else {
 					
@@ -608,21 +474,28 @@ class AnnouncementView extends PageView {
 					// smarty-templates
 					$sConfirmation = new JudoIntranetSmarty();
 					
-					$form = new HTML_QuickForm2(
-											'confirm',
-											'post',
-											array(
-												'name' => 'confirm',
-												'action' => 'announcement.php?id=delete&cid='.$this->get('cid').'&pid='.$this->get('pid')
-											)
-										);
+					// form
+					$form = new Zebra_Form(
+						'formConfirm',			// id/name
+						'post',				// method
+						'announcement.php?id=delete&cid='.$this->get('cid').'&pid='.$this->get('pid')		// action
+					);
+					// set language
+					$form->language('deutsch');
+					// set docktype xhtml
+					$form->doctype('xhtml');
 					
 					// add button
-					$form->addElement('submit','yes',array('value' => parent::lang('class.AnnouncementView#delete#form#yes')));
+					$form->add(
+						'submit',		// type
+						'buttonSubmit',	// id/name
+						parent::lang('class.AnnouncementView#delete#form#yes'),	// value
+						array('title' => parent::lang('class.AnnouncementView#delete#title#yes'))
+					);
 					
 					// smarty-link
 					$link = array(
-									'params' => '',
+									'params' => 'class="submit"',
 									'href' => 'calendar.php?id=listall',
 									'title' => parent::lang('class.AnnouncementView#delete#title#cancel'),
 									'content' => parent::lang('class.AnnouncementView#delete#form#cancel')
@@ -630,7 +503,7 @@ class AnnouncementView extends PageView {
 					$sConfirmation->assign('link', $link);
 					$sConfirmation->assign('spanparams', 'id="cancel"');
 					$sConfirmation->assign('message', parent::lang('class.AnnouncementView#delete#message#confirm').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_DELETE));
-					$sConfirmation->assign('form', $form);
+					$sConfirmation->assign('form', $form->render('', true));
 					
 					// validate
 					if($form->validate()) {
@@ -640,7 +513,7 @@ class AnnouncementView extends PageView {
 						$calendar = new Calendar($this->get('cid'));
 						
 						// get preset
-						$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'));
+						$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'), $this);
 						
 						// get fields
 						$fields = $preset->get_fields();
@@ -725,7 +598,7 @@ class AnnouncementView extends PageView {
 					$return = '';
 					
 					// get preset
-					$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'));
+					$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'), $this);
 					
 					// smarty
 					$sA = new JudoIntranetSmarty();
@@ -811,7 +684,7 @@ class AnnouncementView extends PageView {
 					$return = '';
 					
 					// get preset
-					$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'));
+					$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'), $this);
 					
 					// smarty
 					$sA = new JudoIntranetSmarty();

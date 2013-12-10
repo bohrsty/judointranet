@@ -129,7 +129,7 @@ class Inventory extends Object {
 		$this->set_inventory_no($inventory_no);
 		$this->set_name($name);
 		$this->set_serial_no($serial_no);
-		$this->set_preset(new Preset($preset_id,strtolower(get_class($this)),$id));
+		$this->set_preset(new Preset($preset_id,strtolower(get_class($this)),$id), $this);
 		$this->set_valid($valid);
 		
 		// get owned

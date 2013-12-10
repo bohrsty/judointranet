@@ -1289,7 +1289,7 @@ class ProtocolView extends PageView {
 									'location' => $data['location'],
 									'member' => $data['member0'].'|'.$data['member1'].'|'.$data['member2'],
 									'protocol' => $data['protocol'],
-									'preset' => new Preset($data['preset'],'protocol',$protocol->get_id()),
+									'preset' => new Preset($data['preset'],'protocol',$protocol->get_id(), $this),
 									'recorder' => $data['recorder'],
 									'correctable' => $correctionString,
 									'owner' => $data['owner'],

@@ -71,24 +71,33 @@ function hideJsdiffTextareas() {
  */
 function elementsOneRow(firstSelector, secondSelector, dummySelector, display) {
 	
+	// prepare elements
+	var first = $('#' + firstSelector);
+	var second = $('#' + secondSelector);
+	var dummy = $('#' + dummySelector);
+	// get note (may be undefined)
+	var note = $('#note' + ucfirst(secondSelector));
+
 	// get parent of second
-	var secondParent = $(secondSelector).parent();
-	// get second
-	var second = $(secondSelector);
+	var secondParent = second.parent();
 	// remove second
-	$(secondSelector).remove();
+	second.remove();
 	// append to parent of the first
-	$(firstSelector).parent().append(second);
+	first.parent().append(second);
+	// add note if exist
+	if(typeof(note) !== 'undefined') {
+		first.parent().append(note);
+	}
 	// remove parent of second
 	secondParent.remove();
 	
 	// style elements to be block
-	$(firstSelector).css('display', display);
+	first.css('display', display);
 	second.css('display', display);
 	
 	// hide dummy select to correct odd/even look
-	$(dummySelector).parent().css("display", "none");
-	$(dummySelector).attr('disabled', true);
+	dummy.parent().css("display", "none");
+	dummy.attr('disabled', true);
 }
 
 
@@ -105,8 +114,9 @@ function elementsOneRow(firstSelector, secondSelector, dummySelector, display) {
   * @param string select1Selector DOM selector for the first select element
   * @param string select2Selector DOM selector for the second select element
   * @param array select2Array array containing the values and texts for the second select element in relation to the first value
+  * @param int value of the second select element to be selected
   */
-function zebraHierselect(select1Selector, select2Selector, select2Array) {
+function zebraHierselect(select1Selector, select2Selector, select2Array, select2Value) {
 
 	// get value of the first select element
 	var value = $(select1Selector).val();
@@ -129,4 +139,25 @@ function zebraHierselect(select1Selector, select2Selector, select2Array) {
 	} else {
 		$(select2Selector).append(optionFirst);
 	}
+	
+	// get option to be selected
+	var optionSelected = $(select2Selector).find('[value="' + select2Value + '"]');
+	if(select2Value != 0) {
+		optionSelected.attr('selected', true);
+	}
+}
+
+
+
+/*********************
+ * various functions *
+ *********************/
+/**
+ * ucfirst(string) turns the first character of string into upper case
+ *
+ * @param string string string thats first character should be upper case
+ * @return string the modified string
+ */
+function ucfirst(string) {
+	return string.charAt(0).toUpperCase() + string.slice(1);
 }

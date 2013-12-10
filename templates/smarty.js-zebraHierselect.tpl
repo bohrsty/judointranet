@@ -20,7 +20,7 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-elementsOneRow('#{$select1}', '#{$select2}', '#{$dummySelect}', 'inline');
+				elementsOneRow('{$select1}', '{$select2}', '{$dummySelect}', 'inline');
 				var hierselect =  {$select2Array};
-				zebraHierselect('#{$select1}', '#{$select2}', hierselect);
-				$('#{$select1}').change(function() {ldelim}zebraHierselect('#{$select1}', '#{$select2}', hierselect){rdelim});
+				zebraHierselect('#{$select1}', '#{$select2}', hierselect, '{$select2Value}');
+				$('#{$select1}').change(function() {ldelim}zebraHierselect('#{$select1}', '#{$select2}', hierselect, '{$select2Value}'){rdelim});

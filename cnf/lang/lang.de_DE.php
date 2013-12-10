@@ -520,7 +520,7 @@ $lang = array(
 		),
 		'delete' => array(
 			'form' => array(
-				'yes' => 'Ja',
+				'yes' => '  Ja  ',
 				'cancel' => 'Abbrechen'
 			),
 			'message' => array(
@@ -528,7 +528,8 @@ $lang = array(
 				'done' => 'Der Eintrag wurde erfolgreich gel&ouml;scht.'
 			),
 			'title' => array(
-				'cancel' => 'Bricht den L&ouml;schvorgang ab'
+				'cancel' => 'Bricht den L&ouml;schvorgang ab',
+				'yes' => 'L&ouml;scht den Datensatz',
 			)
 		),
 		'page' => array(

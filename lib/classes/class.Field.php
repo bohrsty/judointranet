@@ -46,6 +46,7 @@ class Field extends Object {
 	private $config;
 	private $lastModified;
 	private $modifiedBy;
+	private $view;
 	
 	/*
 	 * getter/setter
@@ -71,7 +72,7 @@ class Field extends Object {
 	public function getForm(){
 		return $this->form;
 	}
-	public function setForm($form) {
+	public function setForm(&$form) {
 		$this->form = $form;
 	}
 	public function get_value(){
@@ -128,19 +129,27 @@ class Field extends Object {
 	public function setLastModified($lastModified) {
 		$this->lastModified = $lastModified;
 	}
+	public function getView(){
+		return $this->view;
+	}
+	public function setView(&$view) {
+		$this->view = $view;
+	}
 	
 	/*
 	 * constructor/destructor
 	 */
-	public function __construct(&$form, $id, $table, $table_id, $pid) {
+	public function __construct($id, $table, $table_id, $pid, &$view) {
 		
 		// parent constructor
 		parent::__construct();
 		
+		// set view
+		$this->setView($view);
+		
 		// set class variables
 		$this->set_table($table);
 		$this->set_table_id($table_id);
-		$this->setForm($form);
 		
 		// get field for given id
 		$this->getFromDb($id,$pid);
@@ -162,20 +171,39 @@ class Field extends Object {
 		$db = Db::newDb();
 		
 		// prepare sql-statement
-		$sql = 'SELECT f.name,f.type,f2p.required,f.category,f.config,v.last_modified
-				FROM field AS f,fields2presets AS f2p,value AS v
+		$sql = 'SELECT f.name,f.type,f2p.required,f.category,f.config
+				FROM field AS f,fields2presets AS f2p
 				WHERE f.id=\''.$db->real_escape_string($id).'\'
 				AND f2p.field_id=\''.$db->real_escape_string($id).'\'
-				AND f2p.pres_id=\''.$db->real_escape_string($pid).'\'
-				AND v.table_name=\''.$db->real_escape_string($this->get_table()).'\'
-				AND v.table_id=\''.$db->real_escape_string($this->get_table_id()).'\'
-				AND v.field_id=\''.$db->real_escape_string($id).'\'';		
+				AND f2p.pres_id=\''.$db->real_escape_string($pid).'\'';
+						
 		// execute
 		$result = $db->query($sql);
 		
 		// get data
 		if($result) {
-			list($name, $type, $required, $category, $config, $lastModified) = $result->fetch_array(MYSQL_NUM);
+			list($name, $type, $required, $category, $config) = $result->fetch_array(MYSQL_NUM);
+		} else {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
+		}
+		
+		// execute
+		$result = $db->query($sql);
+		
+		// get last modified (if set)
+		$sql = 'SELECT v.last_modified
+				FROM value AS v
+				WHERE v.table_name=\''.$db->real_escape_string($this->get_table()).'\'
+				AND v.table_id=\''.$db->real_escape_string($this->get_table_id()).'\'
+				AND v.field_id=\''.$db->real_escape_string($id).'\'';
+		
+		// get data
+		$lastModified = 0;
+		if($result) {
+			if($result->num_rows == 1) {
+				list($lastModified) = $result->fetch_array(MYSQL_NUM);
+			}
 		} else {
 			$errno = $this->getError()->error_raised('MysqlError', $db->error);
 			$this->getError()->handle_error($errno);
@@ -205,6 +233,9 @@ class Field extends Object {
 	 */
 	public function addFormElement($options = array(),$defaults = false, &$formIds) {
 		
+		// load values
+		$this->readValue();
+		
 		// get and simplify $this->form
 		$form = &$this->getForm();
 		// simplify id
@@ -220,6 +251,12 @@ class Field extends Object {
 			$this->fieldText($form, true);
 		} elseif($this->get_type() == 'date') {
 			
+			// prepare value
+			$date = date('Y-m-d');
+			if($this->get_value() != '') {
+				$date = $this->get_value();
+			}
+						
 			// set form id
 			$formIds[$elementId] = array('valueType' => 'string', 'type' => 'date',);
 			
@@ -235,7 +272,7 @@ class Field extends Object {
 			$element = $form->add(
 					$formIds[$elementId]['type'],			// type
 					$elementId,			// id/name
-					date('d.m.Y')	// default
+					date('d.m.Y', strtotime($date))	// default
 				);
 			// format/position
 			$element->format('d.m.Y');
@@ -282,7 +319,8 @@ class Field extends Object {
 				$formIds[$elementId]['type'],		// type
 				$elementId,						// id/name
 				'1',							// value
-				null							// default
+				null,							// default
+				($this->get_value() != '' ? array('checked' => 'checked') : null)
 			);
 			
 			// define custom required rule
@@ -291,10 +329,10 @@ class Field extends Object {
 						'error',
 						parent::lang('class.Field#element#rule#required.checkbox'),
 					);
-			}
 			
-			// add rules for textarea
-			$element->set_rule($rules);
+				// add rules
+				$element->set_rule($rules);
+			}
 			
 			// add note
 			$form->add(
@@ -304,6 +342,18 @@ class Field extends Object {
 					parent::lang('class.Field#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDCHECKBOX)	// note text
 				);
 		} elseif($this->get_type() == 'dbselect') {
+			
+			// prepare value
+			$value = null;
+			if($this->get_value() != '') {
+				
+				$value = explode('|', $this->get_value());
+				
+				// check length
+				if(count($value) == 1) {
+					$value = $value[0];
+				}
+			}
 			
 			// set form id
 			$formIds[$elementId] = array('valueType' => 'string', 'type' => 'select',);
@@ -326,7 +376,7 @@ class Field extends Object {
 			$element = $form->add(
 				'select',	// type
 				$elementId,		// id/name
-				null,		// default
+				$value,		// default
 				$options	// attributes
 			);
 			
@@ -336,10 +386,10 @@ class Field extends Object {
 						'error',
 						parent::lang('class.Field#element#rule#required.select'),
 					);
+				
+				// add rules
+				$element->set_rule($rules);
 			}
-			
-			// add rules for textarea
-			$element->set_rule($rules);
 			
 			// add select options
 			$element->add_options($this->dbselectOptions());
@@ -408,6 +458,10 @@ class Field extends Object {
 		$result = $db->query($sql);
 		
 		// check result
+		$value = '';
+		$defaults = 0;
+		$lastModified = 0;
+		$modifiedBy = 0;
 		if($result) {
 			// check if value is set
 			if($result->num_rows != 0) {
@@ -1006,10 +1060,10 @@ class Field extends Object {
 		$sql = explode('|',$config['sql'][2],3);
 		
 		// separate value
-		list($v_first,$v_second) = explode('|',$db->real_escape_string($this->get_value()),2);
+		list($v_first,$v_second) = explode('|',$this->get_value(),2);
 		
 		// execute query
-		$value = $sql[0].$v_first.$sql[1].$v_second.$sql[2];
+		$value = $sql[0].$db->real_escape_string($v_first).$sql[1].$db->real_escape_string($v_second).$sql[2];
 		$result = $db->query($value);
 		
 		// check result
@@ -1041,6 +1095,16 @@ class Field extends Object {
 	 */
 	private function hierselect(&$form, $select1Array, $select2Array, $select1Id, $select2Id) {
 		
+		// prepare value
+		$value1 = null;
+		$value2 = 0;
+		if($this->get_value() != '') {
+			
+			$value = explode('|', $this->get_value(), 2);
+			$value1 = $value[0];
+			$value2 = $value[1];
+		}
+		
 		// add label and selects
 		$form->add(
 				'label',			// type
@@ -1050,7 +1114,8 @@ class Field extends Object {
 			);
 		$select1 = $form->add(
 				'select',	// type
-				$select1Id		// id/name
+				$select1Id,		// id/name
+				$value1		// default
 			);
 		$select2 = $form->add(
 				'select',	// type
@@ -1066,8 +1131,8 @@ class Field extends Object {
 		// add note
 		$form->add(
 				'note',			// type
-				'note'.ucfirst($select1Id),	// id/name
-				$select1Id,		// for
+				'note'.ucfirst($select2Id),	// id/name
+				$select2Id,		// for
 				parent::lang('class.Field#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDBHIERSELECT)	// note text
 			);
 		
@@ -1097,11 +1162,12 @@ class Field extends Object {
 		$sJsHierselect = new JudoIntranetSmarty();
 		$sJsHierselect->assign('select1', $select1Id);
 		$sJsHierselect->assign('select2', $select2Id);
+		$sJsHierselect->assign('select2Value', $value2);
 		$sJsHierselect->assign('dummySelect', $dummySelectId);
 		$sJsHierselect->assign('select2Array', $select2Json);
 		
 		// add completed javascript to jquery
-		$this->add_jquery($sJsHierselect->fetch('smarty.js-zebraHierselect.tpl'));
+		$this->getView()->add_jquery($sJsHierselect->fetch('smarty.js-zebraHierselect.tpl'));
 	}
 	
 	
@@ -1114,8 +1180,19 @@ class Field extends Object {
 	 */
 	private function fieldText(&$form, $defaults) {
 		
+		// prepare value
+		$defaultsValue = null;
+		$manualValue = null;
+		if($this->get_defaults() == 0) {
+			if($this->get_value() != '') {
+				$manualValue = $this->get_value();
+			}
+		} else {
+			$defaultsValue = $this->get_defaults();
+		}
+		
 		// set $elementId
-		$elementId = $this->get_name().'-'.$this->get_id();
+		$elementId = $this->get_table().'-'.$this->get_id();
 		
 		// add label
 		$form->add(
@@ -1131,7 +1208,8 @@ class Field extends Object {
 			// add select
 			$select = $form->add(
 					'select',	// type
-					$elementId.'-defaults'	// id/name
+					$elementId.'-defaults',	// id/name
+					'd'.$defaultsValue	// default
 				);
 			// add options
 			$select->add_options($this->getOptions());
@@ -1140,7 +1218,8 @@ class Field extends Object {
 		// add textarea
 		$textarea = $form->add(
 			'textarea',		// type
-			$elementId.'-manual'	// id/name
+			$elementId.'-manual',	// id/name
+			$manualValue
 		);
 		
 		// define regexp rule for the textarea
@@ -1174,8 +1253,8 @@ class Field extends Object {
 		// add note
 		$form->add(
 				'note',			// type
-				'note'.ucfirst($elementId),	// id/name
-				$elementId,		// for
+				'note'.ucfirst($elementId.'-defaults'),	// id/name
+				$elementId.'-defaults',		// for
 				parent::lang('class.Field#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDTEXT)	// note text
 			);
 		
@@ -1186,7 +1265,7 @@ class Field extends Object {
 		$sJsFieldText->assign('dummy', $dummyId);
 		
 		// add completed javascript to jquery
-		$this->add_jquery($sJsFieldText->fetch('smarty.js-zebraFieldText.tpl'));
+		$this->getView()->add_jquery($sJsFieldText->fetch('smarty.js-zebraFieldText.tpl'));
 	} 
 }
 

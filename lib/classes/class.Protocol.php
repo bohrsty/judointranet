@@ -205,7 +205,7 @@ class Protocol extends Page {
 			$this->set_location($arg['location']);
 			$this->set_member($arg['member']);
 			$this->set_protocol($arg['protocol']);
-			$this->set_preset(new Preset($arg['preset'],'protocol',0));
+			$this->set_preset(new Preset($arg['preset'],'protocol',0), null);
 			$this->set_valid($arg['valid']);
 			$this->set_owner($arg['owner']);
 			$this->set_correctable($arg['correctable']);
@@ -251,7 +251,7 @@ class Protocol extends Page {
 		$this->set_location($location);
 		$this->set_member($member);
 		$this->set_protocol($protocol);
-		$this->set_preset(new Preset($preset_id,strtolower(get_class($this)),$id));
+		$this->set_preset(new Preset($preset_id,strtolower(get_class($this)),$id), null);
 		$this->set_valid($valid);
 		$this->set_owner($owner);
 		$this->set_correctable($correctable);

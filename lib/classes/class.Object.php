@@ -33,6 +33,8 @@ class Object {
 	/*
 	 * class-variables
 	 */
+	private $get;
+	private $post;
 	
 	
 	/*
@@ -70,6 +72,18 @@ class Object {
 	public function setHelp($help) {
 		$GLOBALS['help'] = $help;
 	}
+	public function get_get(){
+		return $this->get;
+	}
+	public function set_get($get) {
+		$this->get = $get;
+	}
+	public function getPost(){
+		return $this->post;
+	}
+	public function setPost($post) {
+		$this->post = $post;
+	}
 	
 	/*
 	 * constructor/destructor
@@ -90,6 +104,9 @@ class Object {
 		
 		// set error
 		$this->setError(new Error());
+		
+		// read $_GET and $_POST
+		$this->readGlobals();
 	}
 	
 	/*
@@ -328,13 +345,104 @@ class Object {
 		
 		// replace
 		foreach($table as $char => $replacement) {
-//			echo "$char => $replacement";
 			$string = str_replace($char,$replacement,$string);
-//			$string = preg_replace('/ü/',$replacement,$string);
 		}
 		
 		// return
 		return $string;
+	}
+	
+	
+	/**
+	 * readGlobals() checks the $_GET- and $POST-entrys against allowed-values
+	 * 
+	 * @return void
+	 */
+	private function readGlobals() {
+		
+		// walk through $_GET if defined
+		$get = null;
+		if(isset($_GET)) {
+			
+			foreach($_GET as $get_entry => $get_value) {
+				
+				// check the value
+				$value = $this->check_valid_chars('getvalue',$get_value);
+				if($value === false) {
+					
+					// handle error
+					$errno = $this->getError()->error_raised('GETInvalidChars','entry:'.$get_entry,$get_entry);
+					throw new Exception('GETInvalidChars',$errno);
+				} else {
+					
+					// store value
+					$get[$get_entry] = array($get_value,null);
+				}
+			}
+		}
+		
+		// set class-variables
+		$this->set_get($get);
+		
+		// walk through $_POST if defined
+		$post = null;
+		if(isset($_POST)) {
+			
+			foreach($_POST as $postKey => $postValue) {
+				
+				// check the value
+				$value = $this->check_valid_chars('postvalue',$postValue);
+				if($value === false) {
+					
+					// handle error
+					$errno = $this->getError()->error_raised('POSTInvalidChars','entry:'.$postKey,$postKey);
+					throw new Exception('POSTInvalidChars',$errno);
+				} else {
+					
+					// store value
+					$post[$postKey] = array($postValue,null);
+				}
+			}
+		}
+		
+		// set class-variables
+		$this->setPost($post);
+	}
+	
+	
+	/**
+	 * get returns the value of $_GET[$var] if set
+	 * 
+	 * @param string $var text of key in $_GET-array
+	 * @return string value of the $_GET-key, or false if not set
+	 */
+	public function get($var) {
+		
+		// check if key is set
+		$get = $this->get_get();
+		if(isset($get[$var])) {
+			return $get[$var][0];
+		} else {
+			return false;
+		}
+	}
+	
+	
+	/**
+	 * post() returns the value of $_POST[$var] if set
+	 * 
+	 * @param string $var text of key in $_POST array
+	 * @return string value of the $_POST key, or false if not set
+	 */
+	public function post($var) {
+		
+		// check if key is set
+		$post = $this->getPost();
+		if(isset($post[$var])) {
+			return $post[$var][0];
+		} else {
+			return false;
+		}
 	}
 }
 
