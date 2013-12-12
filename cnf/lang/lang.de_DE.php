@@ -627,7 +627,7 @@ $lang = array(
 		),
 		'cancel' => array(
 			'form' => array(
-				'yes' => 'Ja',
+				'yes' => '  Ja  ',
 				'cancel' => 'Abbrechen'
 			),
 			'message' => array(
@@ -635,7 +635,8 @@ $lang = array(
 				'done' => 'Das Objekt wurde erfolgreich zur&uuml;ckgezogen.'
 			),
 			'title' => array(
-				'cancel' => 'Bricht den Vorgang ab'
+				'cancel' => 'Bricht den Vorgang ab',
+				'yes' => 'Zieht die &Uuml;bergabe zur&uuml;ck',
 			)
 		),
 		'listall' => array(

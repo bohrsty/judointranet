@@ -56,82 +56,6 @@ class InventoryView extends PageView {
 	/*
 	 * methods
 	 */
-//	/**
-//	 * navi knows about the functionalities used in navigation returns an array
-//	 * containing first- and second-level-navientries
-//	 * 
-//	 * @return array contains first- and second-level-navientries
-//	 */
-//	public static function connectnavi() {
-//		
-//		// set first- and secondlevel names and set secondlevel $_GET['id']-values
-//		static $navi = array();
-//		
-//		$navi = array(
-//						'firstlevel' => array(
-//							'name' => 'class.InventoryView#connectnavi#firstlevel#name',
-//							'file' => 'inventory.php',
-//							'position' => 3,
-//							'class' => get_class(),
-//							'id' => md5('InventoryView'), // f32d321bb51244f1e09cfd0f34c82bda
-//							'show' => true
-//						),
-//						'secondlevel' => array(
-//							1 => array(
-//								'getid' => 'listall', 
-//								'name' => 'class.InventoryView#connectnavi#secondlevel#listall',
-//								'id' => md5('InventoryView|listall'), // 4c13dc7e14dd5fe1ade036aac60f64c4
-//								'show' => true
-//							),
-//							0 => array(
-//								'getid' => 'my', 
-//								'name' => 'class.InventoryView#connectnavi#secondlevel#my',
-//								'id' => md5('InventoryView|my'), // 1b7715352a02ff2cdd753e7b23fa46c4
-//								'show' => true
-//							),
-//							2 => array(
-//								'getid' => 'give', 
-//								'name' => 'class.InventoryView#connectnavi#secondlevel#give',
-//								'id' => md5('InventoryView|give'), // 1b26a57943c16402c4b206936e1fc44a
-//								'show' => false
-//							),
-//							3 => array(
-//								'getid' => 'take', 
-//								'name' => 'class.InventoryView#connectnavi#secondlevel#take',
-//								'id' => md5('InventoryView|take'), // e1181951b8950761f24c0d6c1dedb269
-//								'show' => false
-//							),
-//							4 => array(
-//								'getid' => 'cancel', 
-//								'name' => 'class.InventoryView#connectnavi#secondlevel#cancel',
-//								'id' => md5('InventoryView|cancel'), // 4a90ccaf9dd0b1359fa550eafa77e0e0
-//								'show' => false
-//							),
-//							5 => array(
-//								'getid' => 'details', 
-//								'name' => 'class.InventoryView#connectnavi#secondlevel#details',
-//								'id' => md5('InventoryView|details'), // 10fbb6433764f41e4d40b53a511da245
-//								'show' => false
-//							),
-//							6 => array(
-//								'getid' => 'movement', 
-//								'name' => 'class.InventoryView#connectnavi#secondlevel#movement',
-//								'id' => md5('InventoryView|movement'), // 237ff1df758a293404b01433488ed577
-//								'show' => false
-//							)
-//						)
-//					);
-//		
-//		// return array
-//		return $navi;
-//	}
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * init chooses the functionality by using $_GET['id']
 	 * 
@@ -169,7 +93,7 @@ class InventoryView extends PageView {
 						$this->tpl->assign('title', $this->title(parent::lang('class.InventoryView#init#my#title')));
 						$this->tpl->assign('main', $this->my());
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', false);
+						$this->tpl->assign('zebfaform', false);
 					break;
 					
 					case 'give':
@@ -178,7 +102,7 @@ class InventoryView extends PageView {
 						$this->tpl->assign('title', $this->title(parent::lang('class.InventoryView#init#give#title')));
 						$this->tpl->assign('main', $this->give($this->get('did')));
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', true);
+						$this->tpl->assign('zebraform', true);
 					break;
 					
 					
@@ -188,7 +112,7 @@ class InventoryView extends PageView {
 						$this->tpl->assign('title', $this->title(parent::lang('class.InventoryView#init#take#title')));
 						$this->tpl->assign('main', $this->take($this->get('did')));
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', true);
+						$this->tpl->assign('zebraform', true);
 					break;
 					
 					case 'cancel':
@@ -197,7 +121,7 @@ class InventoryView extends PageView {
 						$this->tpl->assign('title', $this->title(parent::lang('class.InventoryView#init#cancel#title')));
 						$this->tpl->assign('main', $this->cancel($this->get('did')));
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', true);
+						$this->tpl->assign('zebraform', true);
 					break;
 					
 					case 'details':
@@ -206,7 +130,7 @@ class InventoryView extends PageView {
 						$this->tpl->assign('title', $this->title(parent::lang('class.InventoryView#init#details#title')));
 						$this->tpl->assign('main', $this->details($this->get('did')));
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', false);
+						$this->tpl->assign('zebraform', false);
 					break;
 					
 					case 'movement':
@@ -215,7 +139,7 @@ class InventoryView extends PageView {
 						$this->tpl->assign('title', $this->title(parent::lang('class.InventoryView#init#movement#title')));
 						$this->tpl->assign('main', $this->movement($this->get('mid')));
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', true);
+						$this->tpl->assign('zebraform', true);
 					break;
 					
 					default:
@@ -228,7 +152,7 @@ class InventoryView extends PageView {
 						$this->tpl->assign('title', '');
 						$this->tpl->assign('main', $this->getError()->to_html($errno));
 						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('hierselect', false);
+						$this->tpl->assign('zebraform', false);
 					break;
 				}
 			} else {
@@ -240,7 +164,7 @@ class InventoryView extends PageView {
 				$this->tpl->assign('title', $this->title(parent::lang('class.InventoryView#init#Error#NotAuthorized')));
 				$this->tpl->assign('main', $this->getError()->to_html($errno));
 				$this->tpl->assign('jquery', true);
-				$this->tpl->assign('hierselect', false);
+				$this->tpl->assign('zebraform', false);
 			}
 		} else {
 			
@@ -252,7 +176,7 @@ class InventoryView extends PageView {
 			// smarty-jquery
 			$this->tpl->assign('jquery', true);
 			// smarty-hierselect
-			$this->tpl->assign('hierselect', false);
+			$this->tpl->assign('zebraform', false);
 		}
 		
 		// global smarty
@@ -504,7 +428,9 @@ class InventoryView extends PageView {
 				$return = '';
 				
 				// get preset
-				$preset = $inventory->get_preset();
+				$preset = &$inventory->get_preset();
+				// set view in preset
+				$preset->setView($this);
 				
 				// get fields
 				$fields = $preset->get_fields();
@@ -515,58 +441,79 @@ class InventoryView extends PageView {
 				$sG->assign('inventoryinfo', parent::lang('class.InventoryView#give#page#accessory.required'));
 				
 				// formular
-				$form = new HTML_QuickForm2(
-										'inventory_give',
-										'post',
-										array(
-											'name' => 'inventory_give',
-											'action' => 'inventory.php?id=give&did='.$this->get('did')
-										)
-									);
-				// renderer
-				$renderer = HTML_QuickForm2_Renderer::factory('default');
-				$renderer->setOption('required_note',parent::lang('class.InventoryView#entry#form#requiredNote'));
+				$form = new Zebra_Form(
+						'inventoryGive',			// id/name
+						'post',				// method
+						'inventory.php?id=give&did='.$this->get('did')	// action
+					);
+				// set language
+				$form->language('deutsch');
+				// set docktype xhtml
+				$form->doctype('xhtml');
+				
+				// prepare formIds
+				$formIds = array();
 				
 				// add user-selection
 				// get users
-				$users_options = array('--');
 				$users = $this->getUser()->return_all_users(array($this->getUser()->get_userinfo('username')));
 				foreach($users as $user) {
 					
 					// put id and name in options-array
-					$users_options[$user->get_userinfo('username')] = $user->get_userinfo('name');
+					$usersOptions[$user->get_userinfo('username')] = $user->get_userinfo('name');
 				}
 				// remove admin
-				unset($users_options['admin']);
+				unset($usersOptions['admin']);
 				
-				$give_to = $form->addElement('select','give_to',array());
-				$give_to->setLabel(parent::lang('class.InventoryView#give#page#objectinfo.head').$inventory->get_name().' ('.$inventory->get_inventory_no().')'.parent::lang('class.InventoryView#give#page#objectinfo.tail').':');
-				$give_to->loadOptions($users_options);
-				$give_to->addRule('required',parent::lang('class.InventoryView#entry#rule#required.give_to'));
-				$give_to->addRule('callback',parent::lang('class.InventoryView#entry#rule#check.give_to'),array($this,'callback_check_select'));
+				// add select
+				$formIds['give_to'] = array('valueType' => 'int', 'type' => 'select',);
+				$form->add(
+						'label',		// type
+						'labelGiveTo',	// id/name
+						'give_to',			// for
+						parent::lang('class.InventoryView#give#page#objectinfo.head').$inventory->get_name().' ('.$inventory->get_inventory_no().')'.parent::lang('class.InventoryView#give#page#objectinfo.tail').':'	// label text
+					);
+				$giveTo = $form->add(
+						$formIds['give_to']['type'],	// type
+						'give_to',		// id/name
+						'',			// default
+						array(		// attributes
+							)
+					);
+				$giveTo->add_options($usersOptions);
+				$giveTo->set_rule(
+						array(
+								'required' => array(
+										'error', parent::lang('class.InventoryView#entry#rule#required.give_to')
+									),
+							)
+					);
 				
-				// generate field-quickform and add to form
+				// add fields to form
 				foreach($fields as $field) {
 					
-					// generate quickform
-					$field->read_quickform();
-//					$field->addFormElement(array(), false, $formIds);
+					// set form
+					$field->setForm($form);
 					
-					// add to form
-					$form->appendChild($field->get_quickform());
+					// generate zebraform
+					$field->addFormElement(array(), false, $formIds);
 				}
 				
 				// submit-button
-				$form->addSubmit('submit',array('value' => parent::lang('class.InventoryView#give#form#submitButton')));
+				$form->add(
+						'submit',		// type
+						'buttonSubmit',	// id/name
+						parent::lang('class.InventoryView#give#form#submitButton')	// value
+					);
 				
 				// validate
 				if($form->validate()) {
 					
 					// values
-					$values = $form->getValue();
+					$values = $this->getFormValues($formIds);
 					
 					// get user
-					$givento_user = new User();
+					$givento_user = new User(false);
 					$givento_user->change_user($values['give_to'],false);
 					
 					// write to db
@@ -597,7 +544,7 @@ class InventoryView extends PageView {
 					$sG->assign('form', '');
 					$sG->assign('data', $data);
 				} else {
-					$sG->assign('form', $form->render($renderer));
+					$sG->assign('form', $form->render('', true));
 				}
 				
 				// return
@@ -654,7 +601,9 @@ class InventoryView extends PageView {
 				$return = '';
 				
 				// get preset
-				$preset = $inventory->get_preset();
+				$preset = &$inventory->get_preset();
+				// set view in preset
+				$preset->setView($this);
 				
 				// get fields
 				$fields = $preset->get_fields();
@@ -664,53 +613,56 @@ class InventoryView extends PageView {
 				
 				// add take from
 				$movements = Inventory::movement_last_row($db,$inventory->get_id(),'user_id',2);
-				$user = new User();
+				$user = new User(false);
 				$user->change_user($movements[1],false,'id');
 				$sT->assign('takefrom', parent::lang('class.InventoryView#take#page#TakeFrom').': '.$user->get_userinfo('name'));
 				// add accessory info
 				$sT->assign('accessoryinfo', parent::lang('class.InventoryView#take#page#accessory.required'));
 				
 				// formular
-				$form = new HTML_QuickForm2(
-										'inventory_take',
-										'post',
-										array(
-											'name' => 'inventory_take',
-											'action' => 'inventory.php?id=take&did='.$this->get('did')
-										)
-									);
-				// renderer
-				$renderer = HTML_QuickForm2_Renderer::factory('default');
-				$renderer->setOption('required_note',parent::lang('class.InventoryView#entry#form#requiredNote'));
+				$form = new Zebra_Form(
+						'inventoryTake',	// id/name
+						'post',				// method
+						'inventory.php?id=take&did='.$this->get('did')	// action
+					);
+				// set language
+				$form->language('deutsch');
+				// set docktype xhtml
+				$form->doctype('xhtml');
+				
+				// prepare formIds
+				$formIds = array();
 				
 				// generate field-quickform and add to form
 				foreach($fields as $field) {
 					
+					// set form
+					$field->setForm($form);
+					
 					// check if given
 					if($inventory->movement_last_accessories($field) === true || $field->get_type() == 'text') {
 					
-						// generate quickform
-						$field->read_quickform();
-//						$field->addFormElement(array(), false, $formIds);
+						// generate zebra_form
+						$field->addFormElement(array(), false, $formIds);
 					} else {
 						
-						// generate quickform
-						$field->read_quickform(array('disabled' => 'disabled'));
-//						$field->addFormElement(array('disabled' => 'disabled'), false, $formIds);
+						// generate zebra_form
+						$field->addFormElement(array('disabled' => 'disabled'), false, $formIds);
 					}
-					
-					// add to form
-					$form->appendChild($field->get_quickform());
 				}
 				
 				// submit-button
-				$form->addSubmit('submit',array('value' => parent::lang('class.InventoryView#take#form#submitButton')));
+				$form->add(
+						'submit',		// type
+						'buttonSubmit',	// id/name
+						parent::lang('class.InventoryView#take#form#submitButton')	// value
+					);
 				
 				// validate
 				if($form->validate()) {
 					
 					// values
-					$values = $form->getValue();
+					$values = $this->getFormValues($formIds);
 					
 					// write to db
 					$insert_id = $this->movement_to_db('taken',$inventory->get_id(),$this->getUser()->userid());
@@ -740,7 +692,7 @@ class InventoryView extends PageView {
 					$sT->assign('form', '');
 					$sT->assign('data', $data);
 				} else {
-					$sT->assign('form', $form->render($renderer));
+					$sT->assign('form', $form->render('', true));
 				}
 				
 				// return
@@ -785,7 +737,7 @@ class InventoryView extends PageView {
 			$inventory = new Inventory($did);
 			
 			// get preset
-			$preset = $inventory->get_preset();
+			$preset = &$inventory->get_preset();
 			
 			// get fields
 			$fields = $preset->get_fields();
@@ -799,21 +751,28 @@ class InventoryView extends PageView {
 				// prepare return
 				$return = '';
 				
-				$form = new HTML_QuickForm2(
-										'confirm',
-										'post',
-										array(
-											'name' => 'confirm',
-											'action' => 'inventory.php?id=cancel&did='.$did
-										)
-									);
+				// form
+				$form = new Zebra_Form(
+						'formConfirm',			// id/name
+						'post',				// method
+						'inventory.php?id=cancel&did='.$did		// action
+					);
+				// set language
+				$form->language('deutsch');
+				// set docktype xhtml
+				$form->doctype('xhtml');
 				
 				// add button
-				$form->addElement('submit','yes',array('value' => parent::lang('class.InventoryView#cancel#form#yes')));
+				$form->add(
+						'submit',		// type
+						'buttonSubmit',	// id/name
+						parent::lang('class.InventoryView#cancel#form#yes'),	// value
+						array('title' => parent::lang('class.InventoryView#cancel#title#yes'))
+					);
 				
 				// smarty-link
 				$link = array(
-						'params' => '',
+						'params' => 'class="submit"',
 						'href' => 'inventory.php?id=my',
 						'title' => parent::lang('class.InventoryView#cancel#title#cancel'),
 						'content' => parent::lang('class.InventoryView#cancel#form#cancel')
@@ -821,7 +780,7 @@ class InventoryView extends PageView {
 				$sC->assign('link', $link);
 				$sC->assign('spanparams', 'id="cancel"');
 				$sC->assign('message', parent::lang('class.InventoryView#cancel#message#confirm'));
-				$sC->assign('form', $form);
+				$sC->assign('form', $form->render('', true));
 				
 				// validate
 				if($form->validate()) {
@@ -1117,12 +1076,21 @@ class InventoryView extends PageView {
 				$value = 0;
 			}
 			
+			// set value
+			$field->value($value);
+			
 			// prepare sql-statement
-			$sql = "INSERT INTO value (id,table_name,table_id,field_id,value)
-					VALUES (NULL,'inventory_movement',$insert_id,$fieldid,'$value')";
+			$sql = 'INSERT INTO value (id,table_name,table_id,field_id,value)
+					VALUES (NULL,\'inventory_movement\','.$insert_id.','.$fieldid.',\''.$field->get_value().'\')';
 			
 			// execute
 			$result = $db->query($sql);
+			
+			// get data
+			if(!$result) {
+				$errno = $this->getError()->error_raised('MysqlError', $db->error);
+				$this->getError()->handle_error($errno);
+			}
 		}		
 	}
 	

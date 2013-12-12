@@ -228,14 +228,20 @@ class Field extends Object {
 	 * to $this->type
 	 * 
 	 * @param array $options array containing parameters for the input-tag
-	 * @param bool $defaults text-fields with default-values if true
+	 * @param bool $defaults text-fields with default-values if true (overridden by field config)
 	 * @param array $formIds array containing the form ids for later getting the values
 	 */
-	public function addFormElement($options = array(),$defaults = false, &$formIds) {
+	public function addFormElement($options = array(),$defaults = true, &$formIds) {
 		
 		// load values
 		$this->readValue();
 		
+		// get config
+		$config = $this->get_config();
+		
+		// override $defaults if $config['defaults'] is set
+		$defaults = (isset($config['defaults']) ? $config['defaults'] : $defaults);
+				
 		// get and simplify $this->form
 		$form = &$this->getForm();
 		// simplify id
@@ -248,7 +254,7 @@ class Field extends Object {
 			$formIds[$elementId] = array('valueType' => 'string', 'type' => 'fieldtext',);
 			
 			// add elements
-			$this->fieldText($form, true);
+			$this->fieldText($form, $defaults);
 		} elseif($this->get_type() == 'date') {
 			
 			// prepare value
@@ -496,13 +502,16 @@ class Field extends Object {
 	 */
 	public function value($value) {
 		
+		// get config
+		$config = $this->get_config();
+		
 		// get db-object
 		$db = Db::newDb();
 		
 		// check type
 		$checked_value = '';
 		$checked_default = 0;
-		if($this->get_type() == 'text') {
+		if($this->get_type() == 'text' && is_array($value)) {
 			
 			// check manual or default
 			if($value['manual'] == '') {

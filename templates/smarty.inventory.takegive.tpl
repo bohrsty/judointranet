@@ -27,8 +27,8 @@
 {$form}
 {else}
 <h3>{$action}</h3>
-<p>{$accesoryaction}</p>
-{for $i=0 to (count($v)-1)}
+<p>{$accessoryaction}</p>
+{for $i=0 to (count($data)-1)}
 <p>
 	<b>{$data.$i.name}:</b> {$data.$i.value|nl2br}
 </p>

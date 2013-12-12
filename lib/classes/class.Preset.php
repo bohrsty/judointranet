@@ -85,13 +85,24 @@ class Preset extends Object {
 	}
 	public function setView(&$view) {
 		$this->view = $view;
+		
+		// check view in fields
+		$fields = $this->get_fields();
+		// if not set in fields (view manually added via setView())
+		if(isset($fields[0]) && $fields[0]->getView() == null) {
+			
+			// set view in any field
+			foreach($fields as $field) {
+				$field->setView($view);
+			}
+		}
 	}
 	
 	
 	/*
 	 * constructor/destructor
 	 */
-	public function __construct($id,$table,$table_id, &$view) {
+	public function __construct($id,$table,$table_id, &$view=null) {
 	
 		// parent constructor
 		parent::__construct();
