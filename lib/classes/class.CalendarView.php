@@ -1351,11 +1351,11 @@ class CalendarView extends PageView {
 	
 	
 	/**
-	 * readPresetForm($calendar) generates a quickform-object to choose the announcement-preset,
+	 * readPresetForm($calendar) generates a zebra_form to choose the announcement-preset,
 	 * if validated redirect to announcement.php?id=new&cid=$id
 	 * 
 	 * @param object $calendar the actual calendarentry
-	 * @return object quickform-object to choose the preset, if validated redirect to new announcement
+	 * @return string returns the generated form or redirects to listall if validated
 	 */
 	private function readPresetForm(&$calendar) {
 		

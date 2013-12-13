@@ -216,7 +216,7 @@ class AnnouncementView extends PageView {
 					// prepare formIds
 					$formIds = array();
 					
-					// generate field-quickform and add to form
+					// add fields to form
 					foreach($fields as $field) {
 						
 						// set form
@@ -355,13 +355,13 @@ class AnnouncementView extends PageView {
 					// prepare formIds
 					$formIds = array();
 					
-					// generate field-quickform and add to form
+					// add fields to form
 					foreach($fields as $field) {
 						
 						// set form
 						$field->setForm($form);
 						
-						// generate quickform
+						// add fields to form
 						$field->addFormElement(array(), true, $formIds);
 					}
 					

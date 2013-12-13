@@ -28,10 +28,6 @@
 		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 		<script type="text/javascript" src="js/jquery-ui-1.10.3.custom.min.js"></script>
 		<script type="text/javascript" src="js/jquery.ui.datepicker-de.js"></script>
-{if isset($hierselect) && $hierselect}
-		<script type="text/javascript" src="js/quickform.js"></script>
-		<script type="text/javascript" src="js/quickform-hierselect.js"></script>
-{/if}
 {if isset($zebraform) and $zebraform}
 		<link rel="stylesheet" type="text/css" href="css/zebra_form/zebra_form.css" />
 		<script type="text/javascript" src="js/zebra_form.js"></script>

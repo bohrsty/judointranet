@@ -534,7 +534,7 @@ class ProtocolView extends PageView {
 				'label',		// type
 				'labelDate',	// id/name
 				'date',			// for
-				parent::lang('class.ProtocolView#entry#form#date')	// label text
+				parent::lang('class.ProtocolView#entry#form#date').':'	// label text
 			);
 		$date = $form->add(
 						$formIds['date']['type'],			// type

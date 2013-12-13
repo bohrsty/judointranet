@@ -112,22 +112,6 @@ div#content {
 	padding: 3px;
 }
 
-div.quickform div.row {
-	margin-bottom: 15px;
-}
-
-td.admin div.quickform div.row {
-	margin-bottom: 0px;
-}
-
-td.admin div.quickform div.row p.label {
-	display: none;
-}
-
-div.quickform div.row div.group select {
-	display: block;
-}
-
 .even {
 	background-color: #b6d6e4;
 }
@@ -432,10 +416,6 @@ div#confirm {
 	padding: 40px 7px 7px 40px;
 }
 
-div#confirm div.quickform {
-	float: left;
-}
-
 span#cancel {
 	padding-left: 70px;
 	vertical-align: bottom;
@@ -456,15 +436,6 @@ form#login .error input {
 
 form#login span.error {
 	color: red;
-}
-
-.quickform textarea {
-	width: 450px;
-	height: 150px;
-}
-
-.quickform #date-0 {
-	width: 100px;
 }
 
 p.label {
