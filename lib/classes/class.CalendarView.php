@@ -223,7 +223,7 @@ class CalendarView extends PageView {
 	
 	/**
 	 * listall lists all calendarentries less/equal than $time in table (paged)
-	 * shows only entrys for which the user has sufficient rights
+	 * shows only entrys for which the user has sufficient permissions
 	 * 
 	 * @param int $timeto unix-timestamp from that the entrys are shown
 	 * @param int $timefrom unix-timestamp from that the entrys are shown
@@ -927,7 +927,7 @@ class CalendarView extends PageView {
 	 */
 	private function edit($cid) {
 		
-		// check rights
+		// check permissions
 		if($this->getUser()->hasPermission('calendar', $cid)) {
 			
 			// smarty-templates
@@ -1271,7 +1271,7 @@ class CalendarView extends PageView {
 		// pagecaption
 		$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#delete').": $cid");
 		
-		// check rights
+		// check permissions
 		if($this->getUser()->hasPermission('calendar', $cid, 'w')) {
 				
 			// prepare return

@@ -191,7 +191,7 @@ class InventoryView extends PageView {
 	
 	/**
 	 * listall lists all inventoryentries, shows only entrys for which
-	 * the user has sufficient rights
+	 * the user has sufficient permissions
 	 * 
 	 * @return string html-string with the output
 	 */
@@ -409,7 +409,7 @@ class InventoryView extends PageView {
 	 */
 	private function give($did) {
 	
-		// check rights
+		// check permissions
 		if($this->getUser()->hasPermission('inventory', $did)) {
 			
 			// pagecaption
@@ -579,7 +579,7 @@ class InventoryView extends PageView {
 	 */
 	private function take($did) {
 	
-		// check rights
+		// check permissions
 		if($this->getUser()->hasPermission('inventory', $did)) {
 			
 			// pagecaption
@@ -727,7 +727,7 @@ class InventoryView extends PageView {
 	 */
 	private function cancel($did) {
 	
-		// check rights
+		// check permissions
 		if($this->getUser()->hasPermission('inventory', $did)) {
 			
 			// pagecaption
@@ -829,7 +829,7 @@ class InventoryView extends PageView {
 	 */
 	private function details($did) {
 	
-		// check rights
+		// check permissions
 		if($this->getUser()->hasPermission('inventory', $did)) {
 			
 			// pagecaption
@@ -913,7 +913,7 @@ class InventoryView extends PageView {
 		// get fields
 		$fields = $preset->get_fields();
 		
-		// check rights
+		// check permissions
 		if($this->getUser()->hasPermission('inventory', $inventory->get_id())) {
 			
 			//smarty-template

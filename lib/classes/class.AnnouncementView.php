@@ -184,7 +184,7 @@ class AnnouncementView extends PageView {
 		// smarty-templates
 		$sD = new JudoIntranetSmarty();
 		
-		// check rights
+		// check permissions
 		if($this->getUser()->hasPermission('calendar', $this->get('cid'))) {
 			
 			// check cid and pid given
@@ -320,7 +320,7 @@ class AnnouncementView extends PageView {
 		// smarty-templates
 		$sD = new JudoIntranetSmarty();
 		
-		// check rights
+		// check permissions
 		if($this->getUser()->hasPermission('calendar', $this->get('cid'))) {
 			
 			// check cid and pid given
@@ -456,7 +456,7 @@ class AnnouncementView extends PageView {
 	 */
 	private function delete() {
 	
-		// check rights
+		// check permissions
 		if($this->getUser()->hasPermission('calendar', $this->get('cid'))) {
 			
 			// check cid and pid given

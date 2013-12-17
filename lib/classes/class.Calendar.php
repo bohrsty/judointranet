@@ -145,14 +145,10 @@ class Calendar extends Page {
 			$this->set_content($arg['content']);
 			$this->set_valid($arg['valid']);
 			$this->setFilter($filter);
-			
-			// set rights
-//			$this->set_rights(new Rights('calendar',$arg['rights']));
 		} else {
 			
 			// get field for given id
 			$this->get_from_db($arg);
-//			$this->set_rights(new Rights('calendar',$arg));
 		}
 	}
 	
