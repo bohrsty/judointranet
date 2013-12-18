@@ -307,7 +307,13 @@ class PageView extends Object {
 					'title' => parent::lang('class.PageView#put_userinfo#usersettings#passwd.title'),
 					'content' => parent::lang('class.PageView#put_userinfo#usersettings#passwd')
 				),
-				1 => array(
+				1 => array(	
+					'params' => 'class="usersettings"',
+					'href' => 'index.php?id=user&action=data',
+					'title' => parent::lang('class.PageView#put_userinfo#usersettings#data.title'),
+					'content' => parent::lang('class.PageView#put_userinfo#usersettings#data')
+				),
+				2 => array(
 					'params' => 'class="usersettings"',
 					'href' => 'index.php?id=logout',
 					'title' => parent::lang('class.PageView#put_userinfo#usersettings#logout.title'),

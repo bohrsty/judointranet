@@ -95,8 +95,20 @@ class User extends Object {
 			}
 		}
 	}
-	public function set_userinfo($userinfo) {
-		$this->userinfo = $userinfo;
+	public function set_userinfo($userinfo, $value='') {
+		
+		// check if $userinfo is array override complete userinfo
+		if(is_array($userinfo)) {
+			$this->userinfo = $userinfo;
+		} else {
+			
+			// get actual userinfo
+			$actualUserinfo = $this->userinfo;
+			
+			// override single row
+			$actualUserinfo[$userinfo] = $value;
+			$this->userinfo = $actualUserinfo;
+		}
 	}
 	
 	/*
@@ -304,28 +316,35 @@ class User extends Object {
 	
 	
 	/**
-	 * change_user sets the information of the given userid from db
+	 * change_user($value, $loggedin, $field) sets the information of the given userid from db
 	 * 
 	 * @param mixed $value value for $field
 	 * @param bool $loggedin new loginstatus of the user
 	 * @param string $field database field to change user to $value
 	 * @return void
 	 */
-	public function change_user($value,$loggedin,$field = 'username') {
+	public function change_user($value, $loggedin, $field = 'username') {
 		
 		// get db-object
 		$db = Db::newDb();
 		
 		// prepare sql-statement
-		$sql = "SELECT u.id,u.name,u.username
+		$sql = 'SELECT *
 				FROM user AS u
-				WHERE u.$field = '$value'";
+				WHERE u.'.$db->real_escape_string($field).' = \''.$db->real_escape_string($value).'\'';
 		
 		// execute statement
 		$result = $db->query($sql);
 		
+		// check result
+		if($result) {
+			$db_result = $result->fetch_array(MYSQL_ASSOC);
+		} else {
+			$errno = self::getError()->error_raised('MysqlError', $db->error);
+			self::getError()->handle_error($errno);
+		}
+		
 		// set id and infos
-		$db_result = $result->fetch_array(MYSQL_ASSOC);
 		$this->set_id($db_result['id']);
 		unset($db_result['id']);
 		$this->set_userinfo($db_result);
@@ -679,6 +698,34 @@ class User extends Object {
 		
 		// check membership
 		return $this->isMemberOf(1);
+	}
+	
+	
+	/**
+	 * writeDb() writes the actual data of the user back to the database
+	 * 
+	 * @return void
+	 */
+	public function writeDb() {
+		
+		// get db-object
+		$db = Db::newDb();
+		
+		// prepare sql-statement
+		$sql = 'UPDATE user
+				SET
+					name = \''.$db->real_escape_string($this->get_userinfo('name')).'\',
+					email = \''.$db->real_escape_string($this->get_userinfo('email')).'\'
+				WHERE id = '.$db->real_escape_string($this->userid());
+		
+		// execute statement
+		$result = $db->query($sql);
+		
+		// get data
+		if(!$result) {
+			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$this->getError()->handle_error($errno);
+		}
 	}
 }
 

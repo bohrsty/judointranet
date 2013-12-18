@@ -70,6 +70,12 @@ $lang = array(
 									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
 									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
 			),
+			'NotAuthorizedDemo' => array(
+				'ERROR.caption' => 'DEMO-MODUS',
+				'ERROR.message' => 'Diese Seite l&auml;uft im Demo-Modus, einige Funktionen sind deaktiviert:<br />
+									Alle Funktionen, die die Anmeldung der Benutzer ver&auml;ndern oder Eingriffe in die Systemkonfiguration erm&ouml;glichen sind nicht verf&uuml;gbar<br />
+									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
+			),
 			'DbActionUnknown' => array(
 				'ERROR.caption' => 'FEHLER',
 				'ERROR.message' => 'Der Eintrag konnte nicht gespeichert werden, bitte probieren Sie es erneut oder wenden sich an Ihre Systembetreuer.'
@@ -308,7 +314,9 @@ $lang = array(
 				'passwd' => 'Kennwort &auml;ndern',
 				'passwd.title' => 'Kennwort &auml;ndern',
 				'logout' => 'Logout',
-				'logout.title' => 'Logout'
+				'logout.title' => 'Logout',
+				'data' => 'Benutzerdaten &auml;ndern',
+				'data.title' => 'Benutzerdaten &auml;ndern',
 			)
 		),
 		'defaultContent' => array(
@@ -409,8 +417,29 @@ $lang = array(
 			),
 			'validate' => array(
 				'passwdChanged' => 'Das Kennwort wurde erfolgreich ge&auml;ndert.'
-			)
-		)
+			),
+		),
+		'userData' => array(
+			'rule' => array(
+				'name.required' => 'Name muss ausgef&uuml;llt werden!',
+				'email.required' => 'Emailadresse muss ausgef&uuml;llt werden!',
+				'regexp.allowedChars' => 'Es k&ouml;nnen nur folgende Zeichen eingegeben werden!',
+				'email' => 'Es muss eine g&uuml;ltige Emailadresse eingegeben werden!',
+			),
+			'label' => array(
+				'name' => 'Name',
+				'email' => 'Emailadresse',
+			),
+			'submit' => array(
+				'value' => 'Speichern',
+			),
+			'validate' => array(
+				'dataChanged' => 'Die Benutzerdaten wurden erfolgreich ge&auml;ndert.'
+			),
+			'caption' => array(
+				'data' => 'Benutzerdaten &auml;ndern',
+			),
+		),
 	),
 	'class.User' => array(
 		'logout' => array(

@@ -444,6 +444,16 @@ class Object {
 			return false;
 		}
 	}
+	
+	
+	/**
+	 * isDemoMode() checks whether the system runs in demo mode or not
+	 * 
+	 * @return bool true if system in demo mode, false otherwise
+	 */
+	public function isDemoMode() {
+		return $this->getGc()->get_config('global.systemDemo') == 1;
+	}
 }
 
 

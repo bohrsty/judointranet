@@ -259,8 +259,8 @@ class MainView extends PageView {
 		// prepare return
 		$return = '';
 		
-		// check login
-		if($this->getUser()->get_loggedin()) {
+		// check login and demomode
+		if($this->getUser()->get_loggedin() && !$this->isDemoMode()) {
 		
 			// smarty
 			$sUserPasswd->assign('pagecaption', parent::lang('class.MainView#user#caption#general').' '.$this->getUser()->get_userinfo('name'));
@@ -268,110 +268,237 @@ class MainView extends PageView {
 			// check action
 			if($this->get('action') == 'passwd') {
 				
-				// smarty
-				$sUserPasswd->assign('section', parent::lang('class.MainView#user#caption#passwd'));
+				// get the change password form
+				$sUserPasswd = $this->userPasswd($sUserPasswd);
 				
-				// prepare form
-				$form = new Zebra_Form(
-					'passwd',					// id/name
-					'post',						// method
-					'index.php?id=user&action=passwd'	// action
-				);
+				return $sUserPasswd->fetch('smarty.user.changeData.tpl');
+			} elseif($this->get('action') == 'data') {
 				
-		// TODO: add complexity check
-				// password
-				$form->add(
-						'label',			// type
-						'labelPassword',	// id/name
-						'password',			// for
-						parent::lang('class.MainView#user#passwd#label'),	// label text
-						array('inside' => true,)	// label inside
-					);
-				$password = $form->add(
-						'password',		// type
-						'password',		// id/name
-						'',				// value
-						array('data-prefix' => 'img:img/iconTextboxPassword.png')
-					);
-				$password->set_rule(
-						array(
-							'required' => array(
-								'error', parent::lang('class.MainView#user#rule#required'),
-							),
-						)
-					);
-				// passwordConfirm
-				$form->add(
-						'label',				// type
-						'labelPasswordConfirm',	// id/name
-						'passwordConfirm',				// for
-						parent::lang('class.MainView#user#passwd#labelConfirm'),	// label text
-						array('inside' => true,)	// label inside
-					);
-				$passwordConfirm = $form->add(
-						'password',			// type
-						'passwordConfirm',	// id/name
-						'',					// value
-						array('data-prefix' => 'img:img/iconTextboxPassword.png')
-					);
-				$passwordConfirm->set_rule(
-						array(
-							'required' => array(
-								'error', parent::lang('class.MainView#user#rule#required'),
-							),
-							'compare' => array(
-								'password', 'error', parent::lang('class.MainView#user#rule#checkPasswd'),
-								
-							),
-						)
-					);
+				// get the change userdata form
+				$sUserPasswd = $this->userData($sUserPasswd);
 				
-				// submit-button
-				$form->add(
-						'submit',		// type
-						'buttonSubmit',	// id/name
-						parent::lang('class.MainView#user#passwd#submitButton')	// value
-					);
-				
-				
-				// validate
-				if($form->validate()) {
-					
-					// get db-object
-					$db = Db::newDb();
-					
-					// prepare sql-statement
-					$sql = 'UPDATE user
-							SET password=\''.md5($db->real_escape_string($this->post('password'))).'\'
-							WHERE id=\''.$db->real_escape_string($this->getUser()->get_id()).'\'';
-					
-					// execute statement
-					$result = $db->query($sql);
-					
-					// get data
-					if(!$result) {
-						$errno = self::getError()->error_raised('MysqlError', $db->error);
-						self::getError()->handle_error($errno);
-					}
-					
-					// smarty message
-					$sUserPasswd->assign('message', parent::lang('class.MainView#user#validate#passwdChanged'));
-				} else {
-					
-					// smarty form and return
-					$sUserPasswd->assign('form', $form->render('', true));
-				}
-				return $sUserPasswd->fetch('smarty.user.passwd.tpl');
+				return $sUserPasswd->fetch('smarty.user.changeData.tpl');
 			} else {
 				return 'default content';
 			}
 		} else {
 			
 			// not authorized
-			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
+			$errno = $this->getError()->error_raised('NotAuthorized'.($this->isDemoMode() === true ? 'Demo' : ''),'entry:'.$this->get('id'),$this->get('id'));
 			$this->getError()->handle_error($errno);
 			return $this->getError()->to_html($errno);
 		}
+	}
+	
+	
+	/**
+	 * userPasswd($sUserPasswd) generates the form for changing the users password
+	 * 
+	 * @param object $sUserPasswd the smarty template object to display the data
+	 * @return object the changed smarty template object
+	 */
+	private function userPasswd($sUserPasswd) {
+		
+		// smarty
+		$sUserPasswd->assign('section', parent::lang('class.MainView#user#caption#passwd'));
+		
+		// prepare form
+		$form = new Zebra_Form(
+			'passwd',					// id/name
+			'post',						// method
+			'index.php?id=user&action=passwd'	// action
+		);
+		// set language
+		$form->language('deutsch');
+		// set docktype xhtml
+		$form->doctype('xhtml');
+		
+// TODO: add complexity check
+		// password
+		$form->add(
+				'label',			// type
+				'labelPassword',	// id/name
+				'password',			// for
+				parent::lang('class.MainView#user#passwd#label'),	// label text
+				array('inside' => true,)	// label inside
+			);
+		$password = $form->add(
+				'password',		// type
+				'password',		// id/name
+				'',				// value
+				array('data-prefix' => 'img:img/iconTextboxPassword.png')
+			);
+		$password->set_rule(
+				array(
+					'required' => array(
+						'error', parent::lang('class.MainView#user#rule#required'),
+					),
+				)
+			);
+		// passwordConfirm
+		$form->add(
+				'label',				// type
+				'labelPasswordConfirm',	// id/name
+				'passwordConfirm',				// for
+				parent::lang('class.MainView#user#passwd#labelConfirm'),	// label text
+				array('inside' => true,)	// label inside
+			);
+		$passwordConfirm = $form->add(
+				'password',			// type
+				'passwordConfirm',	// id/name
+				'',					// value
+				array('data-prefix' => 'img:img/iconTextboxPassword.png')
+			);
+		$passwordConfirm->set_rule(
+				array(
+					'required' => array(
+						'error', parent::lang('class.MainView#user#rule#required'),
+					),
+					'compare' => array(
+						'password', 'error', parent::lang('class.MainView#user#rule#checkPasswd'),
+						
+					),
+				)
+			);
+		
+		// submit-button
+		$form->add(
+				'submit',		// type
+				'buttonSubmit',	// id/name
+				parent::lang('class.MainView#user#passwd#submitButton')	// value
+			);
+		
+		
+		// validate
+		if($form->validate()) {
+			
+			// get db-object
+			$db = Db::newDb();
+			
+			// prepare sql-statement
+			$sql = 'UPDATE user
+					SET password=\''.md5($db->real_escape_string($this->post('password'))).'\'
+					WHERE id=\''.$db->real_escape_string($this->getUser()->get_id()).'\'';
+			
+			// execute statement
+			$result = $db->query($sql);
+			
+			// get data
+			if(!$result) {
+				$errno = self::getError()->error_raised('MysqlError', $db->error);
+				self::getError()->handle_error($errno);
+			}
+			
+			// smarty message
+			$sUserPasswd->assign('message', parent::lang('class.MainView#user#validate#passwdChanged'));
+		} else {
+			
+			// smarty form and return
+			$sUserPasswd->assign('form', $form->render('', true));
+		}
+		
+		// return
+		return $sUserPasswd;
+	}
+	
+	
+	/**
+	 * userData($sUserPasswd) generates the form for changing the users data
+	 * 
+	 * @param object $sUserPasswd the smarty template object to display the data
+	 * @return object the changed smarty template object
+	 */
+	private function userData($sUserPasswd) {
+		
+		// smarty
+		$sUserPasswd->assign('section', parent::lang('class.MainView#userData#caption#data'));
+		
+		// prepare form
+		$form = new Zebra_Form(
+			'userdata',					// id/name
+			'post',						// method
+			'index.php?id=user&action=data'	// action
+		);
+		// set language
+		$form->language('deutsch');
+		// set docktype xhtml
+		$form->doctype('xhtml');
+		
+		// name
+		$form->add(
+				'label',		// type
+				'labelName',	// id/name
+				'name',			// for
+				parent::lang('class.MainView#userData#label#name').':'	// label text
+			);
+		$name = $form->add(
+				'text',	// type
+				'name',	// id/name
+				$this->getUser()->get_userinfo('name')	// value
+			);
+		$name->set_rule(
+				array(
+					'required' => array(
+						'error', parent::lang('class.MainView#userData#rule#name.required'),
+					),
+					'regexp' => array(
+							$this->getGc()->get_config('name.regexp.zebra'),	// regexp
+							'error',	// error variable
+							parent::lang('class.MainView#userData#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+						),
+				)
+			);
+		
+		// email
+		$form->add(
+				'label',		// type
+				'labelEmail',	// id/name
+				'email',			// for
+				parent::lang('class.MainView#userData#label#email').':'	// label text
+			);
+		$name = $form->add(
+				'text',	// type
+				'email',	// id/name
+				$this->getUser()->get_userinfo('email')	// value
+			);
+		$name->set_rule(
+				array(
+					'required' => array(
+						'error', parent::lang('class.MainView#userData#rule#email.required'),
+					),
+					'email' => array(
+							'error',	// error variable
+							parent::lang('class.MainView#userData#rule#email'),	// message
+						),
+				)
+			);
+		
+		// submit-button
+		$form->add(
+				'submit',		// type
+				'buttonSubmit',	// id/name
+				parent::lang('class.MainView#userData#submit#value')	// value
+			);
+		
+		// validate
+		if($form->validate()) {
+			
+			// set userinfo
+			$this->getUser()->set_userinfo('name', $this->post('name'));
+			$this->getUser()->set_userinfo('email', $this->post('email'));
+			// write userinfo
+			$this->getUser()->writeDb();
+			
+			// smarty message
+			$sUserPasswd->assign('message', parent::lang('class.MainView#userData#validate#dataChanged'));
+		} else {
+			
+			// smarty form and return
+			$sUserPasswd->assign('form', $form->render('', true));
+		}
+		
+		// return
+		return $sUserPasswd;
 	}
 }
 

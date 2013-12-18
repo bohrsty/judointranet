@@ -78,7 +78,7 @@ class UserTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($data, $this->user->get_login_message());
 		
 		// userinfo
-		$data = array('name' => 'Public', 'username' => 'public');
+		$data = array('name' => 'some', 'username' => 'thing');
 		$id = 0;
 		
 		$this->user->set_userinfo($data);
@@ -87,6 +87,12 @@ class UserTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($data['username'], $this->user->get_userinfo('username'));
 		$this->user->set_id($id);
 		$this->assertEquals($id, $this->user->get_userinfo('id'));
+		
+		$data = array('name' => 'Public', 'username' => 'public');
+		$this->user->set_userinfo('name', $data['name']);
+		$this->user->set_userinfo('username', $data['username']);
+		$this->assertEquals($data['name'], $this->user->get_userinfo('name'));
+		$this->assertEquals($data['username'], $this->user->get_userinfo('username'));
 	}
 	
 	
@@ -210,6 +216,36 @@ class UserTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue($this->user->isMemberOf(1));
 		// is admin?
 		$this->assertTrue($this->user->isAdmin());
+	}
+	
+	
+	public function testWriteBackToDb() {
+		
+		// reset global user
+		$this->user = new User();
+		$this->user->change_user('admin', true);
+		// create new userinfo
+		$userInfo = array(
+				'name' => 'Admin Changed',
+				'email' => 'changed@localhost',
+			);
+		$this->user->set_userinfo($userInfo);
+		$this->user->writeDb();
+		
+		// reset global user
+		$this->user = new User();
+		$this->user->change_user('admin', true);
+		$userInfoDB = $this->user->get_userinfo();
+		$this->assertEquals($userInfo['name'], $userInfoDB['name']);
+		$this->assertEquals($userInfo['email'], $userInfoDB['email']);
+		
+		// reset userinfo
+		$userInfo = array(
+				'name' => 'Administrator',
+				'email' => 'root@localhost',
+			);
+		$this->user->set_userinfo($userInfo);
+		$this->user->writeDb();
 	}
 }
 
