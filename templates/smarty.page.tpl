@@ -25,7 +25,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 		<title>{$title}</title>
-		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
 		<script type="text/javascript" src="js/jquery-ui-1.10.3.custom.min.js"></script>
 		<script type="text/javascript" src="js/jquery.ui.datepicker-de.js"></script>
 {if isset($zebraform) and $zebraform}
@@ -85,7 +85,7 @@
 			}
 {/literal}
 {/if}
-{if isset($permissionJs) && $permissionJs}
+{if isset($tabsJs) && $tabsJs}
 {literal}
 			$(function() {
 				$( "#tabs" ).tabs();

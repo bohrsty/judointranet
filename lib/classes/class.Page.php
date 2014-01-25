@@ -38,11 +38,18 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 	/*
 	 * getter/setter
 	 */
-	public function get_id(){
+	public function getId(){
 		return $this->id;
 	}
-	public function set_id($id) {
+	public function setId($id) {
 		$this->id = $id;
+	}
+	// stay for compatibility reason
+	public function get_id(){
+		return $this->getId();
+	}
+	public function set_id($id) {
+		$this->setId($id);
 	}
 	
 	
@@ -193,6 +200,40 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 		
 		// close db
 		$db->close();
+	}
+	
+	
+	/**
+	 * createCachedFile($fid) (re)creates the cached file in database
+	 * 
+	 * @param mixed $fid file id or false if cached file does not exists
+	 * @return int file id (new if created new file)
+	 */
+	public function createCachedFile($fid) {
+		
+		// get actual file content
+		$fileFactory = $this->cacheFile();
+		
+		// check if cache exists
+		if($fid !== false) {
+			
+			// cache file
+			$file = new File($fid);
+			$data = array(
+					'content' => $fileFactory['content'],
+				);
+			$file->update($data);
+			$file->writeDb();
+		} else {
+			
+			// create file object
+			$file = File::factory($fileFactory);
+			$file->writeDb();
+			$fid = $file->getId();
+		}
+		
+		// return
+		return $fid;
 	}
  	
  	

@@ -22,17 +22,15 @@
  * ********************************************************************************************}
 {if isset($links)}
 <div class="detailLinks">
-{if $status}
 {for $i=0 to count($links)-1}
 	<a href="{$links.$i.href|escape}" title="{$links.$i.title}">{$links.$i.name}</a>
 {/for}
-{/if}
 </div>
 {/if}
-<div class="protocol-details">
+<div class="fileDetails">
 {if isset($data)}
-{foreach $data as $entry}
-	<p class="details">{$entry}</p>
-{/foreach}
+{for $i=0 to count($data.value)-1}
+	<p class="details"><span class="bold">{$data.caption.$i}:</span> {$data.value.$i}</p>
+{/for}
 {/if}
 </div>

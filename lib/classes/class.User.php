@@ -629,13 +629,39 @@ class User extends Object {
 			$sql = 'SELECT t.id
 				FROM `'.$db->real_escape_string($itemTable).'` AS t'.$sqlDate;
 		} else {
-			$sql = 'SELECT t.id
-				FROM permissions AS p, `'.$db->real_escape_string($itemTable).'` AS t
-				WHERE p.item_table=\''.$db->real_escape_string($itemTable).'\'
-					AND (p.user_id=\''.$db->real_escape_string($this->get_id()).'\'
-					OR (p.group_id IN ('.$db->real_escape_string($groupIds).')))
-					AND p.mode=\''.$db->real_escape_string($mode).'\'
-					AND p.item_id=t.id'.$sqlDate;
+			
+			// switch by $itemTable
+			if($itemTable == 'file') {
+				// files take the permission from calendar, protocol or the uploaded files
+				$sql = 'SELECT f.id
+						FROM file AS f,
+							(SELECT t.id
+							FROM permissions AS p, `calendar` AS t
+							WHERE p.item_table=\'calendar\'
+								AND (p.user_id=\''.$db->real_escape_string($this->get_id()).'\'
+								OR (p.group_id IN ('.$db->real_escape_string($groupIds).')))
+								AND p.mode=\'r\'
+								AND p.item_id=t.id'.$sqlDate.'
+							) cid,
+							(SELECT t.id
+							FROM permissions AS p, `protocol` AS t
+							WHERE p.item_table=\'protocol\'
+								AND (p.user_id=\''.$db->real_escape_string($this->get_id()).'\'
+								OR (p.group_id IN ('.$db->real_escape_string($groupIds).')))
+								AND p.mode=\'r\'
+								AND p.item_id=t.id
+							) pid
+						WHERE f.cached=CONCAT(\'calendar|\',cid.id)
+							OR f.cached=CONCAT(\'protocol|\',pid.id)';
+			} else {
+				$sql = 'SELECT t.id
+					FROM permissions AS p, `'.$db->real_escape_string($itemTable).'` AS t
+					WHERE p.item_table=\''.$db->real_escape_string($itemTable).'\'
+						AND (p.user_id=\''.$db->real_escape_string($this->get_id()).'\'
+						OR (p.group_id IN ('.$db->real_escape_string($groupIds).')))
+						AND p.mode=\''.$db->real_escape_string($mode).'\'
+						AND p.item_id=t.id'.$sqlDate;
+			}
 		}
 		
 		// execute statement

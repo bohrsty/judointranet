@@ -1,4 +1,5 @@
-{* ********************************************************************************************
+<?php
+/* ********************************************************************************************
  * Copyright (c) 2011 Nils Bohrs
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this
@@ -19,20 +20,10 @@
  * 
  * Thirdparty licenses see LICENSE
  * 
- * ********************************************************************************************}
-{if isset($links)}
-<div class="detailLinks">
-{if $status}
-{for $i=0 to count($links)-1}
-	<a href="{$links.$i.href|escape}" title="{$links.$i.title}">{$links.$i.name}</a>
-{/for}
-{/if}
-</div>
-{/if}
-<div class="protocol-details">
-{if isset($data)}
-{foreach $data as $entry}
-	<p class="details">{$entry}</p>
-{/foreach}
-{/if}
-</div>
+ * ********************************************************************************************/
+ 
+ 
+/*
+ * Dummy
+ */
+?>

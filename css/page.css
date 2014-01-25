@@ -299,7 +299,7 @@ a.usersettings {
 	padding: 3px;
 }
 
-div.protocolDetailLinks {
+div.detailLinks {
 	width: 85%;
 	border: 1px solid #3a9ec8;
 	border-radius: 3px;
@@ -308,7 +308,7 @@ div.protocolDetailLinks {
 	margin: 0 0 40px 0;
 }
 
-div.protocolDetailLinks a {
+div.detailLinks a {
 	padding: 0 5px 0 7px;
 }
 
@@ -556,6 +556,10 @@ div.resetFilter {
 
 .confirmForm .last {
 	float: left;
+}
+
+.bold {
+	font-weight: bold;
 }
 
 .Zebra_Form_error_message .message {

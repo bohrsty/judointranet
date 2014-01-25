@@ -91,10 +91,10 @@ class CalendarView extends PageView {
 
 						// check $_GET['from'] and $_GET['to']
 						if($this->get('from') !== false) {
-							$from = strtotime($this->get('from'));
+							$from = $this->get('from');
 						}
 						if($this->get('to') !== false) {
-							$to = strtotime($this->get('to'));
+							$to = $this->get('to');
 						}
 						$this->tpl->assign('main', $this->listall($to,$from));
 					break;
@@ -291,7 +291,7 @@ class CalendarView extends PageView {
 							'show' => true
 						);
 					$sList[$counter]['show'][] = array(
-							'href' => 'announcement.php?id=topdf&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
+							'href' => 'file.php?id=cached&table=calendar&tid='.$entry->get_id(),
 							'title' => parent::lang('class.CalendarView#listall#title#AnnPDF'),
 							'src' => 'img/ann_pdf.png',
 							'alt' => parent::lang('class.CalendarView#listall#alt#AnnPDF'),
@@ -828,6 +828,12 @@ class CalendarView extends PageView {
 							
 			// write to db
 			$calendar->write_db('new');
+						
+			// create cached file
+			$fid = File::idFromCache('calendar|'.$calendar->get_id());
+			if($fid !== false) {
+				$calendar->createCachedFile($fid);
+			}
 			
 			// write permissions
 			$calendar->dbDeletePermission();
@@ -1230,6 +1236,12 @@ class CalendarView extends PageView {
 				// write entry
 				try {
 					$calendar->write_db('update');
+						
+					// create cached file
+					$fid = File::idFromCache('calendar|'.$calendar->get_id());
+					if($fid !== false) {
+						$calendar->createCachedFile($fid);
+					}
 				
 					// write permissions
 					$calendar->dbDeletePermission();
@@ -1327,6 +1339,12 @@ class CalendarView extends PageView {
 				// write entry
 				try {
 					$calendar->write_db('update');
+						
+					// delete cached file
+					$fid = File::idFromCache('calendar|'.$calendar->get_id());
+					if($fid !== false) {
+						File::delete($fid);
+					}
 				} catch(Exception $e) {
 					$this->getError()->handle_error($e);
 					return $this->getError()->to_html($e);

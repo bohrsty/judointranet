@@ -342,28 +342,6 @@ class Navi extends PageView {
 	
 	
 	/**
-	 * callbackSortNavi compares two Navi objects by position (for usort)
-	 * 
-	 * @param object $first first navi entry
-	 * @param object $second second navi entry
-	 * @return int -1 if $first<$second, 0 if equal, 1 if $first>$second
-	 */
-	private function callbackSortNavi($first,$second) {
-	
-		// compare dates
-		if($first->getPosition() < $second->getPosition()) {
-			return -1;
-		}
-		if($first->getPosition() == $second->getPosition()) {
-			return 0;
-		}
-		if($first->getPosition() > $second->getPosition()) {
-			return 1;
-		}
-	}
-	
-	
-	/**
 	 * idFromFileParam($file, $param) returns the navigation id for given $file and $param
 	 * 
 	 * @param string $file script filename that has called the method

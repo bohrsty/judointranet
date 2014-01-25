@@ -337,7 +337,8 @@ class Object {
 			'Ä' => 'Ae',
 			'Ö' => 'Oe',
 			'Ü' => 'Ue',
-			'ß' => 'ss'
+			'ß' => 'ss',
+			' ' => '_',
 		);
 		
 		// convert to utf8
@@ -453,6 +454,28 @@ class Object {
 	 */
 	public function isDemoMode() {
 		return $this->getGc()->get_config('global.systemDemo') == 1;
+	}
+	
+	
+	/**
+	 * callbackSortNavi($first, $second) compares two Navi objects by position (for usort)
+	 * 
+	 * @param object $first first navi entry
+	 * @param object $second second navi entry
+	 * @return int -1 if $first<$second, 0 if equal, 1 if $first>$second
+	 */
+	public function callbackSortNavi($first, $second) {
+		
+		// compare position
+		if($first->getPosition() < $second->getPosition()) {
+			return -1;
+		}
+		if($first->getPosition() == $second->getPosition()) {
+			return 0;
+		}
+		if($first->getPosition() > $second->getPosition()) {
+			return 1;
+		}
 	}
 }
 

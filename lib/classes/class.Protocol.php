@@ -34,7 +34,6 @@ class Protocol extends Page {
 	/*
 	 * class-variables
 	 */
-	private $id;
 	private $date;
 	private $type;
 	private $location;
@@ -45,16 +44,11 @@ class Protocol extends Page {
 	private $owner;
 	private $correctable;
 	private $recorder;
+	private $lastModified;
 	
 	/*
 	 * getter/setter
 	 */
-	public function get_id(){
-		return $this->id;
-	}
-	public function set_id($id) {
-		$this->id = $id;
-	}
 	public function get_date($format=''){
 		
 		// check if format given
@@ -187,6 +181,12 @@ class Protocol extends Page {
 	public function set_recorder($recorder) {
 		$this->recorder = $recorder;
 	}
+	public function getLastModified(){
+		return $this->lastModified;
+	}
+	public function setLastModified($lastModified) {
+		$this->lastModified = $lastModified;
+	}
 	
 	/*
 	 * constructor/destructor
@@ -232,7 +232,7 @@ class Protocol extends Page {
 		$db = Db::newDb();
 		
 		// prepare sql-statement
-		$sql = "SELECT p.date,p.type,pt.name,p.location,p.member,p.protocol,p.preset_id,p.valid,u.name,p.correctable,p.recorder
+		$sql = "SELECT p.date,p.type,pt.name,p.location,p.member,p.protocol,p.preset_id,p.valid,u.name,p.correctable,p.recorder,p.last_modified
 				FROM protocol AS p,protocol_types AS pt,user AS u
 				WHERE p.id = $id
 				AND p.type=pt.id
@@ -242,7 +242,7 @@ class Protocol extends Page {
 		$result = $db->query($sql);
 		
 		// fetch result
-		list($date,$typeId,$typeName,$location,$member,$protocol,$preset_id,$valid,$owner,$correctable,$recorder) = $result->fetch_array(MYSQL_NUM);
+		list($date,$typeId,$typeName,$location,$member,$protocol,$preset_id,$valid,$owner,$correctable,$recorder,$lastModified) = $result->fetch_array(MYSQL_NUM);
 		
 		// set variables to object
 		$this->set_id($id);
@@ -256,6 +256,7 @@ class Protocol extends Page {
 		$this->set_owner($owner);
 		$this->set_correctable($correctable);
 		$this->set_recorder($recorder);
+		$this->setLastModified((strtotime($lastModified) < 0 ? 0 : strtotime($lastModified)));
 		
 		
 		
@@ -431,6 +432,10 @@ class Protocol extends Page {
 	 */
 	public function addMarks(&$infos,$html=true) {
 		
+		// get version
+		$version = max(strtotime($infos['version']), (int)$this->getLastModified());
+		$infos['version'] = date('d.m.Y', $version);
+		
 		// add fields
 		// check html
 		if($html === true) {
@@ -551,6 +556,85 @@ class Protocol extends Page {
 	 */
 	public function __toString() {
 		return 'Protocol';
+	}
+	
+	
+	/**
+	 * cacheFile() generates the cached file in database
+	 * 
+	 * @return void
+	 */
+	public function cacheFile() {
+		
+		// smarty
+		$sP = new JudoIntranetSmarty();
+		
+		// prepare marker-array
+		$infos = array(
+				'version' => '01.01.70 01:00',
+			);
+		
+		// add calendar-fields to array
+		$this->addMarks($infos, false);
+		
+		// add tmce-css
+		$fh = fopen('templates/protocols/tmce_'.$this->get_preset()->get_path().'.css','r');
+		$css = fread($fh,filesize('templates/protocols/tmce_'.$this->get_preset()->get_path().'.css'));
+		fclose($fh);
+		$infos['tmceStyles'] = $css;
+		
+		// smarty
+		$sP->assign('p', $infos);
+		// check marks in values
+		foreach($infos as $k => $v) {
+			
+			if(preg_match('/\{\$p\..*\}/U', $v)) {
+				$infos[$k] = $sP->fetch('string:'.$v);
+			}
+		}
+		
+		// smarty
+		$sP->assign('p', $infos);
+		$pdfOut = $sP->fetch('templates/protocols/'.$this->get_preset()->get_path().'.tpl');			
+		
+		// replace <p></p> to <div></div> for css use with HTML2PDF
+		$pdfOut = preg_replace('/<p class="tmceItem">(.*)<\/p>/U','<div class="tmceItem">$1</div>', $pdfOut);
+		$pdfOut = preg_replace('/<p class="tmceDecision">(.*)<\/p>/U','<div class="tmceDecision">$1</div>', $pdfOut);
+		
+		// get HTML2PDF-object
+		$pdf = new HTML2PDF('P', 'A4', 'de', true, 'UTF-8', array(0, 0, 0, 0));
+		
+		// convert
+		$pdf->writeHTML($pdfOut, false);
+		
+		// output
+		$pdfFilename = $this->replace_umlaute(html_entity_decode($sP->fetch('string:'.$this->get_preset()->get_filename()),ENT_XHTML,'ISO-8859-1'));
+		
+		// prepare file for File::factory
+		return array(
+				'name' => substr($pdfFilename, 0, -4),
+				'filename' => $pdfFilename,
+				'mimetype' => 'application/pdf',
+				'content' => $pdf->Output($pdfFilename, 'S'),
+				'cached' => 'protocol|'.$this->get_id(),
+				'valid' => true,
+			);
+	}
+	
+	
+	/**
+	 * additionalChecksPassed() returns an array containing the check result and the error message
+	 * for any additional checks for this object
+	 * 
+	 * @return array array containing the check result and the error message
+	 */
+	public function additionalChecksPassed() {
+		
+		// add additional permissions check
+		$return['permissions'] = array(
+				'result' => ($this->get_correctable(false)['status'] == 2 || $this->getUser()->get_userinfo('name') == $this->get_owner()),
+			);
+		
 	}
 }
 

@@ -138,6 +138,12 @@ $lang = array(
 				'ERROR.caption' => 'FEHLER',
 				'ERROR.message' => 'Es ist ein Fehler bei einer Datenbank-Abfrage aufgetreten, bitte geben Sie die nachfolgenden Informationen an den Systembetreuer weiter:<br />'
 			),
+			'HeaderSent' => array(
+				'ERROR.caption' => 'FEHLER',
+				'ERROR.message' => 'Beim Zusammenstellen der Daten zum Download ist ein Fehler aufgetreten.<br />
+									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+									Wenn der Fehler unerwartet oder wiederholt auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
+			),
 		
 		)
 	
@@ -353,7 +359,7 @@ $lang = array(
 	'class.MainView' => array(
 		'page' => array(
 			'init' => array(
-				'name' => 'Judointranet'
+				'name' => 'JudoIntranet'
 			)
 		),
 		'init' => array(
@@ -745,7 +751,8 @@ $lang = array(
 				'street' => 'Stra&szlig;e',
 				'zip' => 'PLZ',
 				'city' => 'Stadt',
-				'email' => 'Emailadresse'
+				'email' => 'Emailadresse',
+				'year' => 'G&uuml;ltigkeitsjahr',
 			)
 		),
 		'init' => array(
@@ -899,11 +906,12 @@ $lang = array(
 				'correct' => 'Protokoll korrigieren',
 				'newEntry' => 'Neues Protokoll',
 				'edit' => 'Protokoll bearbeiten',
-				'decisions' => 'Beschl&uuml;sse anzeigen'
+				'decisions' => 'Beschl&uuml;sse anzeigen',
+				'delete' => 'Protokoll l&ouml;schen',
 			),
 			'init' => array(
 				'name' => 'Protokolle'
-			)
+			),
 		),
 		'init' => array(
 			'title' => array(
@@ -1096,7 +1104,7 @@ $lang = array(
 			),
 			'message' => array(
 				'errorIdNotExists' => '<p>Dieses Hilfe-Thema konnte nicht gefunden werden.</p>',
-				'about' => '<p><b>judointranet</b></p>
+				'about' => '<p><b>JudoIntranet</b></p>
 					<p>Author: Nils Bohrs<br />
 					Version: {$replace.version}<br />Lizenz: MIT</p>
 					<p>&nbsp;</p>
@@ -1329,6 +1337,12 @@ $lang = array(
 				'administrationPage' => 'Administration',
 				'administrationPage.field' => 'Ben. Tabellen verwalten',
 				'administrationPage.defaults' => 'Vorgaben verwalten',
+				'filePage' => 'Dateien',
+				'filePage.listall' => 'Dateien auflisten',
+				'filePage.details' => 'Datei-Details',
+				'filePage.edit' => 'Datei bearbeiten',
+				'filePage.delete' => 'Datei l&ouml;schen',
+				'filePage.upload' => 'Datei hochladen',
 			),
 		),
 	),
@@ -1337,6 +1351,124 @@ $lang = array(
 			'name' => array(
 				'elements' => 'Daten',
 				'permissions' => 'Berechtigungen',
+			),
+		),
+	),
+	'class.FileView' => array(
+		'defaultContent' => array(
+			'headline' => array(
+				'text' => 'Dateien'
+			)
+		),
+		'init' => array(
+			'title' => array(
+				'listall' => 'Dateien: Listenansicht',
+				'details' => 'Dateien: Details',
+				'default' => 'Dateien',
+				'upload' => 'Dateien: Datei hochladen',
+				'edit' => 'Dateien: Datei bearbeiten',
+				'delete' => 'Dateien: Datei l&ouml;schen',
+				'download' => 'Datei herunterladen',
+			),
+			'Error' => array(
+				'NotAuthorized' => 'FEHLER - Nicht berechtigt'
+			),
+		),
+		'page' => array(
+			'caption' => array(
+				'listall' => 'Listenansicht',
+				'details' => 'Details',
+				'download' => 'Datei herunterladen',
+				'upload' => 'Datei hochladen',
+				'edit' => 'Datei bearbeiten',
+				'delete' => 'Datei l&ouml;schen'
+			),
+			'init' => array(
+				'name' => 'Dateien'
+			),
+		),
+		'listall' => array(
+			'TH' => array(
+				'name' => 'Name',
+				'filetype' => 'Dateityp',
+				'filename' => 'Dateiname',
+				'show' => 'Ansehen',
+				'admin' => 'Aufgaben'
+			),
+			'title' => array(
+				'edit' => 'Datei bearbeiten',
+				'delete' => 'Datei l&ouml;schen',
+				'name' => 'Details',
+				'filename' => ' herunterladen',
+			),
+			'alt' => array(
+				'edit' => 'Datei bearbeiten',
+				'delete' => 'Datei l&ouml;schen',
+			),
+			'tabTitle' => array(
+				'download' => 'Hochgeladen',
+				'cached' => 'Zwischengespeichert',
+			),
+			'tableName' => array(
+				'calendar' => 'Ausschreibungen',
+				'protocol' => 'Protokolle',
+			),
+		),
+		'details' => array(
+			'back' => array(
+				'title' => 'Zur&uuml;ck',
+				'name' => 'Zur&uuml;ck',
+			),
+			'download' => array(
+				'title' => 'Herunterladen',
+				'name' => 'Herunterladen',
+			),
+		),
+		'delete' => array(
+			'form' => array(
+				'yes' => '  Ja  '
+			),
+			'title' => array(
+				'yes' => 'Datei l&ouml;schen',
+			),
+			'cancel' => array(
+				'title' => 'Bricht den L&ouml;schvorgang ab',
+				'form' => 'Abbrechen'
+			),
+			'message' => array(
+				'confirm' => 'Wollen Sie diese Datei wirklich l&ouml;schen?',
+				'done' => 'Die Datei wurde erfolgreich gel&ouml;scht.'
+			),
+		),
+	'entry' => array(
+			'form' => array(
+				'requiredNote' => '<span class="required">*</span> erforderliches Feld',
+				'name' => 'Name',
+				'content' => 'Datei ausw&auml;hlen',
+				'submitButton' => 'Hochladen',
+				'public' => '&Ouml;ffentlicher Zugriff',
+				'submitButton.edit' => 'Speichern',
+			),
+			'rule' => array(
+				'required.name' => 'Name muss eingetragen werden!',
+				'file.allowedFileTypes' => 'Es k&ouml;nnen nur Dateien mit folgenden Erweiterungen hochgeladen werden!',
+				'regexp.allowedChars' => 'Es k&ouml;nnen nur folgende Zeichen eingegeben werden!',
+				'file.upload' => 'Die Datei konnte nicht hochgeladen werden!',
+			)
+		),
+	),
+	'class.File' => array(
+		'getFileTypeAs' => array(
+			'name' => array(
+				'text_plain' => 'Textdokument',
+				'application_pdf' => 'PDF-Dokument',
+			),
+		),
+		'details' => array(
+			'data' => array(
+				'name' => 'Name',
+				'filetype' => 'Dateityp',
+				'filename' => 'Dateiname',
 			),
 		),
 	),

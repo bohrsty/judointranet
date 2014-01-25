@@ -242,7 +242,7 @@ class AnnouncementView extends PageView {
 						
 						// prepare marker-array
 						$announcement = array(
-								'version' => 0
+								'version' => '01.01.1970 01:00'
 							);
 						
 						// get data
@@ -255,6 +255,10 @@ class AnnouncementView extends PageView {
 							$field->value($data[$field->get_table().'-'.$field->get_id()]);
 							$field->writeDb('insert');
 						}
+						
+						// create cached file
+						$fid = File::idFromCache('calendar|'.$calendar->get_id());
+						$calendar->createCachedFile($fid);
 						
 						// add calendar-fields to array
 						$calendar->add_marks($announcement);
@@ -394,6 +398,10 @@ class AnnouncementView extends PageView {
 							$field->writeDb('update');
 						}
 						
+						// create cached file
+						$fid = File::idFromCache('calendar|'.$calendar->get_id());
+						$calendar->createCachedFile($fid);
+						
 						// add calendar-fields to array
 						$calendar->add_marks($announcement);
 						
@@ -530,6 +538,10 @@ class AnnouncementView extends PageView {
 						
 						// set preset to 0
 						$calendar->update(array('preset_id' => 0));
+						
+						// delete cached file
+						$fid = File::idFromCache('calendar|'.$calendar->get_id());
+						File::delete($fid);
 						
 						// smarty
 						$sConfirmation->assign('message', parent::lang('class.AnnouncementView#delete#message#done'));
@@ -677,65 +689,20 @@ class AnnouncementView extends PageView {
 			// check cid and pid exists
 			if(Calendar::check_id($this->get('cid')) && Preset::check_preset($this->get('pid'),'calendar')) {
 				
-				// check if announcement has values
-				if(Calendar::check_ann_value($this->get('cid'))) {
-					
-					// prepare return
-					$return = '';
-					
-					// get preset
-					$preset = new Preset($this->get('pid'),'calendar',$this->get('cid'), $this);
-					
-					// smarty
-					$sA = new JudoIntranetSmarty();
-					
-					// get calendar
-					$calendar = new Calendar($this->get('cid'));
-					
-					// prepare marker-array
-					$announcement = array(
-							'version' => '01.01.70 01:00'
-						);
-					
-					// add calendar-fields to array
-					$calendar->add_marks($announcement);
-					
-					// add field-names and -values to array
-					$preset->add_marks($announcement);
-					
-					// smarty
-					$sA->assign('a', $announcement);
-					// check marks in values
-					foreach($announcement as $k => $v) {
-						
-						if(preg_match('/\{\$a\..*\}/U', $v)) {
-							$announcement[$k] = $sA->fetch('string:'.$v);
-						}
-					}
-					
-					// smarty
-					$sA->assign('a', $announcement);
-					$pdf_out = $sA->fetch($preset->get_path());			
-					
-					// get HTML2PDF-object
-					$pdf = new HTML2PDF('P', 'A4', 'de', true, 'UTF-8', array(0, 0, 0, 0));
-					
-					// convert
-					$pdf->writeHTML($pdf_out, false);
-					
-					// output
-					$pdf_filename = $this->replace_umlaute(html_entity_decode($sA->fetch('string:'.$preset->get_filename()),ENT_COMPAT,'ISO-8859-1'));
-					$pdf->Output($pdf_filename,'D');
-					
-					// return
-					return $return;
-				} else {
-					
-					// error
-					$errno = $this->getError()->error_raised('AnnNotExists','entry:'.$this->get('cid').'|'.$this->get('pid'),$this->get('cid').'|'.$this->get('pid'));
-					$this->getError()->handle_error($errno);
-					return $this->getError()->to_html($errno);
-				}
+				// prepare return
+				$return = '';
+				
+				// redirect to FileView::download()
+				$this->redirectTo('file',
+					array(
+							'id' => 'cached',
+							'table' => 'calendar',
+							'tid' => $this->get('cid'),
+						)
+					);
+				
+				// return
+				return $return;
 			} else {
 				
 				// error

@@ -544,7 +544,8 @@ class PageView extends Object {
 			$this->getError()->handle_error($errno);
 		}
 		
-		// return
+		// sort by position and return
+		usort($naviItems, array($this, 'callbackSortNavi'));
 		return $naviItems;
 	}
 	
@@ -661,9 +662,10 @@ class PageView extends Object {
 	 * getFormValues($formIds) extracts the values for the given keys in $formIds out of $_POST
 	 * 
 	 * @param array $formIds array containing the form element ids to get from $_POST
+	 * @param array $fileUpload array containing the information of uploaded files
 	 * @return array array containing $key => $value of $_POST
 	 */
-	protected function getFormValues($formIds) {
+	protected function getFormValues($formIds, $fileUpload=null) {
 		
 		// prepare return
 		$data = array();
@@ -700,6 +702,29 @@ class PageView extends Object {
 						
 						case 'array';
 							$data[$formId] = array();
+						break;
+						
+						
+						case 'file':
+							
+							// check $fileUpload
+							if(!is_null($fileUpload)) {
+								
+								// get file content
+								$tempFilename = $fileUpload[$formId]['path'].$fileUpload[$formId]['file_name'];
+								$fp = fopen($tempFilename, 'rb');
+								$fileContent = fread($fp, filesize($tempFilename));
+								fclose($fp);
+								// delete from tmp/
+								unlink($tempFilename);
+								
+								// prepare data
+								$data[$formId] = array(
+										'filename' => $fileUpload[$formId]['name'],
+										'mimetype' => $fileUpload[$formId]['type'],
+										'fileContent' => $fileContent,
+									);
+							}
 						break;
 						
 						case 'string':
@@ -760,6 +785,35 @@ class PageView extends Object {
 		
 		// return
 		return $permissions;
+	}
+	
+	
+	
+	
+	
+	/**
+	 * redirectTo($file, $params) redirects to the given $file with the given url $params
+	 * 
+	 * @param string $file php file to redirect to (without ".php")
+	 * @param array $params array containing the url params with "parameter name" => "value"
+	 * @return void
+	 */
+	protected function redirectTo($file, $params) {
+		
+		// build url
+		$url = $file.'.php';
+		if(count($params) > 0) {
+			
+			$url .= '?';
+			foreach($params as $param => $value) {
+				$url .= $param.'='.$value.'&';
+			}
+			$url = substr($url, 0, -1);
+		}
+		
+		// redirect and exit script
+		header('Location: '.$url);
+		exit;
 	}
 }
 

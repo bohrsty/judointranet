@@ -303,6 +303,7 @@ class ProtocolView extends PageView {
 				
 				// check status
 				if($correctable['status'] == 2 || $this->getUser()->get_userinfo('name') == $entry->get_owner()) {
+					
 					// show
 					$sList[$counter]['show'][] = array(
 							'href' => 'protocol.php?id=show&pid='.$entry->get_id(),
@@ -312,7 +313,7 @@ class ProtocolView extends PageView {
 							'show' => true
 						);
 					$sList[$counter]['show'][] = array(
-							'href' => 'protocol.php?id=topdf&pid='.$entry->get_id(),
+							'href' => 'file.php?id=cached&table=protocol&tid='.$entry->get_id(),
 							'title' => parent::lang('class.ProtocolView#listall#title#ProtPDF'),
 							'src' => 'img/prot_pdf.png',
 							'alt' => parent::lang('class.ProtocolView#listall#alt#ProtPDF'),
@@ -812,6 +813,10 @@ class ProtocolView extends PageView {
 			// write permissions
 			$protocol->dbDeletePermission();
 			$protocol->dbWritePermission($permissions);
+						
+			// create cached file
+			$fid = File::idFromCache('protocol|'.$protocol->get_id());
+			$protocol->createCachedFile($fid);
 			
 			// smarty
 			$sCD = new JudoIntranetSmarty();
@@ -1305,6 +1310,10 @@ class ProtocolView extends PageView {
 				// write permissions
 				$protocol->dbDeletePermission();
 				$protocol->dbWritePermission($permissions);
+						
+				// create cached file
+				$fid = File::idFromCache('protocol|'.$protocol->get_id());
+				$this->createCachedFile($fid);
 				
 				// smarty
 				$sCD = new JudoIntranetSmarty();
@@ -1418,67 +1427,21 @@ class ProtocolView extends PageView {
 	
 		// pagecaption
 		$this->tpl->assign('pagecaption',parent::lang('class.ProtocolView#page#caption#topdf'));
-
-		// get protocol
-		$protocol = new Protocol($pid);
 		
-		// get status
-		$correctable = $protocol->get_correctable(false);
-			
-		// check rights
-		if($this->getUser()->hasPermission('protocol', $pid) && ($correctable['status'] == 2 || $this->getUser()->get_userinfo('name') == $protocol->get_owner())) {
-			
-			// smarty
-			$sP = new JudoIntranetSmarty();
-			
-			// prepare marker-array
-			$infos = array(
-					'version' => date('dmy')
-				);
-			
-			// add calendar-fields to array
-			$protocol->addMarks($infos,false);
-			
-			// add tmce-css
-			$fh = fopen('templates/protocols/tmce_'.$protocol->get_preset()->get_path().'.css','r');
-			$css = fread($fh,filesize('templates/protocols/tmce_'.$protocol->get_preset()->get_path().'.css'));
-			fclose($fh);
-			$infos['tmceStyles'] = $css;
-			
-			// smarty
-			$sP->assign('p', $infos);
-			// check marks in values
-			foreach($infos as $k => $v) {
-				
-				if(preg_match('/\{\$p\..*\}/U', $v)) {
-					$infos[$k] = $sP->fetch('string:'.$v);
-				}
-			}
-			
-			// smarty
-			$sP->assign('p', $infos);
-			$pdf_out = $sP->fetch('templates/protocols/'.$protocol->get_preset()->get_path().'.tpl');			
-			
-			// replace <p></p> to <div></div> for css use with HTML2PDF
-			$pdf_out = preg_replace('/<p class="tmceItem">(.*)<\/p>/U','<div class="tmceItem">$1</div>',$pdf_out);
-			$pdf_out = preg_replace('/<p class="tmceDecision">(.*)<\/p>/U','<div class="tmceDecision">$1</div>',$pdf_out);
-			
-			// get HTML2PDF-object
-			$pdf = new HTML2PDF('P', 'A4', 'de', true, 'UTF-8', array(0, 0, 0, 0));
-			
-			// convert
-			$pdf->writeHTML($pdf_out, false);
-			
-			// output
-			$pdf_filename = $this->replace_umlaute(html_entity_decode($sP->fetch('string:'.$protocol->get_preset()->get_filename()),ENT_XHTML,'ISO-8859-1'));
-			$pdf->Output($pdf_filename,'D');
-		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
-		}
+		// prepare return
+		$return = '';
+		
+		// redirect to FileView::download()
+		$this->redirectTo('file',
+			array(
+					'id' => 'cached',
+					'table' => 'protocol',
+					'tid' => $this->get('pid'),
+				)
+			);
+		
+		// return
+		return $return;
 	}
 	
 	
@@ -1496,7 +1459,7 @@ class ProtocolView extends PageView {
 	private function delete($pid) {
 	
 		// pagecaption
-		$this->tpl->assign('pagecaption',parent::lang('class.ProtocolView#page#caption#correct'));
+		$this->tpl->assign('pagecaption',parent::lang('class.ProtocolView#page#caption#delete'));
 		
 		// check rights
 		if($this->getUser()->hasPermission('protocol', $pid)) {
@@ -1551,6 +1514,10 @@ class ProtocolView extends PageView {
 				// write entry
 				try {
 					$protocol->writeDb('update');
+						
+					// delete cached file
+					$fid = File::idFromCache('protocol|'.$protocol->get_id());
+					File::delete($fid);
 				} catch(Exception $e) {
 					$this->getError()->handle_error($e);
 					return $this->getError()->to_html($e);

@@ -512,6 +512,88 @@ class Calendar extends Page {
 	public function __toString() {
 		return 'Calendar';
 	}
+	
+	
+	/**
+	 * cacheFile() generates the cached file in database
+	 * 
+	 * @return void
+	 */
+	public function cacheFile() {
+		
+		// get preset
+		$preset = new Preset($this->get_preset_id(),'calendar',$this->get_id());
+		
+		// smarty
+		$sA = new JudoIntranetSmarty();
+		
+		// prepare marker-array
+		$announcement = array(
+				'version' => '01.01.70 01:00',
+			);
+		
+		// add calendar-fields to array
+		$this->add_marks($announcement);
+		
+		// add field-names and -values to array
+		$preset->add_marks($announcement);
+		
+		// smarty
+		$sA->assign('a', $announcement);
+		// check marks in values
+		foreach($announcement as $k => $v) {
+			
+			if(preg_match('/\{\$a\..*\}/U', $v)) {
+				$announcement[$k] = $sA->fetch('string:'.$v);
+			}
+		}
+		
+		// smarty
+		$sA->assign('a', $announcement);
+		$pdfOut = $sA->fetch($preset->get_path());			
+		
+		// get HTML2PDF-object
+		$pdf = new HTML2PDF('P', 'A4', 'de', true, 'UTF-8', array(0, 0, 0, 0));
+		$pdf->writeHTML($pdfOut, false);
+		
+		// output (D=download; F=save on filesystem; S=string)
+		// get filename
+		$pdfFilename = $this->replace_umlaute(html_entity_decode($sA->fetch('string:'.$preset->get_filename()),ENT_COMPAT,'ISO-8859-1'));
+		
+		// prepare file for File::factory
+		return array(
+				'name' => substr($pdfFilename, 0, -4),
+				'filename' => $pdfFilename,
+				'mimetype' => 'application/pdf',
+				'content' => $pdf->Output($pdfFilename, 'S'),
+				'cached' => 'calendar|'.$this->get_id(),
+				'valid' => true,
+			);
+	}
+	
+	
+	/**
+	 * additionalChecksPassed() returns an array containing the check result and the error message
+	 * for any additional checks for this object
+	 * 
+	 * @return array array containing the check result and the error message
+	 */
+	public function additionalChecksPassed() {
+		
+		// add additional permissions check
+		$return['permissions'] = array(
+				'result' => true,
+			);
+			
+		// add check announcement value check
+		$return[0] = array(
+				'result' => self::check_ann_value($this->get('cid')),
+				'error' => 'AnnNotExists',
+				'errorMessage' => 'entry:'.$this->get_id().'|'.$this->get_preset_id(),
+				'errorEntry' => $this->get_id().'|'.$this->get_preset_id(),
+			);
+		
+	}
 }
 
 
