@@ -92,6 +92,17 @@
 			});
 {/literal}
 {/if}
+{if isset($accordionJs) && $accordionJs}
+{literal}
+			$(function() {
+				$( "#accordion" ).accordion({
+					icons: false,
+					heightStyle: "content",
+					active: {/literal}{$accordionActive}{literal} 
+				});
+			});
+{/literal}
+{/if}
 		</script>
 {if $manualjquery!=''}
 		<script type="text/javascript">
@@ -141,7 +152,9 @@
 			<div id="logo">
 				<p><img src="{$systemLogo}" alt="Logo" title="JudoIntranet" /></p>
 			</div>
+			{if isset($accordionJs) && $accordionJs}<div id="accordion">{/if}
 {$navigation}
+			{if isset($accordionJs) && $accordionJs}</div>{/if}
 		</div>
 		<div id="content">
 			<div class="headinfo">

@@ -185,7 +185,8 @@ class Navi extends PageView {
 	
 	
 	/**
-	 * output() returns the navigation tree as HTML output
+	 * output($file, $param) returns the navigation tree as HTML output depending on the
+	 * settings in globalConfig->navi.style
 	 * 
 	 * @param string $file filename of the URI
 	 * @param string $param content of the URI parameter "id"
@@ -200,6 +201,7 @@ class Navi extends PageView {
 		$data = $this->allItems();
 		
 		// assign data
+		$smartyTpl->assign('naviStyle', $this->getGc()->get_config('navi.style'));
 		$smartyTpl->assign('data', $data);
 		$smartyTpl->assign('param', $param);
 		$smartyTpl->assign('file', $file);
@@ -262,7 +264,7 @@ class Navi extends PageView {
 						} else {
 							
 							// get ids
-							$tempItems = $subItem->allItems();
+							$tempItems = $subItem->allItems($level, true);
 							$allItems = array_merge($allItems, $tempItems);
 						}
 					}

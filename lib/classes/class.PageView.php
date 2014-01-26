@@ -384,11 +384,26 @@ class PageView extends Object {
 		$file = basename($_SERVER['SCRIPT_FILENAME']);
 		$param = $this->get('id');
 		$naviItems = $this->naviFromDb();
+		$active = 0;
 		// walk through $naviItems
-		foreach($naviItems as $naviItem) {
-			$navi .= $naviItem->output($file, $param).PHP_EOL;
+		for($i=0; $i<count($naviItems); $i++){
+			
+			// check active
+			list($thisFile, $thisParam) = explode('|',$naviItems[$i]->getFileParam());
+			if($thisFile == $file) {
+				$active = $i;
+			}
+			
+			// generate HTML
+			$navi .= $naviItems[$i]->output($file, $param).PHP_EOL;
 		}
+		$this->tpl->assign('accordionActive', $active);
 		$this->tpl->assign('navigation', $navi);
+		
+		// check config for accordion
+		if($this->getGc()->get_config('navi.style') == 'accordion') {
+			$this->tpl->assign('accordionJs', true);
+		}
 		
 		// logininfo
 		$this->tpl->assign('logininfo', $this->put_userinfo());

@@ -20,8 +20,21 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
+{if $naviStyle=='default'}
 {for $i=0 to (count($data)-1)}
-			<div class="navi_{$data.$i.level}{if $data.$i.level!=0}_{if $param==$data.$i.id && $file==$data.$i.file}a{else}i{/if}{/if}">
+			<div class="navi_{$data.$i.level}{if $data.$i.level!=0}_{if $param==$data.$i.param && $file==$data.$i.file}a{else}i{/if}{/if}">
 				<a href="{$data.$i.href}" title="{$data.$i.name}">{$data.$i.name}</a>
 			</div>
 {/for}
+{elseif $naviStyle=='accordion'}
+				<h3>
+					<a href="{$data.0.href}" title="{$data.0.name}">{$data.0.name}</a>
+				</h3>
+				<div>
+{for $i=1 to (count($data)-1)}
+					<div class="navi_{$data.$i.level}{if $data.$i.level!=0}_{if $param==$data.$i.param && $file==$data.$i.file}a{else}i{/if}{/if}">
+						<a href="{$data.$i.href}" title="{$data.$i.name}">{$data.$i.name}</a>
+					</div>
+{/for}
+				</div>
+{/if}

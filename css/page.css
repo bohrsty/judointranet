@@ -398,6 +398,47 @@ div.navi_1_a a {
 	color: #800;
 }
 
+#accordion div.navi_1_a {
+	border-left: 1px solid #0a7db1;
+	border-top: 1px solid #0a7db1;
+	border-bottom: 1px solid #0a7db1;
+	border-right: 0;
+	border-top-left-radius: 3px;
+	border-bottom-left-radius: 3px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	margin: 0 0 1px 11px;
+	width: 210px;
+	text-align: left;
+	background-color: #acdd4a;
+	padding: 2px;
+	height: 1.2em;
+	font-size: 90%;
+}
+
+#accordion div.navi_1_i {
+	border-left: 1px solid #a6c9e2;
+	border-top: 1px solid #a6c9e2;
+	border-bottom: 1px solid #a6c9e2;
+	border-right: 0;
+	border-top-left-radius: 3px;
+	border-bottom-left-radius: 3px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	margin: 0 0 1px 11px;
+	width: 210px;
+	text-align: left;
+	padding: 2px;
+	height: 1.2em;
+	font-size: 90%;
+}
+
+#accordion div.navi_1_a a {
+	color: #0a7db1;
+	text-decoration: none;
+	font-weight: bold;
+}
+
 div#login-out {
 	margin: 130px auto;
 	width: 430px;
@@ -637,6 +678,19 @@ img.Zebra_Form_Input_Prefix {
 	padding: 3px 3px 3px 3px;
 }
 
+
+#navi .ui-accordion-content {
+	padding: 2px;
+}
+
+#navi .ui-accordion-header {
+	padding-top: 2px;
+	padding-bottom: 2px;
+	text-align: left;
+	font-weight: bold;
+	font-size: 90%;
+	text-decoration: underline;
+}
 
 
 
