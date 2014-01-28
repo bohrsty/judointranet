@@ -92,7 +92,7 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 		if($result) {
 			return $result->num_rows == 1;
 		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error);
+			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 			self::getError()->handle_error($errno);
 		}
 		
@@ -133,7 +133,7 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 		// get data
 		$items = array();
 		if(!$result) {
-			$errno = self::getError()->error_raised('MysqlError', $db->error);
+			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 			self::getError()->handle_error($errno);
 		}
 		
@@ -193,7 +193,7 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 			// get data
 			$items = array();
 			if(!$result) {
-				$errno = self::getError()->error_raised('MysqlError', $db->error);
+				$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 				self::getError()->handle_error($errno);
 			}
 		}
@@ -234,6 +234,37 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 		
 		// return
 		return $fid;
+	}
+	
+	
+	/**
+	 * exists($table, $tableId) checks if the given $tableId exists in the given $table
+	 * 
+	 * @return bool true if id exists, false otherwise
+	 */
+	public static function exists($table, $tableId) {
+		
+		// get db-object
+		$db = Db::newDb();
+		
+		// prepare sql
+		$sql = 'SELECT id
+				FROM `'.$db->real_escape_string($table).'`
+				WHERE id='.$db->real_escape_string($tableId);
+		
+		// execute
+		$result = $db->query($sql);
+		
+		if($result) {
+			if($result->num_rows == 0) {
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
+			self::getError()->handle_error($errno);
+		}
 	}
  	
  	

@@ -360,6 +360,13 @@ class ProtocolView extends PageView {
 								'src' => 'img/prot_delete.png',
 								'alt' => parent::lang('class.ProtocolView#listall#alt#delete')
 							);
+						// attachment
+						$sList[$counter]['admin'][] = array(
+								'href' => 'file.php?id=attach&table=protocol&tid='.$entry->get_id(),
+								'title' => parent::lang('class.ProtocolView#listall#title#attach'),
+								'src' => 'img/attachment.png',
+								'alt' => parent::lang('class.ProtocolView#listall#alt#attach')
+							);
 					}
 					
 					// correction
@@ -878,11 +885,22 @@ class ProtocolView extends PageView {
 				);
 			// topdf
 			$links[] = array(
-					'href' => 'protocol.php?id=topdf&pid='.$protocol->get_id(),
+					'href' => 'file.php?id=cached&table=protocol&tid='.$protocol->get_id(),
 					'title' => parent::lang('class.ProtocolView#details#topdf#title'),
 					'name' => parent::lang('class.ProtocolView#details#topdf#name')
 				);
 			$sPD->assign('links',$links);
+			
+			// create file objects
+			$fileIds = File::attachedTo('protocol', $pid);
+			$fileObjects = array();
+			foreach($fileIds as $id) {
+				$fileObjects[] = new File($id);
+			}
+			$sPD->assign('files', $fileObjects);
+			$sPD->assign('attached', parent::lang('class.ProtocolView#details#text#attached'));
+			$sPD->assign('none', parent::lang('class.ProtocolView#details#text#none'));
+			$sPD->assign('fileHref', 'file.php?id=download&fid=');
 			
 			return $sPD->fetch('smarty.protocol.details.tpl');
 		} else {
@@ -1518,6 +1536,8 @@ class ProtocolView extends PageView {
 					// delete cached file
 					$fid = File::idFromCache('protocol|'.$protocol->get_id());
 					File::delete($fid);
+					// delete attachements
+					File::deleteAttachedFiles('protocol',$protocol->get_id());
 				} catch(Exception $e) {
 					$this->getError()->handle_error($e);
 					return $this->getError()->to_html($e);

@@ -192,7 +192,7 @@ class Calendar extends Page {
 			$this->setModifiedBy($modifiedBy);
 			$this->setFilter(Filter::allFilterOf('calendar', $id));
 		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error);
+			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 			self::getError()->handle_error($errno);
 		}
 		
@@ -235,7 +235,7 @@ class Calendar extends Page {
 			// execute
 			$result = $db->query($sql);
 			if(!$result) {
-				$errno = self::getError()->error_raised('MysqlError', $db->error);
+				$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 				self::getError()->handle_error($errno);
 			}
 			
@@ -270,7 +270,7 @@ class Calendar extends Page {
 			// execute
 			$result = $db->query($sql);
 			if(!$result) {
-				$errno = self::getError()->error_raised('MysqlError', $db->error);
+				$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 				self::getError()->handle_error($errno);
 			}
 			
@@ -371,23 +371,11 @@ class Calendar extends Page {
 	 * check_id checks if the given id exists in db
 	 * 
 	 * @return bool true if id exists, false otherwise
+	 * @deprecated - 26.01.2014 use Page::exists() instead
 	 */
 	public static function check_id($id) {
 		
-		// get db-object
-		$db = Db::newDb();
-		
-		// prepare sql
-		$sql = "SELECT id FROM calendar WHERE id=$id";
-		
-		// execute
-		$result = $db->query($sql);
-		
-		if($result->num_rows == 0) {
-			return false;
-		} else {
-			return true;
-		}
+		return self::exists('calendar', $id);
 	}
 	
 	
@@ -593,6 +581,16 @@ class Calendar extends Page {
 				'errorEntry' => $this->get_id().'|'.$this->get_preset_id(),
 			);
 		
+	}
+	
+	
+	/**
+	 * getName() returns a name for this object
+	 * 
+	 * @return string name of this object
+	 */
+	public function getName() {
+		return $this->get_name().' '.$this->get_date('d.m.Y');
 	}
 }
 

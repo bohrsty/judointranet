@@ -636,6 +636,16 @@ class Protocol extends Page {
 			);
 		
 	}
+	
+	
+	/**
+	 * getName() returns a name for this object
+	 * 
+	 * @return string name of this object
+	 */
+	public function getName() {
+		return $this->get_type('n').' '.$this->get_location().' '.$this->get_date('d.m.Y');
+	}
 }
 
 

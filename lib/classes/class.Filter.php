@@ -92,7 +92,7 @@ class Filter extends Object {
 		if($result) {
 			list($name) = $result->fetch_array(MYSQL_NUM);
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -137,7 +137,7 @@ class Filter extends Object {
 				}
 			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -175,7 +175,7 @@ class Filter extends Object {
 				$filter[$id] = new Filter($id);
 			}
 		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error);
+			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 			self::getError()->handle_error($errno);
 		}
 		
@@ -229,7 +229,7 @@ class Filter extends Object {
 					$filteredItems[] = $id;
 				}
 			} else {
-				$errno = self::getError()->error_raised('MysqlError', $db->error);
+				$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 				self::getError()->handle_error($errno);
 			}
 		}
@@ -310,7 +310,7 @@ class Filter extends Object {
 		// get data
 		$items = array();
 		if(!$result) {
-			$errno = self::getError()->error_raised('MysqlError', $db->error);
+			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 			self::getError()->handle_error($errno);
 		}
 		
@@ -343,7 +343,7 @@ class Filter extends Object {
 		// get data
 		$items = array();
 		if(!$result) {
-			$errno = self::getError()->error_raised('MysqlError', $db->error);
+			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 			self::getError()->handle_error($errno);
 		}
 		

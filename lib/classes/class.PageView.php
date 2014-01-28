@@ -555,7 +555,7 @@ class PageView extends Object {
 				$naviItems[] = new Navi($naviId);
 			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		

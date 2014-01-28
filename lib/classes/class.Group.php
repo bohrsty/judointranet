@@ -117,7 +117,7 @@ class Group extends Object {
 		if($result) {
 			list($name, $parent, $valid) = $result->fetch_array(MYSQL_NUM);
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -140,7 +140,7 @@ class Group extends Object {
 				$subGroups[] = new Group($subId);
 			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -212,7 +212,7 @@ class Group extends Object {
 		if($result) {
 			list($id) = $result->fetch_array(MYSQL_NUM);
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -276,7 +276,7 @@ class Group extends Object {
 		if($result) {
 			list($mode) = $result->fetch_array(MYSQL_NUM);
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		

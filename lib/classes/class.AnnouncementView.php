@@ -542,6 +542,8 @@ class AnnouncementView extends PageView {
 						// delete cached file
 						$fid = File::idFromCache('calendar|'.$calendar->get_id());
 						File::delete($fid);
+						// delete attachments
+						File::deleteAttachedFiles('calendar',$calendar->get_id());
 						
 						// smarty
 						$sConfirmation->assign('message', parent::lang('class.AnnouncementView#delete#message#done'));

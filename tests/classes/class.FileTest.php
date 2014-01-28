@@ -244,5 +244,36 @@ class FileTest extends PHPUnit_Framework_TestCase {
 		$file->writeDb();
 	}
 	
+	
+	public function testAttachments() {
+		
+		// check if test entries still in database
+		$this->assertEquals(0, count(File::attachedTo('testEntry', 1)));
+		$this->assertEquals(0, count(File::attachedTo('testEntry', 2)));
+		
+		// attach some files
+		$files1 = array(1,2,3,5);
+		$files2 = array(1,3,4,6);
+		File::attachFiles('testEntry', 1, $files1);
+		File::attachFiles('testEntry', 2, $files2);
+		// check entries
+		$this->assertEquals(4, count(File::attachedTo('testEntry', 1)));
+		$this->assertEquals(4, count(File::attachedTo('testEntry', 2)));
+		
+		// remove all for file 2
+		File::deleteAllAttachments(1);
+		// check entries
+		$this->assertEquals(3, count(File::attachedTo('testEntry', 1)));
+		$this->assertEquals(3, count(File::attachedTo('testEntry', 2)));
+		
+		// remove rest
+		File::deleteAttachedFiles('testEntry', 1);
+		File::deleteAttachedFiles('testEntry', 2);
+		
+		// check if no more entries
+		$this->assertEquals(0, count(File::attachedTo('testEntry', 1)));
+		$this->assertEquals(0, count(File::attachedTo('testEntry', 2)));
+	}
+	
 }
 ?>

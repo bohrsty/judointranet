@@ -184,7 +184,7 @@ class Field extends Object {
 		if($result) {
 			list($name, $type, $required, $category, $config) = $result->fetch_array(MYSQL_NUM);
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -205,7 +205,7 @@ class Field extends Object {
 				list($lastModified) = $result->fetch_array(MYSQL_NUM);
 			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -475,7 +475,7 @@ class Field extends Object {
 				list($value,$defaults,$lastModified,$modifiedBy) = $result->fetch_array(MYSQL_NUM);
 			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -703,7 +703,7 @@ class Field extends Object {
 		
 		// check result
 		if(!$result) {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -737,7 +737,7 @@ class Field extends Object {
 		
 		// check result
 		if(!$result) {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -792,7 +792,7 @@ class Field extends Object {
 				$optionDefaults['d'.$id] = $truncName;
 			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -843,7 +843,7 @@ class Field extends Object {
 				}
 			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -881,7 +881,7 @@ class Field extends Object {
 		if($result) {
 			list($value) = $result->fetch_array(MYSQL_NUM);
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -923,7 +923,7 @@ class Field extends Object {
 				$options[$id] = $name;
 			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $config['sql'][0]);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -970,7 +970,7 @@ class Field extends Object {
 					// fetch result
 					$field_values[] = $result->fetch_array(MYSQL_ASSOC);
 				} else {
-					$errno = $this->getError()->error_raised('MysqlError', $db->error);
+					$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 					$this->getError()->handle_error($errno);
 				}
 			}
@@ -985,7 +985,7 @@ class Field extends Object {
 				// fetch result
 				$field_values = $result->fetch_array(MYSQL_ASSOC);
 			} else {
-					$errno = $this->getError()->error_raised('MysqlError', $db->error);
+					$errno = $this->getError()->error_raised('MysqlError', $db->error, $value);
 					$this->getError()->handle_error($errno);
 				}
 		}
@@ -1038,12 +1038,12 @@ class Field extends Object {
 						$optionsSecond[$id][$id2] = $name2;				
 					}
 				} else {
-					$errno = $this->getError()->error_raised('MysqlError', $db->error);
+					$errno = $this->getError()->error_raised('MysqlError', $db->error, $second);
 					$this->getError()->handle_error($errno);
 				}
 			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $config['sql'][0]);
 			$this->getError()->handle_error($errno);
 		}	
 	}
@@ -1080,7 +1080,7 @@ class Field extends Object {
 			// fetch result
 			$field_values = $result->fetch_array(MYSQL_ASSOC);
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		

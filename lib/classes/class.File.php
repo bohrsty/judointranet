@@ -197,7 +197,7 @@ class File extends Page {
 		if($result) {
 			list($id) = $result->fetch_array(MYSQL_NUM);
 		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error);
+			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 			self::getError()->handle_error($errno);
 		}
 		
@@ -229,7 +229,7 @@ class File extends Page {
 		if($result) {
 			list($name, $fileType, $filename, $content, $cached, $valid) = $result->fetch_array(MYSQL_NUM);
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -283,7 +283,7 @@ class File extends Page {
 		
 		// get data
 		if(!$result) {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		} else {
 		
@@ -318,7 +318,7 @@ class File extends Page {
 		if($result) {
 			return $result->num_rows == 1;
 		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error);
+			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 	}
@@ -385,7 +385,7 @@ class File extends Page {
 				list($value) = $result->fetch_array(MYSQL_NUM);
 			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -452,7 +452,7 @@ class File extends Page {
 			list($ext) = $result->fetch_array(MYSQL_NUM);
 			$extensions .= $ext.',';
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		// remove last comma
@@ -489,7 +489,7 @@ class File extends Page {
 				list($id) = $result->fetch_array(MYSQL_NUM);
 			}
 		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error);
+			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 			self::getError()->handle_error($errno);
 		}
 		
@@ -525,7 +525,7 @@ class File extends Page {
 				list($lastModified) = $result->fetch_array(MYSQL_NUM);
 			}
 		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error);
+			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 			self::getError()->handle_error($errno);
 		}
 		
@@ -562,9 +562,142 @@ class File extends Page {
 			
 			// get data
 			if(!$result) {
-				$errno = $this->getError()->error_raised('MysqlError', $db->error);
-				$this->getError()->handle_error($errno);
+				$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
+				self::getError()->handle_error($errno);
 			}
+			
+			// remove all attachments
+			self::deleteAllAttachments($fid);
+		}
+	}
+	
+	
+	/**
+	 * attachedTo($table, $tableId) returns an array containing the ids of all files attached
+	 * to $table->$tableId
+	 * 
+	 * @param string $table the table name of the entry the files are attached to
+	 * @param int $tableId the id of the entry the files are attached to
+	 * @return array array containing the ids of all files attached to $table->$tableId
+	 */
+	public static function attachedTo($table, $tableId) {
+		
+		// get db object
+		$db = Db::newDb();
+		
+		// prepare sql
+		$sql = 'SELECT file_id FROM `files_attached`
+				WHERE `table_name`=\''.$db->real_escape_string($table).'\'
+					AND `table_id`='.$db->real_escape_string($tableId);
+		
+		// execute statement
+		$result = $db->query($sql);
+		
+		// get data
+		$fileIds = array();
+		if($result) {
+			while(list($fileId) = $result->fetch_array(MYSQL_NUM)) {
+				$fileIds[] = $fileId;
+			}
+		} else {
+			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
+			self::getError()->handle_error($errno);
+		}
+		
+		// return
+		return $fileIds;
+	}
+	
+	
+	/**
+	 * attachFiles($table, $tableId, $files) attaches the given $files to the
+	 * given $table->$tableId
+	 * 
+	 * @param string $table the table name of the entry the file is to attach to
+	 * @param int $tableId the id of the entry the file is to attach to
+	 * @param array $files array of ids of the files to attach
+	 * @return void
+	 */
+	public static function attachFiles($table, $tableId, $files) {
+		
+		// check if there is something to attach
+		if(count($files) > 0) {
+		
+			// get db object
+			$db = Db::newDb();
+			
+			// prepare sql
+			$sql = 'INSERT INTO `files_attached` (table_name, table_id, file_id) VALUES';
+			foreach($files as $id) {
+				
+				 $sql .= '(\''.$db->real_escape_string($table).'\',
+					\''.$db->real_escape_string($tableId).'\',
+					\''.$db->real_escape_string($id).'\'),';
+			}
+			$sql =  substr($sql, 0, -1);
+			
+			// execute statement
+			$result = $db->query($sql);
+			
+			// get data
+			if(!$result) {
+				$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
+				self::getError()->handle_error($errno);
+			}
+		}
+	}
+	
+	
+	/**
+	 * deleteAttachedFiles($table, $tableId) deletes attached files for the given $table->$tableId
+	 * 
+	 * @param string $table the table name of the entry the files are deleted
+	 * @param int $tableId the id of the entry the files are deleted
+	 * @return void
+	 */
+	public static function deleteAttachedFiles($table, $tableId) {
+		
+		// get db object
+		$db = Db::newDb();
+		
+		// prepare sql
+		$sql = 'DELETE FROM `files_attached`
+				WHERE table_name=\''.$db->real_escape_string($table).'\'
+				AND table_id=\''.$db->real_escape_string($tableId).'\'';
+		
+		// execute statement
+		$result = $db->query($sql);
+		
+		// get data
+		if(!$result) {
+			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
+			self::getError()->handle_error($errno);
+		}
+	}
+	
+	
+	/**
+	 * deleteAllAttachments($fileId) deletes all attachments for the given $fileId
+	 * 
+	 * @param int $fileId the id of the file that attachments to be deleted
+	 * @return void
+	 */
+	public static function deleteAllAttachments($fileId) {
+		
+		// get db object
+		$db = Db::newDb();
+		
+		// prepare sql
+		$sql = 'DELETE FROM `files_attached`
+				WHERE file_id=\''.$db->real_escape_string($fileId).'\'';
+		
+		// execute statement
+		$result = $db->query($sql);
+		
+		// get data
+		if(!$result) {
+			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
+			self::getError()->handle_error($errno);
 		}
 	}
 }

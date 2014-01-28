@@ -409,7 +409,7 @@ class AdministrationView extends PageView {
 				}
 			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -616,7 +616,7 @@ class AdministrationView extends PageView {
 				$index++;
 			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -658,7 +658,7 @@ class AdministrationView extends PageView {
 		if($result) {
 			list($valid) = $result->fetch_array(MYSQL_NUM);
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -708,7 +708,7 @@ class AdministrationView extends PageView {
 					return false;
 				}
 			} else {
-				$errno = $this->getError()->error_raised('MysqlError', $db->error);
+				$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 				$this->getError()->handle_error($errno);
 			}
 		} else {
@@ -744,7 +744,7 @@ class AdministrationView extends PageView {
 		
 		// check result
 		if(!$result) {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 	}
@@ -820,7 +820,7 @@ class AdministrationView extends PageView {
 			
 			// check result
 			if(!$result) {
-				$errno = $this->getError()->error_raised('MysqlError', $db->error);
+				$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 				$this->getError()->handle_error($errno);
 			}
 			
@@ -888,7 +888,7 @@ class AdministrationView extends PageView {
 			$row = $result->fetch_array(MYSQL_ASSOC);
 			$tinfo = $result->fetch_fields();
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -946,7 +946,7 @@ class AdministrationView extends PageView {
 							$options[$id] = $name;
 						}
 					} else {
-						$errno = $this->getError()->error_raised('MysqlError', $db->error);
+						$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 						$this->getError()->handle_error($errno);
 					}
 					
@@ -1103,7 +1103,7 @@ class AdministrationView extends PageView {
 			
 			// check result
 			if(!$result) {
-				$errno = $this->getError()->error_raised('MysqlError', $db->error);
+				$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 				$this->getError()->handle_error($errno);
 			}
 			
@@ -1162,7 +1162,7 @@ class AdministrationView extends PageView {
 		if($result) {
 			$tinfo = $result->fetch_fields();
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -1214,7 +1214,7 @@ class AdministrationView extends PageView {
 							$options[$id] = $name;
 						}
 					} else {
-						$errno = $this->getError()->error_raised('MysqlError', $db->error);
+						$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 						$this->getError()->handle_error($errno);
 					}
 					
@@ -1373,7 +1373,7 @@ class AdministrationView extends PageView {
 			
 			// check result
 			if(!$result) {
-				$errno = $this->getError()->error_raised('MysqlError', $db->error);
+				$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 				$this->getError()->handle_error($errno);
 			}
 			

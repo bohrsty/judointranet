@@ -144,6 +144,12 @@ $lang = array(
 									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
 									Wenn der Fehler unerwartet oder wiederholt auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
 			),
+			'ObjectNotExists' => array(
+				'ERROR.caption' => 'FEHLER',
+				'ERROR.message' => 'Das angegebene Objekt existiert nicht, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
+			),
 		
 		)
 	
@@ -162,7 +168,8 @@ $lang = array(
 				'AnnEdit' => 'Ausschreibung bearbeiten',
 				'AnnDelete' => 'Ausschreibung l&ouml;schen',
 				'AnnDetails' => 'Ausschreibung anzeigen',
-				'AnnPDF' => 'Ausschreibung als PDF anzeigen'
+				'AnnPDF' => 'Ausschreibung als PDF anzeigen',
+				'attach' => 'Datei(en) anh&auml;ngen',
 			),
 			'title' => array(
 				'edit' => 'bearbeitet diesen Eintrag',
@@ -170,7 +177,8 @@ $lang = array(
 				'AnnEdit' => 'bearbeitet die Ausschreibung',
 				'AnnDelete' => 'l&ouml;scht die Ausschreibung',
 				'AnnDetails' => 'Ausschreibung anzeigen',
-				'AnnPDF' => 'Ausschreibung als PDF anzeigen'
+				'AnnPDF' => 'Ausschreibung als PDF anzeigen',
+				'attach' => 'Datei(en) anh&auml;ngen',
 			)
 		),
 		'init' => array(
@@ -295,6 +303,12 @@ $lang = array(
 		'global' => array(
 			'info' => array(
 				'help' => 'Hilfe'
+			),
+		),
+		'details' => array(
+			'text' => array(
+				'attached' => '<b>Angeh&auml;ngte Dateien:</b>',
+				'none' => '- keine -',
 			),
 		),
 	),
@@ -950,7 +964,8 @@ $lang = array(
 				'ProtShow' => 'Protokoll anzeigen',
 				'ProtPDF' => 'Protokoll als PDF',
 				'date' => 'Details anzeigen',
-				'corrected' => 'Korrekturen vorhanden, &uuml;berpr&uuml;fen'
+				'corrected' => 'Korrekturen vorhanden, &uuml;berpr&uuml;fen',
+				'attach' => 'Datei(en) anh&auml;ngen',
 			),
 			'alt' => array(
 				'edit' => 'Protokoll bearbeiten',
@@ -958,7 +973,8 @@ $lang = array(
 				'correct' => 'Protokoll korrigieren',
 				'ProtShow' => 'Protokoll anzeigen',
 				'ProtPDF' => 'Protokoll als PDF',
-				'corrected' => 'Korrekturen vorhanden, &uuml;berpr&uuml;fen'
+				'corrected' => 'Korrekturen vorhanden, &uuml;berpr&uuml;fen',
+				'attach' => 'Datei(en) anh&auml;ngen',
 			)
 		),
 		'details' => array(
@@ -973,7 +989,11 @@ $lang = array(
 			'topdf' => array(
 				'title' => 'Protokoll als PDF anzeigen',
 				'name' => 'PDF'
-			)
+			),
+			'text' => array(
+				'attached' => '<b>Angeh&auml;ngte Dateien:</b>',
+				'none' => '- keine -',
+			),
 		),
 		'entry' => array(
 			'form' => array(
@@ -1381,7 +1401,8 @@ $lang = array(
 				'download' => 'Datei herunterladen',
 				'upload' => 'Datei hochladen',
 				'edit' => 'Datei bearbeiten',
-				'delete' => 'Datei l&ouml;schen'
+				'delete' => 'Datei l&ouml;schen',
+				'attach' => 'Datei anh&auml;ngen',
 			),
 			'init' => array(
 				'name' => 'Dateien'
@@ -1438,6 +1459,23 @@ $lang = array(
 			'message' => array(
 				'confirm' => 'Wollen Sie diese Datei wirklich l&ouml;schen?',
 				'done' => 'Die Datei wurde erfolgreich gel&ouml;scht.'
+			),
+		),
+		'attach' => array(
+			'file' => array(
+				'title' => 'Datei anh&auml;ngen an:',
+			),
+			'section' => array(
+				'download' => 'Hochgeladen',
+				'cached' => 'Zwischengespeichert',
+			),
+			'tableName' => array(
+				'calendar' => 'Ausschreibungen',
+				'protocol' => 'Protokolle',
+			),
+			'text' => array(
+				'attached' => 'Angeh&auml;ngte Dateien:',
+				'none' => '- keine -',
 			),
 		),
 	'entry' => array(

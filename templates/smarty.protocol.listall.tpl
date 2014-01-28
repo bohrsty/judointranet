@@ -57,14 +57,10 @@
 		</td>
 {if $loggedin}
 		<td class="admin">
-{if isset($list.$i.admin.0)}
-				<a href="{$list.$i.admin.0.href|escape}" title="{$list.$i.admin.0.title}"><img src="{$list.$i.admin.0.src}" alt="{$list.$i.admin.0.alt}" class="icon" title="{$list.$i.admin.0.alt}" /></a>
-{/if}
-{if isset($list.$i.admin.1)}
-				<a href="{$list.$i.admin.1.href|escape}" title="{$list.$i.admin.1.title}"><img src="{$list.$i.admin.1.src}" alt="{$list.$i.admin.1.alt}" class="icon" title="{$list.$i.admin.1.alt}" /></a>
-{/if}
-{if isset($list.$i.admin.2)}
-				<a href="{$list.$i.admin.2.href|escape}" title="{$list.$i.admin.2.title}"><img src="{$list.$i.admin.2.src}" alt="{$list.$i.admin.2.alt}" class="icon" title="{$list.$i.admin.2.alt}" /></a>
+{if is_array($list.$i.admin)}
+{for $j=0 to count($list.$i.admin)-1}
+				<a href="{$list.$i.admin.$j.href|escape}" title="{$list.$i.admin.$j.title}"><img src="{$list.$i.admin.$j.src}" alt="{$list.$i.admin.$j.alt}" class="icon" title="{$list.$i.admin.$j.alt}" /></a>
+{/for}
 {/if}
 		</td>
 {/if}

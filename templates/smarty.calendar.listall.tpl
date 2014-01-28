@@ -55,8 +55,9 @@
 {if $list.$i.admin.0.admin}
 		<td class="admin">
 			<div class="admin-links">
-				<a href="{$list.$i.admin.0.href|escape}" title="{$list.$i.admin.0.title}"><img src="{$list.$i.admin.0.src}" alt="{$list.$i.admin.0.alt}" class="icon" title="{$list.$i.admin.0.alt}" /></a>
-				<a href="{$list.$i.admin.1.href|escape}" title="{$list.$i.admin.1.title}"><img src="{$list.$i.admin.1.src}" alt="{$list.$i.admin.1.alt}" class="icon" title="{$list.$i.admin.1.alt}" /></a>
+{for $j=0 to count($list.$i.admin)-1}
+				<a href="{$list.$i.admin.$j.href|escape}" title="{$list.$i.admin.$j.title}"><img src="{$list.$i.admin.$j.src}" alt="{$list.$i.admin.$j.alt}" class="icon" title="{$list.$i.admin.$j.alt}" /></a>
+{/for}
 			</div>
 {if $list.$i.annadmin.0.preset==0}
 			{$list.$i.annadmin.0.form}

@@ -20,22 +20,18 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-<div class="calendar-details">
-	<p class="details">{$data.name}</p>
-	<p class="details">{$data.shortname}</p>
-	<p class="details">{$data.date}</p>
-	<p class="details">{$data.type}</p>
-	<p class="details">{$data.content}</p>
-	<p class="details">{$data.filter}</p>
-	<p class="details">{$data.public}</p>
-	<p class="details">{$attached}</p>
+<p class="bold">{$title}</p>
+{if $form != ''}
+<div>{$form}</div>
+{else}
+<p class="bold">{$attached}</p>
 {if count($files) > 0}
-	<ul>
+<ul>
 {foreach $files as $file}
-	<li>{$file->getName()} - <a href="{$fileHref}{$file->getId()}" title="{$file->getFilename()}">{$file->getFilename()}</a> ({$file->getFileTypeAs('name')})</li>
+<li>{$file->getName()} - <a href="{$fileHref}{$file->getId()}" title="{$file->getFilename()}">{$file->getFilename()}</a> ({$file->getFileTypeAs('name')})</li>
 {/foreach}
-	</ul>
+</ul>
 {else}
 <p>{$none}</p>
 {/if}
-</div>
+{/if}

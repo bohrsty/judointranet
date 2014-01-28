@@ -1088,7 +1088,7 @@ class InventoryView extends PageView {
 			
 			// get data
 			if(!$result) {
-				$errno = $this->getError()->error_raised('MysqlError', $db->error);
+				$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 				$this->getError()->handle_error($errno);
 			}
 		}		

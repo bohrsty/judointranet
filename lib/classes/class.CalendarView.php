@@ -340,6 +340,14 @@ class CalendarView extends PageView {
 							'alt' => parent::lang('class.CalendarView#listall#alt#delete'),
 							'admin' => $admin
 						);
+					// attachment
+					$sList[$counter]['admin'][] = array(
+							'href' => 'file.php?id=attach&table=calendar&tid='.$entry->get_id(),
+							'title' => parent::lang('class.CalendarView#listall#title#attach'),
+							'src' => 'img/attachment.png',
+							'alt' => parent::lang('class.CalendarView#listall#alt#attach'),
+							'admin' => $admin
+						);
 					
 					if($entry->get_preset_id() == 0) {
 						
@@ -896,7 +904,7 @@ class CalendarView extends PageView {
 	private function details($cid) {
 	
 		// pagecaption
-		$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#details'));
+		$this->tpl->assign('pagecaption', parent::lang('class.CalendarView#page#caption#details'));
 		
 		// check permissions
 		if($this->getUser()->hasPermission('calendar', $cid)) {
@@ -907,8 +915,19 @@ class CalendarView extends PageView {
 			// smarty-template
 			$sCD = new JudoIntranetSmarty();
 			
+			// create file objects
+			$fileIds = File::attachedTo('calendar', $cid);
+			$fileObjects = array();
+			foreach($fileIds as $id) {
+				$fileObjects[] = new File($id);
+			}
+			
 			// smarty
 			$sCD->assign('data', $calendar->detailsToHtml());
+			$sCD->assign('files', $fileObjects);
+			$sCD->assign('attached', parent::lang('class.CalendarView#details#text#attached'));
+			$sCD->assign('none', parent::lang('class.CalendarView#details#text#none'));
+			$sCD->assign('fileHref', 'file.php?id=download&fid=');
 			return $sCD->fetch('smarty.calendar.details.tpl');
 		} else {
 			
@@ -1345,6 +1364,8 @@ class CalendarView extends PageView {
 					if($fid !== false) {
 						File::delete($fid);
 					}
+					// delete attachments
+					File::deleteAttachedFiles('calendar',$calendar->get_id());
 				} catch(Exception $e) {
 					$this->getError()->handle_error($e);
 					return $this->getError()->to_html($e);

@@ -360,7 +360,7 @@ class Error extends Object {
 				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
 				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#MysqlError#ERROR.caption').'</h3>';
 				$message .= '<p>'.parent::lang('class.Error#handle_error#MysqlError#ERROR.message').'</p>';
-				$message .= '[MysqlError: "'.$this->return_message($errno).'"]';
+				$message .= '[MysqlError: "'.$this->return_message($errno).'"][Statement: '.$this->return_entry($errno).']';
 				$message .= '</div>';
 				die($message);
 			break;
@@ -372,6 +372,21 @@ class Error extends Object {
 				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#HeaderSent#ERROR.caption').'</h3>';
 				$message .= '<p>'.parent::lang('class.Error#handle_error#HeaderSent#ERROR.message').'</p>';
 				$message .= '[HeaderSent: "'.$this->return_entry($errno).'"]';
+				$message .= '</div>';
+				
+				// set output
+				$errors = $this->get_errors();
+				$errors[$errno]['output'] = $message;
+				$this->set_errors($errors);
+			break;
+			
+			case 'ObjectNotExists':
+				
+				// non-fatal error, message
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
+				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#ObjectNotExists#ERROR.caption').'</h3>';
+				$message .= '<p>'.parent::lang('class.Error#handle_error#ObjectNotExists#ERROR.message').'</p>';
+				$message .= '[ObjectNotExists: "'.$this->return_entry($errno).'"]';
 				$message .= '</div>';
 				
 				// set output

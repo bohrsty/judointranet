@@ -278,7 +278,7 @@ class User extends Object {
 				$user = $result->fetch_array(MYSQL_ASSOC);
 			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -340,7 +340,7 @@ class User extends Object {
 		if($result) {
 			$db_result = $result->fetch_array(MYSQL_ASSOC);
 		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error);
+			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 			self::getError()->handle_error($errno);
 		}
 		
@@ -532,7 +532,7 @@ class User extends Object {
 				$groups[] = new Group($id);
 			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 		
@@ -586,7 +586,7 @@ class User extends Object {
 		if($result) {
 			return $result->num_rows > 0;
 		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error);
+			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 			self::getError()->handle_error($errno);
 		}
 		
@@ -677,7 +677,7 @@ class User extends Object {
 				$itemIds[] = $itemId;
 			}
 		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error);
+			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 			self::getError()->handle_error($errno);
 		}
 		
@@ -749,7 +749,7 @@ class User extends Object {
 		
 		// get data
 		if(!$result) {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
 			$this->getError()->handle_error($errno);
 		}
 	}

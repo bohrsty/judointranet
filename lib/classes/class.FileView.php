@@ -145,6 +145,16 @@ class FileView extends PageView {
 						$this->tpl->assign('tinymce', false);
 					break;
 					
+					case 'attach':
+						
+						// smarty
+						$this->tpl->assign('title', $this->title(parent::lang('class.FileView#init#title#attach')));
+						$this->tpl->assign('main', $this->attach());
+						$this->tpl->assign('jquery', true);
+						$this->tpl->assign('zebraform', true);
+						$this->tpl->assign('tinymce', false);
+					break;
+					
 					default:
 						
 						// id set, but no functionality
@@ -1068,6 +1078,173 @@ class FileView extends PageView {
 				
 		// return
 		return $sList;
+	}
+	
+	
+	/**
+	 * attach() handles the attachment functionality for Page objects
+	 * 
+	 * @return string HTML code of the page
+	 */
+	private function attach() {
+		
+		// get table and tableId
+		$table = $this->get('table');
+		$tableId = $this->get('tid');
+		
+		// pagecaption
+		$this->tpl->assign('pagecaption', parent::lang('class.FileView#page#caption#attach'));
+		
+		// check if $tableId exists in $table
+		if(Page::exists($table, $tableId)) {
+			
+			// check permission
+			if($this->getUser()->hasPermission($table, $tableId, 'w')) {
+				
+				// prepare template
+				$sAttach = new JudoIntranetSmarty();
+				
+				// get object
+				$objectClass = ucfirst($table);
+				$object = new $objectClass($tableId);
+				
+				// assign title
+				$sAttach->assign('title', parent::lang('class.FileView#attach#file#title').' "'.$object->getName().'"');
+				
+				// read all permitted entries
+				$entries = $this->readAllEntries();
+				
+				// actual entries
+				$setEntries = File::attachedTo($table, $tableId);
+				
+				// walk through entries (split into cached and not cached)
+				$files = array();
+				$cachedSection = array();
+				foreach($entries as $entry) {
+					
+					// check valid
+					if($entry->getValid() == 1) {
+						
+						// check $entry->cached
+						if($entry->isCached()) {
+							
+							// get table
+							list($thisTable, $thisTableId) = explode('|', $entry->getCached());
+							$cachedSection[$thisTable][$entry->getId()] = $entry->getFilename().' ('.$entry->getFileTypeAs('name').')';
+						} else {
+							$files[$entry->getId()] = $entry->getName().' - '.$entry->getFilename().' ('.$entry->getFileTypeAs('name').')';
+						}
+					}
+				}
+				
+				// form
+				$form = new Zebra_Form(
+						'fileAttach',		// id/name
+						'post',			// method
+						'file.php?id=attach&table='.$table.'&tid='.$tableId	// action
+					);
+				// set language
+				$form->language('deutsch');
+				// set docktype xhtml
+				$form->doctype('xhtml');
+				
+				// prepare formid
+				// files
+				$formIds['files'] = array('valueType' => 'array', 'type' => 'checkboxes', 'default' => 1);
+				// add radio list
+				$form->add(
+						'label',		// type
+						'labelFiles',	// id/name
+						'files',		// for
+						parent::lang('class.FileView#attach#section#download')	// label text
+					);
+				$form->add(
+						$formIds['files']['type'],	// type
+						'files[]',			// id/name
+						$files,		// values
+						$setEntries	// default
+					);
+				
+				// cached
+				foreach($cachedSection as $tableName => $cachedFiles) {
+					
+					// translate tableName
+					$transTableName = parent::lang('class.FileView#attach#tableName#'.$tableName);
+					
+					// cached files
+					$formIds[$tableName.'Files'] = array('valueType' => 'array', 'type' => 'checkboxes', 'default' => 1);
+					// add radio list
+					$form->add(
+							'label',		// type
+							'label'.$tableName.'Files',	// id/name
+							$tableName.'Files',		// for
+							$transTableName	// label text
+						);
+					$form->add(
+							$formIds[$tableName.'Files']['type'],	// type
+							$tableName.'Files[]',			// id/name
+							$cachedFiles,		// values
+							$setEntries	// default
+						);
+				}
+				
+				// submit-button
+				$form->add(
+						'submit',		// type
+						'buttonSubmit',	// id/name
+						parent::lang('class.FileView#entry#form#submitButton.edit')	// value
+					);
+				
+				// assign form
+				$sAttach->assign('form', $form->render('', true));
+				
+				// validate
+				if($form->validate()) {
+					
+					// get form data
+					$data = $this->getFormValues($formIds);
+					
+					// combine file ids
+					$fileIds = array();
+					foreach($data as $section) {
+						$fileIds = array_merge($fileIds, $section);
+					}
+					
+					// delete all attachments
+					File::deleteAttachedFiles($table, $tableId);
+					// add attachments from form
+					File::attachFiles($table, $tableId, $fileIds);
+					
+					// get file objects
+					$fileObjects = array();
+					foreach($fileIds as $id) {
+						$fileObjects[] = new File($id);
+					}
+					
+					// assign to template
+					$sAttach->assign('files', $fileObjects);
+					$sAttach->assign('attached', parent::lang('class.FileView#attach#text#attached'));
+					$sAttach->assign('none', parent::lang('class.FileView#attach#text#none'));
+					$sAttach->assign('fileHref', 'file.php?id=download&fid=');
+					$sAttach->assign('form', '');
+				}
+				
+				// return
+				return $sAttach->fetch('smarty.file.attach.tpl');
+			} else {
+				
+				// error
+				$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$table.' -> '.$tableId, 'entry:'.$table.' -> '.$tableId);
+				$this->getError()->handle_error($errno);
+				return $this->getError()->to_html($errno);
+			}
+		} else {
+			
+			// error
+			$errno = $this->getError()->error_raised('ObjectNotExists','entry:'.$table.' -> '.$tableId, 'entry:'.$table.' -> '.$tableId);
+			$this->getError()->handle_error($errno);
+			return $this->getError()->to_html($errno);
+		}
 	}
 }
 

@@ -385,7 +385,7 @@ class MainView extends PageView {
 			
 			// get data
 			if(!$result) {
-				$errno = self::getError()->error_raised('MysqlError', $db->error);
+				$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 				self::getError()->handle_error($errno);
 			}
 			
