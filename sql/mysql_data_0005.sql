@@ -1,4 +1,4 @@
-INSERT INTO `config` (`name`, `value`, `comment`) 
+INSERT IGNORE INTO `config` (`name`, `value`, `comment`) 
 	VALUES ('usertableCols.club', '', ''),
 		('usertableCols.contact', '', ''),
 		('usertableCols.judo', '', ''),
