@@ -150,6 +150,36 @@ $lang = array(
 									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
 									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
 			),
+			'GETUnknownAction' => array(
+				'ERROR.caption' => 'FEHLER',
+				'ERROR.message' => 'Die angegebene Aktion ist nicht bekannt, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
+			),
+			'NidNotExists' => array(
+				'ERROR.caption' => 'FEHLER',
+				'ERROR.message' => 'Der Navigationseintrag existiert nicht, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+									Wenn der Fehler weiterhin auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
+			),
+			'GidNotExists' => array(
+				'ERROR.caption' => 'FEHLER',
+				'ERROR.message' => 'Die Gruppe existiert nicht, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+									Wenn der Fehler weiterhin auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
+			),
+			'UidNotExists' => array(
+				'ERROR.caption' => 'FEHLER',
+				'ERROR.message' => 'Der Benutzer existiert nicht, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+									Wenn der Fehler weiterhin auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
+			),
+			'ObjectInUse' => array(
+				'ERROR.caption' => 'FEHLER',
+				'ERROR.message' => 'Das Objekt ist in Verwendung und kann nicht gel&ouml;scht/bearbeitet werden, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+									Wenn der Fehler weiterhin auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
+			),
 		
 		)
 	
@@ -778,7 +808,8 @@ $lang = array(
 			),
 			'title' => array(
 				'field' => 'Administration: benutzerdefinierte Tabellen verwalten',
-				'defaults' => 'Administration: Vorgaben verwalten'
+				'defaults' => 'Administration: Vorgaben verwalten',
+				'user' => 'Administration: Benutzer und Rechte verwalten',
 			)
 		),
 		'createTableLinks' => array(
@@ -907,6 +938,119 @@ $lang = array(
 				'location' => '<b>Hallen</b>',
 				'protocol_types' => '<b>Protokolltypen</b>',
 				'staff' => '<b>Referenten</b>'
+			),
+		),
+		'useradmin' => array(
+			'caption' => array(
+				'name' => 'Benutzer, Gruppen und Berechtigungen verwalten'
+			),
+			'tabs' => array(
+				'tab.user' => 'Benutzerverwaltung',
+				'tab.group' => 'Gruppenverwaltung',
+				'tab.permission' => 'Berechtigungsverwaltung',
+				'caption.user' => 'Benutzerverwaltung',
+				'caption.group' => 'Gruppenverwaltung',
+				'caption.permission' => 'Berechtigungsverwaltung',
+			),
+			'backLink' => array(
+				'name' => '&lArr; Zur&uuml;ck...',
+			),
+		),
+		'permissionContent' => array(
+			'form' => array(
+				'submitButton' => 'Speichern',
+			),
+			'naviList' => array(
+				'captionName' => 'Navigationseintrag',
+				'visible' => 'sichtbar',
+				'notVisible' => 'nicht sichtbar',
+			),
+			'backLink' => array(
+				'name' => '&lArr; Zur&uuml;ck...',
+			),
+			'message' => array(
+				'success' => 'Berechtigungen erfolgreich gespeichert!'
+			),
+		),
+		'addPermissionEntry' => array(
+			'clearRadio' => array(
+				'title' => 'Berechtigung entfernen',
+				'name' => 'Berechtigung entfernen',
+				'note' => 'Berechtigung f&uuml;r diesen Navigationseintrag vollst&auml;ndig entfernen',
+			),
+			'permissions' => array(
+				'read' => 'Berechtigung: Lesen/Auflisten',
+				'edit' => 'Berechtigung: Bearbeiten',
+				'headLine' => '<b>Name der zu berechtigenden Gruppe</b>',
+			),
+		),
+		'groupContent' => array(
+			'form' => array(
+				'submitButton.new' => 'Gruppe anlegen',
+				'submitButton.edit' => 'Gruppe speichern',
+				'groupName' => 'Gruppenname',
+				'rule.required.name' => 'Der Gruppenname ist erforderlich!',
+				'rule.regexp.allowedChars' => 'Es k&ouml;nnen nur folgende Zeichen eingegeben werden!',
+				'subgroupOf' => 'Obergruppe',
+				'rule.required.subgroupOf' => 'Die Obergruppe ist erforderlich!',
+				'delete.yes' => 'L&ouml;schen',
+				'delete.cancel' => 'Abbrechen',
+			),
+			'groupList' => array(
+				'captionName' => 'Gruppe bearbeiten',
+				'captionDelete' => 'l&ouml;schen',
+				'editGroup' => 'bearbeiten',
+				'deleteGroup' => 'l&ouml;schen',
+			),
+			'message' => array(
+				'new.success' => 'Neue Gruppe erfolgreich angelegt:',
+				'edit.success' => 'Gruppe erfolgreich gespeichert:',
+				'delete' => 'Wollen Sie diese Gruppe endg&uuml;ltig l&ouml;schen?',
+				'delete.success' => 'Die Gruppe wurde erfolgreich gel&ouml;scht!',
+			),
+			'caption' => array(
+				'edit' => 'Gruppe bearbeiten:',
+			),
+		),
+		'userContent' => array(
+			'form' => array(
+				'submitButton.new' => 'Benutzer anlegen',
+				'submitButton.edit' => 'Benutzer speichern',
+				'userUsername' => 'Benutzername',
+				'userPassword' => 'Passwort',
+				'userPasswordConfirm' => 'Passwort wiederholen',
+				'userName' => 'Name',
+				'userEmail' => 'Emailadresse',
+				'rule.required.username' => 'Der Benutzername ist erforderlich!',
+				'rule.required.password' => 'Das Passwort ist erforderlich!',
+				'rule.checkPasswd' => 'Die Eingaben m&uuml;ssen identisch sein!',
+				'rule.required.name' => 'Der Name ist erforderlich!',
+				'rule.required.email' => 'Die Emailadresse ist erforderlich!',
+				'rule.email' => 'Es muss eine g&uuml;ltige Emailadresse eingegeben werden!',
+				'rule.regexp.allowedChars' => 'Es k&ouml;nnen nur folgende Zeichen eingegeben werden!',
+				'groups' => 'Gruppen',
+				'delete.yes' => 'L&ouml;schen',
+				'delete.cancel' => 'Abbrechen',
+			),
+			'userList' => array(
+				'captionName' => 'Benutzer bearbeiten',
+				'captionDelete' => 'l&ouml;schen',
+				'editUser' => 'bearbeiten',
+				'deleteUser' => 'l&ouml;schen',
+			),
+			'message' => array(
+				'new.success' => 'Neuen Benutzer erfolgreich angelegt:',
+				'edit.success' => 'Benutzer erfolgreich gespeichert:',
+				'delete' => 'Wollen Sie diesen Benutzer endg&uuml;ltig l&ouml;schen?',
+				'delete.success' => 'Der Benutzer wurde erfolgreich gel&ouml;scht!',
+			),
+			'caption' => array(
+				'edit' => 'Benutzer bearbeiten:',
+			),
+		),
+		'global' => array(
+			'info' => array(
+				'help' => 'Hilfe'
 			),
 		),
 	),
@@ -1126,7 +1270,7 @@ $lang = array(
 				'errorIdNotExists' => '<p>Dieses Hilfe-Thema konnte nicht gefunden werden.</p>',
 				'about' => '<p><b>JudoIntranet</b></p>
 					<p>Author: Nils Bohrs<br />
-					Version: {$replace.version}<br />Lizenz: MIT</p>
+					Version: r{$replace.version}<br />Lizenz: MIT</p>
 					<p>&nbsp;</p>
 					<p>Copyright (c) 2011 Nils Bohrs</p>
 					<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this
@@ -1341,6 +1485,7 @@ $lang = array(
 				'announcementPage' => 'Ausschreibungen',
 				'announcementPage.listall' => 'Listenansicht',
 				'announcementPage.new' => 'Neuen Eintrag erstellen',
+				'announcementPage.edit' => 'Eintrag bearbeiten',
 				'announcementPage.delete' => 'Eintrag l&ouml;schen',
 				'announcementPage.details' => 'Details',
 				'announcementPage.topdf' => 'Eintrag als PDF',
@@ -1357,12 +1502,14 @@ $lang = array(
 				'administrationPage' => 'Administration',
 				'administrationPage.field' => 'Ben. Tabellen verwalten',
 				'administrationPage.defaults' => 'Vorgaben verwalten',
+				'administrationPage.useradmin' => 'Benutzer/Gruppen/Rechte',
 				'filePage' => 'Dateien',
 				'filePage.listall' => 'Dateien auflisten',
 				'filePage.details' => 'Datei-Details',
 				'filePage.edit' => 'Datei bearbeiten',
 				'filePage.delete' => 'Datei l&ouml;schen',
 				'filePage.upload' => 'Datei hochladen',
+				'filePage.cached' => 'Datei herunterladen',
 			),
 		),
 	),
@@ -1388,7 +1535,8 @@ $lang = array(
 				'upload' => 'Dateien: Datei hochladen',
 				'edit' => 'Dateien: Datei bearbeiten',
 				'delete' => 'Dateien: Datei l&ouml;schen',
-				'download' => 'Datei herunterladen',
+				'download' => 'Dateien: Datei herunterladen',
+				'cached' => 'Dateien: Datei herunterladen',
 			),
 			'Error' => array(
 				'NotAuthorized' => 'FEHLER - Nicht berechtigt'

@@ -1,5 +1,4 @@
-<?php
-/* ********************************************************************************************
+{* ********************************************************************************************
  * Copyright (c) 2011 Nils Bohrs
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this
@@ -20,37 +19,19 @@
  * 
  * Thirdparty licenses see LICENSE
  * 
- * ********************************************************************************************/
-
-// setup autoload
-require_once('lib/common.inc.php');
-
-// global test classes
-
-class TestObject extends Object {
-	
-	function __construct() {
-		parent::__construct();
-	}
-	
-	public static function lang($string) {
-		return parent::lang($string);
-	}
-}
-
-class TestView extends PageView {
-	
-	function __construct() {
-		parent::__construct();
-	}
-}
-
-class TestDb extends Db {
-	
-	function __construct() {
-		parent::__construct();
-	}
-}
-
-
-?>
+ * ********************************************************************************************}
+<div id="tabs">
+	<ul>
+{for $i=0 to (count($data)-1)}
+		<li><a href="#tab-{$i}" title="{$data.$i.tab}">{$data.$i.tab}</a></li>
+{/for}
+	</ul>
+{for $i=0 to (count($data)-1)}
+	<div id="tab-{$i}">
+		<p>{$data.$i.caption}</p>
+		{if isset($data.$i.action) && $data.$i.action != ''}<p><a href="administration.php?id=user&amp;action={$data.$i.action|escape}" title="{$backName}">{$backName}</a></p>{/if}
+		{$data.$i.content}
+		{if isset($data.$i.action) && $data.$i.action != ''}<p><a href="administration.php?id=user&amp;action={$data.$i.action|escape}" title="{$backName}">{$backName}</a></p>{/if}
+	</div>
+{/for}
+</div>

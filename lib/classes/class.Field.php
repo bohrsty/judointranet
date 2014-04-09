@@ -974,7 +974,7 @@ class Field extends Object {
 					$this->getError()->handle_error($errno);
 				}
 			}
-		} else {
+		} elseif($this->get_value() != '') {
 			
 			// execute single query
 			$value = str_replace('|',$db->real_escape_string($this->get_value()),$config['sql'][1]);		

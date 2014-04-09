@@ -39,6 +39,8 @@ class Group extends Object {
 	private $subGroups;
 	private $parent;
 	private $valid;
+	private $level;
+	private $used;
 	
 	/*
 	 * getter/setter
@@ -73,13 +75,25 @@ class Group extends Object {
 	public function setValid($valid) {
 		$this->valid = $valid;
 	}
+	public function getLevel(){
+		return $this->level;
+	}
+	public function setLevel($level) {
+		$this->level = $level;
+	}
+	public function getUsed(){
+		return $this->used;
+	}
+	public function setUsed($used) {
+		$this->used = $used;
+	}
 	
 	
 	
 	/*
 	 * constructor/destructor
 	 */
-	public function __construct($id) {
+	public function __construct($id = 0) {
 		
 		// parent constructor
 		parent::__construct();
@@ -88,7 +102,9 @@ class Group extends Object {
 		$this->setId($id);
 		
 		// get data from db
-		$this->dbLoadGroup();
+		if($id != 0) {
+			$this->dbLoadGroup();
+		}
 	}
 	
 	
@@ -149,6 +165,8 @@ class Group extends Object {
 		$this->setSubGroups($subGroups);
 		$this->setParent($parent);
 		$this->setValid($valid);
+		$this->setLevel(null);
+		$this->setUsed(Group::isUsed($this->getId()));
 	}
 	
 	
@@ -158,30 +176,29 @@ class Group extends Object {
 	 * 
 	 * @return array array containing the own group object and the ids/names of all subgroup objects
 	 */
-	public function allGroups() {
+	public function allGroups($level = 0) {
 		
 		// prepare return
 		$allGroups = array();
 		
 		// walk through subgroups recursively
 		if(count($this->getSubGroups()) == 0) {
+			$this->setLevel($level);
 			$allGroups[$this->getId()] = $this;
 		} else {
 			
+			// increment level for next recursion
+			$level++;
+			
 			foreach($this->getSubGroups() as $subGroup) {
-				
-				// check if has subgroups
-				if(count($subGroup->getSubGroups()) == 0) {
-					$allGroups[$subGroup->getId()] = $subGroup;
-				} else {
-					
-					// get ids
-					$tempGroups = $subGroup->allGroups();
-					$allGroups = $allGroups + $tempGroups;
-				}
+				$allGroups += $subGroup->allGroups($level);
 			}
 			
+			// decrement level for this object
+			$level--;
+			
 			// add own object
+			$this->setLevel($level);
 			$allGroups[$this->getId()] = $this;
 		}
 		
@@ -286,6 +303,191 @@ class Group extends Object {
 		} else {
 			return $mode;
 		}
+	}
+	
+	
+	/**
+	 * exists($gid) checks if a group with the given $gid exists in database
+	 * 
+	 * @param int $gid the id to be checked for existance
+	 * @return bool true if group exists, false otherwise
+	 */
+	public static function exists($gid) {
+		
+		// prepare sql
+		$sql = '
+				SELECT COUNT(*)
+				FROM `groups`
+				WHERE `id`=#?
+				';
+		
+		// get data
+		$data = Db::singleValue($sql, array($gid));
+		
+		if(!is_null($data)) {
+			return $data > 0;
+		} else {
+			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+			$this->getError()->handle_error($errno);
+		}
+	}
+	
+	
+	/**
+	 * update($data) sets the values from $data to object
+	 * 
+	 * @param array $data array containing the data to be set into object
+	 * @return void
+	 */
+	public function update($data){
+		
+		// set class variables
+		$this->setName((isset($data['name']) ? $data['name'] : ''));
+		$this->setParent((isset($data['parent']) ? $data['parent'] : 0));
+		$this->setValid((isset($data['valid']) ? $data['valid'] : 1));
+	}
+	
+	
+	/**
+	 * writeDb() writes the actual data of the object to database and returns the id
+	 * 
+	 * @return int the new id of the inserted group
+	 */
+	public function writeDb() {
+		
+		// write to db
+		// check new or update
+		if($this->getId() == 0) {
+			
+			$sql = '
+				INSERT INTO `groups`
+					(`id`, `name`, `parent`, `valid`, `modified_by`, `last_modified`)
+				VALUES
+					(NULL, \'#?\', #?, #?, #?, CURRENT_TIMESTAMP)
+			';
+			
+			$result = Db::executeQuery($sql, 
+				array(
+					$this->getName(),
+					$this->getParent(),
+					$this->getValid(),
+					$this->getUser()->get_id(),
+				)
+			);
+		} else {
+			
+			$sql = '
+				UPDATE `groups`
+					SET
+						`name`=\'#?\',
+						`parent`=#?,
+						`valid`=#?,
+						`modified_by`=#?,
+						`last_modified`=CURRENT_TIMESTAMP
+				WHERE `id`=#?
+			';
+			
+			$result = Db::executeQuery($sql, 
+				array(
+					$this->getName(),
+					$this->getParent(),
+					$this->getValid(),
+					$this->getUser()->get_id(),
+					$this->getId(),
+				)
+			);
+		}
+		
+		if(!$result) {
+			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+			$this->getError()->handle_error($errno);
+		}
+		
+		// set new id and return it
+		if($this->getId() == 0) {
+			$this->setId(Db::$insertId);
+		}
+		return $this->getId();
+	}
+	
+	
+	/**
+	 * delete() deletes the group from database
+	 * 
+	 * @return void
+	 */
+	public function delete() {
+		
+		// delete from database
+		$sql = '
+			DELETE FROM `groups`
+				WHERE `id`=#?
+		';
+		
+		$result = Db::executeQuery($sql, 
+			array(
+				$this->getId(),
+			)
+		);
+		
+		if(!$result) {
+			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+			$this->getError()->handle_error($errno);
+		}
+	}
+	
+	
+	/**
+	 * nameToTextIntended($config) returns the group name intended using $this->level and $config
+	 * 
+	 * @param array $config configuration of the intention
+	 * @return string the intended group name
+	 */
+	public function nameToTextIntended($config) {
+		
+		// get level
+		$level = $this->getLevel();
+		
+		// add intention according to $level
+		if($level == 0) {
+			return $config[0].$this->getName();
+		}
+		if($level == 1) {
+			return $config[0].$config[1].$this->getName();
+		}
+		if($level > 1) {
+			$return = $config[0];
+			for($i = 2; $i <= $level; $i++) {
+				$return .= $config['1+'];
+			}
+			return $return.$config[1].$this->getName();
+		}
+	}
+	
+	/**
+	 * isUsed($gid) checks if a group with the given $gid is used in permission table
+	 * 
+	 * @param int $gid the id of the group to be checked
+	 * @return bool true if is used, false otherwise
+	 */
+	public static function isUsed($gid) {
+		
+		// get usage
+		$sql = '
+			SELECT COUNT(*)
+			FROM `permissions`
+			WHERE `group_id`=#?
+		';
+		// get data
+		$used = Db::singleValue($sql, array($gid));
+		
+		if(is_null($used)) {
+			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+			$this->getError()->handle_error($errno);
+		}
+		
+		// return
+		return $used > 0;
 	}
 }
 

@@ -313,6 +313,34 @@ class FileView extends PageView {
 		// prepare return
 		$files = array();
 		
+//		// get calendar and protocol ids for cached file objects
+//		$calendarEntries = self::getUser()->permittedItems('calendar', 'r');
+//		$protocolEntries = self::getUser()->permittedItems('protocol', 'r');
+//		$sqlIn = '';
+//		// walk through calendar entries
+//		foreach($calendarEntries as $calendarId) {
+//			$sqlIn .= '\'calendar|'.$calendarId.'\',';
+//		}
+//		// walk thought protocol entries
+//		foreach($protocolEntries as $protocolId) {
+//			$sqlIn .= '\'protocol|'.$protocolId.'\',';
+//		}
+//		$sqlIn = substr($sqlIn, 0, -1);
+//		// get file ids
+//		$sql = '	SELECT `id`
+//					FROM `file`
+//					WHERE `cached` IN ('.$sqlIn.')
+//		';
+//		$cachedFileIds = Db::arrayValue($sql, MYSQL_ASSOC);
+//		if(!$cachedFileIds) {
+//			$errno = $this->getError()->error_raised('MysqlError', Db::$error, $sql);
+//			$this->getError()->handle_error($errno);
+//		}
+//		// get file objects
+//		foreach($cachedFileIds as $cachedFileId) {
+//			$files[] = new File($cachedFileId['id']);
+//		}
+		
 		// get file objects
 		$fileEntries = self::getUser()->permittedItems('file', 'r');
 		foreach($fileEntries as $fileId) {
@@ -418,7 +446,7 @@ class FileView extends PageView {
 		}
 		
 		// check permissions
-		if($this->getUser()->hasPermission('file', $fid)) {
+		if($this->getUser()->hasPermission('file', $fid) || $this->get('id') == 'cached') {
 		
 			// get file object
 			$file = new File($fid);

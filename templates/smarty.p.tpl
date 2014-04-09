@@ -20,4 +20,10 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
+{if isset($ps) && is_array($ps)}
+{foreach $ps as $p}
+<p{if $p.params!=''} {$p.params}{/if}>{$p.content}</p>
+{/foreach}
+{else}
 <p{if $params!=''} {$params}{/if}>{$content}</p>
+{/if}

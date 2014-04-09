@@ -225,7 +225,9 @@ class Navi extends PageView {
 		$allItems = array();
 		
 		// check permissions or main page
-		if($this->getUser()->hasPermission('navi', $this->getId()) || $this->getFileParam() == 'index.php|') {
+		if(	$this->getUser()->hasPermission('navi', $this->getId())
+			|| $this->subItemsPermitted()
+			|| $this->getFileParam() == 'index.php|') {
 			
 			// walk through subitems recursively
 			if(count($this->getSubItems()) == 0) {
@@ -382,6 +384,132 @@ class Navi extends PageView {
 		
 		// return
 		return $id;
+	}
+	
+	
+	/**
+	 * exists($nid) checks if the given $nid exists in database
+	 * 
+	 * @param int $gid the navi id to be checked for existance
+	 * @return bool true if $nid exists, false otherwise
+	 */
+	public static function exists($nid) {
+		
+		// prepare sql
+		$sql = '
+				SELECT COUNT(*)
+				FROM `navi`
+				WHERE `id`=#?
+				';
+		
+		// get data
+		$data = Db::singleValue($sql, array($nid));
+		
+		if(!is_null($data)) {
+			return $data > 0;
+		} else {
+			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+			$this->getError()->handle_error($errno);
+		}
+	}
+	
+	
+	/**
+	 * dbDeletePermissions() removes all permissions that are directly given to $this object
+	 * from database
+	 * 
+	 * @return void
+	 */
+	public function dbDeletePermission() {
+		
+		// prepare sql statement to delete permissions
+		$sql = 'DELETE FROM permissions
+				WHERE item_table=\'navi\'
+					AND item_id=#?';
+		
+		// execute statement
+		$result = Db::executeQuery($sql, array($this->getId()));
+		
+		// get data
+		$items = array();
+		if(!$result) {
+			$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+			self::getError()->handle_error($errno);
+		}
+	}
+	
+	
+	/**
+	 * dbWritePermissions($permissions) writes the permissions given in the $permissions array
+	 * to database
+	 * 
+	 * @param array $permissions array containing group objects and the given permission value
+	 * 		that should be granted to the corresponding group
+	 * @return void 
+	 */
+	public function dbWritePermission($permissions) {
+		
+		// create values
+		$values = '';
+		foreach($permissions as $groupId => $permission) {
+			
+			// set groups w/o admin
+			if($groupId != 1) {
+				if($permission['value'] != '0') {
+					$values .= '(
+								\'navi\',
+								'.Db::realEscapeString($this->getId()).',
+								-1,
+								'.Db::realEscapeString($groupId).',
+								\''.Db::realEscapeString($permission['value']).'\',
+								CURRENT_TIMESTAMP,
+								'.Db::realEscapeString($this->getUser()->get_id()).'
+								),';
+				}
+			}
+		}
+		
+		// if values to insert
+		if(strlen($values) > 0) {
+			
+			// remove last ","
+			$values = substr($values, 0, -1);
+			
+			// prepare sql statement to get group details
+			$sql = 'INSERT IGNORE INTO permissions
+						(`item_table`, `item_id`, `user_id`, `group_id`, `mode`, `last_modified`, `modified_by`)
+					VALUES
+						'.$values;
+			
+			// execute statement
+			$result = Db::executeQuery($sql);
+			
+			// get data
+			$items = array();
+			if(!$result) {
+				$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+				self::getError()->handle_error($errno);
+			}
+		}
+	}
+	
+	
+	/**
+	 * subItemsPermitted() checks if the actual user has permissions von the subitems
+	 * 
+	 * @return bool true if the actual user has permissions on subitems, false otherwise
+	 */
+	public function subItemsPermitted() {
+		
+		// walk through subitems
+		foreach($this->getSubItems() as $subItem) {
+			if($this->getUser()->hasPermission('navi', $subItem->getId()) === true) {
+				return true;
+			}
+		}
+		
+		// return
+		return false;
 	}
 	
 }

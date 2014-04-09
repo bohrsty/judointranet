@@ -12,3 +12,4 @@
 /templates/smarty/compile/*string.php
 /cnf/config.ini
 /lib/classes/class.Test*.php
+/cnf/setup.ini

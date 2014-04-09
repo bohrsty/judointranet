@@ -54,6 +54,7 @@ class Object {
 		if(is_null($user)) {
 			if(!isset($_SESSION['user'])) {
 				// initialize user
+				$_SESSION['user'] = false;
 				$_SESSION['user'] = new User();
 			}
 		} else {
@@ -476,6 +477,21 @@ class Object {
 		if($first->getPosition() > $second->getPosition()) {
 			return 1;
 		}
+	}
+	
+	
+	/**
+	 * callbackSortGroupsAlpha($first, $second) compares two Group objects alphabetically
+	 * by name (for usort)
+	 * 
+	 * @param object $first first group entry
+	 * @param object $second second group entry
+	 * @return int -1 if $first<$second, 0 if equal, 1 if $first>$second
+	 */
+	public function callbackSortGroupsAlpha($first, $second) {
+		
+		// compare name
+		return strnatcasecmp($first->getName(), $second->getName());
 	}
 }
 

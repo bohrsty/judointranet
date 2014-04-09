@@ -575,11 +575,14 @@ class Calendar extends Page {
 			
 		// add check announcement value check
 		$return[0] = array(
-				'result' => self::check_ann_value($this->get('cid')),
+				'result' => self::check_ann_value($this->get('tid')),
 				'error' => 'AnnNotExists',
 				'errorMessage' => 'entry:'.$this->get_id().'|'.$this->get_preset_id(),
 				'errorEntry' => $this->get_id().'|'.$this->get_preset_id(),
 			);
+		
+		// return
+		return $return;
 		
 	}
 	

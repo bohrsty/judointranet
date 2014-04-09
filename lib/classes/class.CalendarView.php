@@ -317,8 +317,8 @@ class CalendarView extends PageView {
 				}
 					
 				// add admin
-				// logged in and write permissions
-				$admin = $this->getUser()->get_loggedin() && $this->getUser()->hasPermission('calendar', $entry->get_id(),'w'); 
+				// logged in and write permissions;
+				$admin = $this->getUser()->get_loggedin() && $this->getUser()->hasPermission('calendar', $entry->get_id(), 'w'); 
 				if($admin === true) {
 					
 					// prepare admin help
@@ -951,9 +951,9 @@ class CalendarView extends PageView {
 	 * @return string html-string
 	 */
 	private function edit($cid) {
-		
+var_dump($cid);		
 		// check permissions
-		if($this->getUser()->hasPermission('calendar', $cid)) {
+		if($this->getUser()->hasPermission('calendar', $cid, 'w')) {
 			
 			// smarty-templates
 			$sD = new JudoIntranetSmarty();

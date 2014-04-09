@@ -577,6 +577,10 @@ img.iconRead {
 	margin-left: 10px;
 }
 
+#naviPermission img.iconRead {
+	margin-left: 0px;
+}
+
 span.headlineText,span.groupName {
 	margin-left: 5px;
 }
@@ -603,6 +607,61 @@ div.resetFilter {
 	font-weight: bold;
 }
 
+div.setupMessage {
+	font-family: sans-serif;
+	margin: auto;
+	width: 700px;
+	min-height: 300px;
+	border-radius: 3px;
+	padding: 5px;
+}
+
+div.messageError {
+	border: 1px dashed red;
+}
+
+div.messageWarn {
+	border: 1px dashed orange;
+}
+
+div.messageInfo {
+	border: 1px dashed #3a9ec8;
+}
+
+h3.messageError {
+	color: red;
+}
+
+h3.messageWarn {
+	color: orange;
+}
+
+h3.messageInfo {
+	color: #3a9ec8;
+}
+
+.monospace {
+	font-family: monospace;
+	font-size: 90%;
+}
+
+.bgGrey {
+	background-color: #ddd;
+}
+
+.width400 {
+	width: 400px;
+}
+
+select#groups,
+select#subgroupOf {
+	width: 150px;
+}
+
+
+/*
+ * override external library styles
+ */
 .Zebra_Form_error_message .message {
 	background: #b6d6e4;
 	color: black;

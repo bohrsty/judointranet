@@ -20,27 +20,21 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-{if isset($data)}
-{for $i=0 to (count($data)-1)}
-<table class="content protocol_showdecisions">
-	<tr class="head">
-		<td class="date">
-			<b>{$data.$i.date}</b>
-		</td>
-		<td class="type">
-			<b>{$data.$i.type}</b>
+<table class="content">
+	<tr>
+		<th>{Object::lang('class.AdministrationView#groupContent#groupList#captionName')}</th>
+		<th>{Object::lang('class.AdministrationView#groupContent#groupList#captionDelete')}</th>
+	</tr>
+{foreach $groups as $gid => $group}
+{if $gid != 1}
+	<tr class="{cycle values="even,odd"}">
+		<td class="width400">
+			<a href="administration.php?id=user&amp;action={$action|escape}&amp;subaction=groupedit&amp;gid={$gid|escape}" title="{$group->getName()} {Object::lang('class.AdministrationView#groupContent#groupList#editGroup')}">{$group->getName()}</a>
 		</td>
 		<td>
-			<b>{$data.$i.location}</b>
+			{if !$group->getUsed()}<a href="administration.php?id=user&amp;action={$action|escape}&amp;subaction=groupdelete&amp;gid={$gid|escape}" title="{$group->getName()} {Object::lang('class.AdministrationView#groupContent#groupList#deleteGroup')}"><img src="img/group_delete.png" alt="{$group->getName()} {Object::lang('class.AdministrationView#groupContent#groupList#deleteGroup')}"/></a>{/if}
 		</td>
 	</tr>
-{for $j=0 to count($data.$i.decisions) -1}
-	<tr class="decision{cycle values=" even, odd"}">
-		<td colspan="3">
-			{$data.$i.decisions.$j}	
-		</td>
-	</tr>
-{/for}
-</table>
-{/for}
 {/if}
+{/foreach}
+</table>

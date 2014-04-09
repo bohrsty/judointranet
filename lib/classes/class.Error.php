@@ -395,6 +395,81 @@ class Error extends Object {
 				$this->set_errors($errors);
 			break;
 			
+			case 'GETUnknownAction':
+				
+				// non-fatal error, message
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
+				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#GETUnknownAction#ERROR.caption').'</h3>';
+				$message .= '<p>'.parent::lang('class.Error#handle_error#GETUnknownAction#ERROR.message').'</p>';
+				$message .= '[GETUnknownAction: "'.$this->return_message($errno).'"]';
+				$message .= '</div>';
+				
+				// set output
+				$errors = $this->get_errors();
+				$errors[$errno]['output'] = $message;
+				$this->set_errors($errors);
+			break;
+			
+			case 'NidNotExists':
+				
+				// non-fatal error, message
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
+				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#NidNotExists#ERROR.caption').'</h3>';
+				$message .= '<p>'.parent::lang('class.Error#handle_error#NidNotExists#ERROR.message').'</p>';
+				$message .= '[NidNotExits: "'.$this->return_entry($errno).'" in '.$this->return_message($errno).']';
+				$message .= '</div>';
+				
+				// set output
+				$errors = $this->get_errors();
+				$errors[$errno]['output'] = $message;
+				$this->set_errors($errors);
+			break;
+			
+			case 'GidNotExists':
+				
+				// non-fatal error, message
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
+				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#GidNotExists#ERROR.caption').'</h3>';
+				$message .= '<p>'.parent::lang('class.Error#handle_error#GidNotExists#ERROR.message').'</p>';
+				$message .= '[GidNotExits: "'.$this->return_entry($errno).'" in '.$this->return_message($errno).']';
+				$message .= '</div>';
+				
+				// set output
+				$errors = $this->get_errors();
+				$errors[$errno]['output'] = $message;
+				$this->set_errors($errors);
+			break;
+			
+			case 'UidNotExists':
+				
+				// non-fatal error, message
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
+				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#UidNotExists#ERROR.caption').'</h3>';
+				$message .= '<p>'.parent::lang('class.Error#handle_error#UidNotExists#ERROR.message').'</p>';
+				$message .= '[UidNotExits: "'.$this->return_entry($errno).'" in '.$this->return_message($errno).']';
+				$message .= '</div>';
+				
+				// set output
+				$errors = $this->get_errors();
+				$errors[$errno]['output'] = $message;
+				$this->set_errors($errors);
+			break;
+			
+			case 'ObjectInUse':
+				
+				// non-fatal error, message
+				$message = '<div style="font-family: sans-serif; margin: 150px auto; width: 400px; height: 300px; border: 1px dashed red; border-radius: 3px; padding: 5px;">';
+				$message .= '<h3 style="color: red;">'.parent::lang('class.Error#handle_error#ObjectInUse#ERROR.caption').'</h3>';
+				$message .= '<p>'.parent::lang('class.Error#handle_error#ObjectInUse#ERROR.message').'</p>';
+				$message .= '[ObjectInUse: "'.$this->return_entry($errno).'" in '.$this->return_message($errno).']';
+				$message .= '</div>';
+				
+				// set output
+				$errors = $this->get_errors();
+				$errors[$errno]['output'] = $message;
+				$this->set_errors($errors);
+			break;
+			
 			default:
 				
 			break;

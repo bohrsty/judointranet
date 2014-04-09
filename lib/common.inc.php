@@ -26,7 +26,59 @@
 /*
  * define constant to check in each .php-file
  */
-define("JUDOINTRANET","secured");
+define('JUDOINTRANET', 'secured');
+
+/*
+ * set session name
+ */
+session_name('JudoIntranet');
+
+/*
+ * define code version
+ */
+define('CONF_GLOBAL_VERSION', '015');
+
+/*
+ * define constants
+ */
+// db error codes
+define('DB_CONF_NOT_ACCESSIBLE', 1);
+define('DB_CONF_NOT_SET', 2);
+define('DB_CONNECTION_FAILED', 4);
+// version check
+define('VERSION_DO_INSTALL', 0);
+define('VERSION_DO_UPGRADE', 1);
+define('VERSION_EQUAL', 2);
+define('VERSION_LOWER', 3);
+define('VERSION_HIGHER', 4);
+define('VERSION_NO_CONFIG', 5);
+define('VERSION_DB_ERROR', 6);
+define('VERSION_EMPTY_DB', 7);
+define('VERSION_ERROR', 255);
+// helpmessages
+define('HELP_MSG_ABOUT', 1);
+define('HELP_MSG_FIELDDATE', 2);
+define('HELP_MSG_FIELDNAME', 3);
+define('HELP_MSG_FIELDSHORTNAME', 4);
+define('HELP_MSG_FIELDTYPE', 5);
+define('HELP_MSG_FIELDCONTENT', 6);
+define('HELP_MSG_FIELDSORT', 7);
+define('HELP_MSG_FIELDISPUBLIC', 8);
+define('HELP_MSG_CALENDARNEW', 9);
+define('HELP_MSG_CALENDARLISTALL', 10);
+define('HELP_MSG_CALENDARLISTADMIN', 11);
+define('HELP_MSG_DELETE', 12);
+define('HELP_MSG_CALENDARLISTSORTLINKS', 13);
+define('HELP_MSG_FIELDTEXT', 14);
+define('HELP_MSG_LOGIN', 15);
+define('HELP_MSG_FIELDCHECKBOX', 16);
+define('HELP_MSG_FIELDDBSELECT', 17);
+define('HELP_MSG_FIELDDBHIERSELECT', 18);
+define('HELP_MSG_ADMINUSERTABLESELECT', 19);
+define('HELP_MSG_ADMINUSERTABLETASKS', 20);
+// write to db
+define('DB_WRITE_NEW', 1);
+define('DB_WRITE_UPDATE', 2);
 
 
 
@@ -58,31 +110,116 @@ spl_autoload_register(
 );
 
 
+// check versions
+$dbVersion = checkDbVersion();
+if($dbVersion != VERSION_EQUAL && basename($_SERVER['SCRIPT_NAME']) != 'setup.php') {
+	
+	// redirect to setup
+	header('Location: setup.php');
+}
+
+
 
 /*
- * constants
+ * methods used before objects are instanciated
  */
-define('HELP_MSG_ABOUT', 1);
-define('HELP_MSG_FIELDDATE', 2);
-define('HELP_MSG_FIELDNAME', 3);
-define('HELP_MSG_FIELDSHORTNAME', 4);
-define('HELP_MSG_FIELDTYPE', 5);
-define('HELP_MSG_FIELDCONTENT', 6);
-define('HELP_MSG_FIELDSORT', 7);
-define('HELP_MSG_FIELDISPUBLIC', 8);
-define('HELP_MSG_CALENDARNEW', 9);
-define('HELP_MSG_CALENDARLISTALL', 10);
-define('HELP_MSG_CALENDARLISTADMIN', 11);
-define('HELP_MSG_DELETE', 12);
-define('HELP_MSG_CALENDARLISTSORTLINKS', 13);
-define('HELP_MSG_FIELDTEXT', 14);
-define('HELP_MSG_LOGIN', 15);
-define('HELP_MSG_FIELDCHECKBOX', 16);
-define('HELP_MSG_FIELDDBSELECT', 17);
-define('HELP_MSG_FIELDDBHIERSELECT', 18);
-define('HELP_MSG_ADMINUSERTABLESELECT', 19);
-define('HELP_MSG_ADMINUSERTABLETASKS', 20);
 
-
+/**
+ * checkDbVersion() checks the code version against the db version and returns a
+ * constant VERSION_xxx
+ * 
+ * @return int VERSION_xxx constant indicating the state of the version check
+ */
+function checkDbVersion() {
+	
+	// load lib
+	include_once('classes/class.Db.php');
+	
+	// get db-object
+	$db = DB::newDB(false);
+	
+	// check return
+	if(!$db instanceof mysqli) {
+		
+		// analyze bitmask of $db
+		$errorFlags = Db::errorBitmask($db);
+		
+		// return
+		if($errorFlags[DB_CONF_NOT_ACCESSIBLE] || $errorFlags[DB_CONF_NOT_SET]) {
+			
+			// reset action
+			if(isset($_SESSION['setup']['action'])) {unset($_SESSION['setup']['action']);}
+			return VERSION_NO_CONFIG;
+		} elseif($errorFlags[DB_CONNECTION_FAILED]) {
+			
+			// reset action
+			if(isset($_SESSION['setup']['action'])) {unset($_SESSION['setup']['action']);}
+			return VERSION_DB_ERROR;
+		}
+	}
+	
+	// check if database is empty
+	if(Db::isEmpty() === true && !isset($_SESSION['setup']['action'])) {
+		
+		// reset action
+		if(isset($_SESSION['setup']['action'])) {unset($_SESSION['setup']['action']);}
+		return VERSION_EMPTY_DB;
+	}
+	
+	// check action
+	if(isset($_SESSION['setup']['action']) && $_SESSION['setup']['action'] == 'install') {
+		return VERSION_DO_INSTALL;
+	} elseif(isset($_SESSION['setup']['action']) && $_SESSION['setup']['action'] == 'upgrade') {
+		return VERSION_DO_UPGRADE;
+	}
+	
+	// prepare sql-statement
+	$sql = 'SELECT `value`
+			FROM `config`
+			WHERE `name`=\'global.version\'';
+	
+	// execute
+	$result = $db->query($sql);
+	
+	// check result
+	if(!$result) {
+		
+		// set mysql error
+		$_SESSION['setup']['dbConnectError'] = $db->error;
+		
+		// reset action
+		if(isset($_SESSION['setup']['action'])) {unset($_SESSION['setup']['action']);}
+		return VERSION_DB_ERROR;
+	}
+	
+	// fetch result, close db and return
+	$return = $result->fetch_array(MYSQL_NUM);
+	$db->close();
+	
+	// set version number globally
+	$GLOBALS['dbVersion'] = false;
+	if(!is_null($return)) {
+		$GLOBALS['dbVersion'] = $return[0];
+	}
+	
+	// check action
+	if(isset($_SESSION['setup']['action']) && $_SESSION['setup']['action'] == 'install') {
+		return VERSION_DO_INSTALL;
+	} elseif(isset($_SESSION['setup']['action']) && $_SESSION['setup']['action'] == 'upgrade') {
+		return VERSION_DO_UPGRADE;
+	}
+	
+	// check version
+	if(is_null($return) || (int)$return[0] > (int)CONF_GLOBAL_VERSION) {
+		return VERSION_LOWER;
+	} elseif((int)$return[0] < (int)CONF_GLOBAL_VERSION) {
+		return VERSION_HIGHER;
+	} elseif((int)$return[0] == (int)CONF_GLOBAL_VERSION) {
+		return VERSION_EQUAL;
+	}
+	
+	// error
+	return VERSION_ERROR;
+}
 
 ?>

@@ -325,7 +325,7 @@ class AnnouncementView extends PageView {
 		$sD = new JudoIntranetSmarty();
 		
 		// check permissions
-		if($this->getUser()->hasPermission('calendar', $this->get('cid'))) {
+		if($this->getUser()->hasPermission('calendar', $this->get('cid'), 'w')) {
 			
 			// check cid and pid given
 			if ($this->get('cid') !== false && $this->get('pid') !== false) {
@@ -465,7 +465,7 @@ class AnnouncementView extends PageView {
 	private function delete() {
 	
 		// check permissions
-		if($this->getUser()->hasPermission('calendar', $this->get('cid'))) {
+		if($this->getUser()->hasPermission('calendar', $this->get('cid'), 'w')) {
 			
 			// check cid and pid given
 			if ($this->get('cid') !== false && $this->get('pid') !== false) {
@@ -527,7 +527,7 @@ class AnnouncementView extends PageView {
 						$fields = $preset->get_fields();
 						
 						// delete values of the fields
-						if(Calendar::check_ann_value($calendar->get_id(),$calendar->get_preset_id()) === true) {
+						if(Calendar::check_ann_value($calendar->get_id()) === true) {
 							
 							foreach($fields as $field) {
 								

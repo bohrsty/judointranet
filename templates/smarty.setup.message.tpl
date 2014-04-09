@@ -1,5 +1,4 @@
-<?php
-/* ********************************************************************************************
+{* ********************************************************************************************
  * Copyright (c) 2011 Nils Bohrs
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this
@@ -20,37 +19,16 @@
  * 
  * Thirdparty licenses see LICENSE
  * 
- * ********************************************************************************************/
-
-// setup autoload
-require_once('lib/common.inc.php');
-
-// global test classes
-
-class TestObject extends Object {
-	
-	function __construct() {
-		parent::__construct();
-	}
-	
-	public static function lang($string) {
-		return parent::lang($string);
-	}
-}
-
-class TestView extends PageView {
-	
-	function __construct() {
-		parent::__construct();
-	}
-}
-
-class TestDb extends Db {
-	
-	function __construct() {
-		parent::__construct();
-	}
-}
-
-
-?>
+ * ********************************************************************************************}
+<div class="setupMessage {$messageType}">
+	<h3 class="{$messageType}">{$messageCaption}</h3>
+	<p>{$messageMessage}</p>
+	<p class="monospace bgGrey">{$messageValue}</p>
+{if isset($messageActions)}
+	<p>
+		{foreach $messageActions as $link}
+			<span class="Zebra_Form"><input class="submit" type="button" onclick="window.location='{$link.href|escape}'" title="{$link.title}" value="{$link.name|escape}" /></span>
+		{/foreach}
+	</p>
+{/if}
+</div>

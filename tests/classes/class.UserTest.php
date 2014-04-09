@@ -93,6 +93,16 @@ class UserTest extends PHPUnit_Framework_TestCase {
 		$this->user->set_userinfo('username', $data['username']);
 		$this->assertEquals($data['name'], $this->user->get_userinfo('name'));
 		$this->assertEquals($data['username'], $this->user->get_userinfo('username'));
+		
+		// used
+		$data = true;
+		
+		$this->user->setUsed($data);
+		$this->assertEquals($data, $this->user->getUsed());
+		
+		// test existance
+		$this->assertTrue(User::exists(1));
+		$this->assertFalse(User::exists(-1));
 	}
 	
 	
@@ -116,7 +126,16 @@ class UserTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(array(), $this->user->groups());
 		$this->assertEquals(false, $this->user->get_loggedin());
 		$this->assertEquals('class.User#login#message#default', $this->user->get_login_message());
-		$this->assertEquals(array(), $this->user->get_userinfo());
+		$this->assertEquals(
+				array(
+						'name' => 'Public',
+						'username' => 'public',
+						'password' => '',
+						'email' => '',
+						'active' => 1,
+						'last_modified' => '',
+					),
+				$this->user->get_userinfo());
 		// session
 		$this->assertCount(1, $_SESSION);
 		// config
@@ -126,12 +145,23 @@ class UserTest extends PHPUnit_Framework_TestCase {
 		$this->assertContains(TestObject::lang('class.User#logout#logout#message'), $logout);
 		$this->assertNotContains('<form ', $logout);
 		
-		// check login (correct credentials)
-		$login = $this->user->checkLogin('admin', 'admin');
-		$this->assertTrue($login);
-		// wrong password
-		$login = $this->user->checkLogin('admin', 'wrongPassword');
-		$this->assertFalse($login);
+		// check login (if default password, else skip)
+		$password = TestDb::singleValue('
+			SELECT `password`
+			FROM `user`
+			WHERE `id`=1
+		');
+		if($password == '21232f297a57a5a743894a0e4a801fc3') {
+			
+			// (correct credentials)
+			$login = $this->user->checkLogin('admin', 'admin');
+			$this->assertTrue($login);
+			// wrong password
+			$login = $this->user->checkLogin('admin', 'wrongPassword');
+			$this->assertFalse($login);
+		} else {
+			$this->markTestSkipped();
+		}
 		$this->assertEquals('class.MainView#callback_check_login#message#WrongPassword', $this->user->get_login_message());
 		// not existing user
 		$login = $this->user->checkLogin('notExistingUser', 'password');
@@ -162,6 +192,9 @@ class UserTest extends PHPUnit_Framework_TestCase {
 				$this->fail('Found user "admin" in "User::return_all_users(array(\'admin\'))"');
 			}
 		}
+		
+		// is used
+		$this->assertTrue(User::isUsed(1));
 	}
 	
 	
@@ -246,6 +279,32 @@ class UserTest extends PHPUnit_Framework_TestCase {
 			);
 		$this->user->set_userinfo($userInfo);
 		$this->user->writeDb();
+		
+		// new user
+		$this->user = new User(false);
+		$data = array(
+				'username' => 'test',
+				'password' => md5('test'),
+				'name' => 'Testuser',
+				'email' => 'test@localhost.local',
+				'active' => 1,
+				'last_modified' => '',
+			);
+		$this->user->set_userinfo($data);
+		$newGroup = new Group(1);
+		$this->user->set_groups(array($newGroup));
+		$id = $this->user->writeDb(DB_WRITE_NEW);
+		// reset user
+		$this->user = new User(false);
+		$this->user->change_user($id, false, 'id');
+		$this->assertEquals($data['username'], $this->user->get_userinfo('username'));
+		$this->assertEquals($data['password'], $this->user->get_userinfo('password'));
+		$this->assertEquals($data['name'], $this->user->get_userinfo('name'));
+		$this->assertEquals($data['email'], $this->user->get_userinfo('email'));
+		$this->assertEquals($data['active'], $this->user->get_userinfo('active'));
+		$this->assertEquals($newGroup, $this->user->get_groups()[0]);
+		$this->user->delete();
+		$this->assertFalse(User::exists($id));
 	}
 }
 

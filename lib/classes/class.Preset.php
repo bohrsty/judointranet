@@ -368,6 +368,25 @@ class Preset extends Object {
 						}
 					} else {
 						
+						// get values from db for empty all
+						$sql = $config['sql'][1];
+						$wherePos =strpos($sql, 'WHERE'); 
+						// remove WHERE
+						if($wherePos !== false) {
+							$sql = substr($sql, 0, $wherePos -1);
+						}
+						// execute statement
+						$result = DB::arrayValue($sql, MYSQL_ASSOC);
+						if(!$result) {
+							$errno = $this->getError()->error_raised('MysqlError', Db::$error, $sql);
+							$this->getError()->handle_error($errno);
+						}
+						
+						// set empty "all"-values
+						foreach($result[0] as $row => $temp) {
+							$all[$row] = '';
+						}
+						
 						// walk through values
 						foreach($values as $name => $value) {
 							// check html
@@ -378,11 +397,7 @@ class Preset extends Object {
 							}
 							
 							// add to all
-							if(!isset($all[$name])) {
-								$all[$name] = $value.$config['separators'][$name];
-							} else {
-								$all[$name] .= $value.$config['separators'][$name];
-							}
+							$all[$name] .= $value.$config['separators'][$name];
 						}
 						
 						foreach($all as $all_name => $all_value) {

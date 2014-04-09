@@ -200,7 +200,7 @@ class Filter extends Object {
 	public static function filterItems($filterId, $table, $dateFrom=null, $dateTo=null) {
 		
 		// get permitted items
-		$permittedItems = self::getUser()->permittedItems($table, 'r', $dateFrom, $dateTo);
+		$permittedItems = self::getUser()->permittedItems($table, 'w', $dateFrom, $dateTo);
 		// prepare filtered items
 		$filteredItems = array();
 		

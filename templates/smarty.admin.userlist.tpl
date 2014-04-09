@@ -20,27 +20,21 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-{if isset($data)}
-{for $i=0 to (count($data)-1)}
-<table class="content protocol_showdecisions">
-	<tr class="head">
-		<td class="date">
-			<b>{$data.$i.date}</b>
-		</td>
-		<td class="type">
-			<b>{$data.$i.type}</b>
+<table class="content">
+	<tr>
+		<th>{Object::lang('class.AdministrationView#userContent#userList#captionName')}</th>
+		<th>{Object::lang('class.AdministrationView#userContent#userList#captionDelete')}</th>
+	</tr>
+{foreach $users as $user}
+{if $user->get_id() != 1}
+	<tr class="{cycle values="even,odd"}">
+		<td class="width400">
+			<a href="administration.php?id=user&amp;action={$action|escape}&amp;subaction=useredit&amp;uid={$user->get_id()|escape}" title="{$user->get_userinfo('name')} {Object::lang('class.AdministrationView#userContent#userList#editUser')}">{$user->get_userinfo('name')}</a>
 		</td>
 		<td>
-			<b>{$data.$i.location}</b>
+			{if !$user->getUsed()}<a href="administration.php?id=user&amp;action={$action|escape}&amp;subaction=userdelete&amp;uid={$user->get_id()|escape}" title="{$user->get_userinfo('name')} {Object::lang('class.AdministrationView#userContent#userList#deleteUser')}"><img src="img/user_delete.png" alt="{$user->get_userinfo('name')} {Object::lang('class.AdministrationView#userContent#userList#deleteUser')}"/></a>{/if}
 		</td>
 	</tr>
-{for $j=0 to count($data.$i.decisions) -1}
-	<tr class="decision{cycle values=" even, odd"}">
-		<td colspan="3">
-			{$data.$i.decisions.$j}	
-		</td>
-	</tr>
-{/for}
-</table>
-{/for}
 {/if}
+{/foreach}
+</table>

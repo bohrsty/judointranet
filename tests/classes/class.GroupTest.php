@@ -77,6 +77,45 @@ class GroupTest extends PHPUnit_Framework_TestCase {
 		
 		$group->setValid($data);
 		$this->assertEquals($data, $group->getValid());
+		
+		// level
+		$data = 0;
+		
+		$this->assertEquals(null, $group->getLevel());
+		$group->setLevel($data);
+		$this->assertEquals($data, $group->getLevel());
+		
+		// used
+		$data = true;
+		
+		$group->setUsed($data);
+		$this->assertEquals($data, $group->getUsed());
+		
+		// test existance
+		$this->assertTrue(Group::exists(1));
+		$this->assertFalse(Group::exists(-1));
+		
+		// test new group, update and deletion
+		// empty group
+		$group = new Group();
+		$this->assertEquals(0, $group->getId());
+		// update
+		$data = array(
+				'name' => 'Testgroup',
+				'parent' => 0,
+				'valid' => 1,
+			);
+		$group->update(
+			$data
+		);
+		$this->assertEquals($data['name'], $group->getName());
+		$this->assertEquals($data['parent'], $group->getParent());
+		$this->assertEquals($data['valid'], $group->getValid());
+		$id = $group->writeDb();
+		$this->assertEquals($id, $group->getId());
+		// delete
+		$group->delete();
+		$this->assertFalse(Group::exists($id));
 	}
 	
 	
@@ -99,6 +138,33 @@ class GroupTest extends PHPUnit_Framework_TestCase {
 		$this->assertArrayHasKey(1, $allGroups);
 		$this->assertEquals(1, $allGroups[1]->getId());
 		$this->assertEquals('Admins', $allGroups[1]->getName());
+		
+		// is used
+		$this->assertFalse(Group::isUsed(1));
+	}
+	
+	
+	public function testGroupOutput() {
+		
+		// create group
+		$id = 1;
+		$group = new Group($id);
+		
+		// intended groupname
+		$data = array(
+				0 => '',
+				1 => '|--',
+				'1+' => '|&nbsp;&nbsp;&nbsp;',
+			);
+		
+		$group->setLevel(0);
+		$this->assertEquals($group->getName(), $group->nameToTextIntended($data));
+		$group->setLevel(1);
+		$this->assertEquals($data[1].$group->getName(), $group->nameToTextIntended($data));
+		$group->setLevel(2);
+		$this->assertEquals($data['1+'].$data[1].$group->getName(), $group->nameToTextIntended($data));
+		$group->setLevel(3);
+		$this->assertEquals($data['1+'].$data['1+'].$data[1].$group->getName(), $group->nameToTextIntended($data));
 	}
 
 }

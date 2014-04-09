@@ -43,6 +43,7 @@
 		<link rel="stylesheet" type="text/css" href="css/start/jquery-ui-1.10.3.custom.min.css" />
 		<link rel="stylesheet" type="text/css" href="css/page.css" />
 		<script type="text/javascript">
+{if isset($helpids)}
 {literal}
 			$(function() {
 				$({/literal}{$helpids}{literal}).each(function() {
@@ -75,7 +76,8 @@
 				})
 			});
 {/literal}
-{if isset($permissionJs) && $permissionJs}
+{/if}
+{if (isset($permissionJs) && $permissionJs) || (isset($userAdminJs) && $userAdminJs)}
 {literal}
 			function clearRadio(radioName) {
 				$('[name=' + radioName + ']').prop('checked', false)
@@ -86,11 +88,9 @@
 {/literal}
 {/if}
 {if isset($tabsJs) && $tabsJs}
-{literal}
-			$(function() {
-				$( "#tabs" ).tabs();
-			});
-{/literal}
+			$(function() {ldelim}
+				$( "#tabs" ).tabs({if isset($tabsJsOptions)}{$tabsJsOptions}{/if});
+			{rdelim});
 {/if}
 {if isset($accordionJs) && $accordionJs}
 {literal}
@@ -104,7 +104,7 @@
 {/literal}
 {/if}
 		</script>
-{if $manualjquery!=''}
+{if isset($manualjquery) && $manualjquery!=''}
 		<script type="text/javascript">
 			$(document).ready(function(){ldelim}
 				// jQuery functions go here...
@@ -145,28 +145,34 @@
 		{rdelim});
 		</script>
 {/if}
-		{$head}
+		{if isset($head)}{$head}{/if}
 	</head>
 	<body>
 		<div id="navi">
 			<div id="logo">
 				<p><img src="{$systemLogo}" alt="Logo" title="JudoIntranet" /></p>
 			</div>
+{if !isset($setupDisabledNavi)}
 			{if isset($accordionJs) && $accordionJs}<div id="accordion">{/if}
 {$navigation}
 			{if isset($accordionJs) && $accordionJs}</div>{/if}
+{/if}
 		</div>
 		<div id="content">
 			<div class="headinfo">
+{if isset($logininfo)}
 				<div class="logininfo">
 					{$logininfo}
 				</div>
+{/if}
+{if isset($helpabout)}
 				<div class="helpabout">
 					{$helpabout}
 				</div>
+{/if}
 			</div>
 			{block name="main"}Default Text{/block}
 		</div>
-		{$helpmessages}
+		{if isset($helpmessages)}{$helpmessages}{/if}
 	</body>
 </html>

@@ -39,6 +39,7 @@ class User extends Object {
 	private $lang;
 	private $login_message;
 	private $userinfo;
+	private $used;
 	
 	/*
 	 * getter/setter
@@ -97,9 +98,24 @@ class User extends Object {
 	}
 	public function set_userinfo($userinfo, $value='') {
 		
-		// check if $userinfo is array override complete userinfo
+		// check if $userinfo is array
 		if(is_array($userinfo)) {
-			$this->userinfo = $userinfo;
+			
+			// check if length of array match actual userinfo
+			if(count($this->userinfo) == count($userinfo)) {
+				
+				// override complete userinfo
+				$this->userinfo = $userinfo;
+			} else {
+				
+				// update changed values
+				$actualUserinfo = $this->userinfo;
+				foreach($userinfo as $infoName => $infoValue) {
+					$actualUserinfo[$infoName] = $infoValue;
+				}
+				// write updated userinfo
+				$this->userinfo = $actualUserinfo;
+			}
 		} else {
 			
 			// get actual userinfo
@@ -109,6 +125,12 @@ class User extends Object {
 			$actualUserinfo[$userinfo] = $value;
 			$this->userinfo = $actualUserinfo;
 		}
+	}
+	public function getUsed(){
+		return $this->used;
+	}
+	public function setUsed($used) {
+		$this->used = $used;
 	}
 	
 	/*
@@ -131,9 +153,6 @@ class User extends Object {
 		
 		// set loginstatus
 		$this->set_loggedin(false);
-		
-		// read groups
-		$this->set_groups($this->dbReadGroups());
 		
 		// set lang
 		$this->set_lang('de_DE');
@@ -216,12 +235,22 @@ class User extends Object {
 		// smarty-template
 		$sLogout = new JudoIntranetSmarty();
 		
+		// prepare public userinfo
+		$userinfo = array(
+				'name' => 'Public',
+				'username' => 'public',
+				'password' => '',
+				'email' => '',
+				'active' => 1,
+				'last_modified' => '',
+			);
+		
 		// set user-properties to public access
 		$this->set_id(0);
 		$this->set_groups(array());
 		$this->set_loggedin(false);
 		$this->set_login_message('class.User#login#message#default');
-		$this->set_userinfo(array());
+		$this->set_userinfo($userinfo);
 		
 		// cleanup session
 		foreach($_SESSION as $name => $session) {
@@ -354,6 +383,9 @@ class User extends Object {
 		
 		// set loginstatus
 		$this->set_loggedin($loggedin);
+		
+		
+		$this->setUsed(User::isUsed($this->get_id()));
 		
 	}
 	
@@ -565,7 +597,13 @@ class User extends Object {
 		
 		// get group ids
 		$groupIds = implode(',', array_keys($ownGroups));
-			
+		
+		// prepare mode
+		$sqlMode = '(`mode`=\'r\' OR `mode`=\'w\')';
+		if($mode == 'w') {
+			$sqlMode = '`mode`=\'w\'';
+		}
+		
 		// prepare sql statement to get permission of the given entry
 		$sql = 'SELECT *
 				FROM permissions
@@ -573,7 +611,7 @@ class User extends Object {
 					AND item_id=\''.$db->real_escape_string($itemId).'\'
 					AND (user_id=\''.$db->real_escape_string($this->get_id()).'\'
 					OR (group_id IN ('.$db->real_escape_string($groupIds).')))
-					AND mode=\''.$db->real_escape_string($mode).'\'';
+					AND '.$sqlMode;
 		
 		// execute statement
 		$result = $db->query($sql);
@@ -613,72 +651,135 @@ class User extends Object {
 		// get group ids
 		$groupIds = implode(',', array_keys($ownGroups));
 		
-		// get db object
-		$db = Db::newDb();
-		// prepare $sql
-		$sql = '';
+		// prepare return
+		$itemIds = array();
 		
 		// prepare sql statement to get permission of the given entry
+		// prepare mode
+		$sqlMode = 'AND `p`.`mode`=\'r\'';
+		if($mode == 'w') {
+			$sqlMode = 'AND (`p`.`mode`=\'r\' OR `p`.`mode`=\'w\')';
+		}
 		// prepare date
 		$sqlDate = '';
 		if(!is_null($dateFrom) && !is_null($dateTo)) {
-			$sqlDate = (isset($ownGroups[1]) ? ' WHERE' : ' AND').' t.date>=\''.$db->real_escape_string($dateFrom).'\' AND t.date<=\''.$db->real_escape_string($dateTo).'\'';
+			$sqlDate = (isset($ownGroups[1]) ? ' WHERE' : ' AND').' t.date>=\''.$dateFrom.'\' AND t.date<=\''.$dateTo.'\'';
 		}
 		// admin is permitted to anything
 		if(isset($ownGroups[1])) {
+			
 			$sql = 'SELECT t.id
-				FROM `'.$db->real_escape_string($itemTable).'` AS t'.$sqlDate;
+				FROM `'.$itemTable.'` AS t'.$sqlDate;
+			
+			$adminResult = Db::arrayValue($sql, MYSQL_ASSOC);
+			
+			// get data
+			if(is_array($adminResult)) {
+				foreach($adminResult as $id) {
+					$itemIds[] = $id['id'];
+				}
+			} else {
+				$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+				self::getError()->handle_error($errno);
+			}
 		} else {
 			
 			// switch by $itemTable
 			if($itemTable == 'file') {
-				// files take the permission from calendar, protocol or the uploaded files
-				$sql = 'SELECT f.id
-						FROM file AS f,
-							(SELECT t.id
-							FROM permissions AS p, `calendar` AS t
-							WHERE p.item_table=\'calendar\'
-								AND (p.user_id=\''.$db->real_escape_string($this->get_id()).'\'
-								OR (p.group_id IN ('.$db->real_escape_string($groupIds).')))
-								AND p.mode=\'r\'
-								AND p.item_id=t.id'.$sqlDate.'
-							) cid,
-							(SELECT t.id
-							FROM permissions AS p, `protocol` AS t
-							WHERE p.item_table=\'protocol\'
-								AND (p.user_id=\''.$db->real_escape_string($this->get_id()).'\'
-								OR (p.group_id IN ('.$db->real_escape_string($groupIds).')))
-								AND p.mode=\'r\'
-								AND p.item_id=t.id
+				
+				// calendar
+				$sql = '
+						SELECT DISTINCT `f`.`id`
+						FROM `file` AS f,
+							(SELECT DISTINCT `t`.`id`
+							FROM `permissions` AS p, `calendar` AS t
+							LEFT JOIN `permissions` ON `t`.`id`
+							WHERE `p`.`item_table`=\'calendar\'
+								AND (`p`.`user_id`=\'#?\'
+								OR (`p`.`group_id` IN (#?)))
+								'.$sqlMode.$sqlDate.'
+							) cid
+						WHERE `f`.`cached`=CONCAT(\'calendar|\',`cid`.`id`)
+					';
+				$cachedCalendarResult = Db::arrayValue(
+					$sql,
+					MYSQL_ASSOC,
+					array(
+							$this->get_id(),
+							$groupIds,
+						)
+				);
+				// protocol
+				$sql = '
+						SELECT DISTINCT `f`.`id`
+						FROM `file` AS f,
+							(SELECT DISTINCT `t`.`id`
+							FROM `permissions` AS p, `protocol` AS t
+							LEFT JOIN `permissions` ON `t`.`id`
+							WHERE `p`.`item_table`=\'protocol\'
+								AND (`p`.`user_id`=\'#?\'
+								OR (`p`.`group_id` IN (#?)))
+								'.$sqlMode.'
 							) pid
-						WHERE f.cached=CONCAT(\'calendar|\',cid.id)
-							OR f.cached=CONCAT(\'protocol|\',pid.id)';
+						WHERE `f`.`cached`=CONCAT(\'protocol|\',`pid`.`id`)
+					';
+				$cachedProtocolResult = Db::arrayValue(
+					$sql,
+					MYSQL_ASSOC,
+					array(
+							$this->get_id(),
+							$groupIds,
+						)
+				);
+				
+				// get data
+				if(is_array($cachedCalendarResult)) {
+					foreach($cachedCalendarResult as $id) {
+						$itemIds[] = $id['id'];
+					}
+				} else {
+					$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+					self::getError()->handle_error($errno);
+				}
+				if(is_array($cachedProtocolResult)) {
+					foreach($cachedProtocolResult as $id) {
+						$itemIds[] = $id['id'];
+					}
+				} else {
+					$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+					self::getError()->handle_error($errno);
+				}
 			} else {
-				$sql = 'SELECT t.id
-					FROM permissions AS p, `'.$db->real_escape_string($itemTable).'` AS t
-					WHERE p.item_table=\''.$db->real_escape_string($itemTable).'\'
-						AND (p.user_id=\''.$db->real_escape_string($this->get_id()).'\'
-						OR (p.group_id IN ('.$db->real_escape_string($groupIds).')))
-						AND p.mode=\''.$db->real_escape_string($mode).'\'
-						AND p.item_id=t.id'.$sqlDate;
+				
+				$sql = '
+					SELECT DISTINCT `t`.`id`
+					FROM `permissions` AS p, `#?` AS t
+					LEFT JOIN `permissions` ON `t`.`id`
+					WHERE `p`.`item_table`=\'#?\'
+						AND (`p`.`user_id`=\'#?\'
+						OR (`p`.`group_id` IN (#?)))
+						'.$sqlMode.$sqlDate;
+				$itemResult = Db::arrayValue(
+					$sql,
+					MYSQL_ASSOC,
+					array(
+							$itemTable,
+							$itemTable,
+							$this->get_id(),
+							$groupIds,
+						)
+				);
+				
+				// get data
+				if(is_array($itemResult)) {
+					foreach($itemResult as $id) {
+						$itemIds[] = $id['id'];
+					}
+				} else {
+					$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+					self::getError()->handle_error($errno);
+				}
 			}
-		}
-		
-		// execute statement
-		$result = $db->query($sql);
-		
-		// close db
-		$db->close();
-		
-		// get data
-		$itemIds = array();
-		if($result) {
-			while(list($itemId) = $result->fetch_array(MYSQL_NUM)) {
-				$itemIds[] = $itemId;
-			}
-		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-			self::getError()->handle_error($errno);
 		}
 		
 		// return
@@ -728,30 +829,214 @@ class User extends Object {
 	
 	
 	/**
-	 * writeDb() writes the actual data of the user back to the database
+	 * writeDb($mode) writes the actual data of the user back to the database
 	 * 
+	 * @param int $mode indicates new or update
 	 * @return void
 	 */
-	public function writeDb() {
+	public function writeDb($mode = DB_WRITE_UPDATE) {
 		
-		// get db-object
-		$db = Db::newDb();
+		// check $mode
+		if($mode == DB_WRITE_NEW) {
+			
+			$sql = 'INSERT INTO `user`
+						(`id`,`username`,`password`,`name`,`email`,`active`,`last_modified`)
+					VALUES
+						 (NULL,\'#?\',\'#?\',\'#?\',\'#?\',#?,CURRENT_TIMESTAMP)';
+			
+			// execute statement
+			$result = Db::executeQuery(
+				$sql,
+				array(
+						$this->get_userinfo('username'),
+						$this->get_userinfo('password'),
+						$this->get_userinfo('name'),
+						$this->get_userinfo('email'),
+						$this->get_userinfo('active'),
+					)
+			);
+		} elseif($mode == DB_WRITE_UPDATE) {
+			
+			$sql = 'UPDATE `user`
+					SET
+						`username`=\'#?\',
+						`password`=\'#?\',
+						`name`=\'#?\',
+						`email`=\'#?\',
+						`active`=#?,
+						`last_modified`=CURRENT_TIMESTAMP
+					WHERE `id`=#?';
+			
+			// execute statement
+			$result = Db::executeQuery(
+				$sql,
+				array(
+						$this->get_userinfo('username'),
+						$this->get_userinfo('password'),
+						$this->get_userinfo('name'),
+						$this->get_userinfo('email'),
+						$this->get_userinfo('active'),
+						$this->get_id(),
+					)
+			);
+		}
 		
-		// prepare sql-statement
-		$sql = 'UPDATE user
-				SET
-					name = \''.$db->real_escape_string($this->get_userinfo('name')).'\',
-					email = \''.$db->real_escape_string($this->get_userinfo('email')).'\'
-				WHERE id = '.$db->real_escape_string($this->userid());
-		
-		// execute statement
-		$result = $db->query($sql);
+		// set new id
+		if($this->get_id() == 0) {
+			$this->set_id(Db::$insertId);
+		}
 		
 		// get data
 		if(!$result) {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
+			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
 			$this->getError()->handle_error($errno);
 		}
+		
+		// remove group membership from db and write new
+		$sql = 'DELETE FROM `user2groups`
+				WHERE `user_id`=#?';
+			
+		// execute statement
+		$result = Db::executeQuery(
+			$sql,
+			array(
+					$this->get_id(),
+				)
+		);
+		if(!$result) {
+			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+			$this->getError()->handle_error($errno);
+		}
+
+		$groupValues = '';
+		foreach($this->get_groups() as $ownGroup) {
+			$groupValues .= '('.$this->get_id().','.$ownGroup->getId().',CURRENT_TIMESTAMP),';
+		}
+		if($groupValues != '') {
+			$groupValues = substr($groupValues, 0, -1);
+			$sql = 'INSERT INTO `user2groups`
+						(`user_id`,`group_id`,`last_modified`)
+					VALUES
+						'.$groupValues;
+				
+			// execute statement
+			$result = Db::executeQuery(
+				$sql
+			);
+			if(!$result) {
+				$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+				$this->getError()->handle_error($errno);
+			}
+		}
+		
+		// return
+		return $this->get_id();
+	}
+	
+	
+	/**
+	 * exists($uid) checks if a user with the given $uid exists in database
+	 * 
+	 * @param int $uid the id to be checked for existance
+	 * @return bool true if user exists, false otherwise
+	 */
+	public static function exists($uid) {
+		
+		// prepare sql
+		$sql = '
+				SELECT COUNT(*)
+				FROM `user`
+				WHERE `id`=#?
+				';
+		
+		// get data
+		$data = Db::singleValue($sql, array($uid));
+		
+		if(!is_null($data)) {
+			return $data > 0;
+		} else {
+			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+			$this->getError()->handle_error($errno);
+		}
+	}
+	
+	
+	/**
+	 * delete() deletes the user from database
+	 * 
+	 * @return void
+	 */
+	public function delete() {
+		
+		// delete from database
+		$sql = '
+			DELETE FROM `user`
+				WHERE `id`=#?
+		';
+		
+		$result = Db::executeQuery($sql, 
+			array($this->get_id(),)
+		);
+		
+		if(!$result) {
+			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+			$this->getError()->handle_error($errno);
+		}
+		
+		// remove group membership from db
+		$sql = 'DELETE FROM `user2groups`
+				WHERE `user_id`=#?';
+			
+		// execute statement
+		$result = Db::executeQuery(
+			$sql,
+			array($this->get_id(),)
+		);
+		
+		if(!$result) {
+			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+			$this->getError()->handle_error($errno);
+		}
+	}
+	
+	/**
+	 * isUsed($uid) checks if a user with the given $uid is used in permission
+	 * or group table
+	 * 
+	 * @param int $uid the id of the user to be checked
+	 * @return bool true if is used, false otherwise
+	 */
+	public static function isUsed($uid) {
+		
+		// get usage
+		$sql = '
+			SELECT COUNT(*)
+			FROM `permissions`
+			WHERE `user_id`=#?
+		';
+		// get data
+		$usedPerm = Db::singleValue($sql, array($uid));
+		
+		if(is_null($usedPerm)) {
+			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+			$this->getError()->handle_error($errno);
+		}
+		
+		$sql = '
+			SELECT COUNT(*)
+			FROM `user2groups`
+			WHERE `user_id`=#?
+		';
+		// get data
+		$usedGroups = Db::singleValue($sql, array($uid));
+		
+		if(is_null($usedGroups)) {
+			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+			$this->getError()->handle_error($errno);
+		}
+		
+		// return
+		return $usedPerm + $usedGroups > 0;
 	}
 }
 

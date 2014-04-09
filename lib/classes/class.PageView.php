@@ -442,7 +442,7 @@ class PageView extends Object {
 		$this->tpl->assign('help', $help);
 		
 		// assign about
-		$helpabout = $this->getHelp()->getMessage(HELP_MSG_ABOUT, array('version' => $this->getGc()->get_config('global.version')));
+		$helpabout = $this->getHelp()->getMessage(HELP_MSG_ABOUT, array('version' => str_pad($this->getGc()->get_config('global.version'), 3, '0', STR_PAD_LEFT)));
 		$this->tpl->assign('helpabout', $helpabout);
 	}
 	
@@ -552,7 +552,14 @@ class PageView extends Object {
 		if($result) {
 			
 			while(list($naviId) = $result->fetch_array(MYSQL_NUM)) {
-				$naviItems[] = new Navi($naviId);
+				
+				// get navi object
+				$tempNavi = new Navi($naviId);
+				
+				// check permissions
+				if($tempNavi->subItemsPermitted()) {
+					$naviItems[] = $tempNavi;
+				}
 			}
 		} else {
 			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);

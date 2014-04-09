@@ -109,6 +109,10 @@ class NaviTest extends PHPUnit_Framework_TestCase {
 		
 		$navi->setSubItems($data);
 		$this->assertEquals($data, $navi->getSubItems());
+		
+		// existance
+		$this->assertTrue(Navi::exists(1));
+		$this->assertFalse(Navi::exists(-1));
 	}
 	
 	

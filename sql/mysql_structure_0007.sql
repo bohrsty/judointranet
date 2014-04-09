@@ -1,1 +1,0 @@
-ALTER TABLE `navi` ADD `required_permission` VARCHAR( 1 ) NOT NULL DEFAULT 'r' AFTER `valid`;
