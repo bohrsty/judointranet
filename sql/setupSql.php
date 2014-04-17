@@ -54,7 +54,7 @@ function initMysql() {
 	// execute sql
 	if(!Db::executeQuery($sql)) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -77,12 +77,12 @@ function versionMysql() {
 		);
 	
 	// check db version
-	if($GLOBALS['dbVersion'] === false) {
+	if($_SESSION['setup']['dbVersion'] === false) {
 		$dbVersion = 1;
-	} elseif($GLOBALS['dbVersion'] == '0.0.4') {
+	} elseif($_SESSION['setup']['dbVersion'] == '0.0.4') {
 		$dbVersion = 4;
 	} else {
-		$dbVersion = (int)$GLOBALS['dbVersion'];
+		$dbVersion = (int)$_SESSION['setup']['dbVersion'];
 	}
 	
 	// walk through version functions
@@ -104,7 +104,7 @@ function versionMysql() {
 						WHERE `name`=\'global.version\'
 					')) {
 						$return['returnValue'] = false;
-						$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+						$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 						return $return;
 					}
 				}
@@ -148,7 +148,7 @@ function mysql_1() {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -162,7 +162,7 @@ function mysql_1() {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -173,7 +173,7 @@ function mysql_1() {
 		WHERE `config`.`name` = \'systemtables\'
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -183,7 +183,7 @@ function mysql_1() {
 			VALUES (NULL, \'Default\', \'1\')
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -193,7 +193,7 @@ function mysql_1() {
 			VALUES (\'tmce.default.css\', \'default\', \'Name of default CSS style (tcme_<tcme.default.css>.css)\')
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -216,7 +216,7 @@ function mysql_2() {
 				CHANGE `correctable` `correctable` TEXT NOT NULL
 		')) {
 			$return['returnValue'] = false;
-			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
 		}
 	}
@@ -234,7 +234,7 @@ function mysql_2() {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -245,7 +245,7 @@ function mysql_2() {
 		WHERE `config`.`name` = \'systemtables\'
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -271,7 +271,7 @@ function mysql_3() {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -282,7 +282,7 @@ function mysql_3() {
 		WHERE `config`.`name` = \'systemtables\'
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -292,7 +292,7 @@ function mysql_3() {
 			VALUES (1, \'class.Help#global#title#about\', \'class.Help#global#message#about\')
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -307,7 +307,7 @@ function mysql_3() {
 				(\'global.version\', \'0.0.4\', \'\')
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -346,7 +346,7 @@ function mysql_4() {
 				(18, \'class.Help#global#title#FieldDbhierselect\', \'class.Help#global#message#FieldDbhierselect\')
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -358,7 +358,7 @@ function mysql_4() {
 				(\'global.systemcontactName\', \'Systembetreuer\', \'\')
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -381,7 +381,7 @@ function mysql_5() {
 				ADD `last_modified` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 		')) {
 			$return['returnValue'] = false;
-			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
 		}
 	}
@@ -392,7 +392,7 @@ function mysql_5() {
 				ADD `modified_by` INT( 11 ) NOT NULL
 		')) {
 			$return['returnValue'] = false;
-			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
 		}
 	}
@@ -404,7 +404,7 @@ function mysql_5() {
 				ADD `last_modified` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 		')) {
 			$return['returnValue'] = false;
-			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
 		}
 	}
@@ -415,7 +415,7 @@ function mysql_5() {
 				ADD `modified_by` INT( 11 ) NOT NULL
 		')) {
 			$return['returnValue'] = false;
-			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
 		}
 	}
@@ -446,7 +446,7 @@ function mysql_6() {
 				(\'usertableCols.defaults\', \'\', \'\')
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -470,7 +470,7 @@ function mysql_7() {
 				(\'20\', \'class.Help#global#title#adminUsertableTasks\', \'class.Help#global#message#adminUsertableTasks\')
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -499,7 +499,7 @@ function mysql_8() {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -513,7 +513,7 @@ function mysql_8() {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -528,7 +528,7 @@ function mysql_8() {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -543,7 +543,7 @@ function mysql_8() {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -559,7 +559,7 @@ function mysql_8() {
 					`last_modified`=CURRENT_TIMESTAMP
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -569,7 +569,7 @@ function mysql_8() {
 			VALUES (\'1\', \'1\', CURRENT_TIMESTAMP)
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -583,7 +583,7 @@ function mysql_8() {
 					`last_modified`=CURRENT_TIMESTAMP
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -606,7 +606,7 @@ function mysql_8() {
 		');
 		if(!$firstRow) {
 			$return['returnValue'] = false;
-			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
 		}
 		
@@ -618,7 +618,7 @@ function mysql_8() {
 		',
 		$firstRow[0])) {
 			$return['returnValue'] = false;
-			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
 		}
 		$newId = Db::$insertId;
@@ -633,7 +633,7 @@ function mysql_8() {
 		',
 		array($newId))) {
 			$return['returnValue'] = false;
-			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
 		}
 		// rights if exists
@@ -646,7 +646,7 @@ function mysql_8() {
 			',
 			array($newId))) {
 				$return['returnValue'] = false;
-				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 				return $return;
 			}
 		}
@@ -667,18 +667,18 @@ function mysql_8() {
 			WHERE `id`=1
 		')) {
 			$return['returnValue'] = false;
-			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
 		}
 	} else {
 	
 		// add first calendar entry
 		if(!Db::executeQuery('
-			INSERT INTO `calendar` (`id`, `name`, `shortname`, `date`, `type`, `content`, `preset_id`, `valid`, `last_modified`, `modified_by`)
+			INSERT IGNORE INTO `calendar` (`id`, `name`, `shortname`, `date`, `type`, `content`, `preset_id`, `valid`, `last_modified`, `modified_by`)
 				VALUES (1, \'Unix Epoch\', \'UE\', \'1970-01-01\', \'event\', \'Begin of Unix Time Epoch\', 0, 0, CURRENT_TIMESTAMP, 0)
 		')) {
 			$return['returnValue'] = false;
-			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
 
 		}
@@ -690,7 +690,7 @@ function mysql_8() {
 			VALUES (\'calendar\', \'1\', \'1\', CURRENT_TIMESTAMP)
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -709,7 +709,7 @@ function mysql_8() {
 	
 		if(!is_array($sortableGroups)) {
 			$return['returnValue'] = false;
-			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
 		}
 		// insert into filter
@@ -723,7 +723,7 @@ function mysql_8() {
 				array($sortableGroups[$i]['name'])
 			)) {
 				$return['returnValue'] = false;
-				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 				return $return;
 			}
 			// save ids
@@ -737,7 +737,7 @@ function mysql_8() {
 				array($sortableGroups[$i]['id'])
 			)) {
 				$return['returnValue'] = false;
-				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 				return $return;
 			}
 		}
@@ -757,7 +757,7 @@ function mysql_8() {
 			);
 			if(!is_array($rights)) {
 				$return['returnValue'] = false;
-				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 				return $return;
 			}
 			
@@ -771,7 +771,7 @@ function mysql_8() {
 					VALUES '.substr($sqlValues, 0, -1).'
 			')) {
 				$return['returnValue'] = false;
-				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 				return $return;
 			}
 			
@@ -783,7 +783,7 @@ function mysql_8() {
 			',
 			array('calendar', $oldGid))) {
 				$return['returnValue'] = false;
-				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 				return $return;
 			}
 		}
@@ -804,7 +804,7 @@ function mysql_8() {
 		);
 		if(!is_array($groups)) {
 			$return['returnValue'] = false;
-			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
 		}
 		// insert into groups
@@ -818,7 +818,7 @@ function mysql_8() {
 				array($groups[$i]['name'])
 			)) {
 				$return['returnValue'] = false;
-				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 				return $return;
 			}
 			// add public and save ids
@@ -831,7 +831,7 @@ function mysql_8() {
 			',
 			array($groups[$i]['id']))) {
 				$return['returnValue'] = false;
-				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 				return $return;
 			}
 	
@@ -861,7 +861,7 @@ function mysql_8() {
 					array($sqlIds[$group2group[$i]['g_id']], $sqlIds[$group2group[$i]['member_id']])
 				)) {
 					$return['returnValue'] = false;
-					$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+					$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 					return $return;
 				}
 			}
@@ -895,7 +895,7 @@ function mysql_9() {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -914,7 +914,7 @@ function mysql_9() {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -924,7 +924,7 @@ function mysql_9() {
 			VALUES (\'calendar\', 1, -1, 0, \'r\', CURRENT_TIMESTAMP, 0)
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -970,7 +970,7 @@ function mysql_9() {
 				(36, \'class.Navi#item#name#administrationPage.defaults\', \'34\', \'administration.php|defaults\', \'1\', \'1\', \'1\', CURRENT_TIMESTAMP)
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -995,7 +995,7 @@ function mysql_9() {
 				(\'navi\', 33, -1, 0, \'r\', CURRENT_TIMESTAMP, 0)
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -1006,7 +1006,7 @@ function mysql_9() {
 		WHERE `config`.`name` = \'systemtables\'
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -1060,7 +1060,7 @@ function mysql_9() {
 						VALUES '.substr($values, 0, -1).'
 				')) {
 					$return['returnValue'] = false;
-					$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+					$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 					return $return;
 				}
 				
@@ -1072,7 +1072,7 @@ function mysql_9() {
 				',
 				array(implode(',', $gids)))) {
 					$return['returnValue'] = false;
-					$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+					$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 					return $return;
 				}
 			}
@@ -1109,7 +1109,7 @@ function mysql_9() {
 						VALUES '.substr($values, 0, -1).'
 				')) {
 					$return['returnValue'] = false;
-					$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+					$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 					return $return;
 				}
 				
@@ -1121,7 +1121,7 @@ function mysql_9() {
 				',
 				array(implode(',', $gids)))) {
 					$return['returnValue'] = false;
-					$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+					$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 					return $return;
 				}
 			}
@@ -1165,7 +1165,7 @@ function mysql_9() {
 							VALUES '.substr($values, 0, -1).'
 					')) {
 						$return['returnValue'] = false;
-						$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+						$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 						return $return;
 					}
 					
@@ -1177,7 +1177,7 @@ function mysql_9() {
 					',
 					array(implode(',', $gids)))) {
 						$return['returnValue'] = false;
-						$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+						$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 						return $return;
 					}
 				}
@@ -1191,7 +1191,7 @@ function mysql_9() {
 		',
 		array(implode(',', $gids)))) {
 			$return['returnValue'] = false;
-			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
 		}
 	}
@@ -1210,7 +1210,7 @@ function mysql_9() {
 				DROP TABLE IF EXISTS `group`
 			')) {
 				$return['returnValue'] = false;
-				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 				return $return;
 			}
 		}
@@ -1221,7 +1221,7 @@ function mysql_9() {
 				DROP TABLE IF EXISTS `group2group`
 			')) {
 				$return['returnValue'] = false;
-				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 				return $return;
 			}
 		}
@@ -1232,7 +1232,7 @@ function mysql_9() {
 				DROP TABLE IF EXISTS `user2group`
 			')) {
 				$return['returnValue'] = false;
-				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 				return $return;
 			}
 		}
@@ -1243,7 +1243,7 @@ function mysql_9() {
 				DROP TABLE IF EXISTS `rights`
 			')) {
 				$return['returnValue'] = false;
-				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 				return $return;
 			}
 		}
@@ -1269,7 +1269,7 @@ function mysql_10() {
 				ADD `required_permission` VARCHAR( 1 ) NOT NULL DEFAULT \'r\' AFTER `valid`
 		')) {
 			$return['returnValue'] = false;
-			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
 		}
 	}
@@ -1285,7 +1285,7 @@ function mysql_10() {
 		',
 		array($naviIds[$i]))) {
 			$return['returnValue'] = false;
-			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
 		}
 		
@@ -1297,7 +1297,7 @@ function mysql_10() {
 		',
 		array($naviIds[$i]))) {
 			$return['returnValue'] = false;
-			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
 		}
 	}
@@ -1322,7 +1322,7 @@ function mysql_11() {
 			VALUES (\'global.systemLogo\', \'logo.png\', \'filesystem path for site logo below img\')
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -1346,7 +1346,7 @@ function mysql_12() {
 				ADD `email` VARCHAR( 75 ) NOT NULL AFTER `name`
 		')) {
 			$return['returnValue'] = false;
-			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
 		}
 	}
@@ -1358,7 +1358,7 @@ function mysql_12() {
 				ADD `last_modified` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		')) {
 			$return['returnValue'] = false;
-			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
 		}
 	}
@@ -1370,7 +1370,7 @@ function mysql_12() {
 		WHERE `id`=1
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -1380,7 +1380,7 @@ function mysql_12() {
 			VALUES (\'global.systemDemo\', \'0\', \'0 = Demomode off, 1 = Demomode on\')
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -1413,7 +1413,7 @@ function mysql_13() {
 		) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -1428,7 +1428,7 @@ function mysql_13() {
 		) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -1439,7 +1439,7 @@ function mysql_13() {
 				ADD `last_modified` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		')) {
 			$return['returnValue'] = false;
-			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
 		}
 	}
@@ -1450,7 +1450,7 @@ function mysql_13() {
 			VALUES (1, \'MIT License\', 1, \'MIT.txt\', 0x436f707972696768742032303131204e696c7320426f6872730a0a0a5065726d697373696f6e20697320686572656279206772616e7465642c2066726565206f66206368617267652c20746f20616e7920706572736f6e206f627461696e696e67206120636f7079206f6620746869730a736f66747761726520616e64206173736f63696174656420646f63756d656e746174696f6e2066696c657320287468652022536f66747761726522292c20746f206465616c20696e2074686520536f6674776172650a776974686f7574207265737472696374696f6e2c20696e636c7564696e6720776974686f7574206c696d69746174696f6e207468652072696768747320746f207573652c20636f70792c206d6f646966792c206d657267652c0a7075626c6973682c20646973747269627574652c207375626c6963656e73652c20616e642f6f722073656c6c20636f70696573206f662074686520536f6674776172652c20616e6420746f207065726d697420706572736f6e730a746f2077686f6d2074686520536f667477617265206973206675726e697368656420746f20646f20736f2c207375626a65637420746f2074686520666f6c6c6f77696e6720636f6e646974696f6e733a0a0a5468652061626f766520636f70797269676874206e6f7469636520616e642074686973207065726d697373696f6e206e6f74696365207368616c6c20626520696e636c7564656420696e20616c6c20636f70696573206f720a7375627374616e7469616c20706f7274696f6e73206f662074686520536f6674776172652e0a0a54484520534f4654574152452049532050524f564944454420224153204953222c20574954484f55542057415252414e5459204f4620414e59204b494e442c2045585052455353204f5220494d504c4945442c0a494e434c5544494e4720425554204e4f54204c494d4954454420544f205448452057415252414e54494553204f46204d45524348414e544142494c4954592c204649544e45535320464f52204120504152544943554c41520a505552504f534520414e44204e4f4e494e4652494e47454d454e542e20494e204e4f204556454e54205348414c4c2054484520415554484f5253204f5220434f5059524947485420484f4c44455253204245204c4941424c450a464f5220414e5920434c41494d2c2044414d41474553204f52204f54484552204c494142494c4954592c205748455448455220494e20414e20414354494f4e204f4620434f4e54524143542c20544f5254204f520a4f54484552574953452c2041524953494e472046524f4d2c204f5554204f46204f5220494e20434f4e4e454354494f4e20574954482054484520534f465457415245204f522054484520555345204f52204f544845520a4445414c494e475320494e2054484520534f4654574152452e0a, NULL, 0, CURRENT_TIMESTAMP, 0)
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -1462,7 +1462,7 @@ function mysql_13() {
 				(2, \'PDF-Ddokument\', \'application/pdf\', \'pdf\')
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -1473,7 +1473,7 @@ function mysql_13() {
 		WHERE `id`=34
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -1490,7 +1490,7 @@ function mysql_13() {
 				(43, \'class.Navi#item#name#filePage.cached\', \'37\', \'file.php|cached\', \'5\', \'0\', \'1\', \'r\', CURRENT_TIMESTAMP)
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -1504,7 +1504,7 @@ function mysql_13() {
 				(\'navi\', 43, -1, 0, \'r\', CURRENT_TIMESTAMP, 0)
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -1514,7 +1514,7 @@ function mysql_13() {
 			VALUES (\'file.allowedFileTypes\', \'1\', \'Ids of the allowed file extensions (file_type.id)\')
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -1524,7 +1524,7 @@ function mysql_13() {
 			VALUES (\'global.temp\', \'tmp\', \'filesystem path for temporary files (i.e. for upload)\')
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -1534,7 +1534,7 @@ function mysql_13() {
 			VALUES (\'file.maxCacheAge\', \'30\', \'Days after which the file have to be regenerated even if unchanged\')
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -1557,7 +1557,7 @@ function mysql_14() {
 			VALUES (\'navi.style\', \'default\', \'setting for the visible style of the navigation\')
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -1584,7 +1584,7 @@ function mysql_15() {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -1595,7 +1595,7 @@ function mysql_15() {
 				(44, \'class.Navi#item#name#administrationPage.useradmin\', \'34\', \'administration.php|user\', \'2\', \'1\', \'1\', CURRENT_TIMESTAMP)
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
 	
@@ -1610,8 +1610,91 @@ function mysql_15() {
 			OR `item_id`=37)
 	')) {
 		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
+	}
+	
+	// return
+	return $return;
+}
+
+
+function mysql_16() {
+	
+	// prepare return
+	$return = array(
+			'returnValue' => true,
+			'returnMessage' => '',
+		);
+	
+	// add field use_draft to preset
+	if(!Db::columnExists('preset', 'use_draft')) {
+		if(!Db::executeQuery('
+			ALTER TABLE `preset`
+				ADD `use_draft` BOOLEAN NOT NULL AFTER `filename`
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+	}
+	
+	// add draft field
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `field` (`id`,`name`,`type`,`category`,`config`)
+			VALUES
+				(-1, \'als Entwurf speichern\', \'checkbox\', 0, \'\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// insert draft field into existing value
+	$existingValues = Db::arrayValue('
+			SELECT DISTINCT `table_name`,`table_id`
+			FROM `value`
+			WHERE `table_name`=\'calendar\'
+		',
+		MYSQL_ASSOC
+	);
+	if(!$existingValues) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// check existance of draft field in value
+	$draftValuesExists = Db::singleValue('
+			SELECT COUNT(*)
+			FROM `value`
+			WHERE `table_name`=\'calendar\'
+				AND `field_id`=-1
+		'
+	) > 0;
+	if(!$draftValuesExists) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// insert into value
+	if(count($existingValues) > 0 && $draftValuesExists) {
+		$values = '';
+		for($i=0; $i<count($existingValues); $i++) {
+			
+			// add field -1 with value 0
+			$values .= '(NULL, \'calendar\', '.$existingValues[$i]['table_id'].', -1, 0, 0, CURRENT_TIMESTAMP, 0),';
+		}
+		
+		if(!Db::executeQuery('
+			INSERT IGNORE INTO `value` (`id`, `table_name`, `table_id`, `field_id`, `value`, `defaults`, `last_modified`, `modified_by`)
+				VALUES '.substr($values, 0, -1).'
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
 	}
 	
 	// return

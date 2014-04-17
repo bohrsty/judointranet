@@ -36,7 +36,7 @@ session_name('JudoIntranet');
 /*
  * define code version
  */
-define('CONF_GLOBAL_VERSION', '015');
+define('CONF_GLOBAL_VERSION', '016');
 
 /*
  * define constants
@@ -197,9 +197,9 @@ function checkDbVersion() {
 	$db->close();
 	
 	// set version number globally
-	$GLOBALS['dbVersion'] = false;
+	$_SESSION['setup']['dbVersion'] = false;
 	if(!is_null($return)) {
-		$GLOBALS['dbVersion'] = $return[0];
+		$_SESSION['setup']['dbVersion'] = (int)$return[0];
 	}
 	
 	// check action

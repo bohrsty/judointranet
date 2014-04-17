@@ -180,6 +180,12 @@ $lang = array(
 									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
 									Wenn der Fehler weiterhin auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
 			),
+			'FileNotExists' => array(
+				'ERROR.caption' => 'FEHLER',
+				'ERROR.message' => 'Die angegebene Datei existiert nicht, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
+			),
 		
 		)
 	
@@ -198,7 +204,9 @@ $lang = array(
 				'AnnEdit' => 'Ausschreibung bearbeiten',
 				'AnnDelete' => 'Ausschreibung l&ouml;schen',
 				'AnnDetails' => 'Ausschreibung anzeigen',
+				'AnnDetails.draft' => 'Ausschreibung anzeigen (ENTWURF)',
 				'AnnPDF' => 'Ausschreibung als PDF anzeigen',
+				'AnnPDF.draft' => 'Ausschreibung als PDF anzeigen (ENTWURF)',
 				'attach' => 'Datei(en) anh&auml;ngen',
 			),
 			'title' => array(

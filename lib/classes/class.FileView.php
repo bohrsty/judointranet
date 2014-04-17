@@ -920,6 +920,12 @@ class FileView extends PageView {
 		// get additional checks
 		$additionalChecks = $object->additionalChecksPassed();
 		
+		// check draft field (if calendar, ...)
+		$draftValue = 0;
+		if($table == 'calendar') {
+			$draftValue = Calendar::getDraftValue($object->get_preset_id(), $tid);
+		}
+		
 		// check additional checks
 		for($i=0; $i<count($additionalChecks)-2; $i++) {
 			if($additionalChecks[$i]['result'] === false) {
@@ -936,19 +942,29 @@ class FileView extends PageView {
 		
 		// check permissions
 		if($this->getUser()->hasPermission($table, $tid) && $additionalChecks['permissions'] || $this->getUser()->isAdmin()) {
-		
-			// get file id
-			$fid = File::idFromCache($table.'|'.$tid);
 			
-			// check cache age
-			if(File::cacheAge($table, $tid) > $this->getGc()->get_config('file.maxCacheAge')) {
-					
-				// (re)create cached file
-				$fid = $object->createCachedFile($fid);
+			// check draft field
+			if($draftValue == 0 || ($draftValue == 1 && $this->getUser()->get_loggedin())) {
+				
+				// get file id
+				$fid = File::idFromCache($table.'|'.$tid);
+				
+				// check cache age
+				if(File::cacheAge($table, $tid) > $this->getGc()->get_config('file.maxCacheAge')) {
+						
+					// (re)create cached file
+					$fid = $object->createCachedFile($fid);
+				}
+				
+				// return download
+				return $this->download($fid);
+			} else {
+				
+				// error
+				$errno = $this->getError()->error_raised('FileNotExists','entry:'.$tid, $tid);
+				$this->getError()->handle_error($errno);
+				return $this->getError()->to_html($errno);
 			}
-			
-			// return download
-			return $this->download($fid);
 		} else {
 			
 			// error

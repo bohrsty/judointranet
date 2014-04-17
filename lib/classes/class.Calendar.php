@@ -595,6 +595,25 @@ class Calendar extends Page {
 	public function getName() {
 		return $this->get_name().' '.$this->get_date('d.m.Y');
 	}
+	
+	
+	/**
+	 * getDraftValue($pid, $cid) returns the value of the draft field
+	 * 
+	 * @param int $pid id of the used preset
+	 * @param int $cid id of the calender entry
+	 * @return int the value of the draft field
+	 */
+	public static function getDraftValue($pid, $cid) {
+		
+		// get preset
+		$preset = new Preset($pid, 'calendar', $cid);
+		// get draft field and read value
+		$draftField = $preset->fieldById(-1);
+		$draftField->readValue();
+		// return value
+		return $draftField->get_value();
+	}
 }
 
 

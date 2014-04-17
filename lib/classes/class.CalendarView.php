@@ -266,6 +266,12 @@ class CalendarView extends PageView {
 		$sList = array();
 		foreach($entries as $no => $entry) {
 			
+			// get draft value
+			$draftValue = 1;
+			if($entry->get_preset_id() != 0) {
+				$draftValue = Calendar::getDraftValue($entry->get_preset_id(), $entry->get_id());
+			}
+			
 			// check if valid
 			if($entry->get_valid() == 1) {
 					
@@ -281,38 +287,46 @@ class CalendarView extends PageView {
 					);
 				
 				// details and pdf if announcement
-				if($entry->get_preset_id() != 0 && Calendar::check_ann_value($entry->get_id(),$entry->get_preset_id()) === true) {
+				$sList[$counter]['show'][0] = array(
+						'href' => '',
+						'title' => '',
+						'src' => '',
+						'alt' => '',
+						'show' => false
+					);
+				$sList[$counter]['show'][1] = array(
+						'href' => '',
+						'title' => '',
+						'src' => '',
+						'alt' => '',
+						'show' => false
+					);
+				if(	($entry->get_preset_id() != 0
+						&& Calendar::check_ann_value($entry->get_id(),$entry->get_preset_id()) === true)
+					&& ($draftValue == 0
+						|| ($draftValue == 1 && $this->getUser()->get_loggedin()))) {
 					
-					$sList[$counter]['show'][] = array(
+					// set draft for filenames and translation
+					$draftFilename = '';
+					$draftTranslate = '';
+					if($draftValue == 1) {
+						$draftFilename = '_draft_'.$this->getUser()->get_lang();
+						$draftTranslate = '.draft';
+					}
+					
+					$sList[$counter]['show'][0] = array(
 							'href' => 'announcement.php?id=details&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
-							'title' => parent::lang('class.CalendarView#listall#title#AnnDetails'),
-							'src' => 'img/ann_details.png',
-							'alt' => parent::lang('class.CalendarView#listall#alt#AnnDetails'),
+							'title' => parent::lang('class.CalendarView#listall#title#AnnDetails'.$draftTranslate),
+							'src' => 'img/ann_details'.$draftFilename.'.png',
+							'alt' => parent::lang('class.CalendarView#listall#alt#AnnDetails'.$draftTranslate),
 							'show' => true
 						);
-					$sList[$counter]['show'][] = array(
+					$sList[$counter]['show'][1] = array(
 							'href' => 'file.php?id=cached&table=calendar&tid='.$entry->get_id(),
-							'title' => parent::lang('class.CalendarView#listall#title#AnnPDF'),
-							'src' => 'img/ann_pdf.png',
-							'alt' => parent::lang('class.CalendarView#listall#alt#AnnPDF'),
+							'title' => parent::lang('class.CalendarView#listall#title#AnnPDF'.$draftTranslate),
+							'src' => 'img/ann_pdf'.$draftFilename.'.png',
+							'alt' => parent::lang('class.CalendarView#listall#alt#AnnPDF'.$draftTranslate),
 							'show' => true
-						);
-				} else {
-					
-					// smarty show
-					$sList[$counter]['show'][] = array(
-							'href' => '',
-							'title' => '',
-							'src' => '',
-							'alt' => '',
-							'show' => false
-						);
-					$sList[$counter]['show'][] = array(
-							'href' => '',
-							'title' => '',
-							'src' => '',
-							'alt' => '',
-							'show' => false
 						);
 				}
 					

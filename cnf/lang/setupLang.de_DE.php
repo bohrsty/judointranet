@@ -139,7 +139,7 @@ $lang = array(
 				'initMysqlNotExistsReadable' => '"init_mysql.sql" existiert nicht oder nicht lesbar!',
 				'dbQueryFailed' => 'Einlesen der Datenbank-Struktur fehlgeschlagen:<br />',
 				'notMigratedEntries' => 'Es konnten nicht alle Eintr&auml;ge &uuml;bertragen werden,
-										in folgender Tabelle m&uumL,ssen die &uuml;brigen Eintr&auml;ge
+										in folgender Tabelle m&uuml;ssen die &uuml;brigen Eintr&auml;ge
 										 manuell migriert werden und die Tabelle anschlie&szlig;end
 										 gel&ouml;scht werden:<br />',
 			),
@@ -158,7 +158,7 @@ $lang = array(
 			'success' => array(
 				'caption' => 'Aktualisierung erfolgreich',
 				'message' => 'Die Aktualisierung der Datenbank war erfolgreich.<br />
-								JudoIntranet l&auml;ft nun in der Version:',
+								JudoIntranet l&auml;uft nun in der Version:',
 			),
 		),
 	),

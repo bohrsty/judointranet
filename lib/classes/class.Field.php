@@ -325,7 +325,6 @@ class Field extends Object {
 				$formIds[$elementId]['type'],		// type
 				$elementId,						// id/name
 				'1',							// value
-				null,							// default
 				($this->get_value() != '' ? array('checked' => 'checked') : null)
 			);
 			
@@ -696,6 +695,7 @@ class Field extends Object {
 					WHERE field_id='.$db->real_escape_string($this->get_id()).'
 					AND table_id='.$db->real_escape_string($this->get_table_id()).'
 					AND table_name=\''.$db->real_escape_string($this->get_table()).'\'';
+
 		}
 		
 		// execute

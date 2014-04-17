@@ -603,7 +603,10 @@ class AnnouncementView extends PageView {
 			if(Calendar::check_id($this->get('cid')) && Preset::check_preset($this->get('pid'),'calendar')) {
 				
 				// check if announcement has values
-				if(Calendar::check_ann_value($this->get('cid'))) {
+				$draftValue = Calendar::getDraftValue($this->get('pid'), $this->get('cid'));
+				if(	Calendar::check_ann_value($this->get('cid'))
+					&& ($draftValue == 0
+						|| ($draftValue == 1 && $this->getUser()->get_loggedin()))) {
 					
 					// pagecaption
 					$this->tpl->assign('pagecaption',parent::lang('class.AnnouncementView#page#caption#details'));
@@ -691,20 +694,33 @@ class AnnouncementView extends PageView {
 			// check cid and pid exists
 			if(Calendar::check_id($this->get('cid')) && Preset::check_preset($this->get('pid'),'calendar')) {
 				
-				// prepare return
-				$return = '';
-				
-				// redirect to FileView::download()
-				$this->redirectTo('file',
-					array(
-							'id' => 'cached',
-							'table' => 'calendar',
-							'tid' => $this->get('cid'),
-						)
-					);
-				
-				// return
-				return $return;
+				// check if announcement has values
+				$draftValue = Calendar::getDraftValue($this->get('pid'), $this->get('cid'));
+				if(	Calendar::check_ann_value($this->get('cid'))
+					&& ($draftValue == 0
+						|| ($draftValue == 1 && $this->getUser()->get_loggedin()))) {
+					
+					// prepare return
+					$return = '';
+					
+					// redirect to FileView::download()
+					$this->redirectTo('file',
+						array(
+								'id' => 'cached',
+								'table' => 'calendar',
+								'tid' => $this->get('cid'),
+							)
+						);
+					
+					// return
+					return $return;
+				} else {
+					
+					// error
+					$errno = $this->getError()->error_raised('AnnNotExists','entry:'.$this->get('cid').'|'.$this->get('pid'),$this->get('cid').'|'.$this->get('pid'));
+					$this->getError()->handle_error($errno);
+					return $this->getError()->to_html($errno);
+				}
 			} else {
 				
 				// error

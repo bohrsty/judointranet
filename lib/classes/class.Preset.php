@@ -40,6 +40,7 @@ class Preset extends Object {
 	private $path;
 	private $filename;
 	private $view;
+	private $useDraft;
 	
 	/*
 	 * getter/setter
@@ -97,6 +98,12 @@ class Preset extends Object {
 			}
 		}
 	}
+	public function getUseDraft(){
+		return $this->useDraft;
+	}
+	public function setUseDraft($useDraft) {
+		$this->useDraft = $useDraft;
+	}
 	
 	
 	/*
@@ -130,7 +137,7 @@ class Preset extends Object {
 		$db = Db::newDb();
 		
 		// prepare sql-statement
-		$sql = "SELECT p.name,p.desc,p.path,p.filename
+		$sql = "SELECT p.name,p.desc,p.path,p.filename, p.use_draft
 				FROM preset AS p
 				WHERE p.id = $id";
 		
@@ -138,7 +145,7 @@ class Preset extends Object {
 		$result = $db->query($sql);
 		
 		// fetch result
-		list($name,$desc,$path,$filename) = $result->fetch_array(MYSQL_NUM);
+		list($name,$desc,$path,$filename, $useDraft) = $result->fetch_array(MYSQL_NUM);
 		
 		// set variables to object
 		$this->set_id($id);
@@ -146,6 +153,7 @@ class Preset extends Object {
 		$this->set_desc($desc);
 		$this->set_path($path);
 		$this->set_filename($filename);
+		$this->setUseDraft($useDraft);
 		
 		// close db
 		$db->close();
@@ -168,7 +176,8 @@ class Preset extends Object {
 	private function read_fields($id,$table,$table_id) {
 		
 		// prepare return
-		$fields = array();
+		$fields[-1] = null;
+		$tempFields = array();
 		
 		// get db-object
 		$db = Db::newDb();
@@ -184,7 +193,17 @@ class Preset extends Object {
 		// fetch result
 		while(list($field_id) = $result->fetch_array(MYSQL_NUM)) {
 			
-			$fields[] = new Field($field_id,$table,$table_id,$this->get_id(), $this->getView());
+			$tempFields[] = new Field($field_id,$table,$table_id,$this->get_id(), $this->getView());
+		}
+		
+		// walk through fields
+		foreach($tempFields as $tempField) {
+			$fields[$tempField->get_id()] = $tempField;
+		}
+		
+		// unset draft field if not used
+		if($this->getUseDraft() == 0) {
+			 unset($fields[-1]);
 		}
 		
 		// close db
@@ -446,6 +465,26 @@ class Preset extends Object {
 					}
 				}
 			}
+		}
+	}
+	
+	
+	/**
+	 * fieldById($id) returns the field with the given $id or false
+	 * 
+	 * @param int $id id of the field to be returned
+	 * @return mixed field object, if $id exists, false otherwise
+	 */
+	public function fieldById($id) {
+		
+		// get fields
+		$fields = $this->get_fields();
+		
+		// check if $id exists
+		if(isset($fields[$id])) {
+			return $fields[$id];
+		} else {
+			return false;
 		}
 	}
 }
