@@ -624,7 +624,9 @@ class Field extends Object {
 			$values = $this->dbselectValue();
 			
 			// check multiple
-			if(isset($values[0])) {
+			if(count($values) == 0) {
+				$checked_value = '';
+			} elseif(isset($values[0])) {
 				
 				// walk through $value
 				$checked_value = '';
@@ -1070,6 +1072,8 @@ class Field extends Object {
 		
 		// separate value
 		list($v_first,$v_second) = explode('|',$this->get_value(),2);
+		$v_first = ($v_first != '' ? $v_first : 0);
+		$v_second = ($v_second != '' ? $v_second : 0);
 		
 		// execute query
 		$value = $sql[0].$db->real_escape_string($v_first).$sql[1].$db->real_escape_string($v_second).$sql[2];
@@ -1080,7 +1084,7 @@ class Field extends Object {
 			// fetch result
 			$field_values = $result->fetch_array(MYSQL_ASSOC);
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
+			$errno = $this->getError()->error_raised('MysqlError', $db->error, $value);
 			$this->getError()->handle_error($errno);
 		}
 		

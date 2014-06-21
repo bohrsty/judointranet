@@ -104,7 +104,7 @@ class FileTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($data, $file->getValid());
 		
 		// id from cache
-		$this->assertFalse(File::idFromCache('protocol|1'));
+		$this->assertFalse(File::idFromCache('protocol|-1'));
 	}
 	
 	

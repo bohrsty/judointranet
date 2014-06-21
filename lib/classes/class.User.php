@@ -690,15 +690,15 @@ class User extends Object {
 				// calendar
 				$sql = '
 						SELECT DISTINCT `f`.`id`
-						FROM `file` AS f,
+						FROM `file` AS `f`,
 							(SELECT DISTINCT `t`.`id`
-							FROM `permissions` AS p, `calendar` AS t
-							LEFT JOIN `permissions` ON `t`.`id`
-							WHERE `p`.`item_table`=\'calendar\'
+							FROM `permissions` AS `p`, `calendar` AS `t`
+							WHERE `p`.`item_id`=`t`.`id`
+								AND `p`.`item_table`=\'calendar\'
 								AND (`p`.`user_id`=\'#?\'
 								OR (`p`.`group_id` IN (#?)))
-								'.$sqlMode.$sqlDate.'
-							) cid
+								'.$sqlMode.'
+							) `cid`
 						WHERE `f`.`cached`=CONCAT(\'calendar|\',`cid`.`id`)
 					';
 				$cachedCalendarResult = Db::arrayValue(
@@ -715,8 +715,8 @@ class User extends Object {
 						FROM `file` AS f,
 							(SELECT DISTINCT `t`.`id`
 							FROM `permissions` AS p, `protocol` AS t
-							LEFT JOIN `permissions` ON `t`.`id`
-							WHERE `p`.`item_table`=\'protocol\'
+							WHERE `p`.`item_id`=`t`.`id`
+								AND `p`.`item_table`=\'protocol\'
 								AND (`p`.`user_id`=\'#?\'
 								OR (`p`.`group_id` IN (#?)))
 								'.$sqlMode.'
@@ -749,36 +749,38 @@ class User extends Object {
 					$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
 					self::getError()->handle_error($errno);
 				}
-			} else {
-				
-				$sql = '
-					SELECT DISTINCT `t`.`id`
-					FROM `permissions` AS p, `#?` AS t
-					LEFT JOIN `permissions` ON `t`.`id`
-					WHERE `p`.`item_table`=\'#?\'
-						AND (`p`.`user_id`=\'#?\'
-						OR (`p`.`group_id` IN (#?)))
-						'.$sqlMode.$sqlDate;
-				$itemResult = Db::arrayValue(
-					$sql,
-					MYSQL_ASSOC,
-					array(
-							$itemTable,
-							$itemTable,
-							$this->get_id(),
-							$groupIds,
-						)
-				);
-				
-				// get data
-				if(is_array($itemResult)) {
-					foreach($itemResult as $id) {
+			}
+			
+			// uploaded files and other objects
+			$sql = '
+				SELECT DISTINCT `t`.`id`
+				FROM `permissions` AS p, `#?` AS t
+				WHERE `p`.`item_id`=`t`.`id`
+					AND `p`.`item_table`=\'#?\'
+					AND (`p`.`user_id`=\'#?\'
+					OR (`p`.`group_id` IN (#?)))
+					'.$sqlMode.$sqlDate;
+			$itemResult = Db::arrayValue(
+				$sql,
+				MYSQL_ASSOC,
+				array(
+						$itemTable,
+						$itemTable,
+						$this->get_id(),
+						$groupIds,
+					)
+			);
+			
+			// get data
+			if(is_array($itemResult)) {
+				foreach($itemResult as $id) {
+					if(!in_array($id['id'], $itemIds)) {
 						$itemIds[] = $id['id'];
 					}
-				} else {
-					$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-					self::getError()->handle_error($errno);
 				}
+			} else {
+				$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+				self::getError()->handle_error($errno);
 			}
 		}
 		

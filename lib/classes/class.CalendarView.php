@@ -260,6 +260,8 @@ class CalendarView extends PageView {
 		// loggedin? admin links
 		$sListall->assign('loggedin', $this->getUser()->get_loggedin());
 		
+		// get public
+		$publicUser = new User(false);
 		// walk through entries
 		$counter = 0;
 		// smarty
@@ -274,13 +276,14 @@ class CalendarView extends PageView {
 			
 			// check if valid
 			if($entry->get_valid() == 1) {
-					
+				
 				// smarty
 				$sList[$counter] = array(
 						'name' => array(
 								'href' => 'calendar.php?id=details&cid='.$entry->get_id(),
 								'title' => $entry->get_name(),
-								'name' => $entry->get_name()
+								'name' => $entry->get_name(),
+								'public' => $publicUser->hasPermission('calendar', $entry->get_id(), 'r') && $this->getUser()->get_loggedin(),
 							),
 						'date' => $entry->get_date('d.m.Y'),
 						
@@ -327,6 +330,27 @@ class CalendarView extends PageView {
 							'src' => 'img/ann_pdf'.$draftFilename.'.png',
 							'alt' => parent::lang('class.CalendarView#listall#alt#AnnPDF'.$draftTranslate),
 							'show' => true
+						);
+				}
+				
+				// add attached file info
+				if(count(File::attachedTo('calendar', $entry->get_id())) > 0) {
+					
+					$sList[$counter]['show'][2] = array(
+							'href' => 'calendar.php?id=details&cid='.$entry->get_id(),
+							'title' => parent::lang('class.CalendarView#listall#title#filesAttached'),
+							'src' => 'img/attachment_info.png',
+							'alt' => parent::lang('class.CalendarView#listall#alt#filesAttached'),
+							'show' => true
+						);
+				} else {
+					
+					$sList[$counter]['show'][2] = array(
+							'href' => '',
+							'title' => '',
+							'src' => '',
+							'alt' => '',
+							'show' => false
 						);
 				}
 					
@@ -754,7 +778,7 @@ class CalendarView extends PageView {
 		$form->add(
 				'note',			// type
 				'noteContent',	// id/name
-				'content',		// for
+				'entryContent',		// for
 				parent::lang('class.CalendarView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDCONTENT)	// note text
 			);
 		
@@ -864,6 +888,9 @@ class CalendarView extends PageView {
 			// smarty
 			$sCD = new JudoIntranetSmarty();
 			$sCD->assign('data', $calendar->detailsToHtml());
+			$sCD->assign('files', array());
+			$sCD->assign('attached', parent::lang('class.CalendarView#details#text#attached'));
+			$sCD->assign('none', parent::lang('class.CalendarView#details#text#none'));
 			
 			// pagecaption
 			$this->tpl->assign('pagecaption',parent::lang('class.CalendarView#page#caption#newEntry'));
@@ -965,7 +992,7 @@ class CalendarView extends PageView {
 	 * @return string html-string
 	 */
 	private function edit($cid) {
-var_dump($cid);		
+		
 		// check permissions
 		if($this->getUser()->hasPermission('calendar', $cid, 'w')) {
 			
@@ -1280,8 +1307,19 @@ var_dump($cid);
 					$calendar->dbDeletePermission();
 					$calendar->dbWritePermission($permissions);
 					
+					// create file objects
+					$fileIds = File::attachedTo('calendar', $cid);
+					$fileObjects = array();
+					foreach($fileIds as $id) {
+						$fileObjects[] = new File($id);
+					}
+					
 					// smarty
 					$sCD->assign('data', $calendar->detailsToHtml());
+					$sCD->assign('files', $fileObjects);
+					$sCD->assign('attached', parent::lang('class.CalendarView#details#text#attached'));
+					$sCD->assign('none', parent::lang('class.CalendarView#details#text#none'));
+					$sCD->assign('fileHref', 'file.php?id=download&fid=');
 					return $sCD->fetch('smarty.calendar.details.tpl');
 				} catch(Exception $e) {
 					$this->getError()->handle_error($e);

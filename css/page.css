@@ -658,6 +658,18 @@ select#subgroupOf {
 	width: 150px;
 }
 
+.protocolMessage {
+	font-family: sans-serif;
+	font-size: 90%;
+	font-weight: bold;
+	text-align: center;
+	width: 700px;
+	border-radius: 3px;
+	padding: 5px;
+	border: 1px dashed orange;
+	color: orange;
+}
+
 
 /*
  * override external library styles

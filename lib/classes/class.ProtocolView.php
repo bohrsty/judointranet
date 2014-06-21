@@ -256,7 +256,7 @@ class ProtocolView extends PageView {
 	private function listall() {
 		
 		// pagecaption
-		$this->tpl->assign('pagecaption',parent::lang('class.ProtocolView#page#caption#listall'));
+		$this->tpl->assign('pagecaption',parent::lang('class.ProtocolView#page#caption#listall').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_PROTOCOLLISTALL));
 		
 		// read all entries
 		$entries = $this->readAllEntries();
@@ -305,14 +305,14 @@ class ProtocolView extends PageView {
 				if($correctable['status'] == 2 || $this->getUser()->get_userinfo('name') == $entry->get_owner()) {
 					
 					// show
-					$sList[$counter]['show'][] = array(
+					$sList[$counter]['show'][0] = array(
 							'href' => 'protocol.php?id=show&pid='.$entry->get_id(),
 							'title' => parent::lang('class.ProtocolView#listall#title#ProtShow'),
 							'src' => 'img/prot_details.png',
 							'alt' => parent::lang('class.ProtocolView#listall#alt#ProtShow'),
 							'show' => true
 						);
-					$sList[$counter]['show'][] = array(
+					$sList[$counter]['show'][1] = array(
 							'href' => 'file.php?id=cached&table=protocol&tid='.$entry->get_id(),
 							'title' => parent::lang('class.ProtocolView#listall#title#ProtPDF'),
 							'src' => 'img/prot_pdf.png',
@@ -321,14 +321,35 @@ class ProtocolView extends PageView {
 						);
 				} else {
 					
-					$sList[$counter]['show'][] = array(
+					$sList[$counter]['show'][0] = array(
 							'href' => '',
 							'title' => '',
 							'src' => '',
 							'alt' => '',
 							'show' => false
 						);
-					$sList[$counter]['show'][] = array(
+					$sList[$counter]['show'][1] = array(
+							'href' => '',
+							'title' => '',
+							'src' => '',
+							'alt' => '',
+							'show' => false
+						);
+				}
+				
+				// add attached file info
+				if(count(File::attachedTo('protocoll', $entry->get_id())) > 0) {
+					
+					$sList[$counter]['show'][2] = array(
+							'href' => 'protocol.php?id=details&pid='.$entry->get_id(),
+							'title' => parent::lang('class.ProtocolView#listall#title#filesAttached'),
+							'src' => 'img/attachment_info.png',
+							'alt' => parent::lang('class.ProtocolView#listall#alt#filesAttached'),
+							'show' => true
+						);
+				} else {
+					
+					$sList[$counter]['show'][2] = array(
 							'href' => '',
 							'title' => '',
 							'src' => '',
@@ -343,7 +364,8 @@ class ProtocolView extends PageView {
 				if($this->getUser()->get_loggedin() === true) {
 					
 					// edit and delete only for author
-					if($this->getUser()->get_userinfo('name') == $entry->get_owner()) {
+					if($this->getUser()->get_userinfo('name') == $entry->get_owner()
+						|| $this->getUser()->get_id() == 1) {
 						
 						// smarty
 						// edit
@@ -372,19 +394,29 @@ class ProtocolView extends PageView {
 					// correction
 					if($correctable['status'] == 1 && in_array($this->getUser()->get_id(),$correctable['correctors']) && $this->getUser()->get_userinfo('name') != $entry->get_owner()) {
 						
-						// delete
-						$sList[$counter]['admin'][] = array(
-								'href' => 'protocol.php?id=correct&pid='.$entry->get_id(),
-								'title' => parent::lang('class.ProtocolView#listall#title#correct'),
-								'src' => 'img/prot_correct.png',
-								'alt' => parent::lang('class.ProtocolView#listall#alt#correct')
-							);
+						// check if correction is finished
+						$correction = new ProtocolCorrection($entry);
+						
+						if($correction->get_finished() == 1) {
+							$sList[$counter]['admin'][] = array(
+									'href' => false,
+									'title' => parent::lang('class.ProtocolView#listall#title#correctionFinished'),
+									'src' => 'img/done.png',
+									'alt' => parent::lang('class.ProtocolView#listall#alt#correctionFinished')
+								);
+						} else {
+							$sList[$counter]['admin'][] = array(
+									'href' => 'protocol.php?id=correct&pid='.$entry->get_id(),
+									'title' => parent::lang('class.ProtocolView#listall#title#correct'),
+									'src' => 'img/prot_correct.png',
+									'alt' => parent::lang('class.ProtocolView#listall#alt#correct')
+								);
+						}
 					}
 					
 					// corrected
 					if($correctable['status'] == 1 && $this->getUser()->get_userinfo('name') == $entry->get_owner() && $entry->hasCorrections()) {
 						
-						// delete
 						$sList[$counter]['admin'][] = array(
 								'href' => 'protocol.php?id=correct&pid='.$entry->get_id().'&action=diff',
 								'title' => parent::lang('class.ProtocolView#listall#title#corrected'),
@@ -415,6 +447,11 @@ class ProtocolView extends PageView {
 		
 		// smarty
 		$sListall->assign('list', $sList);
+		// prepare admin help
+		$helpListAdmin = $this->getHelp()->getMessage(HELP_MSG_PROTOCOLLISTADMIN);
+		if(isset($helpListAdmin)) {
+			$sListall->assign('helpListAdmin', $helpListAdmin);
+		}
 		
 		// smarty-return
 		return $sListall->fetch('smarty.protocol.listall.tpl');
@@ -438,7 +475,7 @@ class ProtocolView extends PageView {
 		$protocols = array();
 		
 		// get protocol objects
-		$protocol_entries = self::getUser()->permittedItems('protocol', 'r');
+		$protocol_entries = $this->getUser()->permittedItems('protocol', 'w');
 		foreach($protocol_entries as $protocolId) {
 			$protocols[] = new Protocol($protocolId);
 		}
@@ -491,7 +528,7 @@ class ProtocolView extends PageView {
 	private function newEntry() {
 		
 		// pagecaption
-		$this->tpl->assign('pagecaption',parent::lang('class.ProtocolView#page#caption#newEntry'));
+		$this->tpl->assign('pagecaption',parent::lang('class.ProtocolView#page#caption#newEntry').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_PROTOCOLNEW));
 		
 		// smarty-templates
 		$sD = new JudoIntranetSmarty();
@@ -513,6 +550,7 @@ class ProtocolView extends PageView {
 		// elements
 		// preset
 		$options = Preset::read_all_presets('protocol');
+		$paths = Preset::readAllPaths('protocol');
 		$formIds['preset'] = array('valueType' => 'int', 'type' => 'select',);
 		$form->add(
 				'label',		// type
@@ -527,6 +565,12 @@ class ProtocolView extends PageView {
 				array(		// attributes
 					)
 			);
+		$form->add(
+				'note',			// type
+				'notePreset',	// id/name
+				'preset',		// for
+				parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDPRESET)	// note text
+			);
 		$preset->add_options($options);
 		$preset->set_rule(
 			array(
@@ -535,6 +579,9 @@ class ProtocolView extends PageView {
 						),
 				)
 		);
+		// add jquery for changing css
+		$this->tpl->assign('protocolPaths', json_encode($paths));
+		$this->tpl->assign('protocolSelectPreset', 'preset');
 		
 		// date
 		$formIds['date'] = array('valueType' => 'string', 'type' => 'date',);
@@ -548,6 +595,12 @@ class ProtocolView extends PageView {
 						$formIds['date']['type'],			// type
 						'date',			// id/name
 						date('d.m.Y')	// default
+			);
+		$form->add(
+				'note',			// type
+				'noteDate',		// id/name
+				'date',			// for
+				parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDATE)	// note text
 			);
 		// format/position
 		$date->format('d.m.Y');
@@ -580,6 +633,12 @@ class ProtocolView extends PageView {
 				array(		// attributes
 					)
 			);
+		$form->add(
+				'note',			// type
+				'noteType',	// id/name
+				'type',		// for
+				parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
+			);
 		$type->add_options($options);
 		$type->set_rule(
 			array(
@@ -601,6 +660,12 @@ class ProtocolView extends PageView {
 		$location = $form->add(
 						$formIds['location']['type'],		// type
 						'location'		// id/name
+			);
+		$form->add(
+				'note',			// type
+				'noteLocation',	// id/name
+				'location',		// for
+				parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
 			);
 		
 		// add rules
@@ -642,6 +707,12 @@ class ProtocolView extends PageView {
 							),
 					)
 			);
+		$form->add(
+				'note',			// type
+				'noteMember0',	// id/name
+				'member0',		// for
+				parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
+			);
 		
 		// member1
 		$formIds['member1'] = array('valueType' => 'string', 'type' => 'text',);
@@ -655,6 +726,12 @@ class ProtocolView extends PageView {
 		$member1 = $form->add(
 						$formIds['member1']['type'],		// type
 						'member1'		// id/name
+			);
+		$form->add(
+				'note',			// type
+				'noteMember1',	// id/name
+				'member1',		// for
+				parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
 			);
 		
 		// add rules
@@ -681,6 +758,12 @@ class ProtocolView extends PageView {
 						$formIds['member2']['type'],		// type
 						'member2'		// id/name
 			);
+		$form->add(
+				'note',			// type
+				'noteMember2',	// id/name
+				'member2',		// for
+				parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
+			);
 		
 		// add rules
 		$member2->set_rule(
@@ -705,6 +788,12 @@ class ProtocolView extends PageView {
 		$recorder = $form->add(
 						$formIds['recorder']['type'],		// type
 						'recorder'		// id/name
+			);
+		$form->add(
+				'note',			// type
+				'noteRecorder',	// id/name
+				'recorder',		// for
+				parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
 			);
 		
 		// add rules
@@ -734,6 +823,12 @@ class ProtocolView extends PageView {
 						$formIds['protocol']['type'],		// type
 						'protocol'		// id/name
 			);
+		$form->add(
+				'note',			// type
+				'noteProtocol',	// id/name
+				'protocol',		// for
+				parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
+			);
 		
 		// add rules
 		$protocolTa->set_rule(
@@ -751,7 +846,8 @@ class ProtocolView extends PageView {
 				'element' => 'protocol',
 				'css' => 'templates/protocols/tmce_'.$this->getGc()->get_config('tmce.default.css').'.css',
 				'transitem' => parent::lang('class.ProtocolView#newEntry#tmce#item'),
-				'transdecision' => parent::lang('class.ProtocolView#newEntry#tmce#decision')
+				'transdecision' => parent::lang('class.ProtocolView#newEntry#tmce#decision'),
+				'action' => 'new',
 			);
 		// smarty
 		$this->tpl->assign('tmce',$tmce);
@@ -770,6 +866,12 @@ class ProtocolView extends PageView {
 				'public',						// id/name
 				'1',							// value
 				null							// default
+			);
+		$form->add(
+				'note',			// type
+				'notePublic',	// id/name
+				'public',		// for
+				parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDISPUBLIC)	// note text
 			);
 		
 		// permissions
@@ -972,6 +1074,12 @@ class ProtocolView extends PageView {
 						),
 					$correctable['status']	// default
 				);
+			$form->add(
+					'note',			// type
+					'noteCorrectable',	// id/name
+					'correctable',		// for
+					parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_PROTOCOLCORRECTABLE)	// note text
+				);
 			
 			// select correctors
 			// get all users and put id and name to options
@@ -997,9 +1105,16 @@ class ProtocolView extends PageView {
 							'size' => 5,
 						)
 				);
+			$form->add(
+					'note',			// type
+					'noteCorrectors',	// id/name
+					'correctors',		// for
+					parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_PROTOCOLCORRECTORS)	// note text
+				);
 			$correctors->add_options($options, true);
 			
 			// preset
+			$presetObject = new Preset($protocol->get_preset()->get_id(), 'protocol', $protocol->get_id());
 			$options = Preset::read_all_presets('protocol');
 			$formIds['preset'] = array('valueType' => 'int', 'type' => 'select',);
 			$form->add(
@@ -1011,9 +1126,15 @@ class ProtocolView extends PageView {
 			$preset = $form->add(
 					$formIds['preset']['type'],	// type
 					'preset',	// id/name
-					$protocol->get_preset()->get_id(),	// default
+					$presetObject->get_id(),	// default
 					array(		// attributes
 						)
+				);
+			$form->add(
+					'note',			// type
+					'notePreset',	// id/name
+					'preset',		// for
+					parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDPRESET)	// note text
 				);
 			$preset->add_options($options);
 			$preset->set_rule(
@@ -1051,6 +1172,12 @@ class ProtocolView extends PageView {
 						),
 					)
 				);
+			$form->add(
+					'note',			// type
+					'noteDate',		// id/name
+					'date',			// for
+					parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDATE)	// note text
+				);
 			
 			// type
 			$options = Protocol::return_types();
@@ -1068,6 +1195,12 @@ class ProtocolView extends PageView {
 					array(		// attributes
 						)
 				);
+			$form->add(
+					'note',			// type
+					'noteType',	// id/name
+					'type',		// for
+					parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
+				);
 			$type->add_options($options);
 			$type->set_rule(
 				array(
@@ -1083,13 +1216,18 @@ class ProtocolView extends PageView {
 					'label',		// type
 					'labelLocation',	// id/name
 					'location',			// for
-					parent::lang('class.ProtocolView#entry#form#location'),	// label text
-					array('inside' => true,)	// label inside
+					parent::lang('class.ProtocolView#entry#form#location')	// label text
 				);
 			$location = $form->add(
 							$formIds['location']['type'],		// type
 							'location',		// id/name
 							$protocol->get_location()	// default
+				);
+			$form->add(
+					'note',			// type
+					'noteLocation',	// id/name
+					'location',		// for
+					parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
 				);
 			
 			// add rules
@@ -1113,13 +1251,18 @@ class ProtocolView extends PageView {
 					'label',		// type
 					'labelMember0',	// id/name
 					'member0',			// for
-					parent::lang('class.ProtocolView#entry#form#member0'),	// label text
-					array('inside' => true,)	// label inside
+					parent::lang('class.ProtocolView#entry#form#member0')	// label text
 				);
 			$member0 = $form->add(
 							$formIds['member0']['type'],		// type
 							'member0',	// id/name
 							$protocol->get_member(false,0)	// default
+				);
+			$form->add(
+					'note',			// type
+					'noteMember0',	// id/name
+					'member0',		// for
+					parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
 				);
 			
 			// add rules
@@ -1139,13 +1282,18 @@ class ProtocolView extends PageView {
 					'label',		// type
 					'labelMember1',	// id/name
 					'member1',			// for
-					parent::lang('class.ProtocolView#entry#form#member1'),	// label text
-					array('inside' => true,)	// label inside
+					parent::lang('class.ProtocolView#entry#form#member1')	// label text
 				);
 			$member1 = $form->add(
 							$formIds['member1']['type'],		// type
 							'member1',	// id/name
 							$protocol->get_member(false,1)	// default
+				);
+			$form->add(
+					'note',			// type
+					'noteMember1',	// id/name
+					'member1',		// for
+					parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
 				);
 			
 			// add rules
@@ -1165,13 +1313,18 @@ class ProtocolView extends PageView {
 					'label',		// type
 					'labelMember2',	// id/name
 					'member2',			// for
-					parent::lang('class.ProtocolView#entry#form#member2'),	// label text
-					array('inside' => true,)	// label inside
+					parent::lang('class.ProtocolView#entry#form#member2')	// label text
 				);
 			$member2 = $form->add(
 							$formIds['member2']['type'],		// type
 							'member2',	// id/name
 							$protocol->get_member(false,2)	// default
+				);
+			$form->add(
+					'note',			// type
+					'noteMember2',	// id/name
+					'member2',		// for
+					parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
 				);
 			
 			// add rules
@@ -1191,13 +1344,18 @@ class ProtocolView extends PageView {
 					'label',		// type
 					'labelRecorder',	// id/name
 					'recorder',			// for
-					parent::lang('class.ProtocolView#entry#form#recorder'),	// label text
-					array('inside' => true,)	// label inside
+					parent::lang('class.ProtocolView#entry#form#recorder')	// label text
 				);
 			$recorder = $form->add(
 							$formIds['recorder']['type'],		// type
 							'recorder',		// id/name
 							$protocol->get_recorder()	// default
+				);
+			$form->add(
+					'note',			// type
+					'noteRecorder',	// id/name
+					'recorder',		// for
+					parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
 				);
 			
 			// add rules
@@ -1228,6 +1386,12 @@ class ProtocolView extends PageView {
 							'protocol',		// id/name
 							$protocol->get_protocol()	// default
 				);
+			$form->add(
+					'note',			// type
+					'noteProtocol',	// id/name
+					'protocol',		// for
+					parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
+				);
 			
 			// add rules
 			$protocolTa->set_rule(
@@ -1243,9 +1407,10 @@ class ProtocolView extends PageView {
 			// js tiny_mce
 			$tmce = array(
 					'element' => 'protocol',
-					'css' => 'templates/protocols/tmce_'.$this->getGc()->get_config('tmce.default.css').'.css',
+					'css' => 'templates/protocols/tmce_'.$presetObject->get_path().'.css',
 					'transitem' => parent::lang('class.ProtocolView#newEntry#tmce#item'),
-					'transdecision' => parent::lang('class.ProtocolView#newEntry#tmce#decision')
+					'transdecision' => parent::lang('class.ProtocolView#newEntry#tmce#decision'),
+					'action' => 'edit',
 				);
 			// smarty
 			$this->tpl->assign('tmce',$tmce);
@@ -1264,6 +1429,12 @@ class ProtocolView extends PageView {
 					'public',						// id/name
 					'1',							// value
 					($protocol->isPermittedFor(0) ? array('checked' => 'checked') : null)							// default
+				);
+			$form->add(
+					'note',			// type
+					'notePublic',	// id/name
+					'public',		// for
+					parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDISPUBLIC)	// note text
 				);
 			
 			// permissions
@@ -1331,11 +1502,20 @@ class ProtocolView extends PageView {
 						
 				// create cached file
 				$fid = File::idFromCache('protocol|'.$protocol->get_id());
-				$this->createCachedFile($fid);
+				$protocol->createCachedFile($fid);
+				
+				// create file objects
+				$fileIds = File::attachedTo('protocol', $pid);
+				$fileObjects = array();
+				foreach($fileIds as $id) {
+					$fileObjects[] = new File($id);
+				}
 				
 				// smarty
 				$sCD = new JudoIntranetSmarty();
 				$sCD->assign('data', $protocol->details());
+				$sCD->assign('files', $fileObjects);
+				$sCD->assign('fileHref', 'file.php?id=download&fid=');
 				
 				return $sCD->fetch('smarty.protocol.details.tpl');
 			} else {
@@ -1381,7 +1561,7 @@ class ProtocolView extends PageView {
 			
 			// prepare marker-array
 			$infos = array(
-					'version' => date('dmy')
+					'version' => '01.01.1970 01:00'
 				);
 			
 			// add calendar-fields to array
@@ -1513,7 +1693,7 @@ class ProtocolView extends PageView {
 						);
 			$sConfirmation->assign('link', $link);
 			$sConfirmation->assign('spanparams', 'id="cancel"');
-			$sConfirmation->assign('message', parent::lang('class.ProtocolView#delete#message#confirm'));
+			$sConfirmation->assign('message', parent::lang('class.ProtocolView#delete#message#confirm').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_DELETE));
 			$sConfirmation->assign('form', $form->render('', true));
 			
 			// validate
@@ -1569,10 +1749,7 @@ class ProtocolView extends PageView {
 	 * @return string html of the correction page
 	 */
 	private function correct($pid) {
-	
-		// pagecaption
-		$this->tpl->assign('pagecaption',parent::lang('class.ProtocolView#page#caption#correct'));
-		
+			
 		// get protocol object
 		$protocol = new Protocol($pid);
 		$correctable = $protocol->get_correctable(false);
@@ -1582,7 +1759,8 @@ class ProtocolView extends PageView {
 				'element' => 'protocol',
 				'css' => 'templates/protocols/tmce_'.$protocol->get_preset()->get_path().'.css',
 				'transitem' => parent::lang('class.ProtocolView#newEntry#tmce#item'),
-				'transdecision' => parent::lang('class.ProtocolView#newEntry#tmce#decision')
+				'transdecision' => parent::lang('class.ProtocolView#newEntry#tmce#decision'),
+				'action' => '',
 			);
 		// smarty
 		$this->tpl->assign('tmce',$tmce);
@@ -1592,6 +1770,9 @@ class ProtocolView extends PageView {
 			
 			// check owner
 			if($this->getUser()->get_userinfo('name') == $protocol->get_owner()) {
+				
+				// pagecaption
+				$this->tpl->assign('pagecaption',parent::lang('class.ProtocolView#page#caption#correct'));
 				
 				// smarty
 				$sPCo = new JudoIntranetSmarty();
@@ -1743,6 +1924,9 @@ class ProtocolView extends PageView {
 						$sPCo->assign('message',$message);
 					}
 					
+					// smarty
+					$sPCo->assign('caption',parent::lang('class.ProtocolView#correct#diff#pageCaption').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_PROTOCOLDIFF));
+					
 				} else {
 					
 					// list all corrections
@@ -1773,13 +1957,16 @@ class ProtocolView extends PageView {
 					}
 					
 					// smarty
-					$sPCo->assign('caption',parent::lang('class.ProtocolView#correct#difflist#caption'));
+					$sPCo->assign('caption',parent::lang('class.ProtocolView#correct#difflist#caption').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_PROTOCOLDIFFLIST));
 					$sPCo->assign('list', $list);
 				}
 				
 				// return
 				return $sPCo->fetch('smarty.protocolcorrection.owner.tpl');
 			} else {
+				
+				// pagecaption
+				$this->tpl->assign('pagecaption',parent::lang('class.ProtocolView#page#caption#correct').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_PROTOCOLCORRECT));
 				
 				// get ProtocolCorretion object
 				$correction = new ProtocolCorrection($protocol);
@@ -1808,6 +1995,12 @@ class ProtocolView extends PageView {
 								$formIds['protocol']['type'],		// type
 								'protocol',		// id/name
 								$correction->get_protocol()	// default
+					);
+				$form->add(
+						'note',			// type
+						'noteProtocol',	// id/name
+						'protocol',		// for
+						parent::lang('class.ProtocolView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
 					);
 				
 				// add rules
@@ -1880,7 +2073,7 @@ class ProtocolView extends PageView {
 	private function decisions($pid) {
 	
 		// pagecaption
-		$this->tpl->assign('pagecaption',parent::lang('class.ProtocolView#page#caption#decisions'));
+		$this->tpl->assign('pagecaption',parent::lang('class.ProtocolView#page#caption#decisions').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_PROTOCOLDECISIONS));
 		
 		// check rights
 		if($this->getUser()->hasPermission('protocol', $pid) || $pid == false) {
@@ -1893,7 +2086,7 @@ class ProtocolView extends PageView {
 				
 				// get protocols
 				$protocols = array();
-				$protocolIds = self::getUser()->permittedItems('protocol', 'r');
+				$protocolIds = self::getUser()->permittedItems('protocol', 'w');
 				foreach($protocolIds as $protocolId) {
 					$protocols[$protocolId] = new Protocol($protocolId);
 				}
@@ -1906,7 +2099,11 @@ class ProtocolView extends PageView {
 				foreach($protocols as $protocol) {
 					
 					// assign data
-					$data[$counter] = array(	'date' => $protocol->get_date('d.m.Y'),
+					$data[$counter] = array(	'date' => array( 
+														'href' => 'protocol.php?id=details&pid='.$protocol->get_id(),
+														'title' => parent::lang('class.ProtocolView#decisions#listAllTitle#goTo'),
+														'date' => $protocol->get_date('d.m.Y'),
+													),
 												'type' => $protocol->get_type(),
 												'location' => $protocol->get_location(),
 												'decisions' => $this->parseHtml($protocol->get_protocol(),'<p class="tmceDecision">|</p>'));
@@ -1937,6 +2134,9 @@ class ProtocolView extends PageView {
 				// add to template
 				$sD->assign('data',$data);
 			}
+			
+			// add to template
+			$sD->assign('pid', $pid);
 			
 				// return
 				return $sD->fetch('smarty.protocol.showdecisions.tpl');

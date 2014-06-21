@@ -608,7 +608,7 @@ class Protocol extends Page {
 		$pdf->writeHTML($pdfOut, false);
 		
 		// output
-		$pdfFilename = $this->replace_umlaute(html_entity_decode($sP->fetch('string:'.$this->get_preset()->get_filename()),ENT_XHTML,'ISO-8859-1'));
+		$pdfFilename = $this->replace_umlaute(html_entity_decode($sP->fetch('string:'.utf8_encode($this->get_preset()->get_filename())), ENT_XHTML, 'UTF-8'));
 		
 		// prepare file for File::factory
 		return array(
@@ -635,6 +635,8 @@ class Protocol extends Page {
 				'result' => ($this->get_correctable(false)['status'] == 2 || $this->getUser()->get_userinfo('name') == $this->get_owner()),
 			);
 		
+		// return
+		return $return;
 	}
 	
 	

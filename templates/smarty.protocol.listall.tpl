@@ -36,7 +36,7 @@
 		</th>
 {if $loggedin}
 		<th class="admin">
-			{$th.admin}
+			{$th.admin}&nbsp;{if isset($helpListAdmin)}{$helpListAdmin}{/if}
 		</th>
 {/if}
 	</tr>
@@ -59,7 +59,11 @@
 		<td class="admin">
 {if is_array($list.$i.admin)}
 {for $j=0 to count($list.$i.admin)-1}
+{if $list.$i.admin.$j.href !== false}
 				<a href="{$list.$i.admin.$j.href|escape}" title="{$list.$i.admin.$j.title}"><img src="{$list.$i.admin.$j.src}" alt="{$list.$i.admin.$j.alt}" class="icon" title="{$list.$i.admin.$j.alt}" /></a>
+{else}
+				<img src="{$list.$i.admin.$j.src}" alt="{$list.$i.admin.$j.alt}" class="icon" title="{$list.$i.admin.$j.alt}" />
+{/if}
 {/for}
 {/if}
 		</td>

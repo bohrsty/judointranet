@@ -42,7 +42,7 @@
 				</th>
 		{if $loggedin}
 				<th class="admin">
-					{$th.admin}
+					{$th.admin}&nbsp;{if isset($helpListAdmin)}{$helpListAdmin}{/if}
 				</th>
 		{/if}
 			</tr>
@@ -68,7 +68,7 @@
 		{if isset($fileList.$i.admin.1)}
 						<a href="{$fileList.$i.admin.1.href|escape}" title="{$fileList.$i.admin.1.title}"><img src="{$fileList.$i.admin.1.src}" alt="{$fileList.$i.admin.1.alt}" class="icon" title="{$fileList.$i.admin.1.alt}" /></a>
 		{/if}
-		{if isset($list.$i.admin.2)}
+		{if isset($fileList.$i.admin.2)}
 						<a href="{$fileList.$i.admin.2.href|escape}" title="{$fileList.$i.admin.2.title}"><img src="{$fileList.$i.admin.2.src}" alt="{$fileList.$i.admin.2.alt}" class="icon" title="{$fileList.$i.admin.2.alt}" /></a>
 		{/if}
 				</td>

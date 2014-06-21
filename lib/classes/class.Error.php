@@ -600,6 +600,23 @@ class Error extends Object {
 			}
 		}
 	}
+	
+	
+	/**
+	 * afterLogin() returns the "r" url parameter used for login.php to redirect after login
+	 * 
+	 * @param string $prefix prefix to separate from the rest of the url
+	 * @return string the url parameter to redirect after login
+	 */
+	public static function afterLogin($prefix) {
+		
+		if(self::staticGet('id') != 'logout') {
+			return $prefix.'r='.base64_encode($_SERVER['REQUEST_URI']);
+		}
+		
+		// return
+		return '';
+	}
 }
 
 

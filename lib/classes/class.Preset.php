@@ -270,6 +270,42 @@ class Preset extends Object {
 	}
 	
 	
+	/**
+	 * readAllTplPaths reads all preset path information from db and returns them
+	 * as an array with the preset id as key
+	 * 
+	 * @param string $table table of the paths to be read
+	 * @return array array containing all preset paths
+	 */
+	public static function readAllPaths($table) {
+		
+		// prepare sql-statement
+		$sql = 'SELECT `id`,`path`
+				FROM `preset`
+				WHERE `table`=\'#?\'';
+		
+		// execute
+		$result = Db::resultValue(
+				$sql,
+				array($table)
+			);
+		
+		// fetch result
+		$presets = array();
+		if($result) {
+			while(list($id, $path) = $result->fetch_array(MYSQL_NUM)) {
+				$presets[$id] = 'templates/protocols/tmce_'.$path.'.css';
+			}
+		} else {
+			$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+			self::getError()->handle_error($errno);
+		}
+		
+		// return
+		return $presets;
+	}
+	
+	
 	
 	
 	/**

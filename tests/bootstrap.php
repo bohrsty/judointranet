@@ -25,6 +25,9 @@
 // setup autoload
 require_once('lib/common.inc.php');
 
+// set $_SERVER array
+$_SERVER['REQUEST_URI'] = '';
+
 // global test classes
 
 class TestObject extends Object {

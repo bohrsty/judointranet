@@ -221,7 +221,7 @@ function mysql_2() {
 		}
 	}
 	
-	// create table protocol_types
+	// create table protocol_correction
 	if(!Db::executeQuery('
 		CREATE TABLE IF NOT EXISTS `protocol_correction` (
 		  `uid` int(11) NOT NULL,
@@ -1538,6 +1538,17 @@ function mysql_13() {
 		return $return;
 	}
 	
+	// update systemtables
+	if(!Db::executeQuery('
+		UPDATE `config`
+			SET `value` = \'calendar,category,config,defaults,field,fields2presets,group,group2group,inventory,inventory_movement,preset,rights,user,user2group,value,protocol,protocol_correction,helpmessages,user2groups,permissions,navi,item2filter,groups,filter,file,file_type\'
+		WHERE `name` = \'systemtables\';
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
 	// return
 	return $return;
 }
@@ -1591,8 +1602,9 @@ function mysql_15() {
 	// insert navi entry for useradmin
 	if(!Db::executeQuery('
 		INSERT IGNORE INTO `navi` (`id`, `name`, `parent`, `file_param`, `position`, `show`, `valid`, `last_modified`)
-			VALUES 
-				(44, \'class.Navi#item#name#administrationPage.useradmin\', \'34\', \'administration.php|user\', \'2\', \'1\', \'1\', CURRENT_TIMESTAMP)
+			VALUES
+				(44, \'class.Navi#item#name#filePage.attach\', \'37\', \'file.php|attach\', \'6\', \'0\', \'1\', CURRENT_TIMESTAMP),
+				(45, \'class.Navi#item#name#administrationPage.useradmin\', \'34\', \'administration.php|user\', \'2\', \'1\', \'1\', CURRENT_TIMESTAMP)
 	')) {
 		$return['returnValue'] = false;
 		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
@@ -1608,6 +1620,17 @@ function mysql_15() {
 			OR `item_id`=18
 			OR `item_id`=24
 			OR `item_id`=37)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// update systemtables
+	if(!Db::executeQuery('
+		UPDATE `config`
+			SET `value` = \'calendar,category,config,defaults,field,fields2presets,group,group2group,inventory,inventory_movement,preset,rights,user,user2group,value,protocol,protocol_correction,helpmessages,user2groups,permissions,navi,item2filter,groups,filter,file,file_type,files_attached\'
+		WHERE `name` = \'systemtables\';
 	')) {
 		$return['returnValue'] = false;
 		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
@@ -1665,18 +1688,19 @@ function mysql_16() {
 	}
 	
 	// check existance of draft field in value
-	$draftValuesExists = Db::singleValue('
+	$draftValues = Db::singleValue('
 			SELECT COUNT(*)
 			FROM `value`
 			WHERE `table_name`=\'calendar\'
 				AND `field_id`=-1
 		'
-	) > 0;
-	if(!$draftValuesExists) {
+	);
+	if($draftValues === false) {
 		$return['returnValue'] = false;
 		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
+	$draftValuesExists = $draftValues > 0;
 	
 	// insert into value
 	if(count($existingValues) > 0 && $draftValuesExists) {
@@ -1695,6 +1719,89 @@ function mysql_16() {
 			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
 		}
+	}
+	
+	// return
+	return $return;
+}
+
+
+function mysql_17() {
+	
+	// prepare return
+	$return = array(
+			'returnValue' => true,
+			'returnMessage' => '',
+		);
+	
+	// insert helpmessages
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `helpmessages` (`id`, `title`, `message`)
+			VALUES
+				(21, \'class.Help#global#title#fileListall\', \'class.Help#global#message#fileListall\'),
+				(22, \'class.Help#global#title#fileListAdmin\', \'class.Help#global#message#fileListAdmin\'),
+				(23, \'class.Help#global#title#fileUpload\', \'class.Help#global#message#fileUpload\'),
+				(24, \'class.Help#global#title#fieldFile\', \'class.Help#global#message#fieldFile\'),
+				(25, \'class.Help#global#title#protocolListall\', \'class.Help#global#message#protocolListall\'),
+				(26, \'class.Help#global#title#protocolListAdmin\', \'class.Help#global#message#protocolListAdmin\'),
+				(27, \'class.Help#global#title#fieldAllText\', \'class.Help#global#message#fieldAllText\'),
+				(28, \'class.Help#global#title#fieldPreset\', \'class.Help#global#message#fieldPreset\'),
+				(29, \'class.Help#global#title#protocolNew\', \'class.Help#global#message#protocolNew\'),
+				(30, \'class.Help#global#title#protocolCorrect\', \'class.Help#global#message#protocolCorrect\'),
+				(31, \'class.Help#global#title#protocolCorrectable\', \'class.Help#global#message#protocolCorrectable\'),
+				(32, \'class.Help#global#title#protocolCorrectors\', \'class.Help#global#message#protocolCorrectors\'),
+				(33, \'class.Help#global#title#protocolDecisions\', \'class.Help#global#message#protocolDecisions\'),
+				(34, \'class.Help#global#title#protocolDiff\', \'class.Help#global#message#protocolDiff\'),
+				(35, \'class.Help#global#title#protocolDifflist\', \'class.Help#global#message#protocolDifflist\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// correct protocol structure
+	if(Db::columnType('protocol', 'recorder') != 'VARCHAR') {
+		if(!Db::executeQuery('
+			ALTER TABLE `protocol` CHANGE `recorder` `recorder` VARCHAR( 75 ) NOT NULL
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+	}
+	if(Db::columnType('protocol', 'correctable') != 'TEXT') {
+		if(!Db::executeQuery('
+			ALTER TABLE `protocol`
+				CHANGE `correctable` `correctable` TEXT NOT NULL
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+	}
+	if(!Db::executeQuery('
+		CREATE TABLE IF NOT EXISTS `protocol_correction` (
+		  `uid` int(11) NOT NULL,
+		  `pid` int(11) NOT NULL,
+		  `protocol` text COLLATE utf8_unicode_ci NOT NULL,
+		  `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		  `finished` BOOLEAN NOT NULL,
+		  `valid` BOOLEAN NOT NULL,
+		  PRIMARY KEY (`uid`,`pid`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	if(!Db::executeQuery('
+		UPDATE `config`
+			SET `value` = \'calendar,category,config,defaults,field,fields2presets,group,group2group,inventory,inventory_movement,preset,rights,user,user2group,value,protocol,protocol_correction,helpmessages,user2groups,permissions,navi,item2filter,groups,filter,file,file_type,files_attached\'
+		WHERE `name` = \'systemtables\';
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
 	}
 	
 	// return

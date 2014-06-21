@@ -114,35 +114,62 @@
 {/if}
 {if isset($tinymce) and $tinymce}
 		<script type="text/javascript">
-			tinyMCE.init({ldelim}
-		        // General options
-		        mode : "exact",
-		        elements : "{$tmce.element}",
-		        theme : "advanced",
-		        plugins : "spellchecker,pagebreak,style",
-		        language : "de",
-		
-		        // Theme options
-		        theme_advanced_buttons1 : "bold,|,styleselect,|,undo,redo,|,spellchecker",
-		        theme_advanced_buttons2 : "",
-		        theme_advanced_buttons3 : "",
-		        theme_advanced_toolbar_location : "top",
-		        theme_advanced_toolbar_align : "left",
-		        theme_advanced_resizing : true,
-		
-		        // Skin options
-		        skin : "o2k7",
-		        skin_variant : "silver",
-		
-		        // CSS in used editor
-		        content_css : "{$tmce.css}",
-		
-				// Style formats
-				style_formats : [
-					{ldelim}title : '{$tmce.transitem}', block : 'p', classes : 'tmceItem'{rdelim},
-					{ldelim}title : '{$tmce.transdecision}', block : 'p', classes : 'tmceDecision'{rdelim},
-				],
-		{rdelim});
+			function initTinyMce(contentCss) {ldelim}
+				tinyMCE.init({ldelim}
+			        // General options
+			        mode : "exact",
+			        elements : "{$tmce.element}",
+			        theme : "advanced",
+			        plugins : "spellchecker,pagebreak,style",
+			        language : "de",
+			        height : 500,
+			
+			        // Theme options
+			        theme_advanced_buttons1 : "bold,|,styleselect,|,undo,redo,|,spellchecker",
+			        theme_advanced_buttons2 : "",
+			        theme_advanced_buttons3 : "",
+			        theme_advanced_toolbar_location : "top",
+			        theme_advanced_toolbar_align : "left",
+			        theme_advanced_resizing : true,
+			
+			        // Skin options
+			        skin : "o2k7",
+			        skin_variant : "silver",
+			
+			        // CSS in used editor
+			        content_css : contentCss,
+			
+					// Style formats
+					style_formats : [
+						{ldelim}title : '{$tmce.transitem}', block : 'p', classes : 'tmceItem'{rdelim},
+						{ldelim}title : '{$tmce.transdecision}', block : 'p', classes : 'tmceDecision'{rdelim},
+					],
+				{rdelim});
+			{rdelim}
+			
+			$(function() {ldelim}
+{if $tmce.action == 'new'}
+				var messageElement = $('<p>').addClass('protocolMessage').text('{Object::lang('class.ProtocolView#newEntry#tmce#messageElement')}');
+				var messageSelect = $('<p>').addClass('protocolMessage').text('{Object::lang('class.ProtocolView#newEntry#tmce#messageSelect')}').hide();
+				var tmceElement = $("#{$tmce.element}").hide();
+				var selectPreset = $("#{$protocolSelectPreset}");
+				tmceElement.after(messageElement);
+				selectPreset.after(messageSelect);
+				selectPreset.change(function(){ldelim}
+					var paths = {$protocolPaths};
+					var value = selectPreset.val();
+					if(value != '') {ldelim}
+						initTinyMce(paths[value]);
+						tmceElement.slideDown();
+						messageElement.slideUp();
+						selectPreset.slideUp();
+						messageSelect.slideDown();
+					{rdelim}
+				{rdelim});
+{else}
+				initTinyMce('{$tmce.css}');
+{/if}
+			{rdelim});
 		</script>
 {/if}
 		{if isset($head)}{$head}{/if}

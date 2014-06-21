@@ -27,6 +27,7 @@
 {/for}
 {/if}
 {if isset($c) and $c==true}
+<p><b>{$caption}</b></p>
 <div id="{$diffOut}"></div>
 {$form}
 {/if}

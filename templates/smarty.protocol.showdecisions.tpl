@@ -25,7 +25,11 @@
 <table class="content protocol_showdecisions">
 	<tr class="head">
 		<td class="date">
+{if $pid!=false}
 			<b>{$data.$i.date}</b>
+{else}
+			<b><a href="{$data.$i.date.href|escape}" title="{$data.$i.date.title}">{$data.$i.date.date}</a></b>
+{/if}
 		</td>
 		<td class="type">
 			<b>{$data.$i.type}</b>

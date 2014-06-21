@@ -44,12 +44,15 @@
 			{$list.$i.date}
 		</td>
 		<td>
-			<a href="{$list.$i.name.href|escape}" title="{$list.$i.name.title}">{$list.$i.name.name}</a>
+			<a href="{$list.$i.name.href|escape}" title="{$list.$i.name.title}">{$list.$i.name.name}</a>{if $list.$i.name.public == true}<img src="img/public.png" alt="{Object::lang('class.CalendarView#listall#alt#public')}" class="icon" title="{Object::lang('class.CalendarView#listall#title#public')}" />{/if}
 		</td>
 		<td>
 {if $list.$i.show.0.show}
 			<a href="{$list.$i.show.0.href|escape}" title="{$list.$i.show.0.title}"><img src="{$list.$i.show.0.src}" alt="{$list.$i.show.0.alt}" class="icon" title="{$list.$i.show.0.alt}" /></a>
 			<a href="{$list.$i.show.1.href|escape}" title="{$list.$i.show.1.title}"><img src="{$list.$i.show.1.src}" alt="{$list.$i.show.1.alt}" class="icon" title="{$list.$i.show.1.alt}" /></a>
+{/if}
+{if $list.$i.show.2.show}
+			<a href="{$list.$i.show.2.href|escape}" title="{$list.$i.show.2.title}"><img src="{$list.$i.show.2.src}" alt="{$list.$i.show.2.alt}" class="icon" title="{$list.$i.show.2.alt}" /></a>
 {/if}			
 		</td>
 {if $list.$i.admin.0.admin}

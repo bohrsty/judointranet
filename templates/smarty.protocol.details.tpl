@@ -34,15 +34,15 @@
 {foreach $data as $entry}
 	<p class="details">{$entry}</p>
 {/foreach}
-	<p class="details">{$attached}</p>
-{if count($files) > 0}
+	<p class="details">{Object::lang('class.ProtocolView#details#text#attached')}</p>
+{if isset($files) && count($files) > 0}
 	<ul>
 {foreach $files as $file}
 	<li>{$file->getName()} - <a href="{$fileHref}{$file->getId()}" title="{$file->getFilename()}">{$file->getFilename()}</a> ({$file->getFileTypeAs('name')})</li>
 {/foreach}
 	</ul>
 {else}
-<p>{$none}</p>
+<p>{Object::lang('class.ProtocolView#details#text#none')}</p>
 {/if}
 {/if}
 </div>

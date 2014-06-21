@@ -245,7 +245,7 @@ class FileView extends PageView {
 	private function listall() {
 		
 		// pagecaption
-		$this->tpl->assign('pagecaption',parent::lang('class.FileView#page#caption#listall'));
+		$this->tpl->assign('pagecaption',parent::lang('class.FileView#page#caption#listall').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FILELISTALL));
 		
 		// read all entries
 		$entries = $this->readAllEntries();
@@ -290,6 +290,11 @@ class FileView extends PageView {
 		$sListall->assign('tabCached', parent::lang('class.FileView#listall#tabTitle#cached'));
 		// prepare tabs
 		$this->tpl->assign('tabsJs', true);
+		// prepare admin help
+		$helpListAdmin = $this->getHelp()->getMessage(HELP_MSG_FILELISTADMIN);
+		if(isset($helpListAdmin)) {
+			$sListall->assign('helpListAdmin', $helpListAdmin);
+		}
 		
 		
 		// smarty-return
@@ -313,36 +318,8 @@ class FileView extends PageView {
 		// prepare return
 		$files = array();
 		
-//		// get calendar and protocol ids for cached file objects
-//		$calendarEntries = self::getUser()->permittedItems('calendar', 'r');
-//		$protocolEntries = self::getUser()->permittedItems('protocol', 'r');
-//		$sqlIn = '';
-//		// walk through calendar entries
-//		foreach($calendarEntries as $calendarId) {
-//			$sqlIn .= '\'calendar|'.$calendarId.'\',';
-//		}
-//		// walk thought protocol entries
-//		foreach($protocolEntries as $protocolId) {
-//			$sqlIn .= '\'protocol|'.$protocolId.'\',';
-//		}
-//		$sqlIn = substr($sqlIn, 0, -1);
-//		// get file ids
-//		$sql = '	SELECT `id`
-//					FROM `file`
-//					WHERE `cached` IN ('.$sqlIn.')
-//		';
-//		$cachedFileIds = Db::arrayValue($sql, MYSQL_ASSOC);
-//		if(!$cachedFileIds) {
-//			$errno = $this->getError()->error_raised('MysqlError', Db::$error, $sql);
-//			$this->getError()->handle_error($errno);
-//		}
-//		// get file objects
-//		foreach($cachedFileIds as $cachedFileId) {
-//			$files[] = new File($cachedFileId['id']);
-//		}
-		
 		// get file objects
-		$fileEntries = self::getUser()->permittedItems('file', 'r');
+		$fileEntries = self::getUser()->permittedItems('file', 'w');
 		foreach($fileEntries as $fileId) {
 			$files[] = new File($fileId);
 		}
@@ -395,11 +372,15 @@ class FileView extends PageView {
 		// pagecaption
 		$this->tpl->assign('pagecaption',parent::lang('class.FileView#page#caption#details'));
 		
+		// get file-object
+		$file = new File($fid);
+		
+		$cached = $file->getCached(false);
+		
 		// check rights
-		if($this->getUser()->hasPermission('file', $fid)) {
-				
-			// get protocol-object
-			$file = new File($fid);
+		if($this->getUser()->hasPermission('file', $fid)
+			|| (!is_null($cached)
+				&& $this->getUser()->hasPermission($cached['table'], $cached['tableId']))) {
 			
 			// smarty-template
 			$sFD = new JudoIntranetSmarty();
@@ -539,7 +520,7 @@ class FileView extends PageView {
 						);
 			$sConfirmation->assign('link', $link);
 			$sConfirmation->assign('spanparams', 'id="cancel"');
-			$sConfirmation->assign('message', parent::lang('class.FileView#delete#message#confirm'));
+			$sConfirmation->assign('message', parent::lang('class.FileView#delete#message#confirm').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_DELETE));
 			$sConfirmation->assign('form', $form->render('', true));
 			
 			// validate
@@ -580,7 +561,7 @@ class FileView extends PageView {
 	private function upload() {
 		
 		// pagecaption
-		$this->tpl->assign('pagecaption',parent::lang('class.FileView#page#caption#upload'));
+		$this->tpl->assign('pagecaption',parent::lang('class.FileView#page#caption#upload').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FILEUPLOAD));
 		
 		// smarty-templates
 		$sD = new JudoIntranetSmarty();
@@ -600,7 +581,7 @@ class FileView extends PageView {
 		$form->doctype('xhtml');
 		
 		// elements
-		// location
+		// name
 		$formIds['name'] = array('valueType' => 'string', 'type' => 'text',);
 		$form->add(
 				'label',		// type
@@ -612,6 +593,12 @@ class FileView extends PageView {
 		$name = $form->add(
 						$formIds['name']['type'],		// type
 						'name'		// id/name
+			);
+		$form->add(
+				'note',			// type
+				'noteName',	// id/name
+				'name',		// for
+				parent::lang('class.FileView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDNAME)	// note text
 			);
 		
 		// add rules
@@ -640,6 +627,12 @@ class FileView extends PageView {
 		$formContent = $form->add(
 						$formIds['formContent']['type'],		// type
 						'formContent'		// id/name
+			);
+		$form->add(
+				'note',			// type
+				'noteFormContent',	// id/name
+				'formContent',		// for
+				parent::lang('class.FileView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDFILE)	// note text
 			);
 		
 		// add rules
@@ -673,6 +666,12 @@ class FileView extends PageView {
 				'public',						// id/name
 				'1',							// value
 				null							// default
+			);
+		$form->add(
+				'note',			// type
+				'notePublic',	// id/name
+				'public',		// for
+				parent::lang('class.FileView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDISPUBLIC)	// note text
 			);
 		
 		// permissions
@@ -780,6 +779,12 @@ class FileView extends PageView {
 							'name',		// id/name
 							$file->getName()	// default
 				);
+			$form->add(
+					'note',			// type
+					'noteName',	// id/name
+					'name',		// for
+					parent::lang('class.FileView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDNAME)	// note text
+				);
 			
 			// add rules
 			$name->set_rule(
@@ -807,6 +812,12 @@ class FileView extends PageView {
 			$formContent = $form->add(
 							$formIds['formContent']['type'],		// type
 							'formContent'		// id/name
+				);
+			$form->add(
+					'note',			// type
+					'noteFormContent',	// id/name
+					'formContent',		// for
+					parent::lang('class.FileView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDFILE)	// note text
 				);
 			
 			// add rules
@@ -840,6 +851,12 @@ class FileView extends PageView {
 					'public',						// id/name
 					'1',							// value
 					($file->isPermittedFor(0) ? array('checked' => 'checked') : null)							// default
+				);
+			$form->add(
+					'note',			// type
+					'notePublic',	// id/name
+					'public',		// for
+					parent::lang('class.FileView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDISPUBLIC)	// note text
 				);
 			
 			// permissions
@@ -1105,7 +1122,7 @@ class FileView extends PageView {
 					);
 				// show
 				$sList[$table][$counter[$table]]['show'][] = array(
-						'href' => 'file.php?id=cached&table='.$table.'&tid='.$entry->getId(),
+						'href' => 'file.php?id=cached&table='.$table.'&tid='.$entry->getCached(false)['tableId'],
 						'title' => $entry->getName().parent::lang('class.FileView#listall#title#filename'),
 						'src' => 'img/file_download.png',
 						'alt' => '\''.$entry->getFilename().'\''.parent::lang('class.FileView#listall#title#filename'),

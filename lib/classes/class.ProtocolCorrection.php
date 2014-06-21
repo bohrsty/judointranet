@@ -159,22 +159,20 @@ class ProtocolCorrection extends Object {
 		}
 		
 		// prepare sql-statement
-		$sql = "SELECT *
-				FROM protocol_correction
-				WHERE pid = $id
-				AND uid=".$uid;
+		$sql = 'SELECT *
+				FROM `protocol_correction`
+				WHERE `pid` = #?
+				AND `uid`=#?';
 		
 		// execute
-		$result = $db->query($sql);
-		
-		// close db
-		$db->close();
-		
-		// check result
-		if($result->num_rows == 1) {
-			return true;
+		if(!Db::executeQuery(
+			$sql,
+			array($id, $uid,)
+		)) {
+			$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+			self::getError()->handle_error($errno);
 		} else {
-			return false;
+			return Db::$num_rows == 1;
 		}
 	}
 	

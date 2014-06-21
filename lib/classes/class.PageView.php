@@ -385,13 +385,26 @@ class PageView extends Object {
 		$param = $this->get('id');
 		$naviItems = $this->naviFromDb();
 		$active = 0;
+		
+		// get navi position for fileParam
+		$naviPosition = array();
+		foreach($naviItems as $position => $naviItem) {
+			list($positionFile, $positionParam) = explode('|',$naviItem->getFileParam());
+			$naviPosition[$positionFile] = $position;
+		}
+		
 		// walk through $naviItems
 		for($i=0; $i<count($naviItems); $i++){
 			
 			// check active
 			list($thisFile, $thisParam) = explode('|',$naviItems[$i]->getFileParam());
-			if($thisFile == $file) {
-				$active = $i;
+			// check different php files
+			if($file == 'announcement.php') {
+				$active = $naviPosition['calendar.php'];
+			} else {
+				if($thisFile == $file) {
+					$active = $i;
+				}
 			}
 			
 			// generate HTML
@@ -584,7 +597,10 @@ class PageView extends Object {
 	protected function zebraAddPermissions(&$form, $itemTable, $itemId=0) {
 		
 		// prepare return
-		$return = array();
+		$return = array(
+				'iconRead' => array(),
+				'iconEdit' => array(),
+			);
 		$formIds = array();
 		
 		// prepare clear radio

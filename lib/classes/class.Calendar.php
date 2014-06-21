@@ -546,7 +546,7 @@ class Calendar extends Page {
 		
 		// output (D=download; F=save on filesystem; S=string)
 		// get filename
-		$pdfFilename = $this->replace_umlaute(html_entity_decode($sA->fetch('string:'.$preset->get_filename()),ENT_COMPAT,'ISO-8859-1'));
+		$pdfFilename = $this->replace_umlaute(html_entity_decode($sA->fetch('string:'.$preset->get_filename()), ENT_XHTML, 'UTF-8'));
 		
 		// prepare file for File::factory
 		return array(

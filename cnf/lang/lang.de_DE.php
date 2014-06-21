@@ -67,7 +67,8 @@ $lang = array(
 			'NotAuthorized' => array(
 				'ERROR.caption' => 'FEHLER',
 				'ERROR.message' => 'Sie sind nicht berechtigt diese Seite an zu zeigen, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
-									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+									Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>'.
+									(self::getUser()->get_loggedin() ? '' : ' oder <a href="index.php?id=login'.Error::afterLogin('&amp;').'" title="anmelden">melden Sie sich an</a>').'.<br />
 									Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />'
 			),
 			'NotAuthorizedDemo' => array(
@@ -208,6 +209,8 @@ $lang = array(
 				'AnnPDF' => 'Ausschreibung als PDF anzeigen',
 				'AnnPDF.draft' => 'Ausschreibung als PDF anzeigen (ENTWURF)',
 				'attach' => 'Datei(en) anh&auml;ngen',
+				'filesAttached' => 'Anh&auml;nge vorhanden',
+				'public' => '&Ouml;ffentlich',
 			),
 			'title' => array(
 				'edit' => 'bearbeitet diesen Eintrag',
@@ -217,6 +220,8 @@ $lang = array(
 				'AnnDetails' => 'Ausschreibung anzeigen',
 				'AnnPDF' => 'Ausschreibung als PDF anzeigen',
 				'attach' => 'Datei(en) anh&auml;ngen',
+				'filesAttached' => 'Anh&auml;nge vorhanden',
+				'public' => '&Ouml;ffentlich',
 			)
 		),
 		'init' => array(
@@ -585,6 +590,9 @@ $lang = array(
 			),
 			'details' => array(
 				'title' => 'Ausschreibung: Detailansicht',
+			),
+			'delete' => array(
+				'title' => 'Ausschreibung: Ausschreibung l&ouml;schen'
 			),
 			'Error' => array(
 				'NotAuthorized' => 'FEHLER - Nicht berechtigt'
@@ -1113,20 +1121,24 @@ $lang = array(
 				'edit' => 'Protokoll bearbeiten',
 				'delete' => 'Protokoll l&ouml;schen',
 				'correct' => 'Protokoll korrigieren',
+				'correctionFinished' => 'Korrektur abgeschlossen',
 				'ProtShow' => 'Protokoll anzeigen',
 				'ProtPDF' => 'Protokoll als PDF',
 				'date' => 'Details anzeigen',
 				'corrected' => 'Korrekturen vorhanden, &uuml;berpr&uuml;fen',
 				'attach' => 'Datei(en) anh&auml;ngen',
+				'filesAttached' => 'Anh&auml;nge vorhanden',
 			),
 			'alt' => array(
 				'edit' => 'Protokoll bearbeiten',
 				'delete' => 'Protokoll l&ouml;schen',
 				'correct' => 'Protokoll korrigieren',
+				'correctionFinished' => 'Korrektur abgeschlossen',
 				'ProtShow' => 'Protokoll anzeigen',
 				'ProtPDF' => 'Protokoll als PDF',
 				'corrected' => 'Korrekturen vorhanden, &uuml;berpr&uuml;fen',
 				'attach' => 'Datei(en) anh&auml;ngen',
+				'filesAttached' => 'Anh&auml;nge vorhanden',
 			)
 		),
 		'details' => array(
@@ -1184,7 +1196,9 @@ $lang = array(
 		'newEntry' => array(
 			'tmce' => array(
 				'item' => 'TOP',
-				'decision' => 'Beschluss'
+				'decision' => 'Beschluss',
+				'messageElement' => 'Der Editor erscheint erst nach Auswahl der Vorlage!',
+				'messageSelect' => 'Die Vorlage kann erst nach dem Speichern wieder angepasst werden!',
 			)
 		),
 		'delete' => array(
@@ -1222,13 +1236,24 @@ $lang = array(
 			),
 			'diff' => array(
 				'baseCaption' => 'Originaltext',
-				'newCaption' => 'Korrektur'
+				'newCaption' => 'Korrektur',
+				'pageCaption' => 'Korrektur vergleichen',
 			),
 			'tmceClass' => array(
 				'tmceItem' => 'TOP',
 				'tmceDecision' => 'Beschluss',
 			),
-		)
+		),
+		'global' => array(
+			'info' => array(
+				'help' => 'Hilfe',
+			),
+		),
+		'decisions' => array(
+			'listAllTitle' => array(
+				'goTo' => 'Gehe zum Protokoll...',
+			),
+		),
 	),
 	'class.Protocol' => array(
 		'details' => array(
@@ -1273,6 +1298,21 @@ $lang = array(
 				'Login' => 'Login',
 				'adminUsertableSelect' => 'Tabelle ausw&auml;hlen',
 				'adminUsertableTasks' => 'Aufgaben',
+				'fileListall' => 'Dateiliste',
+				'fileListAdmin' => 'Aufgaben in der Dateiliste',
+				'fileUpload' => 'Datei hochladen',
+				'fieldFile' => 'Dateiauswahlfeld',
+				'protocolListall' => 'Protokollliste',
+				'protocolListAdmin' => 'Aufgaben in der Protokollliste',
+				'fieldAllText' => 'Textfeld',
+				'fieldPreset' => 'Vorlagenauswahl',
+				'protocolNew' => 'Neues Protokoll',
+				'protocolCorrectable' => 'Protokoll Status',
+				'protocolCorrectors' => 'Protokoll Korrektoren',
+				'protocolDecisions' => 'Beschl&uuml;sse',
+				'protocolCorrect' => 'Protokoll korrigieren',
+				'protocolDiff' => 'Korrekturen vergleichen',
+				'protocolDifflist' => 'Korrekturen auflisten',
 			),
 			'message' => array(
 				'errorIdNotExists' => '<p>Dieses Hilfe-Thema konnte nicht gefunden werden.</p>',
@@ -1349,6 +1389,8 @@ $lang = array(
 					Ausschreibung direkt als PDF (ein entsprechendes Programm zur Anzeige
 					wie der AdobeReader vorausgesetzt), in dieser Ansicht kann die Ausschreibung
 					gedruckt oder gespeichert werden.</li>
+					<li><img src="img/attachment_info.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; zeigt an, ob
+					Dateien am Termin angeh&auml;ngt sind, ein Klick darauf &ouml;ffnet die Detailansicht des Termins.</li>
 					</ul>',
 				'calendarListAdmin' => '<p>Die Administration eines Termins oder einer
 					Ausschreibung erfolgt &uuml;ber folgende Buttons:</p>
@@ -1364,26 +1406,30 @@ $lang = array(
 					Felder.</li>
 					<li><img src="img/ann_delete.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; l&ouml;scht die Ausschreibung
 					nach R&uuml;ckfrage endg&uuml;ltig.</li>
-					<li><select><option>Ausschreibungsvorlage ausw&auml;hlen</option></select>
-					<input type="submit" value="+" />&nbsp;:&nbsp; Um eine Ausschreibung mit Daten
+					<li><img src="img/attachment.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; &Ouml;ffnet den Dialog um
+					Dateien mit diesem Termin zu verkn&uuml;pfen.</li>
+					<li><span class="Zebra_Form"><select class="control"><option>Ausschreibungsvorlage ausw&auml;hlen</option></select>
+					<input class="submit" type="submit" value="+" /></span>&nbsp;:&nbsp; Um eine Ausschreibung mit Daten
 					zu f&uuml;llen muss ihr eine Vorlage zugewiesen werden, die die zu verwendenden
 					Felder und das Aussehen festlegt.<br />
 					Das Zuweisen der Vorlage erfolgt durch das Ausw&auml;hlen der Vorlage aus dem
 					einzeiligen Auswahlfeld und anschlie&szlig;endem Zuf&uuml;gen durch den Button.</li>
-					</ul>',
+					</ul>
+					<p>Das Symbol <img src="img/public.png" alt="Bild im Hilfetext" /> hinter dem Namen eines Termins zeigt den
+					eingeloggten Benutzern an, ob der Termin &ouml;ffentlich ist.</p>',
 				'calendarListSortlinks' => '<p>Die eingeblendete Filterauswahl besteht aus drei
 					Bereichen:</p>
 					<ul>
-					<li>Der erste Bereich enth&auml;lt die Buttons zum Zur&uuml;cksetzen der
+					<li>Der obere Bereich enth&auml;lt die Buttons zum Zur&uuml;cksetzen der
 					gew&auml;hlten Filter:<br />"<span class="underline">Alle Filter zur&uuml;cksetzen</span>" zeigt wieder die
 					komplette Liste an, ohne Filter.<br />"<span class="underline">Datumsfilter zur&uuml;cksetzen</span>"
 					beh&auml;lt die ausgew&auml;hlte Gruppe bei und entfernt nur den Zeitraum.<br />
 					"<span class="underline">Gruppenfilter zur&uuml;cksetzen</span>"beh&auml;lt den gew&auml;hlten Zeitraum und
 					entfernt nur die Gruppe</li>
-					<li>Der zweite Bereich enth&auml;lt die Buttons zur Auswahl eines festgelegten
+					<li>Der erste Reiter enth&auml;lt die Buttons zur Auswahl eines festgelegten
 					Zeitraums, der die Liste auf die Termine einschr&auml;nkt, die in diesem Zeitraum
 					stattfinden.</li>
-					<li>Der dritte Bereich enth&auml;lt die Buttons zur Auswahl nach festgelegten
+					<li>Der zweite Reiter enth&auml;lt die Buttons zur Auswahl nach festgelegten
 					Gruppierungen (z.B.: Altersklassen), die beim anlegen des Termins festgelegt
 					wurden.</li>
 					</ul>',
@@ -1455,6 +1501,131 @@ $lang = array(
 					R&uuml;ckfrage. Der Datensatz ist danach endg&uuml;ltig aus der Datenbank entfernt und
 					nur durch Neueintragen wiederherstellbar.</li>
 					</ul>',
+				'fileListall' => '<p>Diese Seite listet alle Dateien auf getrennt nach hochgeladenen und zwischengespeicherten.
+					Ein Klick auf den unterstrichenen Namen einer Datei &ouml;ffnet deren Details.</p>
+					<ul>
+					<li><img src="img/file_download.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; l&auml;dt die Datei herunter, der Browser
+					&ouml;ffnet den Auswahldialog, der zur Entscheidung auffordert, was mit der Datei geschehen soll.</li>
+					</ul>',
+				'fileListAdmin' => '<p>Die Administration einer Datei erfolgt &uuml;ber folgende Buttons:</p>
+					<ul>
+					<li><img src="img/file_edit.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; &ouml;ffnet die Datei im
+					Bearbeitungsmodus, hier k&ouml;nnen die einzelnen Felder des Datensatzes ge&auml;ndert werden.</li>
+					<li><img src="img/file_delete.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; l&ouml;scht die Datei nach
+					R&uuml;ckfrage endg&uuml;ltig.</li>
+					</ul>',
+				'fileUpload' => '<p>Formular zum Hochladen einer neuen Datei. Alle Felder, die
+					mit einem roten <span class="required">*</span> gekennzeichnet sind, m&uuml;ssen ausgef&uuml;llt werden, das
+					Formular l&auml;sst sich sonst nicht speichern.<br />Die erlaubten Zeichen
+					werden in der Hilfe des jeweiligen Feldes erl&auml;tert, bei Fehleingaben
+					wird eine entsprechende Meldung ausgegeben.</p>',
+				'fieldFile' => '<p><b>Format</b>: <i>Datei-Upload</i></p>
+					<p>Der Button "Durchsuchen..." &ouml;ffnet den Dialog zur Auswahl einer Datei vom lokalen Rechner. Durch
+					einen Fehler in einer verwendeten Komponente wird die Datei nach dem Ausw&auml;hlen nicht mehr angezeigt,
+					um eine falsch ausgew&auml;hlte Datei zu korrigieren, ist das Neuladen der Seite erforderlich.</p>',
+				'protocolListall' => '<p>Diese Seite listet alle Protokolle. Ein Klick auf den unterstrichenen
+					Namen des Protokolls &ouml;ffnet dessen Details. Zur Ansicht des Protokolls stehen folgende Buttons zur
+					Verf&uuml;gung:</p>
+					<ul>
+					<li><img src="img/prot_details.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; &ouml;ffnet
+					das Protokoll als Seitenansicht eingebettet in diese Seite, Drucken ist
+					in dieser Ansicht nicht m&ouml;glich.</li>
+					<li><img src="img/prot_pdf.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; &ouml;ffnet das
+					Protokoll direkt als PDF (ein entsprechendes Programm zur Anzeige
+					wie der AdobeReader vorausgesetzt), in dieser Ansicht kann die Ausschreibung
+					gedruckt oder gespeichert werden.</li>
+					<li><img src="img/attachment_info.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; zeigt an, ob
+					Dateien am Protokoll angeh&auml;ngt sind, ein Klick darauf &ouml;ffnet die Detailansicht des Protokolls.</li>
+					</ul>',
+				'protocolListAdmin' => '<p>Die Administration eines Protokolls erfolgt &uuml;ber folgende Buttons
+					(die administrativen Aufgaben k&ouml;nnen derzeit nur vom Ersteller des Protokolls vorgenommen werden):</p>
+					<ul>
+					<li><img src="img/prot_edit.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; &ouml;ffnet das Protokoll im
+					Bearbeitungsmodus, hier k&ouml;nnen die einzelnen Felder des Datensatzes
+					ge&auml;ndert werden.</li>
+					<li><img src="img/prot_delete.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; l&ouml;scht das Protokoll nach
+					R&uuml;ckfrage endg&uuml;ltig.</li>
+					<li><img src="img/prot_correct.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; &ouml;ffnet das Protokoll zur
+					Korrektur, nur sichtbar, wenn man als Korrektor eingetragen wurde und sich das Protokoll im Status "korrigierbar"
+					befindet.</li>
+					<li><img src="img/prot_corrected.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; &ouml;ffnet die Liste der Korrekturen
+					um diese zu pr&uuml;fen und ein zu arbeiten. Der Button ist nur sichtbar, wenn man Ersteller des Protokolls ist
+					und Korrekturen existieren.</li>
+					<li><img src="img/attachment.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; &ouml;ffnet eine Seite auf der Dateien
+					mit diesem Protokoll verkn&uuml;pft werden k&ouml;nnen.</li>
+					</ul>',
+				'fieldAllText' => '<p><b>Format</b>: <i>ein-/mehrzeiliger Text</i><br />
+					<b>Standardwert</b>: <i>keiner</i><br />
+					<b>Erlaubte Zeichen</b>: <i>"'.
+					htmlspecialchars(self::getGc()->get_config('textarea.desc')).'"</i></p>
+					<p>In dieses Feld kann ein beliebiger Text eingetragen werden, entsprechend den o.a. erlaubten Zeichen.</p>',
+				'fieldPreset' => '<p><b>Format</b>: <i>einzeiliges Auswahlfeld</i></p>
+					Hier ist die Vorlage aus zu w&auml;hlen, in der der Datensatz als PDF angezeitg wird.<p>',
+				'protocolNew' => '<p>Formular zur Erstellung eines neuen Protokolls. Alle Felder, die
+					mit einem roten <span class="required">*</span> gekennzeichnet sind, m&uuml;ssen ausgef&uuml;llt werden, das
+					Formular l&auml;sst sich sonst nicht speichern.<br />Die erlaubten Zeichen
+					werden in der Hilfe des jeweiligen Feldes erl&auml;tert, bei Fehleingaben
+					wird eine entsprechende Meldung ausgegeben.</p>',
+				'protocolCorrectable' => '<p>Der Status eines Protokolls besteht aus drei Auswahlm&ouml;glichkeiten:</p>
+					<ul>
+					<li><b>in Bearbeitung</b>: in diesem Status kann nur der Ersteller des Protokolls es bearbeiten, f&uuml;r
+					alle anderen ist es nicht sichtbar.</li>
+					<li><b>Korrekturfreigabe</b>: in diesem Status kann das Protokoll von den "Korrektoren" korrigiert werden,
+					es ist dann nur f&uuml;r den Ersteller und die Korrektoren sichtbar mit jeweils unterschiedlichen Aufgaben.</li>
+					<li><b>ver&ouml;ffentlicht</b>: in diesem Status ist das Protokoll fertig und sichtbar f&uuml;r alle die
+					berechtigt sind es zu sehen (angemeldete Benutzer, oder alle).</li>
+					</ul>',
+				'protocolCorrectors' => '<p><b>Format</b>: <i>Mehrfachauswahlfeld</i></p>
+					<p>Das Feld listet alle Benutzer auf, die sich anmelden k&ouml;nnen, hier kann ein oder mehrere Benutzer ausgew&auml;hlt
+					werden, die das Protokoll korrigieren d&uuml;rfen. Die Auswahl mehrerer Werte ist
+					durch Dr&uuml;cken und Halten der &lt;STRG&gt;-Taste m&ouml;glich, das
+					Entfernen der Auswahl oder einzelner Werte ist ebenfalls mittels
+					Dr&uuml;cken und Halten der &lt;STRG&gt;-Taste m&ouml;glich.</p>',
+				'protocolDecisions' => '<p>Beschl&uuml;sse werden hier in Tabellen angezeigt:</p>
+					<table class="content protocol_showdecisions">
+						<tr class="head">
+							<td class="date">
+								<b>---Datum---</b>
+							</td>
+							<td class="type">
+								<b>---Sitzungstyp---</b>
+							</td>
+							<td>
+								<b>---Ort---</b>
+							</td>
+						</tr>
+						<tr class="decision even">
+							<td colspan="3">
+								---Beschlusstext 1. Beschluss---	
+							</td>
+						</tr>
+						<tr class="decision odd">
+							<td colspan="3">
+								---Beschlusstext 2. Beschluss---	
+							</td>
+						</tr>
+					</table>
+					<p>Wenn diese Seite aus einem einzelnen Protokoll heraus aufgerufen wird, werden nur die
+					Beschl&uuml;sse dieses Protokolls angezeigt. Wenn man den Men&uuml;punkt "Alle Beschl&uuml;sse anzeigen"
+					unter "Protokolle" w&auml;hlt, wird pro Protokoll eine Tabelle mit den jeweiligen Beschl&uuml;ssen angezeigt.</p>',
+				'protocolCorrect' => '<p>Zur Korrektur wird der Original-Protokolltext im Editor angezeigt und die Korrektoren
+					d&uuml;rfen ihre Korrekturen direkt im Text vornehmen, so dass das Protokoll dem Stand entspricht, den sie
+					f&uuml;r den korrekten halten.</p>',
+				'protocolDiff' => '<p>Der obere Teil der Ansicht zeigt auf der rechten Seite den Text des urspr&uuml;nglichen Protokolls
+					und auf der linken Seite den Text der Korrektur zeilenweise gegen&uuml;ber gestellt. Die Formatierungen (TOP oder Beschluss)
+					werden im direkten Vergleich durch die Texte "TOP:" und "Beschluss:" ersetzt. Wenn eine Zeile in der Vergleichsansicht
+					<span style="background-color: #fd8;">rot</span>
+					eingef&auml;rbt ist, wurde in diese Zeile etwas ver&auml;ndert (hinzugef&uuml;gt oder entfernt), wenn die Zeile
+					<span style="background-color: #9e9;">gr&uuml;n</span>
+					eingef&auml;rbt ist, wurde diese Zeile komplett hinzugef&uuml;gt.</p>
+					<p>Der untere Teil der Ansicht enth&auml;lt den Editor zum Bearbeiten des urspr&uuml;nglichen Protokolls.</p>
+					<p>Der Haken "Korrektur abgeschlossen" in der letzten Zeile markiert die Korrektur als bearbeitet, damit wird
+					sie in der Liste der Korrekturen markiert (&nbsp;<img src="img/done.png" alt="Bild im Hilfetext" />&nbsp;)
+					und der Korrektor kann seine Korrektur nicht mehr bearbeiten.</p>',
+				'protocolDifflist' => '<p>Hier werden alle Korrekturen zu diesem Protokoll aufgelistet, es werden der Name des Korrektors
+					und das Datum der Erstellung angezeigt. Der Klick auf eine Korrektur, &ouml;ffnet die Vergleichsansicht.</p>
+					<p>Wenn hinter der Korrektur das Symbol <img src="img/done.png" alt="Bild im Hilfetext" /> angezeigt wird,
+					wurde diese Korrektur als "schon bearbeitet" markiert.</p>',
 			),
 		),
 		'getMessage' => array(
@@ -1518,6 +1689,7 @@ $lang = array(
 				'filePage.delete' => 'Datei l&ouml;schen',
 				'filePage.upload' => 'Datei hochladen',
 				'filePage.cached' => 'Datei herunterladen',
+				'filePage.attach' => 'Datei anh&auml;ngen',
 			),
 		),
 	),
@@ -1545,6 +1717,7 @@ $lang = array(
 				'delete' => 'Dateien: Datei l&ouml;schen',
 				'download' => 'Dateien: Datei herunterladen',
 				'cached' => 'Dateien: Datei herunterladen',
+				'attach' => 'Dateien: Datei anh&auml;ngen',
 			),
 			'Error' => array(
 				'NotAuthorized' => 'FEHLER - Nicht berechtigt'
@@ -1634,7 +1807,7 @@ $lang = array(
 				'none' => '- keine -',
 			),
 		),
-	'entry' => array(
+		'entry' => array(
 			'form' => array(
 				'requiredNote' => '<span class="required">*</span> erforderliches Feld',
 				'name' => 'Name',
@@ -1649,6 +1822,11 @@ $lang = array(
 				'regexp.allowedChars' => 'Es k&ouml;nnen nur folgende Zeichen eingegeben werden!',
 				'file.upload' => 'Die Datei konnte nicht hochgeladen werden!',
 			)
+		),
+		'global' => array(
+			'info' => array(
+				'help' => 'Hilfe',
+			),
 		),
 	),
 	'class.File' => array(

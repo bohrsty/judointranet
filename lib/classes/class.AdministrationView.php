@@ -1701,7 +1701,7 @@ class AdministrationView extends PageView {
 				$name->set_rule(
 						array(
 								'required' => array(
-										'error', parent::lang('class.AdministrationView#userContent#form#rule.required.name'),
+										'error', parent::lang('class.AdministrationView#userContent#form#rule.required.email'),
 									),
 								'email' => array(
 										'error',	// error variable
@@ -2493,7 +2493,7 @@ class AdministrationView extends PageView {
 		
 		// check for navi list or permission page
 		$nid = $this->get('nid');
-		$forbiddenNids = array(1, 2, 3, 44);
+		$forbiddenNids = array(1, 2, 3, 45);
 		if($nid === false) {
 			
 			// navi list

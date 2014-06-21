@@ -541,7 +541,9 @@ class AnnouncementView extends PageView {
 						
 						// delete cached file
 						$fid = File::idFromCache('calendar|'.$calendar->get_id());
-						File::delete($fid);
+						if($fid !== false) {
+							File::delete($fid);
+						}
 						// delete attachments
 						File::deleteAttachedFiles('calendar',$calendar->get_id());
 						

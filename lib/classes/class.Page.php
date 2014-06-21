@@ -221,6 +221,8 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 			$file = new File($fid);
 			$data = array(
 					'content' => $fileFactory['content'],
+					'name' => $fileFactory['name'],
+					'filename' => $fileFactory['filename'],
 				);
 			$file->update($data);
 			$file->writeDb();

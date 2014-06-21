@@ -56,7 +56,9 @@ function hideJsdiffTextareas() {
 
 	// style parent element of the hidden jsdiff textareas
 	$("#protDiffBase").parent().css("display", "none");
+	$("#protDiffBase").attr("disabled", true);
 	$("#protDiffNew").parent().css("display", "none");
+	$("#protDiffNew").attr("disabled", true);
 }
 
 

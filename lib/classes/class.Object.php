@@ -34,6 +34,7 @@ class Object {
 	 * class-variables
 	 */
 	private $get;
+	private static $staticGet;
 	private $post;
 	
 	
@@ -76,8 +77,14 @@ class Object {
 	public function get_get(){
 		return $this->get;
 	}
+	public static function staticGetGet(){
+		return self::$staticGet;
+	}
 	public function set_get($get) {
 		$this->get = $get;
+	}
+	public static function staticSetGet($get) {
+		self::$staticGet = $get;
 	}
 	public function getPost(){
 		return $this->post;
@@ -342,9 +349,6 @@ class Object {
 			' ' => '_',
 		);
 		
-		// convert to utf8
-		$string = utf8_encode($string);		
-		
 		// replace
 		foreach($table as $char => $replacement) {
 			$string = str_replace($char,$replacement,$string);
@@ -385,6 +389,7 @@ class Object {
 		
 		// set class-variables
 		$this->set_get($get);
+		self::staticSetGet($get);
 		
 		// walk through $_POST if defined
 		$post = null;
@@ -422,6 +427,24 @@ class Object {
 		
 		// check if key is set
 		$get = $this->get_get();
+		if(isset($get[$var])) {
+			return $get[$var][0];
+		} else {
+			return false;
+		}
+	}
+	
+	
+	/**
+	 * statidGet() returns the value of $_GET[$var] if set (for use in static context)
+	 * 
+	 * @param string $var text of key in $_GET-array
+	 * @return string value of the $_GET-key, or false if not set
+	 */
+	public static function staticGet($var) {
+		
+		// check if key is set
+		$get = self::staticGetGet();
 		if(isset($get[$var])) {
 			return $get[$var][0];
 		} else {

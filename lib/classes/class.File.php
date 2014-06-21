@@ -319,7 +319,7 @@ class File extends Page {
 			return $result->num_rows == 1;
 		} else {
 			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-			$this->getError()->handle_error($errno);
+			self::getError()->handle_error($errno);
 		}
 	}
 	
@@ -449,11 +449,12 @@ class File extends Page {
 		// get data
 		$extensions = '';
 		if($result) {
-			list($ext) = $result->fetch_array(MYSQL_NUM);
-			$extensions .= $ext.',';
+			while(list($ext) = $result->fetch_array(MYSQL_NUM)) {
+				$extensions .= $ext.',';
+			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
-			$this->getError()->handle_error($errno);
+			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
+			self::getError()->handle_error($errno);
 		}
 		// remove last comma
 		$extensions = substr($extensions, 0, -1);
@@ -699,6 +700,16 @@ class File extends Page {
 			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 			self::getError()->handle_error($errno);
 		}
+	}
+	
+	
+	/**
+	 * __toString() returns an string representation of this object
+	 * 
+	 * @return string string representation of this object
+	 */
+	public function __toString() {
+		return 'File';
 	}
 }
 
