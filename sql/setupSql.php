@@ -954,7 +954,7 @@ function mysql_9() {
 				(20, \'class.Navi#item#name#announcementPage.edit\', \'18\', \'announcement.php|edit\', \'1\', \'0\', \'1\', CURRENT_TIMESTAMP),
 				(21, \'class.Navi#item#name#announcementPage.delete\', \'18\', \'announcement.php|delete\', \'2\', \'0\', \'1\', CURRENT_TIMESTAMP),
 				(22, \'class.Navi#item#name#announcementPage.details\', \'18\', \'announcement.php|details\', \'3\', \'0\', \'1\', CURRENT_TIMESTAMP),
-				(23, \'class.Navi#item#name#announcementPage.topdf\', \'18\', \'announcement.php|topfd\', \'4\', \'0\', \'1\', CURRENT_TIMESTAMP),
+				(23, \'class.Navi#item#name#announcementPage.topdf\', \'18\', \'announcement.php|topdf\', \'4\', \'0\', \'1\', CURRENT_TIMESTAMP),
 				(24, \'class.Navi#item#name#protocolPage\', \'0\', \'protocol.php|\', \'4\', \'1\', \'1\', CURRENT_TIMESTAMP),
 				(25, \'class.Navi#item#name#protocolPage.new\', \'24\', \'protocol.php|new\', \'0\', \'1\', \'1\', CURRENT_TIMESTAMP),
 				(26, \'class.Navi#item#name#protocolPage.listall\', \'24\', \'protocol.php|listall\', \'1\', \'1\', \'1\', CURRENT_TIMESTAMP),

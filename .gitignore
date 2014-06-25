@@ -1,5 +1,6 @@
 /TODO
 /test.*
+/test_*
 /img/Momentum_MatteEntireSet1.zip
 /templates/announcements/*/*
 /templates/protocols/*

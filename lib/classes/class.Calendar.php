@@ -609,10 +609,15 @@ class Calendar extends Page {
 		// get preset
 		$preset = new Preset($pid, 'calendar', $cid);
 		// get draft field and read value
-		$draftField = $preset->fieldById(-1);
-		$draftField->readValue();
-		// return value
-		return $draftField->get_value();
+		if($preset->getUseDraft() == 1) {
+			
+			$draftField = $preset->fieldById(-1);
+			$draftField->readValue();
+			// return value
+			return $draftField->get_value();
+		} else {
+			return 0;
+		}
 	}
 }
 
