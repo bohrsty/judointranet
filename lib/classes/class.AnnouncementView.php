@@ -64,7 +64,7 @@ class AnnouncementView extends PageView {
 	public function init() {
 		
 		// set pagename
-		$this->tpl->assign('pagename',parent::lang('class.AnnouncementView#page#init#name'));
+		$this->getTpl()->assign('pagename',parent::lang('announcement'));
 		
 		// init helpmessages
 		$this->initHelp();
@@ -81,46 +81,46 @@ class AnnouncementView extends PageView {
 					case 'new':
 						
 						// smarty
-						$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#new#title')));
-						$this->tpl->assign('main', $this->newEntry());
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('zebraform', true);
+						$this->getTpl()->assign('title', $this->title(parent::lang('announcement: new entry')));
+						$this->getTpl()->assign('main', $this->newEntry());
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', true);
 					break;
 					
 					case 'edit':
 						
 						// smarty
-						$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#edit#title')));
-						$this->tpl->assign('main', $this->edit());
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('zebraform', true);
+						$this->getTpl()->assign('title', $this->title(parent::lang('announcement: edit')));
+						$this->getTpl()->assign('main', $this->edit());
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', true);
 					break;
 					
 					case 'delete':
 						
 						// smarty
-						$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#delete#title')));
-						$this->tpl->assign('main', $this->delete());
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('zebraform', true);
+						$this->getTpl()->assign('title', $this->title(parent::lang('announcement: delete')));
+						$this->getTpl()->assign('main', $this->delete());
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', true);
 					break;
 					
 					case 'details':
 						
 						// smarty
-						$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#details#title')));
-						$this->tpl->assign('main', $this->details());
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('zebraform', false);
+						$this->getTpl()->assign('title', $this->title(parent::lang('announcement: details')));
+						$this->getTpl()->assign('main', $this->details());
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', false);
 					break;
 					
 					case 'topdf':
 						
 						// smarty
-						$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#topdf#title')));
-						$this->tpl->assign('main', $this->topdf());
-						$this->tpl->assign('jquery', false);
-						$this->tpl->assign('zebraform', false);
+						$this->getTpl()->assign('title', $this->title(parent::lang('announcement: pdf')));
+						$this->getTpl()->assign('main', $this->topdf());
+						$this->getTpl()->assign('jquery', false);
+						$this->getTpl()->assign('zebraform', false);
 					break;
 					
 					default:
@@ -130,38 +130,30 @@ class AnnouncementView extends PageView {
 						$this->getError()->handle_error($errno);
 						
 						// smarty
-						$this->tpl->assign('title', '');
-						$this->tpl->assign('main', $this->getError()->to_html($errno));
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('zebraform', false);
+						$this->getTpl()->assign('title', '');
+						$this->getTpl()->assign('main', $this->getError()->to_html($errno));
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', false);
 					break;
 				}
 			} else {
 				
 				// error not authorized
-				// main content
-				$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-				$this->getError()->handle_error($errno);
-
-				// smarty
-				$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#Error#NotAuthorized')));
-				$this->tpl->assign('main', $this->getError()->to_html($errno));
-				$this->tpl->assign('jquery', true);
-				$this->tpl->assign('zebraform', false);
+				throw new NotAuthorizedException($this);
 			}
 		} else {
 			
 			// id not set
 			// smarty-title
-			$this->tpl->assign('title', $this->title(parent::lang('class.AnnouncementView#init#default#title')));
+			$this->getTpl()->assign('title', $this->title(parent::lang('announcement')));
 			// smarty-pagecaption
-			$this->tpl->assign('pagecaption', $this->defaultContent()); 
+			$this->getTpl()->assign('pagecaption', $this->defaultContent()); 
 			// smarty-main
-			$this->tpl->assign('main', '');
+			$this->getTpl()->assign('main', '');
 			// smarty-jquery
-			$this->tpl->assign('jquery', true);
+			$this->getTpl()->assign('jquery', true);
 			// smarty-hierselect
-			$this->tpl->assign('zebraform', false);
+			$this->getTpl()->assign('zebraform', false);
 		}
 		
 		// global smarty
@@ -231,7 +223,7 @@ class AnnouncementView extends PageView {
 					$form->add(
 						'submit',		// type
 						'buttonSubmit',	// id/name
-						parent::lang('class.AnnouncementView#new_entry#form#submitButton')	// value
+						parent::lang('save')	// value
 					);
 					
 					// validate
@@ -334,7 +326,7 @@ class AnnouncementView extends PageView {
 				if(Calendar::check_id($this->get('cid')) && Preset::check_preset($this->get('pid'),'calendar')) {
 					
 					// pagecaption
-					$this->tpl->assign('pagecaption',parent::lang('class.AnnouncementView#page#caption#edit'));
+					$this->getTpl()->assign('pagecaption',parent::lang('edit entry'));
 					
 					// prepare return
 					$return = '';
@@ -373,7 +365,7 @@ class AnnouncementView extends PageView {
 					$form->add(
 						'submit',		// type
 						'buttonSubmit',	// id/name
-						parent::lang('class.AnnouncementView#new_entry#form#submitButton')	// value
+						parent::lang('save')	// value
 					);
 					
 					// validate
@@ -462,7 +454,7 @@ class AnnouncementView extends PageView {
 	 * @param int $cid entry-id for calendar
 	 * @return string html-string
 	 */
-	private function delete() {
+	protected function delete() {
 	
 		// check permissions
 		if($this->getUser()->hasPermission('calendar', $this->get('cid'), 'w')) {
@@ -474,7 +466,7 @@ class AnnouncementView extends PageView {
 				if(Calendar::check_id($this->get('cid')) && Preset::check_preset($this->get('pid'),'calendar')) {
 					
 					// pagecaption
-					$this->tpl->assign('pagecaption',parent::lang('class.AnnouncementView#page#caption#delete'));
+					$this->getTpl()->assign('pagecaption',parent::lang('delete entry'));
 					
 					// prepare return
 					$return = '';
@@ -497,20 +489,20 @@ class AnnouncementView extends PageView {
 					$form->add(
 						'submit',		// type
 						'buttonSubmit',	// id/name
-						parent::lang('class.AnnouncementView#delete#form#yes'),	// value
-						array('title' => parent::lang('class.AnnouncementView#delete#title#yes'))
+						parent::lang('yes'),	// value
+						array('title' => parent::lang('yes'))
 					);
 					
 					// smarty-link
 					$link = array(
 									'params' => 'class="submit"',
 									'href' => 'calendar.php?id=listall',
-									'title' => parent::lang('class.AnnouncementView#delete#title#cancel'),
-									'content' => parent::lang('class.AnnouncementView#delete#form#cancel')
+									'title' => parent::lang('cancel'),
+									'content' => parent::lang('cancel')
 								);
 					$sConfirmation->assign('link', $link);
 					$sConfirmation->assign('spanparams', 'id="cancel"');
-					$sConfirmation->assign('message', parent::lang('class.AnnouncementView#delete#message#confirm').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_DELETE));
+					$sConfirmation->assign('message', parent::lang('you really want to delete').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_DELETE));
 					$sConfirmation->assign('form', $form->render('', true));
 					
 					// validate
@@ -548,7 +540,7 @@ class AnnouncementView extends PageView {
 						File::deleteAttachedFiles('calendar',$calendar->get_id());
 						
 						// smarty
-						$sConfirmation->assign('message', parent::lang('class.AnnouncementView#delete#message#done'));
+						$sConfirmation->assign('message', parent::lang('entry successful deleted'));
 						$sConfirmation->assign('form', '');
 						
 						// write entry
@@ -611,7 +603,7 @@ class AnnouncementView extends PageView {
 						|| ($draftValue == 1 && $this->getUser()->get_loggedin()))) {
 					
 					// pagecaption
-					$this->tpl->assign('pagecaption',parent::lang('class.AnnouncementView#page#caption#details'));
+					$this->getTpl()->assign('pagecaption',parent::lang('details'));
 					
 					// prepare return
 					$return = '';

@@ -163,8 +163,8 @@ class Config extends Object {
 		$config = $this->get_config();
 		
 		// read default configuration from ini-file
-		if(is_file('cnf/default.ini') && is_readable('cnf/default.ini')) {
-			$default = parse_ini_file('cnf/default.ini',true);
+		if(is_file(JIPATH.'/cnf/default.ini') && is_readable(JIPATH.'/cnf/default.ini')) {
+			$default = parse_ini_file(JIPATH.'/cnf/default.ini',true);
 			
 			// merge arrays
 			foreach($default as $parts) {
@@ -173,8 +173,8 @@ class Config extends Object {
 		}
 		
 		// read configuration from ini-file
-		if(is_file('cnf/config.ini') && is_readable('cnf/config.ini')) {
-			$file = parse_ini_file('cnf/config.ini',true);
+		if(is_file(JIPATH.'/cnf/config.ini') && is_readable(JIPATH.'/cnf/config.ini')) {
+			$file = parse_ini_file(JIPATH.'/cnf/config.ini',true);
 			
 			// merge arrays
 			foreach($file as $parts) {		

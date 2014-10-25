@@ -43,6 +43,8 @@ class Calendar extends Page {
 	private $lastModified;
 	private $modifiedBy;
 	private $filter;
+	private $additionalFields;
+	private $city;
 	
 	/*
 	 * getter/setter
@@ -113,6 +115,18 @@ class Calendar extends Page {
 	public function setFilter($filter) {
 		$this->filter = $filter;
 	}
+	public function getAdditionalFields(){
+		return $this->additionalFields;
+	}
+	public function setAdditionalFields($additionalFields) {
+		$this->additionalFields = $additionalFields;
+	}
+	public function getCity(){
+		return $this->city;
+	}
+	public function setCity($city) {
+		$this->city = $city;
+	}
 	
 	/*
 	 * constructor/destructor
@@ -143,6 +157,8 @@ class Calendar extends Page {
 			$this->set_date($arg['date']);
 			$this->set_type($arg['type']);
 			$this->set_content($arg['content']);
+			$this->setCity($arg['city']);
+			$this->set_preset_id(0);
 			$this->set_valid($arg['valid']);
 			$this->setFilter($filter);
 		} else {
@@ -163,41 +179,53 @@ class Calendar extends Page {
 	 */
 	private function get_from_db($id) {
 		
-		// get db-object
-		$db = Db::newDb();
-		
-		// prepare sql-statement
-		$sql = "
-			SELECT c.name,c.shortname,c.date,c.type,c.content,c.preset_id,c.valid,c.last_modified,c.modified_by
-			FROM calendar AS c
-			WHERE c.id = $id";
-		
-		// execute
-		$result = $db->query($sql);
-		
-		// fetch result
-		if($result) {
-			list($name,$shortname,$date,$type,$content,$preset_id,$valid,$lastModified,$modifiedBy) = $result->fetch_array(MYSQL_NUM);
-			
-			// set variables to object
-			$this->set_id($id);
-			$this->set_name($name);
-			$this->set_shortname($shortname);
-			$this->set_date($date);
-			$this->set_type($type);
-			$this->set_content($content);
-			$this->set_preset_id($preset_id);
-			$this->set_valid($valid);
-			$this->setLastModified((strtotime($lastModified) < 0 ? 0 : strtotime($lastModified)));
-			$this->setModifiedBy($modifiedBy);
-			$this->setFilter(Filter::allFilterOf('calendar', $id));
-		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-			self::getError()->handle_error($errno);
+		// get values from db MysqlErrorException
+		$result = Db::ArrayValue('
+			SELECT `c`.`name`,
+				`c`.`shortname`,
+				`c`.`date`,
+				`c`.`type`,
+				`c`.`content`,
+				`c`.`city`,
+				`c`.`preset_id`,
+				`c`.`valid`,
+				`c`.`last_modified`,
+				`c`.`modified_by`,
+				(SELECT COUNT(`r`.`id`)
+					FROM `result` AS `r`
+					WHERE `r`.`calendar_id`=`c`.`id`) `results`,
+				(SELECT COUNT(`fa`.`file_id`)
+					FROM `files_attached` AS `fa`
+					WHERE `fa`.`table_name`=\'calendar\'
+						AND `fa`.`table_id`=`c`.`id`) `files`
+			FROM `calendar` AS `c`
+			WHERE `c`.`id`=#?	
+		',
+		MYSQL_ASSOC,
+		array($id,));
+		if($result === false) {
+			throw new MysqlErrorException($this, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
-		
-		// close db
-		$db->close();
+			
+		// set variables to object
+		$this->set_id($id);
+		$this->set_name($result[0]['name']);
+		$this->set_shortname($result[0]['shortname']);
+		$this->set_date($result[0]['date']);
+		$this->set_type($result[0]['type']);
+		$this->set_content($result[0]['content']);
+		$this->setCity($result[0]['city']);
+		$this->set_preset_id($result[0]['preset_id']);
+		$this->set_valid($result[0]['valid']);
+		$this->setLastModified((strtotime($result[0]['last_modified']) < 0 ? 0 : strtotime($result[0]['last_modified'])));
+		$this->setModifiedBy($result[0]['modified_by']);
+		$this->setFilter(Filter::allFilterOf('calendar', $id));
+		$this->setAdditionalFields(
+			array(
+					'files' => $result[0]['files'],
+					'results' => $result[0]['results'],
+				)
+		);
 	}
 	
 	
@@ -213,81 +241,57 @@ class Calendar extends Page {
 		// prepare timestamp
 		$timestamp = date('Y-m-d',strtotime($this->get_date()));
 		
-		// get db-object
-		$db = Db::newDb();
+		// insert into database
+		if(!Db::executeQuery('
+				INSERT INTO calendar (`id`,`name`,`shortname`,`date`,`type`,`content`,`city`,`preset_id`,`valid`,`last_modified`,`modified_by`)
+				VALUES (#?, \'#?\', \'#?\', \'#?\', \'#?\', \'#?\', \'#?\', #?, #?, CURRENT_TIMESTAMP, #?)
+				ON DUPLICATE KEY UPDATE
+					`name`=\'#?\',
+					`shortname`=\'#?\',
+					`date`=\'#?\',
+					`type`=\'#?\',
+					`content`=\'#?\',
+					`city`=\'#?\',
+					`preset_id`=#?,
+					`valid`=#?,
+					`last_modified`=CURRENT_TIMESTAMP,
+					`modified_by`=#?
+			',
+				array(// insert
+					(is_null($this->getId()) ? 'NULL' : $this->getId()),
+					$this->get_name(),
+					$this->get_shortname(),
+					$timestamp,
+					$this->get_type(),
+					$this->get_content(),
+					$this->getCity(),
+					$this->get_preset_id(),
+					$this->get_valid(),
+					(int)$this->getUser()->get_id(),
+					// update
+					$this->get_name(),
+					$this->get_shortname(),
+					$timestamp,
+					$this->get_type(),
+					$this->get_content(),
+					$this->getCity(),
+					$this->get_preset_id(),
+					$this->get_valid(),
+					(int)$this->getUser()->get_id(),))) {
+				$n = null;
+				throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+			}
 		
-		// check action
-		if($action == 'new') {
-		
-			// insert
-			// prepare sql-statement
-			$sql = 'INSERT INTO calendar (id,name,shortname,date,type,content,preset_id,valid,modified_by)
-					VALUES (null,"'
-					.$this->get_name().'","'
-					.$this->get_shortname().'","'
-					.$timestamp.'","'
-					.$this->get_type().'","'
-					.$this->get_content().'",
-					0,'
-					.$this->get_valid().','.
-					(int)$this->getUser()->get_id().')';
-			
-			// execute
-			$result = $db->query($sql);
-			if(!$result) {
-				$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-				self::getError()->handle_error($errno);
-			}
-			
-			// get insert_id
-			$insert_id = $db->insert_id;
-			
-			// set id and preset_id
-			$this->set_id($insert_id);
-			$this->set_preset_id(0);
-			
-			// write filter
-			Filter::dbRemove('calendar', $insert_id);
-			foreach($this->getFilter() as $filter) {
-				$filter->dbWrite('calendar', $insert_id);
-			}
-		} elseif($action == 'update') {
-			
-			// update
-			// prepare sql-statement
-			$sql = 'UPDATE calendar
-					SET
-						name = "'.$this->get_name().'",
-						shortname = "'.$this->get_shortname().'",
-						date = "'.$timestamp.'",
-						type = "'.$this->get_type().'",
-						content = "'.$this->get_content().'",
-						preset_id = "'.$this->get_preset_id().'",
-						valid = '.$this->get_valid().',
-						modified_by = '.$this->getUser()->get_id().'
-					WHERE id = "'.$this->get_id().'"';
-			
-			// execute
-			$result = $db->query($sql);
-			if(!$result) {
-				$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-				self::getError()->handle_error($errno);
-			}
-			
-			// write filter
-			Filter::dbRemove('calendar', $this->get_id());
-			foreach($this->getFilter() as $filter) {
-				$filter->dbWrite('calendar', $this->get_id());
-			}
-		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('DbActionUnknown','write_calendar',$action);
-			throw new Exception('DbActionUnknown',$errno);
+		// set id if insert
+		if(isset(Db::$insertId)) {
+			$this->setId(Db::$insertId);
 		}
 		
-		// close db
-		$db->close();
+		// write filter
+		Filter::dbRemove('calendar', $this->getId());
+		foreach($this->getFilter() as $filter) {
+			$filter->dbWrite('calendar', $this->getId());
+		}
 	}
 	
 	
@@ -311,13 +315,14 @@ class Calendar extends Page {
 
 		// prepare data
 		$data = array(
-					'name' => parent::lang('class.Calendar#details_to_html#data#name').$this->get_name(),
-					'shortname' => parent::lang('class.Calendar#details_to_html#data#shortname').$this->get_shortname(),
-					'date' => parent::lang('class.Calendar#details_to_html#data#date').$this->get_date('d.m.Y'),
-					'type' => parent::lang('class.Calendar#details_to_html#data#type').$this->return_type('translated'),
-					'content' => parent::lang('class.Calendar#details_to_html#data#content').nl2br($this->get_content()),
-					'filter' => parent::lang('class.Calendar#details_to_html#data#filter').$filterNames,
-					'public' => parent::lang('class.Calendar#details_to_html#data#public').($this->isPermittedFor(0) ? parent::lang('class.Calendar#details_to_html#data#publicYes') : parent::lang('class.Calendar#details_to_html#data#publicNo')),
+					'name' => _l('event<br />').$this->get_name(),
+					'shortname' => _l('shortname<br />').$this->get_shortname(),
+					'date' => _l('date<br />').$this->get_date('d.m.Y'),
+					'type' => _l('type<br />').$this->return_type('translated'),
+					'content' => _l('description<br />').nl2br($this->get_content()),
+					'city' => _l('city<br />').$this->getCity(),
+					'filter' => _l('filter<br />').$filterNames,
+					'public' => _l('public access<br />').($this->isPermittedFor(0) ? parent::lang('yes') : parent::lang('no')),
 		);
 		
 		// return
@@ -335,12 +340,15 @@ class Calendar extends Page {
 	 */
 	public function return_type($choice='raw') {
 		
+		// get types
+		$types = self::return_types();
+		
 		// check choice
 		if($choice == 'raw') {
 			return $this->get_type();
 		}
 		if($choice == 'translated') {
-			return parent::lang('class.Calendar#return_types#type#name.'.$this->get_type());
+			return $types[$this->get_type()];
 		}
 	}
 	
@@ -356,8 +364,8 @@ class Calendar extends Page {
 		
 		// fill array
 		$return = array(
-					'event' => parent::lang('class.Calendar#return_types#type#name.event'),
-					'training' => parent::lang('class.Calendar#return_types#type#name.training')
+					'event' => parent::lang('competition/championship'),
+					'training' => parent::lang('course')
 		);
 		
 		// return
@@ -403,6 +411,8 @@ class Calendar extends Page {
 				$this->set_type($value);
 			} elseif($name == 'content') {
 				$this->set_content($value);
+			} elseif($name == 'city') {
+				$this->setCity($value);
 			} elseif($name == 'filter') {
 				
 				// get filter objects
@@ -489,16 +499,6 @@ class Calendar extends Page {
 			$announcement['calendar_type'] = $this->get_type();
 			$announcement['calendar_content'] = $this->get_content();
 		}
-	}
-	
-	
-	/**
-	 * __toString() returns an string representation of this object
-	 * 
-	 * @return string string representation of this object
-	 */
-	public function __toString() {
-		return 'Calendar';
 	}
 	
 	
@@ -617,6 +617,34 @@ class Calendar extends Page {
 			return $draftField->get_value();
 		} else {
 			return 0;
+		}
+	}
+	
+	
+	/**
+	 * updateCity($city) updates the city field in database
+	 * 
+	 * @param int $tid table id of the entry to be updated
+	 * @param string $city city value to be set in database
+	 * @return void
+	 */
+	public static function updateCity($tid, $city) {
+		
+		// check empty city from callback
+		if($city != '') {
+			// update city value
+			if(!Db::executeQuery('
+					UPDATE `calendar`
+					SET `city` = \'#?\'
+					WHERE `id` = #?
+				',
+				array(
+					$city,
+					$tid,
+				))) {
+					$n = null;
+					throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+				}
 		}
 	}
 }

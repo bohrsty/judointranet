@@ -27,13 +27,20 @@
 		<title>{$title}</title>
 		<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
 		<script type="text/javascript" src="js/jquery-ui-1.10.3.custom.min.js"></script>
-		<script type="text/javascript" src="js/jquery.ui.datepicker-de.js"></script>
+		<script type="text/javascript" src="{if is_file('js/jquery.ui.datepicker-{$sLang}.js')}js/jquery.ui.datepicker-{$sLang}.js{else}js/jquery.ui.datepicker-de.js{/if}"></script>
 {if isset($zebraform) and $zebraform}
 		<link rel="stylesheet" type="text/css" href="css/zebra_form/zebra_form.css" />
 		<script type="text/javascript" src="js/zebra_form.js"></script>
 {/if}
 {if isset($tinymce) and $tinymce}
 		<script type="text/javascript" src="js/tiny_mce/tiny_mce.js"></script>
+{/if}
+{if isset($jtable) and $jtable}
+		<script type="text/javascript" src="js/jtable/jquery.jtable.min.js"></script>
+		<script type="text/javascript" src="{if is_file('js/jtable/localization/jquery.jtable.{$sLang}.js')}js/jtable/localization/jquery.jtable.{$sLang}.js{else}js/jtable/localization/jquery.jtable.de.js{/if}"></script>
+		<script type="text/javascript" src="js/validationEngine.jquery/jquery.validationEngine.js"></script>
+		<script type="text/javascript" src="{if is_file('js/validationEngine.jquery/languages/jquery.validationEngine-{$sLang}.js')}js/validationEngine.jquery/languages/jquery.validationEngine-{$sLang}.js{else}js/validationEngine.jquery/languages/jquery.validationEngine-de.js{/if}"></script>
+		<link rel="stylesheet" type="text/css" href="css/validationEngine.jquery.css" />
 {/if}
 {if isset($jsdifflib) and $jsdifflib}
 		<script type="text/javascript" src="js/difflib.js"></script>
@@ -42,8 +49,17 @@
 		<script type="text/javascript" src="js/page.js"></script>
 		<link rel="stylesheet" type="text/css" href="css/start/jquery-ui-1.10.3.custom.min.css" />
 		<link rel="stylesheet" type="text/css" href="css/page.css" />
+{if isset($jtable) and $jtable}
+		<link rel="stylesheet" type="text/css" href="css/jtable/jtable_jqueryui.min.css" />
+{/if}
 		<script type="text/javascript">
-{if isset($helpids)}
+			$(function() {
+				$("{$usersettingsJsToToggle}").hide();
+				$("{$usersettingsJsId}").click(function() {ldelim}
+					$("{$usersettingsJsToToggle}").slideToggle({$usersettingsJsTime});
+				{rdelim});
+			});
+{if isset($helpids) && isset($help)}
 {literal}
 			$(function() {
 				$({/literal}{$helpids}{literal}).each(function() {
@@ -112,7 +128,7 @@
 			{rdelim});
 		</script>
 {/if}
-{if isset($tinymce) and $tinymce}
+{if isset($tinymce) and isset($tmce)}
 		<script type="text/javascript">
 			function initTinyMce(contentCss) {ldelim}
 				tinyMCE.init({ldelim}
@@ -121,7 +137,7 @@
 			        elements : "{$tmce.element}",
 			        theme : "advanced",
 			        plugins : "spellchecker,pagebreak,style",
-			        language : "de",
+			        language : "{if is_file('js/tiny_mce/langs/{$sLang}.js')}{$sLang}{else}de{/if}",
 			        height : 500,
 			
 			        // Theme options
@@ -149,8 +165,8 @@
 			
 			$(function() {ldelim}
 {if $tmce.action == 'new'}
-				var messageElement = $('<p>').addClass('protocolMessage').text('{Object::lang('class.ProtocolView#newEntry#tmce#messageElement')}');
-				var messageSelect = $('<p>').addClass('protocolMessage').text('{Object::lang('class.ProtocolView#newEntry#tmce#messageSelect')}').hide();
+				var messageElement = $('<p>').addClass('protocolMessage').text('{lang}editor is shown after preset selection{/lang}');
+				var messageSelect = $('<p>').addClass('protocolMessage').text('{lang}preset cannot be changed until saved{/lang}').hide();
 				var tmceElement = $("#{$tmce.element}").hide();
 				var selectPreset = $("#{$protocolSelectPreset}");
 				tmceElement.after(messageElement);

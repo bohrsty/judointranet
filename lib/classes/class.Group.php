@@ -255,7 +255,7 @@ class Group extends Object {
 		$group = new Group(0);
 		
 		// set values
-		$group->setName(parent::lang('class.Group#fakePublic#public#name'));
+		$group->setName(parent::lang('public access'));
 		$group->setSubGroups(array());
 		$group->setParent(-1);
 		$group->setValid(1);

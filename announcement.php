@@ -33,9 +33,18 @@ require('lib/common.inc.php');
  */
 session_start();
 
-$announcement_view = new AnnouncementView();
+/*
+ * catch exceptions
+ */
+try {
 
-$announcement_view->init();
+	$announcement_view = new AnnouncementView();
+	
+	$announcement_view->toHtml();
+}
+catch(Exception $e) {
+	handleExceptions($e, HANDLE_EXCEPTION_VIEW);
+}
 
 
 

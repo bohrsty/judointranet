@@ -1019,7 +1019,7 @@ function mysql_9() {
 		$gids[1] = 1;
 		
 		// get config
-		$config = parse_ini_file('cnf/setup.ini', true);
+		$config = parse_ini_file(JIPATH.'/cnf/setup.ini', true);
 		$writeGid = 1;
 		if(isset($config['writeGid'])) {
 			if(isset($gids[$config['writeGid']])) {
@@ -1803,6 +1803,673 @@ function mysql_17() {
 		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
+	
+	// return
+	return $return;
+}
+
+
+function mysql_18() {
+	
+	// prepare return
+	$return = array(
+			'returnValue' => true,
+			'returnMessage' => '',
+		);
+	
+	// insert navi item in administration
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `navi` (`id`, `name`, `parent`, `file_param`, `position`, `show`, `valid`, `required_permission`, `last_modified`)
+			VALUES 
+				(46, \'class.Navi#item#name#administrationPage.club\', \'34\', \'administration.php|club\', \'3\', \'1\', \'1\', \'w\', CURRENT_TIMESTAMP)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	
+	/*
+	 * switch club to system table
+	 */
+	// remove config for user table club
+	if(!Db::executeQuery('
+		DELETE FROM `config`
+			WHERE `name`=\'usertableCols.club\'
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// update systemtables
+	if(!Db::executeQuery('
+		UPDATE `config`
+			SET `value` = \'calendar,category,config,defaults,field,fields2presets,group,group2group,inventory,inventory_movement,preset,rights,user,user2group,value,protocol,protocol_correction,helpmessages,user2groups,permissions,navi,item2filter,groups,filter,file,file_type,files_attached,club\'
+		WHERE `name` = \'systemtables\';
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// get usertableCols.* from config
+	$usertableCols = Db::arrayValue('
+		SELECT * FROM `config` WHERE `name` LIKE \'usertableCols.%\'
+		',
+		MYSQL_ASSOC);
+	if(!is_array($usertableCols)) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	// walk through $usertableCols
+	foreach($usertableCols as $usertableCol) {
+		
+		// split name
+		list($temp, $table) = explode('.', $usertableCol['name']);
+		
+		// prepare array
+		$tableConfig = array(
+				'cols' => $usertableCol['value'],
+				'fk' => array(
+						),
+				'orderBy' => '',
+			);
+		// get json
+		$tableConfigJson = json_encode($tableConfig);
+		
+		// insert into config table
+		if(!Db::executeQuery('
+			INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+				VALUES 
+					(\'usertableConfig.'.$table.'\', \''.$tableConfigJson.'\', \'configuration for table '.$table.'\')
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+		
+		// delete old config
+		if(!Db::executeQuery('
+			DELETE FROM `config`
+			WHERE `name`=\''.$usertableCol['name'].'\'
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+	}
+	
+	/*
+	 * migrate club entry with id 1
+	 */
+	// check if club entry "1" exists
+	if(Db::rowExists('club', 'id', '1')
+		&& Db::singleValue('
+				SELECT `name`
+				FROM `club`
+				WHERE `id`=1
+		') != 'Testverein') {
+		
+		// get row with id 1
+		$firstRow = Db::arrayValue('
+				SELECT *
+				FROM `club`
+				WHERE `id`=1
+		');
+		if(!$firstRow) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+		
+		unset($firstRow[0][0]);
+		
+		if(!Db::executeQuery('
+			INSERT INTO `club` (`id`, `number`, `name`, `valid`)
+				VALUES (NULL, #?, \'#?\', #?)
+		',
+		$firstRow[0])) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+		$newId = Db::$insertId;
+		
+		// update contact and location table
+		// contact
+		if(!Db::executeQuery('
+			UPDATE `contact`
+				SET `club_id`=#?
+			WHERE `club_id`=1
+		',
+		array($newId))) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+		// location
+		if(!Db::executeQuery('
+			UPDATE `location`
+				SET `club_id`=#?
+			WHERE `club_id`=1
+		',
+		array($newId))) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+		
+		// update first row
+		if(!Db::executeQuery('
+			UPDATE `club`
+				SET 
+					`number`=0,
+					`name`=\'Testverein\',
+					`valid`=0
+			WHERE `id`=1
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+	} else {
+	
+		// add first calendar entry
+		if(!Db::executeQuery('
+			INSERT IGNORE INTO `club` (`id`, `number`, `name`, `valid`)
+				VALUES (1, 0, \'Testverein\', 0)
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+
+		}
+	}
+	
+	
+	/*
+	 * create tables for results
+	 */
+	// create table result
+	if(!Db::executeQuery('
+		CREATE TABLE IF NOT EXISTS `result` (
+		  `id` int(11) NOT NULL AUTO_INCREMENT,
+		  `calendar_id` int(11) NOT NULL,
+		  `preset_id` INT(11) NOT NULL DEFAULT \'0\',
+		  `desc` VARCHAR( 150 ) NOT NULL,
+		  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		  `modified_by` int(11) NOT NULL,
+		  `valid` BOOLEAN NOT NULL DEFAULT TRUE,
+		  PRIMARY KEY (`id`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// create table standings
+	if(!Db::executeQuery('
+		CREATE TABLE IF NOT EXISTS `standings` (
+		  `id` int(11) NOT NULL AUTO_INCREMENT,
+		  `result_id` int(11) NOT NULL,
+		  `agegroup` varchar(50) NOT NULL,
+		  `weightclass` varchar(50) NOT NULL,
+		  `name` varchar(100) NOT NULL,
+		  `club_id` int(11) NOT NULL,
+		  `place` int(2) NOT NULL,
+		  PRIMARY KEY (`id`)
+		) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// update systemtables
+	if(!Db::executeQuery('
+		UPDATE `config`
+			SET `value` = \'calendar,category,config,defaults,field,fields2presets,group,group2group,inventory,inventory_movement,preset,rights,user,user2group,value,protocol,protocol_correction,helpmessages,user2groups,permissions,navi,item2filter,groups,filter,file,file_type,files_attached,club,result,standings\'
+		WHERE `name` = \'systemtables\';
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// insert into result table
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `result` (`id`, `calendar_id`, `preset_id`, `last_modified`, `modified_by`, `valid`)
+			VALUES 
+				(1, 1, 1, CURRENT_TIMESTAMP, 1, TRUE)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// insert into standings table
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `standings` (`id`, `result_id`, `agegroup`, `weightclass`, `name`, `club_id`, `place`)
+			VALUES 
+				(1, 1, \'Jugend U10\', \'-23,4\', \'Vorname Nachname\', 1, 1)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	/*
+	 * add navi entries for result
+	 */
+	// move navi entry administration
+	if(!Db::executeQuery('
+		UPDATE `navi`
+			SET `position`=7
+		WHERE `parent`=0
+			AND `position`=6
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	// insert navi entries
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `navi` (`id`, `name`, `parent`, `file_param`, `position`, `show`, `valid`, `last_modified`)
+			VALUES 
+				(47, \'class.Navi#item#name#resultPage\', \'0\', \'result.php|\', \'6\', \'1\', \'1\', CURRENT_TIMESTAMP),
+				(48, \'class.Navi#item#name#resultPage.listall\', \'47\', \'result.php|listall\', \'0\', \'1\', \'1\', CURRENT_TIMESTAMP),
+				(49, \'class.Navi#item#name#resultPage.details\', \'47\', \'result.php|details\', \'1\', \'0\', \'1\', CURRENT_TIMESTAMP),
+				(50, \'class.Navi#item#name#resultPage.delete\', \'47\', \'result.php|delete\', \'2\', \'0\', \'1\', CURRENT_TIMESTAMP),
+				(51, \'class.Navi#item#name#resultPage.new\', \'47\', \'result.php|new\', \'3\', \'0\', \'1\', CURRENT_TIMESTAMP),
+				(52, \'class.Navi#item#name#resultPage.list\', \'47\', \'result.php|list\', \'4\', \'0\', \'1\', CURRENT_TIMESTAMP)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// add permissions for new navi entries
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `permissions` (`item_table`, `item_id`, `user_id`, `group_id`, `mode`, `last_modified`, `modified_by`)
+			VALUES
+				(\'navi\', 47, -1, 0, \'r\', CURRENT_TIMESTAMP, 0),
+				(\'navi\', 48, -1, 0, \'r\', CURRENT_TIMESTAMP, 0),
+				(\'navi\', 49, -1, 0, \'r\', CURRENT_TIMESTAMP, 0),
+				(\'navi\', 52, -1, 0, \'r\', CURRENT_TIMESTAMP, 0)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	/*
+	 * add config
+	 */
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+		VALUES
+			(\'result.cityField\', \'{"id":0,"value":""}\', \'Config of field containing the city of a calendar entry\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	/*
+	 * add navi entries for accounting
+	 */
+	// move navi entry administration
+	if(!Db::executeQuery('
+		UPDATE `navi`
+			SET `position`=8
+		WHERE `parent`=0
+			AND `position`=7
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	// insert navi entries
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `navi` (`id`, `name`, `parent`, `file_param`, `position`, `show`, `valid`, `last_modified`)
+			VALUES 
+				(53, \'class.Navi#item#name#accountingPage\', \'0\', \'accounting.php|\', \'7\', \'1\', \'1\', CURRENT_TIMESTAMP),
+				(54, \'class.Navi#item#name#accountingPage.dashboard\', \'53\', \'accounting.php|dashboard\', \'0\', \'1\', \'1\', CURRENT_TIMESTAMP)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	/*
+	 * migrate group entry with id 2
+	 */
+	// check if group entry "2" exists
+	if(Db::rowExists('groups', 'id', '2')
+		&& Db::singleValue('
+				SELECT `name`
+				FROM `groups`
+				WHERE `id`=2
+		') != 'Finanzen') {
+		
+		// get row with id 2
+		$secondRow = Db::arrayValue('
+				SELECT *
+				FROM `groups`
+				WHERE `id`=2
+		');
+		if(!$secondRow) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+		
+		unset($secondRow[0][0]);
+		
+		if(!Db::executeQuery('
+			INSERT IGNORE INTO `groups` (`id`, `name`, `parent`, `valid`, `modified_by`, `last_modified`)
+				VALUES (NULL, \'#?\', #?, #?, #?, CURRENT_TIMESTAMP)
+		',
+		$secondRow[0])) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+		$newId = Db::$insertId;
+		
+		// update user2groups and permission table
+		// user2groups
+		if(!Db::executeQuery('
+			UPDATE `user2groups`
+				SET `group_id`=#?
+			WHERE `group_id`=2
+		',
+		array($newId))) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+		// rights if exists
+		if(!Db::executeQuery('
+			UPDATE `permissions`
+				SET `group_id`=#?
+			WHERE `group_id`=2
+		',
+		array($newId))) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+		
+		// update second row
+		if(!Db::executeQuery('
+			UPDATE `groups`
+				SET 
+					`name`=\'Finanzen\',
+					`parent`=1,
+					`valid`=1,
+					`last_modified`=CURRENT_TIMESTAMP,
+					`modified_by`=0
+			WHERE `id`=2
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+	} else {
+	
+		// add first calendar entry
+		if(!Db::executeQuery('
+			INSERT IGNORE INTO `groups` (`id`, `name`, `parent`, `valid`, `last_modified`, `modified_by`)
+				VALUES (2, \'Finanzen\', 1, 1, CURRENT_TIMESTAMP, 0)
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+
+		}
+	}
+	
+	// add permissions for new navi entries
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `permissions` (`item_table`, `item_id`, `user_id`, `group_id`, `mode`, `last_modified`, `modified_by`)
+			VALUES
+				(\'navi\', 53, -1, 2, \'w\', CURRENT_TIMESTAMP, 0),
+				(\'navi\', 54, -1, 2, \'w\', CURRENT_TIMESTAMP, 0)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	
+	/*
+	 * add table for accounting tasks
+	 */
+	// check if table exists
+	$accountingTasksExists = Db::tableExists('accounting_tasks');
+	
+	// create table accounting_tasks
+	if(!Db::executeQuery('
+		CREATE TABLE IF NOT EXISTS `accounting_tasks` (
+		  `table_name` varchar(50) NOT NULL,
+		  `table_id` int(11) NOT NULL,
+		  `state` tinyint(1) NOT NULL DEFAULT \'0\',
+		  PRIMARY KEY (`table_name`,`table_id`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	
+	// add result tasks once, if table hasn't exists
+	if($accountingTasksExists === false) {
+		
+		// get result ids
+		$resultIds = Db::arrayValue('
+				SELECT `id`
+				FROM `result`
+		',
+		MYSQL_ASSOC);
+		if(!$resultIds) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+		
+		// add tasks
+		foreach($resultIds as $resultId) {
+			if(!Db::executeQuery('
+				INSERT IGNORE INTO `accounting_tasks` (`table_name`, `table_id`, `state`)
+				VALUES (\'result\', #?, \'0\')
+			',
+			array($resultId['id'],))) {
+				$return['returnValue'] = false;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+				return $return;
+			}
+		}
+	}
+	
+	// update systemtables
+	if(!Db::executeQuery('
+		UPDATE `config`
+			SET `value` = \'calendar,category,config,defaults,field,fields2presets,group,group2group,inventory,inventory_movement,preset,rights,user,user2group,value,protocol,protocol_correction,helpmessages,user2groups,permissions,navi,item2filter,groups,filter,file,file_type,files_attached,club,result,standings,accounting_tasks\'
+		WHERE `name` = \'systemtables\';
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// insert navi entries
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `navi` (`id`, `name`, `parent`, `file_param`, `position`, `show`, `valid`, `last_modified`)
+			VALUES
+				(55, \'class.Navi#item#name#accountingPage.task\', \'53\', \'accounting.php|task\', \'1\', \'0\', \'1\', CURRENT_TIMESTAMP),
+				(56, \'class.Navi#item#name#accountingPage.settings\', \'53\', \'accounting.php|settings\', \'2\', \'1\', \'1\', CURRENT_TIMESTAMP)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	/*
+	 * add config for announcement club field
+	 */
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+		VALUES
+			(\'result.clubField\', \'{"id":0,"value":""}\', \'Config of field containing the club of a calendar entry\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	
+	/*
+	 * add accounting_costs table
+	 */
+	if(!Db::executeQuery('
+		CREATE TABLE IF NOT EXISTS `accounting_costs` (
+		  `id` int(11) NOT NULL AUTO_INCREMENT,
+		  `name` varchar(75) NOT NULL,
+		  `type` varchar(75) NOT NULL,
+		  `value` varchar(8) NOT NULL DEFAULT \'0,00\',
+		  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		  `modified_by` int(11) NOT NULL,
+		  `valid` BOOLEAN NOT NULL DEFAULT TRUE,
+		  PRIMARY KEY (`id`),
+		  UNIQUE KEY `UNIQUE` (`name`,`type`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// insert required data
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `accounting_costs` (`id`, `name`, `type`, `value`, `last_modified`, `modified_by`, `valid`)
+		VALUES
+			(1, \'base\', \'payback\', \'0,00\', CURRENT_TIMESTAMP, 0, TRUE),
+			(2, \'singleParticipant\', \'payback\', \'0,00\', CURRENT_TIMESTAMP, 0, TRUE),
+			(3, \'singleParticipant\', \'payment\', \'0,00\', CURRENT_TIMESTAMP, 0, TRUE)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// update systemtables
+	if(!Db::executeQuery('
+		UPDATE `config`
+			SET `value` = \'calendar,category,config,defaults,field,fields2presets,group,group2group,inventory,inventory_movement,preset,rights,user,user2group,value,protocol,protocol_correction,helpmessages,user2groups,permissions,navi,item2filter,groups,filter,file,file_type,files_attached,club,result,standings,accounting_tasks,accounting_costs\'
+		WHERE `name` = \'systemtables\';
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// replace navi translation
+	if(!Db::executeQuery('
+		UPDATE `navi`
+		SET `name` = REPLACE(`name`, \'class.Navi#item#name#\', \'navi: \')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+	}
+	
+	/*
+	 * add config for internal api timeout
+	 */
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+		VALUES
+			(\'internalApi.timeout\', \'900\', \'Time for internal api signature to expire\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	/*
+	 * add city to calendar
+	 */
+	if(!Db::columnExists('calendar', 'city')) {
+		if(!Db::executeQuery('
+			ALTER TABLE `calendar` ADD `city` VARCHAR(150) NOT NULL AFTER `content`;
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+	}
+	
+	// set city of first entry
+	if(!Db::executeQuery('
+		UPDATE `calendar`
+		SET `city` = \'London\'
+		WHERE `id` = 1
+	'
+	)) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+	}
+	
+	/*
+	 * change field config format to JSON
+	 */
+	// get non empty configs
+	$configs = Db::arrayValue('
+			SELECT `id`,`config`
+			FROM `field`
+			WHERE `config`<>\'\'
+	',
+	MYSQL_ASSOC);
+	if(!$configs) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// walk through configs
+	foreach($configs as $row) {
+		
+		// check if already JSON
+		if(substr($row['config'], 0, 1) == '{') {
+			continue;
+		} else {
+			
+			// unserialize old config
+			$old = unserialize(stripcslashes($row['config']));
+			
+			// encode to JSON
+			$json = json_encode($old);
+			
+			// update database
+			if(!Db::executeQuery('
+				UPDATE `field`
+				SET `config` = \'#?\'
+				WHERE `id` = #?
+			',
+			array(
+					$json,
+					$row['id'],
+				))) {
+				$return['returnValue'] = false;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			}
+		}
+	}
+	
 	
 	// return
 	return $return;

@@ -44,7 +44,7 @@ class NaviTest extends PHPUnit_Framework_TestCase {
 		$id = 1;
 		$navi = new Navi($id);
 		$this->assertEquals($id, $navi->getId());
-		$this->assertEquals('class.Navi#item#name#mainPage', $navi->getName());
+		$this->assertEquals('navi: mainPage', $navi->getName());
 		$this->assertEquals(0, $navi->getParent());
 		$this->assertEquals('index.php|', $navi->getFileParam());
 		$this->assertEquals(0, $navi->getPosition());

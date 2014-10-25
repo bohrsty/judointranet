@@ -335,16 +335,6 @@ class Inventory extends Object {
 		// return
 		return $return;
 	}
-	
-	
-	/**
-	 * __toString() returns an string representation of this object
-	 * 
-	 * @return string string representation of this object
-	 */
-	public function __toString() {
-		return 'Inventory';
-	}
 }
 
 

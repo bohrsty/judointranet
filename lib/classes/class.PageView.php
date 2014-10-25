@@ -33,51 +33,47 @@ class PageView extends Object {
 	/*
 	 * class-variables
 	 */
-	private $output;
-	private $jquery;
-	private $head;
-	private $helpmessages;
-	private $helpids;
-	// smarty
-	protected $tpl;
 	
 	/*
 	 * getter/setter
 	 */
 	public function get_output(){
-		return $this->output;
+		return $GLOBALS['output'];
 	}
 	public function set_output($output) {
-		$this->output = $output;
+		return $GLOBALS['output'] = $output;
 	}
 	public function get_jquery(){
-		return $this->jquery;
+		return $GLOBALS['jquery'];
 	}
 	public function set_jquery($jquery) {
-		$this->jquery = $jquery;
+		return $GLOBALS['jquery'] = $jquery;
 	}
 	public function get_head(){
-		return $this->head;
+		return $GLOBALS['head'];
 	}
 	public function set_head($head) {
-		$this->head = $head;
+		return $GLOBALS['head'] = $head;
 	}
 	public function getHelpmessages(){
-		return $this->helpmessages;
+		return $GLOBALS['helpmessages'];
 	}
 	public function setHelpmessages($helpmessages) {
-		$this->helpmessages = $helpmessages;
+		$GLOBALS['helpmessages'] = $helpmessages;
 	}
 	public function getHelpids($complete=false){
 		
 		if($complete === true) {
-			return '['.$this->helpids.']';
+			return '['.$GLOBALS['helpids'].']';
 		} else {
-			return $this->helpids;
+			return $GLOBALS['helpids'];
 		}
 	}
 	public function setHelpids($helpids) {
-		$this->helpids = $helpids;
+		$GLOBALS['helpids'] = $helpids;
+	}
+	public function getTpl() {
+		return $GLOBALS['tpl'];
 	}
 	
 	/*
@@ -92,23 +88,39 @@ class PageView extends Object {
 		$GLOBALS['error'] = new Error();
 		
 		// init smarty
-		$this->tpl = new JudoIntranetSmarty();
+		if(!isset($GLOBALS['tpl'])) {
+			$GLOBALS['tpl'] = new JudoIntranetSmarty();
+		}
 		
 		// set class-variables
-		$this->set_output(array());
-		$this->set_jquery('');
-		$this->set_head('');
-		$this->setHelpmessages('');
-		$this->setHelpids('');
-		
-		// set userinfos if logged in
-		$this->put_userinfo();
+		if(!isset($GLOBALS['output'])) {
+			$this->set_output(array());
+		}
+		if(!isset($GLOBALS['jquery'])) {
+			$this->set_jquery('');
+		}
+		if(!isset($GLOBALS['head'])) {
+			$this->set_head('');
+		}
+		if(!isset($GLOBALS['helpmessages'])) {
+			$this->setHelpmessages('');
+		}
+		if(!isset($GLOBALS['helpids'])) {
+			$this->setHelpids('');
+		}
 		
 		// initialize help
-		$GLOBALS['help'] = new Help($this);
+		if(!isset($GLOBALS['help'])) {
+			$GLOBALS['help'] = new Help($this);
+		}
 		
 		// set logo
-		$this->tpl->assign('systemLogo', 'img/'.$this->getGc()->get_config('global.systemLogo'));
+		$this->getTpl()->assign('systemLogo', 'img/'.$this->getGc()->get_config('global.systemLogo'));
+		
+		// assign language
+		$shortLang = explode('_', $this->getUser()->get_lang());
+		$this->getTpl()->assign('lLang', $this->getUser()->get_lang());
+		$this->getTpl()->assign('sLang', $shortLang[0]);
 	}
 	
 	/*
@@ -233,10 +245,10 @@ class PageView extends Object {
 	 * @param string $title title to be combined
 	 * @return string combined title and prefix
 	 */
-	protected function title($title) {
+	public function title($title) {
 		
 		// return combined prefix and title
-		return parent::lang('class.PageView#title#prefix#title').' '.$title;
+		return parent::lang('JudoIntranet').' '.$title;
 	}
 	
 	
@@ -284,8 +296,12 @@ class PageView extends Object {
 		
 		// smarty-templates
 		$sUserLink = new JudoIntranetSmarty();
+		$sLogoutLink = new JudoIntranetSmarty();
+		$sLogoutImg = new JudoIntranetSmarty();
 		$sUsersettings = new JudoIntranetSmarty();
-		$sJsToggleSlide = new JudoIntranetSmarty();
+		// jquery element ids
+		$toToggle = 'usersettings';
+		$id = 'toggleUsersettings';
 		
 		// check if userinfo exists and set to output
 		$name = $this->getUser()->get_userinfo('name');
@@ -293,45 +309,56 @@ class PageView extends Object {
 			
 			// smarty-link
 			$spanUserLink = array(
-					'params' => 'id="toggleUsersettings"',
-					'title' => parent::lang('class.PageView#put_userinfo#logininfo#toggleUsersettings'),
+					'params' => 'id="'.$id.'"',
+					'title' => _l('toggle usersettings'),
 					'content' => $name,	
 				);
 			$sUserLink->assign('span', $spanUserLink);
 			$link = $sUserLink->fetch('smarty.span.tpl');
 			
+			// logout img and link
+			$logoutArray = array(
+					'params' => '',
+					'src' => 'img/logout.png',
+					'alt' => _l('logout'),
+				);
+			$sLogoutImg->assign('img', $logoutArray);
+			$logoutImg = $sLogoutImg->fetch('smarty.img.tpl');
+			
+			$sLogoutLink->assign('params', '');
+			$sLogoutLink->assign('href', 'index.php?id=logout');
+			$sLogoutLink->assign('title', _l('logout'));
+			$sLogoutLink->assign('content', $logoutImg._l('logout'));
+			$logout = $sLogoutLink->fetch('smarty.a.tpl');
+			
 			// smarty-usersettings
-			$usersettings = array(0 => array(	
-					'params' => 'class="usersettings"',
-					'href' => 'index.php?id=user&action=passwd',
-					'title' => parent::lang('class.PageView#put_userinfo#usersettings#passwd.title'),
-					'content' => parent::lang('class.PageView#put_userinfo#usersettings#passwd')
-				),
-				1 => array(	
-					'params' => 'class="usersettings"',
-					'href' => 'index.php?id=user&action=data',
-					'title' => parent::lang('class.PageView#put_userinfo#usersettings#data.title'),
-					'content' => parent::lang('class.PageView#put_userinfo#usersettings#data')
-				),
-				2 => array(
-					'params' => 'class="usersettings"',
-					'href' => 'index.php?id=logout',
-					'title' => parent::lang('class.PageView#put_userinfo#usersettings#logout.title'),
-					'content' => parent::lang('class.PageView#put_userinfo#usersettings#logout')
-				));
+			$usersettings = array(
+					0 => array(	
+							'params' => 'class="'.$toToggle.'"',
+							'href' => 'index.php?id=user&action=passwd',
+							'title' => _l('change password'),
+							'content' => _l('change password')
+						),
+					1 => array(	
+							'params' => 'class="'.$toToggle.'"',
+							'href' => 'index.php?id=user&action=data',
+							'title' => _l('change usersettings'),
+							'content' => _l('change usersettings')
+						),
+				);
+			
 			$sUsersettings->assign('us', $usersettings);
 			
 			// smarty jquery
-			$sJsToggleSlide->assign('id', '#toggleUsersettings');
-			$sJsToggleSlide->assign('toToggle', '#usersettings');
-			$sJsToggleSlide->assign('time', '');
-			$this->add_jquery($sJsToggleSlide->fetch('smarty.js-toggleSlide.tpl'));
+			$this->getTpl()->assign('usersettingsJsId', '#'.$id);
+			$this->getTpl()->assign('usersettingsJsToToggle', '#'.$toToggle);
+			$this->getTpl()->assign('usersettingsJsTime', '');
 			
 			// smarty return
-			return parent::lang('class.PageView#put_userinfo#logininfo#LoggedinAs').' '.$link.' ('.$this->getUser()->get_userinfo('username').')'.$sUsersettings->fetch('smarty.usersettings.tpl');
+			return _l('logged in as').' '.$link.' ('.$this->getUser()->get_userinfo('username').') '.$logout.$sUsersettings->fetch('smarty.usersettings.tpl');
 		} else {
 			// smarty return
-			return parent::lang('class.PageView#put_userinfo#logininfo#NotLoggedin');
+			return _l('not loggedin');
 		}
 	}
 	
@@ -371,13 +398,16 @@ class PageView extends Object {
 	 * @param string $template name of the template file to use
 	 * @return void
 	 */
-	protected function showPage($template) {
+	public function showPage($template) {
+		
+		// logininfo
+		$this->getTpl()->assign('logininfo', $this->put_userinfo());
 		
 		// head
-		$this->tpl->assign('head', $this->get_head());
+		$this->getTpl()->assign('head', $this->get_head());
 		
 		// manualjquery
-		$this->tpl->assign('manualjquery', $this->get_jquery());
+		$this->getTpl()->assign('manualjquery', $this->get_jquery());
 		
 		// navi
 		$navi = '';
@@ -410,23 +440,20 @@ class PageView extends Object {
 			// generate HTML
 			$navi .= $naviItems[$i]->output($file, $param).PHP_EOL;
 		}
-		$this->tpl->assign('accordionActive', $active);
-		$this->tpl->assign('navigation', $navi);
+		$this->getTpl()->assign('accordionActive', $active);
+		$this->getTpl()->assign('navigation', $navi);
 		
 		// check config for accordion
 		if($this->getGc()->get_config('navi.style') == 'accordion') {
-			$this->tpl->assign('accordionJs', true);
+			$this->getTpl()->assign('accordionJs', true);
 		}
 		
-		// logininfo
-		$this->tpl->assign('logininfo', $this->put_userinfo());
-		
 		// help messages
-		$this->tpl->assign('helpmessages', $this->getHelpmessages());
-		$this->tpl->assign('helpids', $this->getHelpids(true));
+		$this->getTpl()->assign('helpmessages', $this->getHelpmessages());
+		$this->getTpl()->assign('helpids', $this->getHelpids(true));
 		
 		// smarty-display
-		$this->tpl->display($template);
+		$this->getTpl()->display($template);
 	}
 	
 	
@@ -450,13 +477,13 @@ class PageView extends Object {
 				'dialogClass' => $this->getGc()->get_config('help.dialogClass'),
 				'effect' => $this->getGc()->get_config('help.effect'),
 				'effectDuration' => $this->getGc()->get_config('help.effectDuration'),
-				'closeText' => parent::lang('class.PageView#showPage#helpMessages#closeText'),
+				'closeText' => parent::lang('close'),
 			);
-		$this->tpl->assign('help', $help);
+		$this->getTpl()->assign('help', $help);
 		
 		// assign about
 		$helpabout = $this->getHelp()->getMessage(HELP_MSG_ABOUT, array('version' => str_pad($this->getGc()->get_config('global.version'), 3, '0', STR_PAD_LEFT)));
-		$this->tpl->assign('helpabout', $helpabout);
+		$this->getTpl()->assign('helpabout', $helpabout);
 	}
 	
 	
@@ -505,7 +532,7 @@ class PageView extends Object {
 			$pagelinks['links'][] = array(
 					'params' => $params,
 					'href' => '&page='.$i,
-					'title' => parent::lang('class.AdministrationView#listTableContent#pages#page').' '.$i,
+					'title' => parent::lang('page').' '.$i,
 					'content' => $i
 				);
 		}
@@ -527,11 +554,11 @@ class PageView extends Object {
 		
 		// assign "from - to - of"
 		$pagelinks['toof'] = " (".($page * $pagesize + 1)." ".
-				parent::lang('class.AdministrationView#listTableContent#pages#to')." $last ".
-				parent::lang('class.AdministrationView#listTableContent#pages#of')." $rows)";
+				parent::lang('page to')." $last ".
+				parent::lang('of pages')." $rows)";
 		
 		// assign "pages"
-		$pagelinks['pages'] = parent::lang('class.AdministrationView#listTableContent#pages#pages');
+		$pagelinks['pages'] = parent::lang('pages');
 		
 		// return
 		return array($page, $pagelinks);
@@ -604,9 +631,9 @@ class PageView extends Object {
 		$formIds = array();
 		
 		// prepare clear radio
-		$this->tpl->assign('permissionJs', true);
+		$this->getTpl()->assign('permissionJs', true);
 		// prepare tabs
-		$this->tpl->assign('tabsJs', true);
+		$this->getTpl()->assign('tabsJs', true);
 		
 		
 		// get groups
@@ -630,7 +657,7 @@ class PageView extends Object {
 				
 				// prepare images
 				// read
-				$imgReadText = parent::lang('class.PageView#zebraAddPermissions#permissions#read');
+				$imgReadText = parent::lang('read/list');
 				$imgRead = array(
 						'params' => 'class="iconRead clickable" title="'.$imgReadText.'" onclick="selectRadio(\''.$radioName.'_r\')"',
 						'src' => 'img/permissions_read.png',
@@ -642,7 +669,7 @@ class PageView extends Object {
 				$return['iconRead'][$radioName] = $sImgReadTemplate->fetch('smarty.img.tpl');
 				
 				// edit
-				$imgEditText = parent::lang('class.PageView#zebraAddPermissions#permissions#edit');
+				$imgEditText = parent::lang('edit');
 				$imgEdit = array(
 						'params' => 'class="iconEdit clickable" title="'.$imgEditText.'" onclick="selectRadio(\''.$radioName.'_w\')"',
 						'src' => 'img/permissions_edit.png',
@@ -656,9 +683,9 @@ class PageView extends Object {
 				// prepare clear radio link
 				$sImgClearRadio = new JudoIntranetSmarty();
 				$img = array(
-						'params' => 'class="clickable" onclick="clearRadio(\''.$radioName.'\')" title="'.parent::lang('class.PageView#zebraAddPermissions#clearRadio#title').'"',
+						'params' => 'class="clickable" onclick="clearRadio(\''.$radioName.'\')" title="'.parent::lang('remove permissions').'"',
 						'src' => 'img/permissions_delete.png',
-						'alt' => parent::lang('class.PageView#zebraAddPermissions#clearRadio#name'),
+						'alt' => parent::lang('remove permissions'),
 					);
 				$sImgClearRadio->assign('img', $img);
 				
@@ -682,7 +709,7 @@ class PageView extends Object {
 						'note',			// type
 						'note'.ucfirst($radioName),	// id/name
 						$radioName,		// for
-						parent::lang('class.PageView#zebraAddPermissions#clearRadio#note').':&nbsp;'.$sImgClearRadio->fetch('smarty.img.tpl')	// note text
+						parent::lang('completely remove permissions from group').':&nbsp;'.$sImgClearRadio->fetch('smarty.img.tpl')	// note text
 					);
 			}
 		}
@@ -701,9 +728,10 @@ class PageView extends Object {
 	 * 
 	 * @param array $formIds array containing the form element ids to get from $_POST
 	 * @param array $fileUpload array containing the information of uploaded files
+	 * @param bool $delete indicates if the temp file is deleted after getting its content
 	 * @return array array containing $key => $value of $_POST
 	 */
-	protected function getFormValues($formIds, $fileUpload=null) {
+	protected function getFormValues($formIds, $fileUpload=null, $delete=true) {
 		
 		// prepare return
 		$data = array();
@@ -754,7 +782,9 @@ class PageView extends Object {
 								$fileContent = fread($fp, filesize($tempFilename));
 								fclose($fp);
 								// delete from tmp/
-								unlink($tempFilename);
+								if($delete === true) {
+									unlink($tempFilename);
+								}
 								
 								// prepare data
 								$data[$formId] = array(
@@ -762,6 +792,10 @@ class PageView extends Object {
 										'mimetype' => $fileUpload[$formId]['type'],
 										'fileContent' => $fileContent,
 									);
+								// add temp file name and path
+								if($delete === false) {
+									$data[$formId]['tempFilename'] = $tempFilename;
+								}
 							}
 						break;
 						
@@ -852,6 +886,119 @@ class PageView extends Object {
 		// redirect and exit script
 		header('Location: '.$url);
 		exit;
+	}
+	
+	
+	/**
+	 * toHtml() handles the exceptions maybe thrown and calls each init() method
+	 * 
+	 * @return void
+	 */
+	final public function toHtml() {
+		
+		// run init
+		$this->init();
+	}
+	
+	
+	/**
+	 * delete handles the deletion of page child object
+	 * 
+	 * @param array $config config for the deletion page (translation names, links, etc.)
+	 * @return string html of the deletion page
+	 */
+	protected function delete($config) {
+		
+		/*
+		 * config has to contain the following entries
+		 * 
+		 * 'pagecaption'	-> text for page caption (for Object::lang())
+		 * 'table'			-> table of object to be deleted (also used for object creation)
+		 * 'tid'			-> id of the object to be deleted
+		 * 'formaction'		-> common part of the action parameter for the form (w/o tid, see before)
+		 * 'cancellink'		-> url that the "cancel" button directs to
+		 */
+		
+		// pagecaption
+		$this->getTpl()->assign('pagecaption',parent::lang($config['pagecaption'], true));
+		
+		// get object
+		$class = ucfirst(strtolower($config['table']));
+		$object = new $class($config['tid']);
+		
+		// prepare permission check
+		$permissionTable = $config['table'];
+		$permissionTid = $config['tid'];
+		// check table
+		if(strtolower($config['table']) == 'result') {
+			$permissionTable = 'calendar';
+			$permissionTid = $object->getCalendar()->get_id();
+		} 
+		
+		// check rights
+		if($this->getUser()->hasPermission($permissionTable, $permissionTid)) {
+			
+			// smarty-templates
+			$sConfirmation = new JudoIntranetSmarty();
+			
+			// form
+			$form = new Zebra_Form(
+				'formConfirm',			// id/name
+				'post',				// method
+				$config['formaction'].$config['tid']		// action
+			);
+			// set language
+			$form->language('deutsch');
+			// set docktype xhtml
+			$form->doctype('xhtml');
+			
+			// add button
+			$form->add(
+				'submit',		// type
+				'buttonSubmit',	// id/name
+				parent::lang('delete', true),	// value
+				array('title' => parent::lang('delete', true))
+			);
+			
+			// smarty-link
+			$link = array(
+							'params' => 'class="submit"',
+							'href' => $config['cancellink'],
+							'title' => parent::lang('cancel', true),
+							'content' => parent::lang('cancel', true)
+						);
+			$sConfirmation->assign('link', $link);
+			$sConfirmation->assign('spanparams', 'id="cancel"');
+			$sConfirmation->assign('message', parent::lang('delete confirm', true).'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_DELETE));
+			$sConfirmation->assign('form', $form->render('', true));
+			
+			// validate
+			if($form->validate()) {
+			
+				// check table for delete action
+				if(strtolower($config['table']) == 'result') {
+					
+					// set valid
+					$object->setValid(0);
+					$object->writeDb();
+					
+					// delete cached file
+					$fid = File::idFromCache(strtolower($config['table']).'|'.$config['tid']);
+					File::delete($fid);
+					// delete attachements
+					File::deleteAttachedFiles(strtolower($config['table']), $config['tid']);
+				}
+				
+				// smarty
+				$sConfirmation->assign('message', parent::lang('delete done', true));
+				$sConfirmation->assign('form', '');
+			}
+			
+			// smarty return
+			return $sConfirmation->fetch('smarty.confirmation.tpl');
+		} else {
+			throw new NotAuthorizedException($this);
+		}
 	}
 }
 

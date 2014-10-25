@@ -69,6 +69,32 @@ h5 {
 	
 }
 
+/*
+exceptions
+*/
+div.exception {
+	font-family: sans-serif;
+	margin: 150px auto;
+	min-width: 400px;
+	max-width: 750px; 
+	min-height: 300px;
+	border: 1px dashed red; border-radius: 3px;
+	padding: 5px;
+}
+
+h3.red {
+	color: red;
+}
+
+table.trace {
+	border: 1px solid grey;
+	margin: 20px auto;
+}
+
+table.trace td {
+	padding: 5px;
+	border: 1px solid grey;
+}
 
 /*
 layout
@@ -116,8 +142,8 @@ div#content {
 	background-color: #b6d6e4;
 }
 
-th.admin {
-	width:400px;
+th.show {
+	width: 100px;
 }
 
 th.name {
@@ -529,6 +555,10 @@ table.content th, table.content td {
 	border-bottom-right-radius: 3px;
 }
 
+table.content {
+	width: 100%;
+}
+
 img.center {
 	display: block;
 	margin: auto;
@@ -613,19 +643,37 @@ div.setupMessage {
 	width: 700px;
 	min-height: 300px;
 	border-radius: 3px;
-	padding: 5px;
+	padding: 34px 5px 5px 5px;
+}
+
+
+
+div.message {
+	margin: auto;
+	width: 500px;
+	min-height: 150px;
+	border-radius: 3px;
+	padding: 34px 5px 5px 5px;
+	background-position: top left;
+	background-repeat: no-repeat;
 }
 
 div.messageError {
 	border: 1px dashed red;
+	background-image: url('../img/message_error.png');
+	background-repeat: no-repeat;
 }
 
 div.messageWarn {
 	border: 1px dashed orange;
+	background-image: url('../img/message_warning.png');
+	background-repeat: no-repeat;
 }
 
 div.messageInfo {
 	border: 1px dashed #3a9ec8;
+	background-image: url('../img/message_info.png');
+	background-repeat: no-repeat;
 }
 
 h3.messageError {
@@ -668,6 +716,78 @@ select#subgroupOf {
 	padding: 5px;
 	border: 1px dashed orange;
 	color: orange;
+}
+
+div.result-page {
+	margin: 25px 50px;
+}
+
+span.iconspacer16 {
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	margin: 2px;
+}
+
+p.agegroup {
+	margin: 0px;
+	font-weight: bold;
+}
+
+p.weightclass {
+	margin: 0px;
+}
+
+div.result_agegroup {
+	margin-top: 8mm;
+}
+
+div.result_weightclass {
+	margin-top: 3mm;
+}
+
+td.result_place {
+	width: 120px;
+}
+
+td.result_name {
+	width: 300px;
+}
+
+td.result_club {
+	width: 300px;
+}
+
+p#toggleImportedResults {
+	text-decoration: underline;
+	font-size: 90%;
+	cursor: pointer;
+}
+
+div.accountingDash {
+	width: 100%;
+	border: 1px solid #3a9ec8;
+	border-radius: 3px;
+}
+
+div.dashContent {
+	padding: 5px;
+	max-height: 350px;
+	overflow: auto;
+}
+
+p.dashHead {
+	margin: 0;
+	padding: 5px;
+	font-weight: bold;
+}
+
+.width100 {
+	width: 100%;
+}
+
+.divFloatLeft {
+	float: left;
 }
 
 
@@ -747,6 +867,28 @@ img.Zebra_Form_Input_Prefix {
 .Zebra_Form input.text,
 .Zebra_Form select {
 	padding: 3px 3px 3px 3px;
+}
+
+.Zebra_Form table.content {
+	border-collapse: separate;
+}
+
+.Zebra_Form table.content input,
+.Zebra_Form table.content select {
+	border-radius: 4px;
+}
+
+.Zebra_Form table.content th,
+.Zebra_Form table.content td {
+	border-right: solid 1px #3a9ec8;
+	border-bottom: solid 1px #3a9ec8;
+	border-bottom-right-radius: 3px;
+	padding: 5px;
+}
+
+.Zebra_Form table.content td {
+	padding: 5px;
+	vertical-align: middle;
 }
 
 

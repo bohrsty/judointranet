@@ -33,7 +33,7 @@ class Db {
 	/*
 	 * variables
 	 */
-	private static $config;
+	protected static $config;
 	public static $error;
 	public static $insertId;
 	public static $statement;
@@ -64,12 +64,12 @@ class Db {
 		$errorCode = 0;
 		
 		// get configuration
-		if(		is_file('cnf/default.ini')
-				&& is_readable('cnf/default.ini')
-				&& is_file('cnf/config.ini')
-				&& is_readable('cnf/config.ini')) {
-			$default = parse_ini_file('cnf/default.ini',true);
-			$config = parse_ini_file('cnf/config.ini',true);
+		if(		is_file(JIPATH.'/cnf/default.ini')
+				&& is_readable(JIPATH.'/cnf/default.ini')
+				&& is_file(JIPATH.'/cnf/config.ini')
+				&& is_readable(JIPATH.'/cnf/config.ini')) {
+			$default = parse_ini_file(JIPATH.'/cnf/default.ini',true);
+			$config = parse_ini_file(JIPATH.'/cnf/config.ini',true);
 			
 			// merge arrays
 			self::$config = array_merge($default,$config);
@@ -331,9 +331,10 @@ class Db {
 		$values = false;
 		if($result->num_rows == 0) {
 			$values = array();
-		}
-		while($row = $result->fetch_array($arrayType)) {
-			$values[] = $row;
+		} else {
+			while($row = $result->fetch_array($arrayType)) {
+				$values[] = $row;
+			}
 		}
 		
 		// close and return

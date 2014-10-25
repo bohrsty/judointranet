@@ -215,7 +215,7 @@ class Field extends Object {
 		$this->set_type($type);
 		$this->set_required($required);
 		$this->set_category($category);
-		$this->set_config(unserialize(stripcslashes($config)));
+		$this->set_config(json_decode($config, true));
 		$this->setLastModified((strtotime($lastModified) < 0 ? 0 : strtotime($lastModified)));
 		
 		// close db
@@ -287,13 +287,13 @@ class Field extends Object {
 			// define regexp rule for the textarea
 			$rules['date'] = array(
 					'error',
-					parent::lang('class.Field#element#rule#check.date'),
+					parent::lang('check date'),
 				);
 			// define custom required rule
 			if($this->get_required() == 1) {
 				$rules['required'] = array(
 						'error',
-						parent::lang('class.Field#element#rule#required.date'),
+						parent::lang('required date'),
 					);
 			}
 			
@@ -305,7 +305,7 @@ class Field extends Object {
 					'note',			// type
 					'note'.ucfirst($elementId),	// id/name
 					$elementId,		// for
-					parent::lang('class.Field#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDATE)	// note text
+					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDATE)	// note text
 				);
 		} elseif($this->get_type() == 'checkbox') {
 			
@@ -332,7 +332,7 @@ class Field extends Object {
 			if($this->get_required() == 1) {
 				$rules['required'] = array(
 						'error',
-						parent::lang('class.Field#element#rule#required.checkbox'),
+						parent::lang('required checkbox'),
 					);
 			
 				// add rules
@@ -344,7 +344,7 @@ class Field extends Object {
 					'note',			// type
 					'note'.ucfirst($elementId),	// id/name
 					$elementId,		// for
-					parent::lang('class.Field#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDCHECKBOX)	// note text
+					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDCHECKBOX)	// note text
 				);
 		} elseif($this->get_type() == 'dbselect') {
 			
@@ -380,7 +380,7 @@ class Field extends Object {
 			// add element
 			$element = $form->add(
 				'select',	// type
-				$elementId,		// id/name
+				$elementId.(array_key_exists('multiple', $options) ? '[]' : ''),		// id/name
 				$value,		// default
 				$options	// attributes
 			);
@@ -404,7 +404,7 @@ class Field extends Object {
 					'note',			// type
 					'note'.ucfirst($elementId),	// id/name
 					$elementId,		// for
-					parent::lang('class.Field#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDBSELECT)	// note text
+					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDBSELECT)	// note text
 				);
 		} elseif($this->get_type() == 'dbhierselect') {
 			
@@ -536,7 +536,7 @@ class Field extends Object {
 			// check multiple
 			if(is_array($value)) {
 				
-				// walk throug $value
+				// walk through $value
 				$checked_value = '';
 				foreach($value as $v) {
 					$checked_value .= $v.'|';
@@ -579,9 +579,9 @@ class Field extends Object {
 			
 			// check if not null
 			if(isset($value) && $value == 1) {
-				$checked_value = parent::lang('class.Field#value_to_html#checkbox.value#checked');
+				$checked_value = parent::lang('yes');
 			} else {
-				$checked_value = parent::lang('class.Field#value_to_html#checkbox.value#unchecked');
+				$checked_value = parent::lang('no');
 			}
 			
 			// return
@@ -671,46 +671,51 @@ class Field extends Object {
 	 */
 	public function writeDb($action) {
 		
-		// get db-object
-		$db = Db::newDb();
-		
 		// prepare sql
 		if($action == 'insert') {
 			
 			// insert
-			$sql = 'INSERT INTO value (id,table_name,table_id,field_id,value,defaults,modified_by)
-					VALUES (
-						NULL,'.
-						'\''.$db->real_escape_string($this->get_table()).'\','.
-						$db->real_escape_string($this->get_table_id()).','.
-						$db->real_escape_string($this->get_id()).','.
-						'\''.$db->real_escape_string($this->get_value()).'\','.
-						$db->real_escape_string($this->get_defaults()).','.
-						$db->real_escape_string((int)$this->getUser()->get_id()).')';
+			$sql = 'INSERT INTO value (`id`,`table_name`,`table_id`,`field_id`,`value`,`defaults`,`modified_by`)
+					VALUES (#?, \'#?\', #?, #?, \'#?\', #?, #?)';
+			$data = array(
+					'NULL',
+					$this->get_table(),
+					$this->get_table_id(),
+					$this->get_id(),
+					$this->get_value(),
+					$this->get_defaults(),
+					$this->getUser()->get_id(),
+				);
 		} else {
 			
 			// update
 			$sql = 'UPDATE value SET
-					value=\''.$db->real_escape_string($this->get_value()).'\',
-					defaults='.$db->real_escape_string($this->get_defaults()).',
-					modified_by='.$db->real_escape_string((int)$this->getUser()->get_id()).'
-					WHERE field_id='.$db->real_escape_string($this->get_id()).'
-					AND table_id='.$db->real_escape_string($this->get_table_id()).'
-					AND table_name=\''.$db->real_escape_string($this->get_table()).'\'';
-
+					`value`=\'#?\',
+					`defaults`=#?,
+					`modified_by`=#?
+					WHERE `field_id`=#?
+					AND `table_id`=#?
+					AND `table_name`=\'#?\'';
+			$data = array(
+					$this->get_value(),
+					$this->get_defaults(),
+					$this->getUser()->get_id(),
+					$this->get_id(),
+					$this->get_table_id(),
+					$this->get_table(),
+				);
 		}
 		
-		// execute
-		$result = $db->query($sql);
+		// insert into database
+		if(!Db::executeQuery(
+			$sql,
+			$data)) {
+				$n = null;
+				throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+			}
 		
-		// check result
-		if(!$result) {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
-			$this->getError()->handle_error($errno);
-		}
-		
-		// close db
-		$db->close();
+		// run updates
+		$this->runUpdates();
 	}
 	
 	
@@ -851,8 +856,8 @@ class Field extends Object {
 		
 		// return optgroups
 		return array(
-			parent::lang('class.Field#readDefaults#separator#defaults') => $optionDefaults,
-			parent::lang('class.Field#readDefaults#separator#lastUsed') => $optionLastUsed,
+			parent::lang('preset') => $optionDefaults,
+			parent::lang('last used') => $optionLastUsed,
 		);
 	}
 	
@@ -1146,7 +1151,7 @@ class Field extends Object {
 				'note',			// type
 				'note'.ucfirst($select2Id),	// id/name
 				$select2Id,		// for
-				parent::lang('class.Field#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDBHIERSELECT)	// note text
+				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDBHIERSELECT)	// note text
 			);
 		
 		// add rule to check second select to be selected if first is
@@ -1156,7 +1161,7 @@ class Field extends Object {
 								array($this, 'callbackCheckHierselect'),
 								$select1Id,
 								'error',
-								parent::lang('class.Field#element#rule#check.hierselect'),
+								parent::lang('required fields'),
 							),),
 					)
 			);
@@ -1239,7 +1244,7 @@ class Field extends Object {
 		$rules['regexp'] = array(
 				$this->getGc()->get_config('textarea.regexp.zebra'),
 				'error',
-				parent::lang('class.Field#element#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
+				parent::lang('allowed chars').' ['.$this->getGc()->get_config('textarea.desc').']',
 			);
 		// define custom required rule
 		if($this->get_required() == 1) {
@@ -1248,7 +1253,7 @@ class Field extends Object {
 							array($this, 'callbackCheckRequired'),
 							$elementId.'-defaults',
 							'error',
-							parent::lang('class.Field#element#rule#required.text'),
+							parent::lang('required text'),
 						),
 				);
 		}
@@ -1268,7 +1273,7 @@ class Field extends Object {
 				'note',			// type
 				'note'.ucfirst($elementId.'-defaults'),	// id/name
 				$elementId.'-defaults',		// for
-				parent::lang('class.Field#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDTEXT)	// note text
+				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDTEXT)	// note text
 			);
 		
 		// create smarty template and add variables
@@ -1280,6 +1285,37 @@ class Field extends Object {
 		// add completed javascript to jquery
 		$this->getView()->add_jquery($sJsFieldText->fetch('smarty.js-zebraFieldText.tpl'));
 	} 
+	
+	
+	/**
+	 * runUpdates() checks if some database fields depend on updates of this field
+	 * 
+	 * @return void
+	 */
+	private function runUpdates() {
+		
+		// check config
+		if(isset($this->get_config()['update'])) {
+			
+			// get update config
+			$update = $this->get_config()['update'];
+			
+			// check if user function exists
+			if(method_exists($update['callback'][0], $update['callback'][1])) {
+				
+				// get value
+				$value = null;
+				if(isset($update['field']['dbhierselect'])) {
+					$value = $this->dbhierselectValue()[$update['field']['dbhierselect']];
+				} else {
+					$value = $this->valueToHtml()['value'];
+				}
+				
+				// call function to update with value/defaults value
+				call_user_func($update['callback'], $this->get_table_id(), $value);
+			}
+		}
+	}
 }
 
 

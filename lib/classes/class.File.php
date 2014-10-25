@@ -296,35 +296,6 @@ class File extends Page {
 	
 	
 	/**
-	 * exists($id) checks if a file with the given $id exists
-	 * 
-	 * @param int $id id to check if file exists
-	 * @return bool true if file exists, false otherwise
-	 */
-	public static function exists($id) {
-		
-		// get db object
-		$db = Db::newDb();
-		
-		// prepare sql
-		$sql = 'SELECT *
-				FROM `file`
-				WHERE `id`='.$db->real_escape_string($id);
-		
-		// execute statement
-		$result = $db->query($sql);
-		
-		// get data
-		if($result) {
-			return $result->num_rows == 1;
-		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-			self::getError()->handle_error($errno);
-		}
-	}
-	
-	
-	/**
 	 * update($data) updates $this with the given $data
 	 * 
 	 * @param array $data array containing the information to be updated
@@ -391,7 +362,7 @@ class File extends Page {
 		
 		// check translation
 		if($field == 'name') {
-			$value = parent::lang('class.File#getFileTypeAs#name#'.str_replace('/', '_', $mimetype));
+			$value = parent::lang(str_replace('/', '_', $mimetype));
 		}
 		
 		// return
@@ -409,9 +380,9 @@ class File extends Page {
 		// prepare data
 		$data = array(
 					'caption' => array(
-							0 => parent::lang('class.File#details#data#name'),
-							1 => parent::lang('class.File#details#data#filetype'),
-							2 => parent::lang('class.File#details#data#filename'),
+							0 => parent::lang('name'),
+							1 => parent::lang('filetype'),
+							2 => parent::lang('filename'),
 						),
 					'value' => array(
 							0 => $this->getName(),
@@ -549,7 +520,7 @@ class File extends Page {
 	public static function delete($fid) {
 		
 		// check if file exists
-		if(self::exists($fid)) {
+		if(self::exists('file', $fid)) {
 			
 			// get db object
 			$db = Db::newDb();
@@ -700,16 +671,6 @@ class File extends Page {
 			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 			self::getError()->handle_error($errno);
 		}
-	}
-	
-	
-	/**
-	 * __toString() returns an string representation of this object
-	 * 
-	 * @return string string representation of this object
-	 */
-	public function __toString() {
-		return 'File';
 	}
 }
 

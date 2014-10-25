@@ -48,11 +48,13 @@ class HelpTest extends PHPUnit_Framework_TestCase {
 		$mid = 1;
 		$message = $this->help->getMessage($mid);
 		// check output
-		$this->assertContains(TestObject::lang('class.Help#getMessage#templateValues#imgTitle'), $message);
+		$this->assertContains(TestObject::lang('help'), $message);
 		$this->assertContains('id="'.$this->page->getGc()->get_config('help.buttonClass'), $message);
 		
 		// test output
-		$this->assertContains(TestObject::lang('class.Help#global#message#about'), $this->page->getHelpmessages());
+		$smarty = new JudoIntranetSmarty();
+		$smarty->assign('replace', array('version' => $this->page->getGc()->get_config('global.version')));
+		$this->assertContains($smarty->fetch('string:'.TestObject::lang('HELP_MESSAGE_1')), $this->page->getHelpmessages());
 		$this->assertContains('id="'.$this->page->getGc()->get_config('help.dialogClass'), $this->page->getHelpmessages());
 		
 	}
@@ -62,7 +64,7 @@ class HelpTest extends PHPUnit_Framework_TestCase {
 		
 		// check nonexistent id
 		$message = $this->help->getMessage(-1);
-		$this->assertContains(TestObject::lang('class.Help#global#message#errorIdNotExists'), $this->page->getHelpmessages());
+		$this->assertContains(TestObject::lang('HELP_MESSAGE_error'), $this->page->getHelpmessages());
 	}
 	
 	

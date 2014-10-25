@@ -21,13 +21,9 @@
  * 
  * ********************************************************************************************}
 <div class="calendar-details">
-	<p class="details">{$data.name}</p>
-	<p class="details">{$data.shortname}</p>
-	<p class="details">{$data.date}</p>
-	<p class="details">{$data.type}</p>
-	<p class="details">{$data.content}</p>
-	<p class="details">{$data.filter}</p>
-	<p class="details">{$data.public}</p>
+{foreach $data as $name}
+	<p class="details">{$name}</p>
+{/foreach}
 	<p class="details">{$attached}</p>
 {if count($files) > 0}
 	<ul>

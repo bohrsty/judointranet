@@ -274,26 +274,31 @@ class Protocol extends Page {
 	 */
 	public function details() {
 		
+		// prepare translation
+		$stateTranslation[0] = parent::lang('in progress');
+		$stateTranslation[1] = parent::lang('in progress');
+		$stateTranslation[2] = parent::lang('published');
+		
 		// prepare data
 		$correctable = $this->get_correctable(false);
 		$data = array(
-					'status' => parent::lang('class.Protocol#details#data#status').parent::lang('class.Protocol#details#data#status'.$correctable['status']),
-					'date' => parent::lang('class.Protocol#details#data#date').$this->get_date('d.m.Y'),
-					'location' => parent::lang('class.Protocol#details#data#location').$this->get_location(),
-					'member0' => parent::lang('class.Protocol#details#data#member0').$this->get_member(false,0),
-					'member1' => parent::lang('class.Protocol#details#data#member1').$this->get_member(false,1),
-					'member2' => parent::lang('class.Protocol#details#data#member2').$this->get_member(false,2),
-					'recorder' => parent::lang('class.Protocol#details#data#recorder').$this->get_recorder()
+					'status' => parent::lang('<span>state:</span><br />').$stateTranslation[$correctable['status']],
+					'date' => parent::lang('<span>date:</span><br />').$this->get_date('d.m.Y'),
+					'location' => parent::lang('<span>location:</span><br />').$this->get_location(),
+					'member0' => parent::lang('<span>participants (attendant):</span><br />').$this->get_member(false,0),
+					'member1' => parent::lang('<span>participants (excused):</span><br />').$this->get_member(false,1),
+					'member2' => parent::lang('<span>participants (without excuse):</span><br />').$this->get_member(false,2),
+					'recorder' => parent::lang('<span>recorder:</span><br />').$this->get_recorder()
 		);
 		if(is_numeric($this->get_type())) {
-			$data['type'] = parent::lang('class.Protocol#details#data#type').DB::returnValueById($this->get_type(),'protocol_types','name');
+			$data['type'] = parent::lang('<span>kind:</span><br />').DB::returnValueById($this->get_type(),'protocol_types','name');
 		} else {
-			$data['type'] = parent::lang('class.Protocol#details#data#type').$this->get_type();
+			$data['type'] = parent::lang('<span>kind:</span><br />').$this->get_type();
 		}
 		if(is_numeric($this->get_owner())) {
-			$data['owner'] = parent::lang('class.Protocol#details#data#owner').DB::returnValueById($this->get_owner(),'user','name');
+			$data['owner'] = parent::lang('<span>owner:</span><br />').DB::returnValueById($this->get_owner(),'user','name');
 		} else {
-			$data['owner'] = parent::lang('class.Protocol#details#data#owner').$this->get_owner();
+			$data['owner'] = parent::lang('<span>owner:</span><br />').$this->get_owner();
 		}
 		
 		// return
@@ -546,16 +551,6 @@ class Protocol extends Page {
 		} else {
 			return false;
 		}
-	}
-	
-	
-	/**
-	 * __toString() returns an string representation of this object
-	 * 
-	 * @return string string representation of this object
-	 */
-	public function __toString() {
-		return 'Protocol';
 	}
 	
 	

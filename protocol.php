@@ -33,9 +33,19 @@ require('lib/common.inc.php');
  */
 session_start();
 
-$protocol_view = new ProtocolView();
+/*
+ * catch exceptions
+ */
+try {
 
-$protocol_view->init();
+	$protocol_view = new ProtocolView();
+	
+	$protocol_view->toHtml();
+}
+catch(Exception $e) {
+	handleExceptions($e, HANDLE_EXCEPTION_VIEW);
+}
+
 
 
 

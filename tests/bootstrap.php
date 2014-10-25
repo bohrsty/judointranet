@@ -22,11 +22,12 @@
  * 
  * ********************************************************************************************/
 
-// setup autoload
-require_once('lib/common.inc.php');
-
 // set $_SERVER array
 $_SERVER['REQUEST_URI'] = '';
+$_SERVER['SCRIPT_FILENAME'] = __FILE__;
+
+// setup autoload
+require('lib/common.inc.php');
 
 // global test classes
 
@@ -52,6 +53,45 @@ class TestDb extends Db {
 	
 	function __construct() {
 		parent::__construct();
+	}
+	
+	
+	
+	
+	/**
+	 * getAutoincrement($table) gets the autoincrement value of $table
+	 * 
+	 * @param string $table name of the table to get the autoincrement value from
+	 * @return int autoincrement value of $table
+	 */
+	public static function getAutoincrement($table) {
+		
+		// prepare statement
+		$sql = '	SELECT `auto_increment`
+					FROM `information_schema`.`tables`
+					WHERE `table_schema`=\'#?\' AND `table_name`=\'#?\'';
+		
+		// get value and return
+		return self::singleValue($sql, array(self::$config['db']['database'], $table));
+		
+	}
+	
+	
+	/**
+	 * resetAutoincrement($table, $value) sets the autoincrement value to $value for given $table
+	 * 
+	 * @param string $table name of the table the autoincrement value is set
+	 * @param int $value the value autoincrement is set to
+	 * @return void
+	 */
+	public static function resetAutoincrement($table, $value) {
+		
+		// prepare statement
+		$sql = 'ALTER TABLE `#?` AUTO_INCREMENT=#?';
+		
+		// get value and return
+		self::executeQuery($sql, array($table, $value));
+		
 	}
 }
 

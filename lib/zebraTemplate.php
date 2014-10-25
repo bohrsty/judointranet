@@ -25,13 +25,15 @@
 /*
  * this file is called by zebra_form if custom template is used.
  * it requires that $form->render() takes an array as third argument with
- * 0 => $formIds and 1 => 'smarty-template-file-name'
+ * 0 => $formIds and 1 => 'smarty-template-file-name', optional 2 => 'permission-config'
+ * and 3 => 'smarty-template-object'
  */
 
 // prepare variables
 $formIds = $variables[0];
 $template = $variables[1];
-$permissionConfig = $variables[2];
+$permissionConfig = (isset($variables[2]) ? $variables[2] : array());
+$sForm = (isset($variables[3]) && $variables[3] instanceof JudoIntranetSmarty ? $variables[3] : new JudoIntranetSmarty());
 
 
 // prepare elements
@@ -66,17 +68,16 @@ foreach($formIds as $elementName => $settings) {
 }
 
 // walk through permission ids
-foreach($permissionConfig['ids'] as $permissionName => $settings) {
-	
-	$permissions[$permissionName]['label'] = (isset(${'label'.ucfirst($permissionName)}) ? ${'label'.ucfirst($permissionName)} : '');
-	$permissions[$permissionName]['element']['r'] = (isset(${$permissionName.'_r'}) ? ${$permissionName.'_r'} : '');
-	$permissions[$permissionName]['element']['w'] = (isset(${$permissionName.'_w'}) ? ${$permissionName.'_w'} : '');
-	$permissions[$permissionName]['note'] = (isset(${'note'.ucfirst($permissionName)}) ? ${'note'.ucfirst($permissionName)} : '');	
+if(count($permissionConfig) > 0) {
+	foreach($permissionConfig['ids'] as $permissionName => $settings) {
+		
+		$permissions[$permissionName]['label'] = (isset(${'label'.ucfirst($permissionName)}) ? ${'label'.ucfirst($permissionName)} : '');
+		$permissions[$permissionName]['element']['r'] = (isset(${$permissionName.'_r'}) ? ${$permissionName.'_r'} : '');
+		$permissions[$permissionName]['element']['w'] = (isset(${$permissionName.'_w'}) ? ${$permissionName.'_w'} : '');
+		$permissions[$permissionName]['note'] = (isset(${'note'.ucfirst($permissionName)}) ? ${'note'.ucfirst($permissionName)} : '');	
+	}
 }
 
-
-// get smarty template
-$sForm = new JudoIntranetSmarty();
 
 // assign elements, permissions and buttons
 $sForm->assign('elements', $elements);
@@ -85,11 +86,12 @@ $sForm->assign('buttonSubmit',$buttonSubmit);
 // assign errors
 $sForm->assign('error',(isset($zf_error) ? $zf_error : (isset($error) ? $error : '')));
 // assign tab names
-$sForm->assign('tabElements', Object::lang('zebraTemplate#tabs#name#elements'));
-$sForm->assign('tabPermissions', Object::lang('zebraTemplate#tabs#name#permissions'));
+$sForm->assign('tabElements', Object::lang('data'));
+$sForm->assign('tabPermissions', Object::lang('permissions'));
 // assign permission heads
-$sForm->assign('iconRead', $permissionConfig['iconRead']);
-$sForm->assign('iconEdit', $permissionConfig['iconEdit']);
+$sForm->assign('iconRead', (count($permissionConfig) > 0) ? $permissionConfig['iconRead'] : '');
+$sForm->assign('iconEdit', (count($permissionConfig) > 0) ? $permissionConfig['iconEdit'] : '');
+
 
 
 // echo template

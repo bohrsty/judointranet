@@ -33,9 +33,19 @@ require('lib/common.inc.php');
  */
 session_start();
 
-$announcement_view = new InventoryView();
+/*
+ * catch exceptions
+ */
+try {
 
-$announcement_view->init();
+	$inventory_view = new InventoryView();
+	
+	$inventory_view->toHtml();
+}
+catch(Exception $e) {
+	handleExceptions($e, HANDLE_EXCEPTION_VIEW);
+}
+
 
 
 

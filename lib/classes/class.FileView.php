@@ -61,7 +61,7 @@ class FileView extends PageView {
 	public function init() {
 		
 		// set pagename
-		$this->tpl->assign('pagename',parent::lang('class.FileView#page#init#name'));
+		$this->getTpl()->assign('pagename',parent::lang('files'));
 		
 		// init helpmessages
 		$this->initHelp();
@@ -78,81 +78,81 @@ class FileView extends PageView {
 					case 'listall':
 						
 						// smarty
-						$this->tpl->assign('title', $this->title(parent::lang('class.FileView#init#title#listall')));
-						$this->tpl->assign('main', $this->listall());
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('zebraform', false);
-						$this->tpl->assign('tinymce', false);
+						$this->getTpl()->assign('title', $this->title(parent::lang('files: listall')));
+						$this->getTpl()->assign('main', $this->listall());
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', false);
+						$this->getTpl()->assign('tinymce', false);
 					break;
 					
 					case 'upload':
 						
 						// smarty
-						$this->tpl->assign('title', $this->title(parent::lang('class.FileView#init#title#upload')));
-						$this->tpl->assign('main', $this->upload());
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('zebraform', true);
-						$this->tpl->assign('tinymce', false);
+						$this->getTpl()->assign('title', $this->title(parent::lang('files: upload')));
+						$this->getTpl()->assign('main', $this->upload());
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', true);
+						$this->getTpl()->assign('tinymce', false);
 					break;
 					
 					case 'details':
 						
 						// smarty
-						$this->tpl->assign('title', $this->title(parent::lang('class.FileView#init#title#details')));
-						$this->tpl->assign('main', $this->details());
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('zebraform', false);
-						$this->tpl->assign('tinymce', false);
+						$this->getTpl()->assign('title', $this->title(parent::lang('files: details')));
+						$this->getTpl()->assign('main', $this->details());
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', false);
+						$this->getTpl()->assign('tinymce', false);
 					break;
 					
 					case 'edit':
 						
 						// smarty
-						$this->tpl->assign('title', $this->title(parent::lang('class.FileView#init#title#edit')));
-						$this->tpl->assign('main', $this->edit());
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('zebraform', true);
-						$this->tpl->assign('tinymce', false);
+						$this->getTpl()->assign('title', $this->title(parent::lang('files: edit')));
+						$this->getTpl()->assign('main', $this->edit());
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', true);
+						$this->getTpl()->assign('tinymce', false);
 					break;
 					
 					case 'download':
 						
 						// smarty
-						$this->tpl->assign('title', $this->title(parent::lang('class.FileView#init#title#download')));
-						$this->tpl->assign('main', $this->download());
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('zebraform', false);
-						$this->tpl->assign('tinymce', false);
+						$this->getTpl()->assign('title', $this->title(parent::lang('files: download')));
+						$this->getTpl()->assign('main', $this->download());
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', false);
+						$this->getTpl()->assign('tinymce', false);
 					break;
 					
 					case 'delete':
 						
 						// smarty
-						$this->tpl->assign('title', $this->title(parent::lang('class.FileView#init#title#delete')));
-						$this->tpl->assign('main', $this->delete());
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('zebraform', true);
-						$this->tpl->assign('tinymce', false);
+						$this->getTpl()->assign('title', $this->title(parent::lang('files: delete')));
+						$this->getTpl()->assign('main', $this->delete());
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', true);
+						$this->getTpl()->assign('tinymce', false);
 					break;
 					
 					case 'cached':
 						
 						// smarty
-						$this->tpl->assign('title', $this->title(parent::lang('class.FileView#init#title#cached')));
-						$this->tpl->assign('main', $this->cached());
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('zebraform', false);
-						$this->tpl->assign('tinymce', false);
+						$this->getTpl()->assign('title', $this->title(parent::lang('files: download')));
+						$this->getTpl()->assign('main', $this->cached());
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', false);
+						$this->getTpl()->assign('tinymce', false);
 					break;
 					
 					case 'attach':
 						
 						// smarty
-						$this->tpl->assign('title', $this->title(parent::lang('class.FileView#init#title#attach')));
-						$this->tpl->assign('main', $this->attach());
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('zebraform', true);
-						$this->tpl->assign('tinymce', false);
+						$this->getTpl()->assign('title', $this->title(parent::lang('files: attach')));
+						$this->getTpl()->assign('main', $this->attach());
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', true);
+						$this->getTpl()->assign('tinymce', false);
 					break;
 					
 					default:
@@ -162,39 +162,31 @@ class FileView extends PageView {
 						$this->getError()->handle_error($errno);
 						
 						// smarty
-						$this->tpl->assign('title', '');
-						$this->tpl->assign('main', $this->getError()->to_html($errno));
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('zebraform', false);
-						$this->tpl->assign('tinymce', false);
+						$this->getTpl()->assign('title', '');
+						$this->getTpl()->assign('main', $this->getError()->to_html($errno));
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', false);
+						$this->getTpl()->assign('tinymce', false);
 					break;
 				}
 			} else {
 				
 				// error not authorized
-				$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-				$this->getError()->handle_error($errno);
-				
-				// smarty
-				$this->tpl->assign('title', $this->title(parent::lang('class.FileView#init#Error#NotAuthorized')));
-				$this->tpl->assign('main', $this->getError()->to_html($errno));
-				$this->tpl->assign('jquery', true);
-				$this->tpl->assign('zebraform', false);
-				$this->tpl->assign('tinymce', false);
+				throw new NotAuthorizedException($this);
 			}
 		} else {
 			
 			// id not set
 			// smarty-title
-			$this->tpl->assign('title', $this->title(parent::lang('class.FileView#init#title#default'))); 
+			$this->getTpl()->assign('title', $this->title(parent::lang('files'))); 
 			// smarty-main
-			$this->tpl->assign('main', $this->defaultContent());
+			$this->getTpl()->assign('main', $this->defaultContent());
 			// smarty-jquery
-			$this->tpl->assign('jquery', true);
+			$this->getTpl()->assign('jquery', true);
 			// smarty-hierselect
-			$this->tpl->assign('zebraform', false);
+			$this->getTpl()->assign('zebraform', false);
 			// smarty-tiny_mce
-			$this->tpl->assign('tinymce', false);
+			$this->getTpl()->assign('tinymce', false);
 		}
 		
 		// global smarty
@@ -219,7 +211,7 @@ class FileView extends PageView {
 		$sD = new JudoIntranetSmarty();
 		
 		// smarty
-		$sD->assign('caption', parent::lang('class.FileView#defaultContent#headline#text'));
+		$sD->assign('caption', parent::lang('files'));
 		$text[] = array(
 				'caption' => '',
 				'text' => ''
@@ -245,7 +237,7 @@ class FileView extends PageView {
 	private function listall() {
 		
 		// pagecaption
-		$this->tpl->assign('pagecaption',parent::lang('class.FileView#page#caption#listall').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FILELISTALL));
+		$this->getTpl()->assign('pagecaption',parent::lang('listall').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FILELISTALL));
 		
 		// read all entries
 		$entries = $this->readAllEntries();
@@ -255,11 +247,11 @@ class FileView extends PageView {
 		
 		// smarty
 		$sTh = array(
-				'name' => parent::lang('class.FileView#listall#TH#name'),
-				'filetype' => parent::lang('class.FileView#listall#TH#filetype'),
-				'filename' => parent::lang('class.FileView#listall#TH#filename'),
-				'show' => parent::lang('class.FileView#listall#TH#show'),
-				'admin' => parent::lang('class.FileView#listall#TH#admin')
+				'name' => parent::lang('name'),
+				'filetype' => parent::lang('filetype'),
+				'filename' => parent::lang('filename'),
+				'show' => parent::lang('show'),
+				'admin' => parent::lang('tasks')
 			);
 
 		$sListall->assign('th', $sTh);
@@ -286,10 +278,10 @@ class FileView extends PageView {
 		// smarty
 		$sListall->assign('fileList', $fileList);
 		$sListall->assign('cachedList', $cachedList);
-		$sListall->assign('tabDownload', parent::lang('class.FileView#listall#tabTitle#download'));
-		$sListall->assign('tabCached', parent::lang('class.FileView#listall#tabTitle#cached'));
+		$sListall->assign('tabDownload', parent::lang('uploaded'));
+		$sListall->assign('tabCached', parent::lang('cached'));
 		// prepare tabs
-		$this->tpl->assign('tabsJs', true);
+		$this->getTpl()->assign('tabsJs', true);
 		// prepare admin help
 		$helpListAdmin = $this->getHelp()->getMessage(HELP_MSG_FILELISTADMIN);
 		if(isset($helpListAdmin)) {
@@ -370,7 +362,7 @@ class FileView extends PageView {
 		$fid = $this->get('fid');
 		
 		// pagecaption
-		$this->tpl->assign('pagecaption',parent::lang('class.FileView#page#caption#details'));
+		$this->getTpl()->assign('pagecaption',parent::lang('details'));
 		
 		// get file-object
 		$file = new File($fid);
@@ -392,14 +384,14 @@ class FileView extends PageView {
 			// back to listall
 			$links[] = array(
 					'href' => 'file.php?id=listall',
-					'title' => parent::lang('class.FileView#details#back#title'),
-					'name' => parent::lang('class.FileView#details#back#name')
+					'title' => parent::lang('back'),
+					'name' => parent::lang('back')
 				);
 			// download
 			$links[] = array(
 					'href' => 'file.php?id=download&fid='.$file->getId(),
-					'title' => parent::lang('class.FileView#details#download#title'),
-					'name' => parent::lang('class.FileView#details#download#name')
+					'title' => parent::lang('download'),
+					'name' => parent::lang('download')
 				);
 			$sFD->assign('links',$links);
 			
@@ -478,13 +470,13 @@ class FileView extends PageView {
 	 * 
 	 * @return string html of the deletion page
 	 */
-	private function delete() {
+	protected function delete() {
 		
 		// get $fid
 		$fid = $this->get('fid');
 		
 		// pagecaption
-		$this->tpl->assign('pagecaption',parent::lang('class.FileView#page#caption#delete'));
+		$this->getTpl()->assign('pagecaption',parent::lang('delete file'));
 		
 		// check permissions
 		if($this->getUser()->hasPermission('file', $fid, 'w')) {
@@ -507,20 +499,20 @@ class FileView extends PageView {
 			$form->add(
 				'submit',		// type
 				'buttonSubmit',	// id/name
-				parent::lang('class.FileView#delete#form#yes'),	// value
-				array('title' => parent::lang('class.FileView#delete#title#yes'))
+				parent::lang('yes'),	// value
+				array('title' => parent::lang('delete file'))
 			);
 			
 			// smarty-link
 			$link = array(
 							'params' => 'class="submit"',
 							'href' => 'file.php?id=listall',
-							'title' => parent::lang('class.FileView#delete#cancel#title'),
-							'content' => parent::lang('class.FileView#delete#cancel#form')
+							'title' => parent::lang('cancels deletion'),
+							'content' => parent::lang('cancel')
 						);
 			$sConfirmation->assign('link', $link);
 			$sConfirmation->assign('spanparams', 'id="cancel"');
-			$sConfirmation->assign('message', parent::lang('class.FileView#delete#message#confirm').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_DELETE));
+			$sConfirmation->assign('message', parent::lang('you really want to delete this file?').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_DELETE));
 			$sConfirmation->assign('form', $form->render('', true));
 			
 			// validate
@@ -533,7 +525,7 @@ class FileView extends PageView {
 				$file->update(array('valid' => 0));
 				
 				// smarty
-				$sConfirmation->assign('message', parent::lang('class.FileView#delete#message#done'));
+				$sConfirmation->assign('message', parent::lang('successful deleted file.'));
 				$sConfirmation->assign('form', '');
 				
 				// write entry
@@ -561,7 +553,7 @@ class FileView extends PageView {
 	private function upload() {
 		
 		// pagecaption
-		$this->tpl->assign('pagecaption',parent::lang('class.FileView#page#caption#upload').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FILEUPLOAD));
+		$this->getTpl()->assign('pagecaption',parent::lang('upload file').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FILEUPLOAD));
 		
 		// smarty-templates
 		$sD = new JudoIntranetSmarty();
@@ -587,7 +579,7 @@ class FileView extends PageView {
 				'label',		// type
 				'labelName',	// id/name
 				'name',			// for
-				parent::lang('class.FileView#entry#form#name'),	// label text
+				parent::lang('name'),	// label text
 				array('inside' => true,)	// label inside
 			);
 		$name = $form->add(
@@ -598,7 +590,7 @@ class FileView extends PageView {
 				'note',			// type
 				'noteName',	// id/name
 				'name',		// for
-				parent::lang('class.FileView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDNAME)	// note text
+				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDNAME)	// note text
 			);
 		
 		// add rules
@@ -607,11 +599,11 @@ class FileView extends PageView {
 						'regexp' => array(
 								$this->getGc()->get_config('textarea.regexp.zebra'),
 								'error',
-								parent::lang('class.FileView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
+								parent::lang('allowed chars').' ['.$this->getGc()->get_config('textarea.desc').']',
 							),
 						'required' => array(
 								'error',
-								parent::lang('class.FileView#entry#rule#required.name'),
+								parent::lang('required name'),
 							),
 					)
 			);
@@ -622,7 +614,7 @@ class FileView extends PageView {
 				'label',		// type
 				'labelContent',	// id/name
 				'formContent',			// for
-				parent::lang('class.FileView#entry#form#content').':'	// label text
+				parent::lang('select file').':'	// label text
 			);
 		$formContent = $form->add(
 						$formIds['formContent']['type'],		// type
@@ -632,7 +624,7 @@ class FileView extends PageView {
 				'note',			// type
 				'noteFormContent',	// id/name
 				'formContent',		// for
-				parent::lang('class.FileView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDFILE)	// note text
+				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDFILE)	// note text
 			);
 		
 		// add rules
@@ -642,13 +634,13 @@ class FileView extends PageView {
 						'filetype' => array(
 								$allowedFileTypes,
 								'error',
-								parent::lang('class.FileView#entry#rule#file.allowedFileTypes').' ['.$allowedFileTypes.']',
+								parent::lang('only the following file extensions are allowed!').' ['.$allowedFileTypes.']',
 							),
 						'upload' => array(
 								$this->getGc()->get_config('global.temp'),
 								ZEBRA_FORM_UPLOAD_RANDOM_NAMES,
 								'error',
-								parent::lang('class.FileView#entry#rule#file.upload'),
+								parent::lang('could not upload file!'),
 							),
 					)
 			);
@@ -659,7 +651,7 @@ class FileView extends PageView {
 				'label',		// type
 				'labelPublic',	// id/name
 				'public',		// for
-				parent::lang('class.FileView#entry#form#public')	// label text
+				parent::lang('public access')	// label text
 			);
 		$public = $form->add(
 				$formIds['public']['type'],		// type
@@ -671,7 +663,7 @@ class FileView extends PageView {
 				'note',			// type
 				'notePublic',	// id/name
 				'public',		// for
-				parent::lang('class.FileView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDISPUBLIC)	// note text
+				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDISPUBLIC)	// note text
 			);
 		
 		// permissions
@@ -685,7 +677,7 @@ class FileView extends PageView {
 		$form->add(
 				'submit',		// type
 				'buttonSubmit',	// id/name
-				parent::lang('class.FileView#entry#form#submitButton')	// value
+				parent::lang('upload')	// value
 			);
 		
 		// validate
@@ -743,7 +735,7 @@ class FileView extends PageView {
 		$file = new File($fid);
 		
 		// pagecaption
-		$this->tpl->assign('pagecaption',parent::lang('class.FileView#page#caption#edit'));
+		$this->getTpl()->assign('pagecaption',parent::lang('edit file'));
 		
 		// check permissions
 		if($this->getUser()->hasPermission('file', $fid, 'w')) {
@@ -772,7 +764,7 @@ class FileView extends PageView {
 					'label',		// type
 					'labelName',	// id/name
 					'name',			// for
-					parent::lang('class.FileView#entry#form#name').':'
+					parent::lang('name').':'
 				);
 			$name = $form->add(
 							$formIds['name']['type'],	// type
@@ -783,7 +775,7 @@ class FileView extends PageView {
 					'note',			// type
 					'noteName',	// id/name
 					'name',		// for
-					parent::lang('class.FileView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDNAME)	// note text
+					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDNAME)	// note text
 				);
 			
 			// add rules
@@ -792,11 +784,11 @@ class FileView extends PageView {
 							'regexp' => array(
 									$this->getGc()->get_config('textarea.regexp.zebra'),
 									'error',
-									parent::lang('class.FileView#entry#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
+									parent::lang('allowed chars').' ['.$this->getGc()->get_config('textarea.desc').']',
 								),
 							'required' => array(
 									'error',
-									parent::lang('class.FileView#entry#rule#required.name'),
+									parent::lang('required name'),
 								),
 						)
 				);
@@ -807,7 +799,7 @@ class FileView extends PageView {
 					'label',		// type
 					'labelContent',	// id/name
 					'formContent',			// for
-					parent::lang('class.FileView#entry#form#content').':'	// label text
+					parent::lang('content').':'	// label text
 				);
 			$formContent = $form->add(
 							$formIds['formContent']['type'],		// type
@@ -817,7 +809,7 @@ class FileView extends PageView {
 					'note',			// type
 					'noteFormContent',	// id/name
 					'formContent',		// for
-					parent::lang('class.FileView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDFILE)	// note text
+					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDFILE)	// note text
 				);
 			
 			// add rules
@@ -827,13 +819,13 @@ class FileView extends PageView {
 							'filetype' => array(
 									$allowedFileTypes,
 									'error',
-									parent::lang('class.FileView#entry#rule#file.allowedFileTypes').' ['.$allowedFileTypes.']',
+									parent::lang('only the following file extensions are allowed!').' ['.$allowedFileTypes.']',
 								),
 							'upload' => array(
 									$this->getGc()->get_config('global.temp'),
 									ZEBRA_FORM_UPLOAD_RANDOM_NAMES,
 									'error',
-									parent::lang('class.FileView#entry#rule#file.upload'),
+									parent::lang('could not upload file!'),
 								),
 						)
 				);
@@ -844,7 +836,7 @@ class FileView extends PageView {
 					'label',		// type
 					'labelPublic',	// id/name
 					'public',		// for
-					parent::lang('class.FileView#entry#form#public')	// label text
+					parent::lang('public access')	// label text
 				);
 			$public = $form->add(
 					$formIds['public']['type'],		// type
@@ -856,7 +848,7 @@ class FileView extends PageView {
 					'note',			// type
 					'notePublic',	// id/name
 					'public',		// for
-					parent::lang('class.FileView#global#info#help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDISPUBLIC)	// note text
+					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDISPUBLIC)	// note text
 				);
 			
 			// permissions
@@ -870,7 +862,7 @@ class FileView extends PageView {
 			$form->add(
 					'submit',		// type
 					'buttonSubmit',	// id/name
-					parent::lang('class.FileView#entry#form#submitButton.edit')	// value
+					parent::lang('save')	// value
 				);
 			
 			// validate
@@ -958,7 +950,15 @@ class FileView extends PageView {
 		}
 		
 		// check permissions
-		if($this->getUser()->hasPermission($table, $tid) && $additionalChecks['permissions'] || $this->getUser()->isAdmin()) {
+		$permissionTable = $table;
+		$permissionTid = $tid;
+		// if result check permissions against calendar table
+		if($table == 'result') {
+			$permissionTable = 'calendar';
+			$permissionTid = $object->getCalendar()->get_id();
+		}
+		
+		if($this->getUser()->hasPermission($permissionTable, $permissionTid) && $additionalChecks['permissions'] || $this->getUser()->isAdmin()) {
 			
 			// check draft field
 			if($draftValue == 0 || ($draftValue == 1 && $this->getUser()->get_loggedin())) {
@@ -1016,7 +1016,7 @@ class FileView extends PageView {
 				$sList[$counter] = array(
 						'name' => array(
 								'href' => 'file.php?id=details&fid='.$entry->getId(),
-								'title' => parent::lang('class.FileView#listall#title#name'),
+								'title' => parent::lang('details'),
 								'name' => $entry->getName(),
 							),
 						'filetype' => $entry->getFileTypeAs('name'),
@@ -1028,9 +1028,9 @@ class FileView extends PageView {
 				// show
 				$sList[$counter]['show'][] = array(
 							'href' => 'file.php?id=download&fid='.$entry->getId(),
-							'title' => $entry->getName().parent::lang('class.FileView#listall#title#filename'),
+							'title' => $entry->getName().parent::lang(' download'),
 							'src' => 'img/file_download.png',
-							'alt' => '\''.$entry->getName().'\''.parent::lang('class.FileView#listall#title#filename'),
+							'alt' => '\''.$entry->getName().'\''.parent::lang('filename'),
 						);
 					
 				// add admin
@@ -1041,16 +1041,16 @@ class FileView extends PageView {
 					// edit
 					$sList[$counter]['admin'][] = array(
 							'href' => 'file.php?id=edit&fid='.$entry->getId(),
-							'title' => parent::lang('class.FileView#listall#title#edit'),
+							'title' => parent::lang('edit file'),
 							'src' => 'img/file_edit.png',
-							'alt' => parent::lang('class.FileView#listall#alt#edit')
+							'alt' => parent::lang('edit file')
 						);
 					// delete
 					$sList[$counter]['admin'][] = array(
 							'href' => 'file.php?id=delete&fid='.$entry->getId(),
-							'title' => parent::lang('class.FileView#listall#title#delete'),
+							'title' => parent::lang('delete file'),
 							'src' => 'img/file_delete.png',
-							'alt' => parent::lang('class.FileView#listall#alt#delete')
+							'alt' => parent::lang('delete file')
 						);
 				} else {
 					
@@ -1107,11 +1107,11 @@ class FileView extends PageView {
 				if(strlen($entry->getFilename()) > 35) {
 					$shortFilename = substr($entry->getFilename(), 0, 6).'[...]'.substr($entry->getFilename(), -19);
 				}
-				$sList[$table]['name'] = parent::lang('class.FileView#listall#tableName#'.$table);
+				$sList[$table]['name'] = parent::lang('table name '.$table);
 				$sList[$table][$counter[$table]] = array(
 						'name' => array(
 								'href' => 'file.php?id=details&fid='.$entry->getId(),
-								'title' => parent::lang('class.FileView#listall#title#name'),
+								'title' => parent::lang('name'),
 								'name' => $entry->getName(),
 							),
 						'filetype' => $entry->getFileTypeAs('name'),
@@ -1123,9 +1123,9 @@ class FileView extends PageView {
 				// show
 				$sList[$table][$counter[$table]]['show'][] = array(
 						'href' => 'file.php?id=cached&table='.$table.'&tid='.$entry->getCached(false)['tableId'],
-						'title' => $entry->getName().parent::lang('class.FileView#listall#title#filename'),
+						'title' => $entry->getName().parent::lang('filename'),
 						'src' => 'img/file_download.png',
-						'alt' => '\''.$entry->getFilename().'\''.parent::lang('class.FileView#listall#title#filename'),
+						'alt' => '\''.$entry->getFilename().'\''.parent::lang('filename'),
 					);
 				
 				// increment counter
@@ -1154,7 +1154,7 @@ class FileView extends PageView {
 		$tableId = $this->get('tid');
 		
 		// pagecaption
-		$this->tpl->assign('pagecaption', parent::lang('class.FileView#page#caption#attach'));
+		$this->getTpl()->assign('pagecaption', parent::lang('attach file'));
 		
 		// check if $tableId exists in $table
 		if(Page::exists($table, $tableId)) {
@@ -1170,7 +1170,7 @@ class FileView extends PageView {
 				$object = new $objectClass($tableId);
 				
 				// assign title
-				$sAttach->assign('title', parent::lang('class.FileView#attach#file#title').' "'.$object->getName().'"');
+				$sAttach->assign('title', parent::lang('attach file to:').' "'.$object->getName().'"');
 				
 				// read all permitted entries
 				$entries = $this->readAllEntries();
@@ -1217,7 +1217,7 @@ class FileView extends PageView {
 						'label',		// type
 						'labelFiles',	// id/name
 						'files',		// for
-						parent::lang('class.FileView#attach#section#download')	// label text
+						parent::lang('uploaded')	// label text
 					);
 				$form->add(
 						$formIds['files']['type'],	// type
@@ -1230,7 +1230,7 @@ class FileView extends PageView {
 				foreach($cachedSection as $tableName => $cachedFiles) {
 					
 					// translate tableName
-					$transTableName = parent::lang('class.FileView#attach#tableName#'.$tableName);
+					$transTableName = parent::lang('table name '.$tableName);
 					
 					// cached files
 					$formIds[$tableName.'Files'] = array('valueType' => 'array', 'type' => 'checkboxes', 'default' => 1);
@@ -1253,7 +1253,7 @@ class FileView extends PageView {
 				$form->add(
 						'submit',		// type
 						'buttonSubmit',	// id/name
-						parent::lang('class.FileView#entry#form#submitButton.edit')	// value
+						parent::lang('save')	// value
 					);
 				
 				// assign form
@@ -1284,8 +1284,8 @@ class FileView extends PageView {
 					
 					// assign to template
 					$sAttach->assign('files', $fileObjects);
-					$sAttach->assign('attached', parent::lang('class.FileView#attach#text#attached'));
-					$sAttach->assign('none', parent::lang('class.FileView#attach#text#none'));
+					$sAttach->assign('attached', parent::lang('attached files:'));
+					$sAttach->assign('none', parent::lang('- none -'));
 					$sAttach->assign('fileHref', 'file.php?id=download&fid=');
 					$sAttach->assign('form', '');
 				}

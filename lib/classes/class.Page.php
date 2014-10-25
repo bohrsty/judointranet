@@ -34,6 +34,9 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 	 * class-variables
 	 */
 	private $id;
+	private $lastModified;
+	private $modifiedBy;
+	private $valid;
 	
 	/*
 	 * getter/setter
@@ -43,6 +46,24 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 	}
 	public function setId($id) {
 		$this->id = $id;
+	}
+	public function getLastModified(){
+		return $this->lastModified;
+	}
+	public function setLastModified($lastModified) {
+		$this->lastModified = $lastModified;
+	}
+	public function getModifiedBy(){
+		return $this->modifiedBy;
+	}
+	public function setModifiedBy($modifiedBy) {
+		$this->modifiedBy = $modifiedBy;
+	}
+	public function getValid(){
+		return $this->valid;
+	}
+	public function setValid($valid) {
+		$this->valid = $valid;
 	}
 	// stay for compatibility reason
 	public function get_id(){
@@ -98,16 +119,6 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 		
 		// close db
 		$db->close();
-	}
-	
-	
-	/**
-	 * __toString() returns an string representation of this object
-	 * 
-	 * @return string string representation of this object
-	 */
-	public function __toString() {
-		return 'Page';
 	}
 	
 	
@@ -258,15 +269,42 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 		$result = $db->query($sql);
 		
 		if($result) {
-			if($result->num_rows == 0) {
-				return false;
-			} else {
-				return true;
-			}
+			return $result->num_rows == 1;
 		} else {
 			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
 			self::getError()->handle_error($errno);
 		}
+	}
+	
+	
+	/**
+	 * readClubs() reads all clubs from database and sets $this->clubArray as an
+	 * array club_id->name and number
+	 * 
+	 * @return array array containing all club information
+	 */
+	public static function readClubs() {
+		
+		// get clubs from db
+		$result = Db::ArrayValue('
+			SELECT `id`, `number`, `name`
+			FROM `club`	
+		',
+		MYSQL_ASSOC,
+		array());
+		if($result === false) {
+			throw new MysqlErrorException($this, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		}
+		
+		// fill return array
+		$clubs = array();
+		foreach($result as $club) {
+			$clubs[$club['id']]['number'] = $club['number'];
+			$clubs[$club['id']]['name'] = $club['name'];
+		}
+		
+		// return
+		return $clubs;
 	}
  	
  	

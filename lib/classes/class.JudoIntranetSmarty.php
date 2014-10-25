@@ -40,6 +40,43 @@ class JudoIntranetSmarty extends Smarty {
 		$this->setCompileDir('templates/smarty/compile/');
 		$this->setConfigDir('templates/smarty/config/');
 		$this->setCacheDir('templates/smarty/cache/');
+		
+		// add plugin
+		$this->registerPlugin('block', 'lang', array($this, 'smarty_block_lang'));
+	}
+	
+	
+	/**
+	 * {lang}...{/lang}
+	 * 
+	 * @param array $params parameters
+	 * @param string $content contents of the block
+	 * @param Smarty_Internal_Template $template template object
+	 * @param boolean &$repeat repeat flag
+	 * @return string content re-formatted
+	 */
+	function smarty_block_lang($params, $content, $template, &$repeat) {
+		
+		// return if no content given
+		if(is_null($content)) {
+			return;
+		}
+		
+		// check parameters
+		if(count($params) > 0) {
+			
+			// translate
+			$translation = Object::lang($content, true);
+			 
+			// walk through params and replace
+			foreach($params as $name => $value) {
+				return str_replace('#?'.$name, $value, $translation);
+			}
+		} else {
+			
+			// just translate and return
+			return Object::lang($content, true);
+		}
 	}
 
 }

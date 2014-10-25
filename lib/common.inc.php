@@ -36,7 +36,17 @@ session_name('JudoIntranet');
 /*
  * define code version
  */
-define('CONF_GLOBAL_VERSION', '017');
+define('CONF_GLOBAL_VERSION', '018');
+
+/*
+ * determine app path
+ */
+$scriptPath = dirname(realpath($_SERVER['SCRIPT_FILENAME']));
+while(!is_dir($scriptPath.'/lib') && !is_file($scriptPath.'/administration.php')) {
+	$scriptPath = dirname($scriptPath);
+}
+define('JIPATH', $scriptPath);
+unset($scriptPath);
 
 /*
  * define constants
@@ -91,54 +101,68 @@ define('HELP_MSG_PROTOCOLCORRECTORS', 32);
 define('HELP_MSG_PROTOCOLDECISIONS', 33);
 define('HELP_MSG_PROTOCOLDIFF', 34);
 define('HELP_MSG_PROTOCOLDIFFLIST', 35);
+define('HELP_MSG_RESULTIMPORTER', 36);
+define('HELP_MSG_RESULTDESC', 37);
+define('HELP_MSG_ACCOUNTINGDASHBOARD', 38);
+define('HELP_MSG_FIELDCITY', 39);
 // write to db
 define('DB_WRITE_NEW', 1);
 define('DB_WRITE_UPDATE', 2);
+// exception handling
+define('HANDLE_EXCEPTION_VIEW', 1);
+define('HANDLE_EXCEPTION_JSON', 2);
 
 
 
 /**
  * loads the class-definition of given class from lib
  */
+include_once(JIPATH.'/lib/classes/Exceptions.php');
+
 // register autoload
 spl_autoload_register(
 	function ($class) {
-	
+		
+		// load interfaces
+		if(substr($class, -9) == 'Interface') {
+			include_once(JIPATH.'/lib/interfaces/iface.'.substr($class, 0, -9).'.php');
+		// load Services_JSON
+		} elseif($class == 'Services_JSON') {
+			include_once(JIPATH.'/lib/Services_JSON/json.php');
 		// load HTML2PDF
-		if($class == 'HTML2PDF') {
-			include_once('lib/html2pdf/html2pdf.class.php');
+		} elseif($class == 'HTML2PDF') {
+			include_once(JIPATH.'/lib/html2pdf/html2pdf.class.php');
 		// load smarty
 		} elseif($class == 'Smarty') {
-			include_once('lib/smarty/libs/Smarty.class.php');
+			include_once(JIPATH.'/lib/smarty/libs/Smarty.class.php');
 		// load smarty plugins
 		} elseif(substr($class,0,6) == 'Smarty') {
-			include_once('lib/smarty/libs/sysplugins/'.strtolower($class).'.php');
+			include_once(JIPATH.'/lib/smarty/libs/sysplugins/'.strtolower($class).'.php');
 		// load Zebra_Form
 		} elseif($class == 'Zebra_Form') {
-			include_once('lib/zebra_form/Zebra_Form.php');
+			include_once(JIPATH.'/lib/zebra_form/Zebra_Form.php');
+		// load classes
 		} else {
-		
-			// load classes
-			include_once('lib/classes/class.'.$class.'.php');
+			include_once(JIPATH.'/lib/classes/class.'.$class.'.php');
 		}
 	}
 );
 
 
-// check versions
-$dbVersion = checkDbVersion();
-if($dbVersion != VERSION_EQUAL && basename($_SERVER['SCRIPT_NAME']) != 'setup.php') {
-	
-	// redirect to setup
-	header('Location: setup.php');
+// check versions if not api
+if(basename($_SERVER['SCRIPT_FILENAME']) != 'internal.php') {
+	$dbVersion = checkDbVersion();
+	if($dbVersion != VERSION_EQUAL && basename($_SERVER['SCRIPT_NAME']) != 'setup.php') {
+		
+		// redirect to setup
+		header('Location: setup.php');
+	}
 }
-
 
 
 /*
  * methods used before objects are instanciated
  */
-
 /**
  * checkDbVersion() checks the code version against the db version and returns a
  * constant VERSION_xxx
@@ -147,11 +171,8 @@ if($dbVersion != VERSION_EQUAL && basename($_SERVER['SCRIPT_NAME']) != 'setup.ph
  */
 function checkDbVersion() {
 	
-	// load lib
-	include_once('classes/class.Db.php');
-	
 	// get db-object
-	$db = DB::newDB(false);
+	$db = Db::newDB(false);
 	
 	// check return
 	if(!$db instanceof mysqli) {
@@ -235,6 +256,70 @@ function checkDbVersion() {
 	
 	// error
 	return VERSION_ERROR;
+}
+
+
+/**
+ * handleExceptions($e, $outputType) shows the error messages of $e according to $outputType,
+ * no objects other than Exceptions (and their childs) allowed in this function
+ * 
+ * @param Exception $e the thrown exception object to be handled
+ * @param int $outputType type of the error message (i.e. HTML or JSON output)
+ * @return void
+ */
+function handleExceptions($e, $outputType) {
+	
+	// determine type of exception
+	switch(get_class($e)) {
+		case 'SmartyException':
+		case 'SmartyCompilerException':
+		case 'HTML2PDF_exception':
+			
+			// check $outputType
+			if($outputType == HANDLE_EXCEPTION_JSON) {
+				echo json_encode(array(
+						'Result' => 'ERROR',
+						'Message' => $e->__toString(),
+					));
+			} else {
+				echo '<table>'.$e->xdebug_message.'</table>';
+			}
+		break;
+		
+		default:
+			$e->errorMessage($outputType);
+		break;
+	}
+}
+
+
+/**
+ * _($string) translates $string in the user choosen language
+ * 
+ * @param string $string string to translate
+ * @return string translation of $string
+ */
+function _l($string) {
+	
+	// check user
+	$lang = 'de_DE';
+	if(Object::staticGetUser()) {
+		$lang = Object::staticGetUser()->get_lang();
+	}
+	
+	// import lang-file
+	if(is_file(JIPATH.'/cnf/lang/lang.'.$lang.'.php')) {
+		include(JIPATH.'/cnf/lang/lang.'.$lang.'.php');
+	} else {
+		return htmlentities('[language "'.$lang.'" not found]', ENT_QUOTES, 'UTF-8');
+	}
+	
+	// check if is translated
+	if(!isset($lang[$string])) {
+		return htmlentities($string, ENT_QUOTES, 'UTF-8');
+	} else {
+		return $lang[$string];
+	}
 }
 
 ?>

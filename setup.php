@@ -29,7 +29,7 @@ require('lib/common.inc.php');
 session_start();
 
 // get default config
-$defaultConfig = parse_ini_file('cnf/default.ini', true);
+$defaultConfig = parse_ini_file(JIPATH.'/cnf/default.ini', true);
 
 // create template
 $tpl = new JudoIntranetSmarty();
@@ -103,8 +103,8 @@ function lang($string) {
 	$_SESSION['setup']['l'] = $lang;
 	
 	// import lang-file
-	if(is_file('cnf/lang/setupLang.'.$lang.'.php')) {
-		include('cnf/lang/setupLang.'.$lang.'.php');
+	if(is_file(JIPATH.'/cnf/lang/setupLang.'.$lang.'.php')) {
+		include(JIPATH.'/cnf/lang/setupLang.'.$lang.'.php');
 	} else {
 		return '[language "'.$lang.'" not found]';
 	}
@@ -163,7 +163,7 @@ function checkAccess() {
 	} else {
 		
 		// get setup key from config.ini
-		$config = parse_ini_file('cnf/setup.ini', true);
+		$config = parse_ini_file(JIPATH.'/cnf/setup.ini', true);
 		$setupKey = $config['setupKey'];
 		
 		// check setup keys
@@ -684,7 +684,7 @@ function doInstall() {
 	
 	// enable sql functions and import them
 	define('SETUPSQL', true);
-	include_once('sql/setupSql.php');
+	include_once(JIPATH.'/sql/setupSql.php');
 	
 	// import initial sql
 	$returnInit = initMysql();
@@ -716,7 +716,7 @@ function doUpgrade() {
 	if(!defined('SETUPSQL')) {
 		define('SETUPSQL', true);
 	}
-	include_once('sql/setupSql.php');
+	include_once(JIPATH.'/sql/setupSql.php');
 	
 	// upgrade sql
 	$returnInit = versionMysql();

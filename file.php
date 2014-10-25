@@ -33,9 +33,19 @@ require('lib/common.inc.php');
  */
 session_start();
 
-$fileView = new FileView();
+/*
+ * catch exceptions
+ */
+try {
 
-$fileView->init();
+	$fileView = new FileView();
+	
+	$fileView->toHtml();
+}
+catch(Exception $e) {
+	handleExceptions($e, HANDLE_EXCEPTION_VIEW);
+}
+
 
 
 

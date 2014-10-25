@@ -6,6 +6,8 @@
 /templates/protocols/*
 !/templates/protocols/index.php
 !/templates/protocols/tcme_default.css
+/templates/results/*
+!/templates/results/index.php
 /.project
 /templates/test.*
 *.z
@@ -14,3 +16,4 @@
 /cnf/config.ini
 /lib/classes/class.Test*.php
 /cnf/setup.ini
+/DEBUG_ALL

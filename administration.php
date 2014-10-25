@@ -33,9 +33,18 @@ require('lib/common.inc.php');
  */
 session_start();
 
-$administration_view = new AdministrationView();
+/*
+ * catch exceptions
+ */
+try {
 
-$administration_view->init();
+	$administration_view = new AdministrationView();
+	
+	$administration_view->toHtml();
+}
+catch(Exception $e) {
+	handleExceptions($e, HANDLE_EXCEPTION_VIEW);
+}
 
 
 

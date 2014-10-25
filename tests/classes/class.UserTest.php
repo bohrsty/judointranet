@@ -125,7 +125,7 @@ class UserTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(0, $this->user->userid());
 		$this->assertEquals(array(), $this->user->groups());
 		$this->assertEquals(false, $this->user->get_loggedin());
-		$this->assertEquals('class.User#login#message#default', $this->user->get_login_message());
+		$this->assertEquals('please log on', $this->user->get_login_message());
 		$this->assertEquals(
 				array(
 						'name' => 'Public',
@@ -141,8 +141,8 @@ class UserTest extends PHPUnit_Framework_TestCase {
 		// config
 		$this->assertEquals(new Config(), $this->user->getGc());
 		// output
-		$this->assertContains(TestObject::lang('class.User#logout#logout#caption'), $logout);
-		$this->assertContains(TestObject::lang('class.User#logout#logout#message'), $logout);
+		$this->assertContains(TestObject::lang('logout'), $logout);
+		$this->assertContains(TestObject::lang('logout successful'), $logout);
 		$this->assertNotContains('<form ', $logout);
 		
 		// check login (if default password, else skip)
@@ -162,11 +162,11 @@ class UserTest extends PHPUnit_Framework_TestCase {
 		} else {
 			$this->markTestSkipped();
 		}
-		$this->assertEquals('class.MainView#callback_check_login#message#WrongPassword', $this->user->get_login_message());
+		$this->assertEquals('wrong password', $this->user->get_login_message());
 		// not existing user
 		$login = $this->user->checkLogin('notExistingUser', 'password');
 		$this->assertFalse($login);
-		$this->assertEquals('class.MainView#callback_check_login#message#UserNotExist', $this->user->get_login_message());
+		$this->assertEquals('user not exist', $this->user->get_login_message());
 	}
 	
 	

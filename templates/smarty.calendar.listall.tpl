@@ -29,6 +29,14 @@
 		<th class="name">
 			{$th.name}
 		</th>
+		<th class="city">
+			{$th.city}
+		</th>
+{if $loggedin}
+		<th>
+			<img src="img/public.png" alt="{lang}public{/lang}" class="icon" title="{lang}public{/lang}" />
+		</th>
+{/if}
 		<th class="show">
 			{$th.show}
 		</th>
@@ -44,30 +52,49 @@
 			{$list.$i.date}
 		</td>
 		<td>
-			<a href="{$list.$i.name.href|escape}" title="{$list.$i.name.title}">{$list.$i.name.name}</a>{if $list.$i.name.public == true}<img src="img/public.png" alt="{Object::lang('class.CalendarView#listall#alt#public')}" class="icon" title="{Object::lang('class.CalendarView#listall#title#public')}" />{/if}
+			<a href="{$list.$i.name.href|escape}" title="{$list.$i.name.title}">{$list.$i.name.name}</a>
 		</td>
+		<td class="city">
+			{$list.$i.city}
+		</td>
+{if $loggedin}
 		<td>
-{if $list.$i.show.0.show}
-			<a href="{$list.$i.show.0.href|escape}" title="{$list.$i.show.0.title}"><img src="{$list.$i.show.0.src}" alt="{$list.$i.show.0.alt}" class="icon" title="{$list.$i.show.0.alt}" /></a>
-			<a href="{$list.$i.show.1.href|escape}" title="{$list.$i.show.1.title}"><img src="{$list.$i.show.1.src}" alt="{$list.$i.show.1.alt}" class="icon" title="{$list.$i.show.1.alt}" /></a>
+{if $list.$i.name.public == true}
+			<img src="img/public.png" alt="{lang}public{/lang}" class="icon" title="{lang}public{/lang}" />
 {/if}
-{if $list.$i.show.2.show}
-			<a href="{$list.$i.show.2.href|escape}" title="{$list.$i.show.2.title}"><img src="{$list.$i.show.2.src}" alt="{$list.$i.show.2.alt}" class="icon" title="{$list.$i.show.2.alt}" /></a>
-{/if}			
+		</td>
+{/if}
+		<td>
+{for $j=0 to count($list.$i.show)-1}
+{if $list.$i.show.$j.href != ''}
+			<a href="{$list.$i.show.$j.href|escape}" title="{$list.$i.show.$j.title}"><img src="{$list.$i.show.$j.src}" alt="{$list.$i.show.$j.alt}" class="icon" title="{$list.$i.show.$j.alt}" /></a>
+{else}
+			<span class="iconspacer16"></span>
+{/if}
+{/for}
 		</td>
 {if $list.$i.admin.0.admin}
 		<td class="admin">
 			<div class="admin-links">
 {for $j=0 to count($list.$i.admin)-1}
+{if $list.$i.admin.$j.href != ''}
 				<a href="{$list.$i.admin.$j.href|escape}" title="{$list.$i.admin.$j.title}"><img src="{$list.$i.admin.$j.src}" alt="{$list.$i.admin.$j.alt}" class="icon" title="{$list.$i.admin.$j.alt}" /></a>
+{else}
+				<span class="iconspacer16"></span>
+{/if}
 {/for}
 			</div>
 {if $list.$i.annadmin.0.preset==0}
 			{$list.$i.annadmin.0.form}
 {else}
 			<div class="admin-links">
-				<a href="{$list.$i.annadmin.0.href|escape}" title="{$list.$i.annadmin.0.title}"><img src="{$list.$i.annadmin.0.src}" alt="{$list.$i.annadmin.0.alt}" class="icon" title="{$list.$i.annadmin.0.alt}" /></a>
-				<a href="{$list.$i.annadmin.1.href|escape}" title="{$list.$i.annadmin.1.title}"><img src="{$list.$i.annadmin.1.src}" alt="{$list.$i.annadmin.1.alt}" class="icon" title="{$list.$i.annadmin.1.alt}" /></a>
+{for $j=0 to count($list.$i.annadmin)-1}
+{if $list.$i.annadmin.$j.href != ''}
+				<a href="{$list.$i.annadmin.$j.href|escape}" title="{$list.$i.annadmin.$j.title}"><img src="{$list.$i.annadmin.$j.src}" alt="{$list.$i.annadmin.$j.alt}" class="icon" title="{$list.$i.annadmin.$j.alt}" /></a>
+{else}
+				<span class="iconspacer16"></span>
+{/if}
+{/for}
 			</div>
 {/if}
 		</td>

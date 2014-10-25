@@ -158,7 +158,7 @@ class User extends Object {
 		$this->set_lang('de_DE');
 		
 		// set login_message
-		$this->set_login_message('class.User#login#message#default');
+		$this->set_login_message('please log on');
 		
 		// set userinfo
 		$userinfo = array(
@@ -249,7 +249,7 @@ class User extends Object {
 		$this->set_id(0);
 		$this->set_groups(array());
 		$this->set_loggedin(false);
-		$this->set_login_message('class.User#login#message#default');
+		$this->set_login_message('please log on');
 		$this->set_userinfo($userinfo);
 		
 		// cleanup session
@@ -266,8 +266,8 @@ class User extends Object {
 		
 		// logout-message
 		// smarty
-		$sLogout->assign('caption', parent::lang('class.User#logout#logout#caption'));
-		$sLogout->assign('message', parent::lang('class.User#logout#logout#message'));
+		$sLogout->assign('caption', parent::lang('logout'));
+		$sLogout->assign('message', parent::lang('successfully logged off'));
 		$sLogout->assign('form', '');
 		
 		// return
@@ -318,12 +318,12 @@ class User extends Object {
 			if($user['active'] == 0) {
 				
 				// set message and return false
-				$this->set_login_message('class.MainView#callback_check_login#message#UserNotActive');
+				$this->set_login_message('user not active');
 				return false;
 			} elseif($user['password'] != md5($password)) {
 				
 				// set message and return false
-				$this->set_login_message('class.MainView#callback_check_login#message#WrongPassword');
+				$this->set_login_message('wrong password');
 				return false;
 			} else {
 				
@@ -333,7 +333,7 @@ class User extends Object {
 		} else {
 			
 			// set message and return false
-			$this->set_login_message('class.MainView#callback_check_login#message#UserNotExist');
+			$this->set_login_message('username not exists');
 			return false;
 		}
 	}
@@ -406,7 +406,7 @@ class User extends Object {
 		
 		// prepare return
 		if($param != 'sort') {
-			$groups = array(0 => parent::lang('class.User#return_all_groups#rights#public.access'));
+			$groups = array(0 => parent::lang('any (public access)'));
 		} else {
 			$groups = array();
 		}
@@ -743,6 +743,39 @@ class User extends Object {
 				}
 				if(is_array($cachedProtocolResult)) {
 					foreach($cachedProtocolResult as $id) {
+						$itemIds[] = $id['id'];
+					}
+				} else {
+					$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+					self::getError()->handle_error($errno);
+				}
+			} elseif($itemTable == 'result') {
+				
+				$sql = '
+						SELECT DISTINCT `r`.`id`
+						FROM `result` AS `r`,
+							(SELECT DISTINCT `t`.`id`
+							FROM `permissions` AS `p`, `calendar` AS `t`
+							WHERE `p`.`item_id`=`t`.`id`
+								AND `p`.`item_table`=\'calendar\'
+								AND (`p`.`user_id`=\'#?\'
+								OR (`p`.`group_id` IN (#?)))
+								'.$sqlMode.'
+							) `cid`
+						WHERE `r`.`calendar_id`=`cid`.`id`
+					';
+				$resultResult = Db::arrayValue(
+					$sql,
+					MYSQL_ASSOC,
+					array(
+							$this->get_id(),
+							$groupIds,
+						)
+				);
+				
+				// get data
+				if(is_array($resultResult)) {
+					foreach($resultResult as $id) {
 						$itemIds[] = $id['id'];
 					}
 				} else {

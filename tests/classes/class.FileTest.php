@@ -158,7 +158,7 @@ class FileTest extends PHPUnit_Framework_TestCase {
 						'valid' => 0,);
 		
 		// check if file exists
-		if(!File::exists(1)) {
+		if(!Page::exists('file', 1)) {
 			
 			// create file object from factory
 			$file = File::factory($data);
@@ -189,7 +189,7 @@ class FileTest extends PHPUnit_Framework_TestCase {
 		// get object
 		$file = new File(1);
 		$details = $file->details();
-		$fileType = TestObject::lang('class.File#getFileTypeAs#name#'.str_replace('/', '_', $file->getFileTypeAs('mimetype')));
+		$fileType = TestObject::lang(str_replace('/', '_', $file->getFileTypeAs('mimetype')));
 		
 		// assert
 		$this->assertEquals('MIT License', $details['value'][0]);
@@ -234,7 +234,7 @@ class FileTest extends PHPUnit_Framework_TestCase {
 		// delete file
 		File::delete(1);
 		
-		$this->assertFalse(File::exists(1));
+		$this->assertFalse(Page::exists('file', 1));
 		
 		// recreate deleted file
 		$file = new File(1);

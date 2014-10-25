@@ -44,6 +44,11 @@ Copyright by:		Moxiecode Systems AB
 License:			LGPL v2.1
 
 
+Name:				jTable
+Copyright by:		Halil İbrahim Kalkan
+License:			MIT
+
+
 
 
 PHP libraries:
@@ -61,3 +66,8 @@ License:			LGPL v3
 Name:				Zebra_Form
 Copyright by:		Stefan Gabos
 License:			LGPL v3
+
+
+Name:				Services_JSON
+Copyright by:		Michal Migurski
+License:			BSD

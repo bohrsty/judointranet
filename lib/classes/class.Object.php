@@ -50,6 +50,9 @@ class Object {
 	public function getUser() {
 		return $_SESSION['user'];
 	}
+	public static function staticGetUser() {
+		return $_SESSION['user'];
+	}
 	public function setUser($user=null) {
 		
 		if(is_null($user)) {
@@ -133,7 +136,7 @@ class Object {
 		// regexps
 		$regexp = array(
 		//					'userpass' => '/^[a-zA-Z0-9\.\-_]+$/',
-	  						'getvalue' => '/^[a-zA-Z0-9\.\-_\+\/=]*$/',
+	  						'getvalue' => '/^[a-zA-Z0-9\.\-_\+\/= ]*$/',
 	  						'postvalue' => '/^[a-zA-Z0-9äöüÄÖÜß\.,\-_\+!§\$%&\/()\[\]\{\}=`´;:\*#~\?<>|"@ \n\r\t]*$/'
 	  	//					'text' => '{^[a-zA-Z0-9äöüÄÖÜß\.,\-_\+!§\$%&/()=`´;:\*#~\?ß<>| ]*$}',
 	  	//					'text_nt' => '{^[a-zA-Z0-9äöüÄÖÜß\.,\-_\+!§\$%&/()=`´;:\*#~\?ß<>| \n\r\t]*$}s',
@@ -163,36 +166,16 @@ class Object {
 	
 	
 	/**
-	 * lang reads the translated string for the given marker and returns it
+	 * lang($string, $plaintext) reads the translated string for the given marker and returns it
 	 * expects $_SESSION['lang'] to be set to lang-code (i.e. "de_DE")
 	 * 
 	 * @param string $string string to be parsed and "translated", splitmarker "#"
+	 * @param bool $plaintext if true, human readable plaintext is used for translation
 	 * @return string translated value of the string
 	 */
-	public static function lang($string) {
+	public static function lang($string, $plaintext=true) {
 		
-		// split string
-		$i = explode('#',$string,4);
-		
-		// check user
-		$lang = 'de_DE';
-		if(self::getUser()) {
-			$lang = self::getUser()->get_lang();
-		}
-		
-		// import lang-file
-		if(is_file('cnf/lang/lang.'.$lang.'.php')) {
-			include('cnf/lang/lang.'.$lang.'.php');
-		} else {
-			return '[language "'.$lang.'" not found]';
-		}
-		
-		// check if is translated
-		if(!isset($lang[$i[0]][$i[1]][$i[2]][$i[3]])) {
-			return $string.' not translated';
-		} else {
-			return $lang[$i[0]][$i[1]][$i[2]][$i[3]];
-		}
+		return _l($string);
 	}
 	
 	
@@ -375,10 +358,7 @@ class Object {
 				// check the value
 				$value = $this->check_valid_chars('getvalue',$get_value);
 				if($value === false) {
-					
-					// handle error
-					$errno = $this->getError()->error_raised('GETInvalidChars','entry:'.$get_entry,$get_entry);
-					throw new Exception('GETInvalidChars',$errno);
+					throw new GetInvalidCharsException($message = $get_entry);
 				} else {
 					
 					// store value
@@ -400,10 +380,7 @@ class Object {
 				// check the value
 				$value = $this->check_valid_chars('postvalue',$postValue);
 				if($value === false) {
-					
-					// handle error
-					$errno = $this->getError()->error_raised('POSTInvalidChars','entry:'.$postKey,$postKey);
-					throw new Exception('POSTInvalidChars',$errno);
+					throw new PostInvalidCharsException($message = $postKey);
 				} else {
 					
 					// store value
@@ -515,6 +492,16 @@ class Object {
 		
 		// compare name
 		return strnatcasecmp($first->getName(), $second->getName());
+	}
+	
+	
+	/**
+	 * __toString() returns an string representation of this object
+	 * 
+	 * @return string string representation of this object
+	 */
+	public function __toString() {
+		return get_class($this);
 	}
 }
 

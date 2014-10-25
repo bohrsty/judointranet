@@ -33,9 +33,19 @@ require('lib/common.inc.php');
  */
 session_start();
 
-$calendar_view = new CalendarView();
+/*
+ * catch exceptions
+ */
+try {
 
-$calendar_view->init();
+	$calendar_view = new CalendarView();
+	
+	$calendar_view->toHtml();
+}
+catch(Exception $e) {
+	handleExceptions($e, HANDLE_EXCEPTION_VIEW);
+}
+
 
 
 

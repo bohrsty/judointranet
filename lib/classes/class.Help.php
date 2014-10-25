@@ -70,36 +70,36 @@ class Help extends Object {
 	 * methods
 	 */
 	/**
-	 * getMessage() get the HTML code of the helpmessate for the given
+	 * getMessage() get the HTML code of the helpmessage for the given
 	 * $messageId
 	 * 
 	 * @param int $messageId id of the message
 	 * @return string HTML code helpmessage
 	 */
-	public function getMessage($messageId, $replacements=null) {
+	public function getMessage($messageId, $replacements=array()) {
 		
-		// get infos from db
-		if($this->helpmessageExists($messageId)) {
-			$message = $this->getMessageFromDB($messageId);
-		} else {
+		// add version
+		$replacements['version'] = $this->getGc()->get_config('global.version');
+		
+		// translate
+		$translateTitle = parent::lang('HELP_TITLE_'.$messageId);
+		$translateMessage = parent::lang('HELP_MESSAGE_'.$messageId);
+		
+		// check $messageId
+		if($translateMessage == 'HELP_MESSAGE_'.$messageId ||
+			$translateTitle == 'HELP_TITLE_'.$messageId) {
 			
-			$message = array(
-					'title'   => 'class.Help#global#title#errorIdNotExists',
-					'message' => 'class.Help#global#message#errorIdNotExists',
-				); 
+			// set not found message
+			$translateTitle = parent::lang('HELP_TITLE_error');
+			$translateMessage = parent::lang('HELP_MESSAGE_error');
 		}
 		
-		// translate and replace placeholders
-		foreach($message as $key => $value) {
-			$message[$key] = parent::lang($value);
-			if(!is_null($replacements) && is_array($replacements)) {
-				
-				// get smarty template
-				$replacementTemplate = new JudoIntranetSmarty();
-				$replacementTemplate->assign('replace', $replacements);
-				$message[$key] = $replacementTemplate->fetch('string:'.$message[$key]);
-			}
-		}
+		// get smarty template
+		$replacementTemplate = new JudoIntranetSmarty();
+		$replacementTemplate->assign('replace', $replacements);
+		$replacementTemplate->assign('object', $this);
+		$translateTitle = $replacementTemplate->fetch('string:'.$translateTitle);
+		$translateMessage = $replacementTemplate->fetch('string:'.$translateMessage);
 		
 		// prepare random-id
 		$randomId = base_convert(mt_rand(10000000, 99999999), 10, 36);
@@ -108,9 +108,9 @@ class Help extends Object {
 		$templateValues = array(
 				'buttonClass' => $this->getGc()->get_config('help.buttonClass'),
 				'dialogClass' => $this->getGc()->get_config('help.dialogClass'),
-				'imgTitle' => parent::lang('class.Help#getMessage#templateValues#imgTitle'),
-				'title' => $message['title'],
-				'message' => $message['message'],
+				'imgTitle' => parent::lang('help'),
+				'title' => $translateTitle,
+				'message' => $translateMessage,
 				'messageId' => $randomId,
 			);
 		
@@ -123,57 +123,6 @@ class Help extends Object {
 		
 		// return button
 		return $helpTemplate->fetch('smarty.help.button.tpl');	
-	}
-	
-	
-	/**
-	 * getMessageFromDb() gets the infos of the given $messageId from db
-	 * 
-	 * @param int $messageId id of the message to get
-	 * @return array array containing the message infos
-	 */
-	private function getMessageFromDb($messageId) {
-		
-		// get db-object
-		$db = Db::newDb();
-		
-		// prepare sql-statement
-		$sql = "SELECT title,message
-				FROM helpmessages
-				WHERE id = $messageId";
-		
-		// execute
-		$result = $db->query($sql);
-		
-		// return
-		return $result->fetch_array(MYSQL_ASSOC);
-	}
-	
-	
-	/**
-	 * helpmessageExists() checks if the given $messageId exists in db
-	 * 
-	 * @param int $messageId id of the message to check
-	 * @return boolean true if exists, false otherwise
-	 */
-	private function helpmessageExists($messageId) {
-		
-		// get db-object
-		$db = Db::newDb();
-		
-		// prepare sql-statement
-		$sql = "SELECT COUNT(*)
-				FROM helpmessages
-				WHERE id = $messageId";
-		
-		// execute
-		$result = $db->query($sql);
-		
-		// get value
-		list($count) = $result->fetch_array(MYSQL_NUM);
-		
-		// return
-		return $count == 1;
 	}
 
 }

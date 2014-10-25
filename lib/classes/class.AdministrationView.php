@@ -64,7 +64,7 @@ class AdministrationView extends PageView {
 	public function init() {
 		
 		// set pagename
-		$this->tpl->assign('pagename',parent::lang('class.AdministrationView#page#init#name'));
+		$this->getTpl()->assign('pagename',parent::lang('administration'));
 		
 		// init helpmessages
 		$this->initHelp();
@@ -81,28 +81,37 @@ class AdministrationView extends PageView {
 					case 'field':
 						
 						// smarty
-						$this->tpl->assign('title', $this->title(parent::lang('class.AdministrationView#init#title#field')));
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('zebraform', true);
-						$this->tpl->assign('main', $this->field());
+						$this->getTpl()->assign('title', $this->title(parent::lang('administration: manage user tables')));
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', true);
+						$this->getTpl()->assign('main', $this->field());
 					break;
 					
 					case 'defaults':
 						
 						// smarty
-						$this->tpl->assign('title', $this->title(parent::lang('class.AdministrationView#init#title#defaults')));
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('zebraform', true);
-						$this->tpl->assign('main', $this->defaults());
+						$this->getTpl()->assign('title', $this->title(parent::lang('administration: manage defaults')));
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', true);
+						$this->getTpl()->assign('main', $this->defaults());
 					break;
 					
 					case 'user':
 						
 						// smarty
-						$this->tpl->assign('title', $this->title(parent::lang('class.AdministrationView#init#title#user')));
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('zebraform', true);
-						$this->tpl->assign('main', $this->useradmin());
+						$this->getTpl()->assign('title', $this->title(parent::lang('administration: manage users and permissions')));
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', true);
+						$this->getTpl()->assign('main', $this->useradmin());
+					break;
+					
+					case 'club':
+						
+						// smarty
+						$this->getTpl()->assign('title', $this->title(parent::lang('administration: manage clubs')));
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', true);
+						$this->getTpl()->assign('main', $this->clubadmin());
 					break;
 					
 					default:
@@ -112,35 +121,28 @@ class AdministrationView extends PageView {
 						$this->getError()->handle_error($errno);
 						
 						// smarty
-						$this->tpl->assign('title', '');
-						$this->tpl->assign('main', $this->getError()->to_html($errno));
-						$this->tpl->assign('jquery', true);
-						$this->tpl->assign('zebraform', false);
+						$this->getTpl()->assign('title', '');
+						$this->getTpl()->assign('main', $this->getError()->to_html($errno));
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', false);
 					break;
 				}
 			} else {
 				
 				// error not authorized
-				$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-				$this->getError()->handle_error($errno);
-				
-				// smarty
-				$this->tpl->assign('title', $this->title(parent::lang('class.AdministrationView#init#Error#NotAuthorized')));
-				$this->tpl->assign('main', $this->getError()->to_html($errno));
-				$this->tpl->assign('jquery', true);
-				$this->tpl->assign('zebraform', false);
+				throw new NotAuthorizedException($this);
 			}
 		} else {
 			
 			// id not set
 			// smarty-title
-			$this->tpl->assign('title', $this->title(parent::lang('class.AdministrationView#init#default#title'))); 
+			$this->getTpl()->assign('title', $this->title(parent::lang('administration'))); 
 			// smarty-main
-			$this->tpl->assign('main', $this->defaultContent());
+			$this->getTpl()->assign('main', $this->defaultContent());
 			// smarty-jquery
-			$this->tpl->assign('jquery', true);
+			$this->getTpl()->assign('jquery', true);
 			// smarty-hierselect
-			$this->tpl->assign('zebraform', false);
+			$this->getTpl()->assign('zebraform', false);
 		}
 		
 		// global smarty
@@ -167,85 +169,19 @@ class AdministrationView extends PageView {
 		if($this->get('field') !== false) {
 			
 			// translate table name
-			if(parent::lang('class.AdministrationView#tables#name#'.$this->get('field')) != 'class.AdministrationView#tables#name#'.$this->get('field').' not translated') {
-				$translatedField = parent::lang('class.AdministrationView#tables#name#'.$this->get('field'));
+			if(parent::lang('<b>'.$this->get('field').'</b>') != '<b>'.$this->get('field').'</b>') {
+				$translatedField = parent::lang('<b>'.$this->get('field').'</b>');
 			} else {
 				$translatedField = $this->get('field');
 			}
 			
 			// set caption
-			$this->tpl->assign('caption', parent::lang('class.AdministrationView#field#caption#name.table').$translatedField.' ("'.$this->get('field').'")');
+			$this->getTpl()->assign('caption', parent::lang('manage table').$translatedField.' ("'.$this->get('field').'")');
 			
 			// check if 'field' exists
 			if($this->checkUsertable($this->get('field')) !== false) {
 				
-				// check if row exists
-				$rid = $this->get('rid');
-				if($this->rowExists($this->get('field'),$rid)) {
-					
-					// check $_GET['action']
-					if($this->get('action') == 'new') {
-						$content .= $this->newRow($this->get('field'));				
-					} elseif($this->get('action') == 'edit') {
-						$content .= $this->editRow($this->get('field'),$rid);				
-					} elseif($this->get('action') == 'disable') {
-						
-						// check if row is enabled
-						if($this->isValid($this->get('field'),$rid)) {
-							
-							// set valid 0
-							$this->setValid($this->get('field'),$rid,0);
-							
-							// list table content
-							$content .= $this->listTableContent($this->get('field'),$this->get('page'));
-						} else {
-							
-							// give link to enable
-							// smarty
-							$sE = new JudoIntranetSmarty();
-							$sE->assign('message', parent::lang('class.AdministrationView#defaults#disable#rowNotEnabled'));
-							$sE->assign('href', 'administration.php?id='.$this->get('id').'&field='.$this->get('field').'&action=enable&rid='.$rid);
-							$sE->assign('title', parent::lang('class.AdministrationView#defaults#disable#rowNotEnabled.enable'));
-							$sE->assign('content', parent::lang('class.AdministrationView#defaults#disable#rowNotEnabled.enable'));
-							
-							$content .= $sE->fetch('smarty.admin.dis-enable.tpl');
-						}
-					} elseif($this->get('action') == 'enable') {
-						
-						// check if row is disabled
-						if(!$this->isValid($this->get('field'),$rid)) {
-							
-							// set valid 1
-							$this->setValid($this->get('field'),$rid,1);
-							
-							// list table content
-							$content .= $this->listTableContent($this->get('field'),$this->get('page'));
-						} else {
-							
-							// give link to enable
-							// smarty
-							$sE = new JudoIntranetSmarty();
-							$sE->assign('message', parent::lang('class.AdministrationView#defaults#enable#rowNotDisabled'));
-							$sE->assign('href', 'administration.php?id='.$this->get('id').'&field='.$this->get('field').'&action=disable&rid='.$rid);
-							$sE->assign('title', parent::lang('class.AdministrationView#defaults#enable#rowNotDisabled.disable'));
-							$sE->assign('content', parent::lang('class.AdministrationView#defaults#enable#rowNotDisabled.disable'));
-							
-							$content .= $sE->fetch('smarty.admin.dis-enable.tpl');
-						}
-					} elseif($this->get('action') == 'delete') {
-						
-						// add form and message
-						$content .= $this->deleteRow($this->get('field'),$rid);
-					} else {
-						
-						// list table content
-						$content .= $this->listTableContent($this->get('field'),$this->get('page'));
-					}
-				} else {
-					$errno = $this->getError()->error_raised('RowNotExists',$this->get('rid'));
-					$this->getError()->handle_error($errno);
-					return $this->getError()->to_html($errno);
-				}
+				$content .= $this->manageTable();
 			} else {
 				$errno = $this->getError()->error_raised('UsertableNotExists',$this->get('field'));
 				$this->getError()->handle_error($errno);
@@ -254,11 +190,11 @@ class AdministrationView extends PageView {
 		} else {
 			
 			// set caption
-			$this->tpl->assign('caption', parent::lang('class.AdministrationView#field#caption#name'));
+			$this->getTpl()->assign('caption', parent::lang('manage user tables'));
 		}
 		
 		// smarty
-		$this->tpl->assign('tablelinks', $this->createTableLinks());
+		$this->getTpl()->assign('tablelinks', $this->createTableLinks());
 		
 		// return
 		return $content;
@@ -296,17 +232,17 @@ class AdministrationView extends PageView {
 			if($this->get('field') === false || $this->get('field') != $table) {
 			
 				// translate table name
-				if(parent::lang('class.AdministrationView#tables#name#'.$table) != 'class.AdministrationView#tables#name#'.$table.' not translated') {
-					$translatedTable = parent::lang('class.AdministrationView#tables#name#'.$table);
+				if(parent::lang('<b>'.$table.'</b>') != '<b>'.$table.'</b>') {
+					$translatedTable = parent::lang('<b>'.$table.'</b>');
 				} else {
-					$translatedTable = $table;
+					$translatedTable = '<b>'.$table.'</b>';
 				}
 				// smarty
 				$data[] = array(
 						'params' => 'class="usertable"',
 						'href' => 'administration.php?id='.$this->get('id').'&field='.$table,
-						'title' => $translatedTable.' '.parent::lang('class.AdministrationView#createTableLinks#title#manage'),
-						'content' => $translatedTable.' '.parent::lang('class.AdministrationView#createTableLinks#name#manage')
+						'title' => $translatedTable.' '.parent::lang('manage'),
+						'content' => $translatedTable.' '.parent::lang('manage')
 					);
 			}
 		}
@@ -316,8 +252,8 @@ class AdministrationView extends PageView {
 		// add slider-link
 		// smarty
 		$link = array(
-				'title' => parent::lang('class.AdministrationView#createTableLinks#toggleTable#title'),
-				'content' => parent::lang('class.AdministrationView#createTableLinks#toggleTable#name'),
+				'title' => parent::lang('toggle table selection'),
+				'content' => parent::lang('toggle table selection'),
 				'params' => 'id="toggleTable"',
 				'help' => $this->getHelp()->getMessage(HELP_MSG_ADMINUSERTABLESELECT),
 			);
@@ -433,12 +369,15 @@ class AdministrationView extends PageView {
 		// prepare return
 		$return = '';
 		
+		// get table config
+		$tableConfig = $this->getTableConfig($table_name);
+		
 		// smarty
 		$newlink = array(
 				'params' => 'id="newLink"',
 				'href' => $preface.'&action=new',
-				'title' => parent::lang('class.AdministrationView#listTableContent#new#title'),
-				'content' => parent::lang('class.AdministrationView#listTableContent#new#name')
+				'title' => parent::lang('add new entry in table'),
+				'content' => parent::lang('add new entry in table')
 			);
 		$sTc->assign('newlink', $newlink);
 		
@@ -452,7 +391,7 @@ class AdministrationView extends PageView {
 		$sTc->assign('pagelinks', $pagelinks);
 		
 		// check if table has "usertableShow.$table" entry
-		$configUsertableCols = $this->getGc()->get_config('usertableCols.'.$table_name);
+		$configUsertableCols = $tableConfig['cols'];
 		if($configUsertableCols === false || $configUsertableCols == '') {
 			$usertableCols = array();
 			$skipUsertableCols = false;
@@ -466,6 +405,7 @@ class AdministrationView extends PageView {
 		$limit = $page * $pagesize;
 		$sql = 'SELECT *
 				FROM '.$db->real_escape_string($table_name).'
+				'.$tableConfig['orderBy'].'
 				LIMIT '.$db->real_escape_string($limit).','.$db->real_escape_string($pagesize);
 		
 		// execute
@@ -480,7 +420,7 @@ class AdministrationView extends PageView {
 			
 			// prepare th
 			$i = 1;
-			$data[0]['th'][0]['content'] = parent::lang('class.AdministrationView#listTableContent#table#tasks').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_ADMINUSERTABLETASKS);
+			$data[0]['th'][0]['content'] = parent::lang('tasks').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_ADMINUSERTABLETASKS);
 			foreach($tinfo as $col) {
 				
 				// check usertableCols
@@ -489,8 +429,8 @@ class AdministrationView extends PageView {
 				}
 				// check translation
 				$translated_name = '';
-				if(parent::lang('class.AdministrationView#tableRows#name#'.$col->name) != "class.AdministrationView#tableRows#name#$col->name not translated") {
-					$translated_name = parent::lang('class.AdministrationView#tableRows#name#'.$col->name);
+				if(parent::lang('usertable row '.$col->name) != 'usertable row '.$col->name) {
+					$translated_name = parent::lang('usertable row '.$col->name);
 				} else {
 					$translated_name = $col->name;
 				}
@@ -509,9 +449,9 @@ class AdministrationView extends PageView {
 				// smarty
 				$data[$index]['td'][0]['edit'] = array(
 						'src' => 'img/admin_edit.png',
-						'alt' => parent::lang('class.AdministrationView#listTableContent#table#edit'),
+						'alt' => parent::lang('edit'),
 						'href' => $preface.'&action=edit&rid='.$row['id'],
-						'title' => parent::lang('class.AdministrationView#listTableContent#table#edit').': '.$row['id']
+						'title' => parent::lang('edit').': '.$row['id']
 					);
 				
 				// add disable/enable
@@ -527,17 +467,17 @@ class AdministrationView extends PageView {
 				// smarty
 				$data[$index]['td'][0]['disenable'] = array(
 						'src' => 'img/admin_'.$status.'.png',
-						'alt' => parent::lang('class.AdministrationView#listTableContent#table#'.$status),
+						'alt' => parent::lang($status),
 						'href' => $preface.'&action='.$status.'&rid='.$row['id'],
-						'title' => parent::lang('class.AdministrationView#listTableContent#table#'.$status).': '.$row['id']
+						'title' => parent::lang($status).': '.$row['id']
 					);
 				// add delete
 				// smarty
 				$data[$index]['td'][0]['delete'] = array(
 						'src' => 'img/admin_delete.png',
-						'alt' => parent::lang('class.AdministrationView#listTableContent#table#delete'),
+						'alt' => parent::lang('delete'),
 						'href' => $preface.'&action=delete&rid='.$row['id'],
-						'title' => parent::lang('class.AdministrationView#listTableContent#table#delete').': '.$row['id']
+						'title' => parent::lang('delete').': '.$row['id']
 					);
 				
 				// walk through $row
@@ -563,13 +503,17 @@ class AdministrationView extends PageView {
 						// set value to according img
 						$validImg = new JudoIntranetSmarty();
 						$validImg->assign('status', $actualStatus);
-						$validImg->assign('statusTranslated', parent::lang('class.AdministrationView#listTableContent#table#'.$actualStatus));
+						$validImg->assign('statusTranslated', parent::lang($actualStatus));
 						$value = $validImg->fetch('smarty.admin.valid_img.tpl');
 						$data[$index]['td'][$index2]['escape'] = false;
 					}
 					
-					// smarty
-					$data[$index]['td'][$index2]['content'] = $value;
+					// value
+					if(isset($tableConfig['fk'][$name]) && is_array($tableConfig['fk'][$name])) {
+						$data[$index]['td'][$index2]['content'] = $tableConfig['fk'][$name][$value];
+					} else {
+						$data[$index]['td'][$index2]['content'] = $value;
+					}
 					
 					// increment index2
 					$index2++;
@@ -753,20 +697,20 @@ class AdministrationView extends PageView {
 		$form->add(
 				'submit',		// type
 				'buttonSubmit',	// id/name
-				parent::lang('class.AdministrationView#deleteRow#form#yes'),	// value
-				array('title' => parent::lang('class.AdministrationView#deleteRow#title#yes'))
+				parent::lang('yes'),	// value
+				array('title' => parent::lang('deletes the entry'))
 			);
 		
 		// smarty-link
 		$cancellink = array(
 						'params' => 'class="submit"',
 						'href' => $link,
-						'title' => parent::lang('class.AdministrationView#deleteRow#cancel#title'),
-						'content' => parent::lang('class.AdministrationView#deleteRow#cancel#form')
+						'title' => parent::lang('cancel'),
+						'content' => parent::lang('cancel')
 					);
 		$sConfirmation->assign('link', $cancellink);
 		$sConfirmation->assign('spanparams', 'id="cancel"');
-		$sConfirmation->assign('message', parent::lang('class.AdministrationView#deleteRow#message#confirm'));
+		$sConfirmation->assign('message', parent::lang('you really want to completely delete this row'));
 		$sConfirmation->assign('form', $form->render('', true));
 		
 		// validate
@@ -788,7 +732,7 @@ class AdministrationView extends PageView {
 			}
 			
 			// smarty
-			$sConfirmation->assign('message', parent::lang('class.AdministrationView#deleteRow#message#done'));
+			$sConfirmation->assign('message', parent::lang('successful deleted row completely'));
 			$sConfirmation->assign('form', '');
 			
 			// smarty return
@@ -823,6 +767,9 @@ class AdministrationView extends PageView {
 		
 		// prepare return
 		$return = '';
+		
+		// get table config
+		$tableConfig = $this->getTableConfig($table);
 		
 		// get url-parameters
 		$link = '';
@@ -877,8 +824,8 @@ class AdministrationView extends PageView {
 			
 			// check translation
 			$translated_col = '';
-			if(parent::lang('class.AdministrationView#tableRows#name#'.$col) != 'class.AdministrationView#tableRows#name#'.$col.' not translated') {
-				$translated_col = parent::lang('class.AdministrationView#tableRows#name#'.$col);
+			if(parent::lang('usertable row '.$col) != 'usertable row '.$col) {
+				$translated_col = parent::lang('usertable row '.$col);
 			} else {
 				$translated_col = $col;
 			}
@@ -933,92 +880,114 @@ class AdministrationView extends PageView {
 						$field->set_rule(
 								array(
 										'required' => array(
-												'error', parent::lang('class.AdministrationView#editRow#rule#requiredSelect')
+												'error', parent::lang('required field')
 											),
 									)
 							);
 					}
 				} else {
 					
-					// check type
-					if($tableInfo[$col]->type == 252) {
+					// check forein keys
+					if(isset($tableConfig['fk'][$col]) && is_array($tableConfig['fk'][$col])) {
 						
-						// textarea
-						$formIds[$col] = array('valueType' => 'string', 'type' => 'textarea',);
+						// select
+						$formIds[$col] = array('valueType' => 'int', 'type' => 'select',);
 						$form->add(
 								'label',		// type
 								'label'.ucfirst($col),	// id/name
-								$col,				// for
-								$translated_col,	// label text
-								array('inside' => true)
-							);
-						$field = $form->add(
-								$formIds[$col]['type'],		// type
-								$col,	// id/name
-								$row[$col]	// default
-							);
-						$rules['regexp'] = 
-							array(
-									$this->getGc()->get_config('textarea.regexp.zebra'),
-									'error',
-									parent::lang('class.AdministrationView#newRow#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
-								);
-						if($table == 'defaults') {
-							$rules['required'] = 
-								array(
-										'error',
-										parent::lang('class.AdministrationView#newRow#rule#required'),
-									);
-						}
-						$field->set_rule($rules);
-					} elseif($tableInfo[$col]->type == 253 || $tableInfo[$col]->type == 3) {
-						
-						// input
-						$formIds[$col] = array('valueType' => 'string', 'type' => 'text',);
-						$form->add(
-								'label',		// type
-								'label'.ucfirst($col),	// id/name
-								$col,			// for
-								$translated_col,	// label text
-								array('inside' => true,)	// label inside
-							);
-						$field = $form->add(
-										$formIds[$col]['type'],		// type
-										$col,		// id/name
-										$row[$col]	// defaults
-							);
-						
-						// add rules
-						$rules['regexp'] = 
-							array(
-									$this->getGc()->get_config('textarea.regexp.zebra'),
-									'error',
-									parent::lang('class.AdministrationView#newRow#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
-								);
-						if($table == 'defaults') {
-							$rules['required'] = 
-								array(
-										'error',
-										parent::lang('class.AdministrationView#newRow#rule#required'),
-									);
-						}
-						$field->set_rule($rules);
-					} elseif($tableInfo[$col]->type == 1) {
-						
-						// input
-						$formIds[$col] = array('valueType' => 'int', 'type' => 'checkbox', 'default' => 1);
-						$form->add(
-								'label',		// type
-								'label'.ucfirst($col),	// id/name
-								$col,			// for
+								$col,		// for
 								$translated_col.':'	// label text
 							);
-						$public = $form->add(
-								$formIds[$col]['type'],		// type
-								$col,						// id/name
-								'1',							// value
-								($row[$col] == 1 ? array('checked' => 'checked') : null)	// default
+						$field = $form->add(
+								$formIds[$col]['type'],	// type
+								$col,	// id/name
+								$row[$col],			// default
+								array(		// attributes
+									)
 							);
+						$field->add_options($tableConfig['fk'][$col]);
+					} else {
+						
+						// check type
+						if($tableInfo[$col]->type == 252) {
+							
+							// textarea
+							$formIds[$col] = array('valueType' => 'string', 'type' => 'textarea',);
+							$form->add(
+									'label',		// type
+									'label'.ucfirst($col),	// id/name
+									$col,				// for
+									$translated_col,	// label text
+									array('inside' => true)
+								);
+							$field = $form->add(
+									$formIds[$col]['type'],		// type
+									$col,	// id/name
+									$row[$col]	// default
+								);
+							$rules['regexp'] = 
+								array(
+										$this->getGc()->get_config('textarea.regexp.zebra'),
+										'error',
+										parent::lang('allowed chars').' ['.$this->getGc()->get_config('textarea.desc').']',
+									);
+							if($table == 'defaults') {
+								$rules['required'] = 
+									array(
+											'error',
+											parent::lang('required field selection!'),
+										);
+							}
+							$field->set_rule($rules);
+						} elseif($tableInfo[$col]->type == 253 || $tableInfo[$col]->type == 3) {
+							
+							// input
+							$formIds[$col] = array('valueType' => 'string', 'type' => 'text',);
+							$form->add(
+									'label',		// type
+									'label'.ucfirst($col),	// id/name
+									$col,			// for
+									$translated_col,	// label text
+									array('inside' => true,)	// label inside
+								);
+							$field = $form->add(
+											$formIds[$col]['type'],		// type
+											$col,		// id/name
+											$row[$col]	// defaults
+								);
+							
+							// add rules
+							$rules['regexp'] = 
+								array(
+										$this->getGc()->get_config('textarea.regexp.zebra'),
+										'error',
+										parent::lang('allowed chars').' ['.$this->getGc()->get_config('textarea.desc').']',
+									);
+							if($table == 'defaults') {
+								$rules['required'] = 
+									array(
+											'error',
+											parent::lang('required field selection!'),
+										);
+							}
+							$field->set_rule($rules);
+						} elseif($tableInfo[$col]->type == 1) {
+							
+							// input
+							$formIds[$col] = array('valueType' => 'int', 'type' => 'checkbox', 'default' => 1);
+							$form->add(
+									'label',		// type
+									'label'.ucfirst($col),	// id/name
+									$col,			// for
+									$translated_col.':'	// label text
+								);
+							$public = $form->add(
+									$formIds[$col]['type'],		// type
+									$col,						// id/name
+									'1',							// value
+									($row[$col] == 1 ? array('checked' => 'checked') : null)	// default
+								);
+						}
 					}
 				}
 			}
@@ -1028,14 +997,14 @@ class AdministrationView extends PageView {
 		$form->add(
 				'submit',		// type
 				'buttonSubmit',	// id/name
-				parent::lang('class.AdministrationView#editRow#form#submitButton')	// value
+				parent::lang('save')	// value
 			);
 		
 		// validate
 		if($form->validate()) {
 			
 			// set output
-			$return .= $this->p('class="edit_caption"',parent::lang('class.AdministrationView#editRow#caption#done'));
+			$return .= $this->p('class="edit_caption"',parent::lang('successful changed row'));
 			
 			// get data
 			$data = $this->getFormValues($formIds);
@@ -1046,8 +1015,8 @@ class AdministrationView extends PageView {
 				
 				// check translation
 				$translated_field = '';
-				if(parent::lang('class.AdministrationView#tableRows#name#'.$field) != 'class.AdministrationView#tableRows#name#'.$field.' not translated') {
-					$translated_field = parent::lang('class.AdministrationView#tableRows#name#'.$field);
+				if(parent::lang('usertable row '.$field) != 'usertable row '.$field) {
+					$translated_field = parent::lang('usertable row '.$field);
 				} else {
 					$translated_field = $field;
 				}
@@ -1056,7 +1025,11 @@ class AdministrationView extends PageView {
 				$sql .= $db->real_escape_string($field).'=\''.$db->real_escape_string($value).'\', ';
 				
 				// add fields to output
-				$return .= $this->p('',"$translated_field = '".nl2br(htmlentities(utf8_decode($value)))."'");
+				if(isset($tableConfig['fk'][$field]) && is_array($tableConfig['fk'][$field])) {
+					$return .= $this->p('', $translated_field.' = \''.nl2br(htmlentities($tableConfig['fk'][$field][$value])).'\'');
+				} else {
+					$return .= $this->p('', $translated_field.' = \''.nl2br(htmlentities($value)).'\'');
+				}
 			}
 			
 			$sql = substr($sql,0,-2).' WHERE id='.$db->real_escape_string($rid);
@@ -1073,7 +1046,7 @@ class AdministrationView extends PageView {
 			// add table content
 			$return .= $this->listTableContent($table,$this->get('page'));
 		} else {
-			$return .= $this->p('',parent::lang('class.AdministrationView#newRow#caption#edit'));
+			$return .= $this->p('',parent::lang('insert row'));
 			$return .= $form->render('', true);
 		}
 		
@@ -1100,6 +1073,9 @@ class AdministrationView extends PageView {
 		
 		// prepare return
 		$return = '';
+		
+		// get table config
+		$tableConfig = $this->getTableConfig($table);
 		
 		// get url-parameters
 		$link = '';
@@ -1145,8 +1121,8 @@ class AdministrationView extends PageView {
 			
 			// check translation
 			$translated_col = '';
-			if(parent::lang('class.AdministrationView#tableRows#name#'.$col->name) != "class.AdministrationView#tableRows#name#$col->name not translated") {
-				$translated_col = parent::lang('class.AdministrationView#tableRows#name#'.$col->name);
+			if(parent::lang('usertable row '.$col->name) != 'usertable row '.$col->name) {
+				$translated_col = parent::lang('usertable row '.$col->name);
 			} else {
 				$translated_col = $col->name;
 			}
@@ -1201,90 +1177,112 @@ class AdministrationView extends PageView {
 						$field->set_rule(
 								array(
 										'required' => array(
-												'error', parent::lang('class.AdministrationView#newRow#rule#requiredSelect')
+												'error', parent::lang('required field')
 											),
 									)
 							);
 					}
 				} else {
 					
-					// check type
-					if($col->type == 252) {
+					// check forein keys
+					if(isset($tableConfig['fk'][$col->name]) && is_array($tableConfig['fk'][$col->name])) {
 						
-						// textarea
-						$formIds[$col->name] = array('valueType' => 'string', 'type' => 'textarea',);
+						// select
+						$formIds[$col->name] = array('valueType' => 'int', 'type' => 'select',);
 						$form->add(
 								'label',		// type
 								'label'.ucfirst($col->name),	// id/name
-								$col->name,				// for
-								$translated_col,	// label text
-								array('inside' => true)
-							);
-						$field = $form->add(
-								$formIds[$col->name]['type'],		// type
-								$col->name	// id/name
-							);
-						$rules['regexp'] = 
-							array(
-									$this->getGc()->get_config('textarea.regexp.zebra'),
-									'error',
-									parent::lang('class.AdministrationView#newRow#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
-								);
-						if($table == 'defaults') {
-							$rules['required'] = 
-								array(
-										'error',
-										parent::lang('class.AdministrationView#newRow#rule#required'),
-									);
-						}
-						$field->set_rule($rules);
-					} elseif($col->type == 253 || $col->type == 3) {
-						
-						// input
-						$formIds[$col->name] = array('valueType' => 'string', 'type' => 'text',);
-						$form->add(
-								'label',		// type
-								'label'.ucfirst($col->name),	// id/name
-								$col->name,			// for
-								$translated_col,	// label text
-								array('inside' => true,)	// label inside
-							);
-						$field = $form->add(
-										$formIds[$col->name]['type'],		// type
-										$col->name		// id/name
-							);
-						
-						// add rules
-						$rules['regexp'] = 
-							array(
-									$this->getGc()->get_config('textarea.regexp.zebra'),
-									'error',
-									parent::lang('class.AdministrationView#newRow#rule#regexp.allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
-								);
-						if($table == 'defaults') {
-							$rules['required'] = 
-								array(
-										'error',
-										parent::lang('class.AdministrationView#newRow#rule#required'),
-									);
-						}
-						$field->set_rule($rules);
-					} elseif($col->type == 1) {
-						
-						// input
-						$formIds[$col->name] = array('valueType' => 'int', 'type' => 'checkbox', 'default' => 1);
-						$form->add(
-								'label',		// type
-								'label'.ucfirst($col->name),	// id/name
-								$col->name,			// for
+								$col->name,		// for
 								$translated_col.':'	// label text
 							);
-						$public = $form->add(
-								$formIds[$col->name]['type'],		// type
-								$col->name,						// id/name
-								'1',							// value
-								($col->name == 'valid' ? array('checked' => 'checked') : null)	// default
+						$field = $form->add(
+								$formIds[$col->name]['type'],	// type
+								$col->name,	// id/name
+								'',			// default
+								array(		// attributes
+									)
 							);
+						$field->add_options($tableConfig['fk'][$col->name]);
+					} else {
+						
+						// check type
+						if($col->type == 252) {
+							
+							// textarea
+							$formIds[$col->name] = array('valueType' => 'string', 'type' => 'textarea',);
+							$form->add(
+									'label',		// type
+									'label'.ucfirst($col->name),	// id/name
+									$col->name,				// for
+									$translated_col,	// label text
+									array('inside' => true)
+								);
+							$field = $form->add(
+									$formIds[$col->name]['type'],		// type
+									$col->name	// id/name
+								);
+							$rules['regexp'] = 
+								array(
+										$this->getGc()->get_config('textarea.regexp.zebra'),
+										'error',
+										parent::lang('allowed chars').' ['.$this->getGc()->get_config('textarea.desc').']',
+									);
+							if($table == 'defaults') {
+								$rules['required'] = 
+									array(
+											'error',
+											parent::lang('required to be filled'),
+										);
+							}
+							$field->set_rule($rules);
+						} elseif($col->type == 253 || $col->type == 3) {
+							
+							// input
+							$formIds[$col->name] = array('valueType' => 'string', 'type' => 'text',);
+							$form->add(
+									'label',		// type
+									'label'.ucfirst($col->name),	// id/name
+									$col->name,			// for
+									$translated_col,	// label text
+									array('inside' => true,)	// label inside
+								);
+							$field = $form->add(
+											$formIds[$col->name]['type'],		// type
+											$col->name		// id/name
+								);
+							
+							// add rules
+							$rules['regexp'] = 
+								array(
+										$this->getGc()->get_config('textarea.regexp.zebra'),
+										'error',
+										parent::lang('allowed chars').' ['.$this->getGc()->get_config('textarea.desc').']',
+									);
+							if($table == 'defaults') {
+								$rules['required'] = 
+									array(
+											'error',
+											parent::lang('required field selection!'),
+										);
+							}
+							$field->set_rule($rules);
+						} elseif($col->type == 1) {
+							
+							// input
+							$formIds[$col->name] = array('valueType' => 'int', 'type' => 'checkbox', 'default' => 1);
+							$form->add(
+									'label',		// type
+									'label'.ucfirst($col->name),	// id/name
+									$col->name,			// for
+									$translated_col.':'	// label text
+								);
+							$public = $form->add(
+									$formIds[$col->name]['type'],		// type
+									$col->name,						// id/name
+									'1',							// value
+									($col->name == 'valid' ? array('checked' => 'checked') : null)	// default
+								);
+						}
 					}
 				}
 			}
@@ -1294,14 +1292,14 @@ class AdministrationView extends PageView {
 		$form->add(
 				'submit',		// type
 				'buttonSubmit',	// id/name
-				parent::lang('class.AdministrationView#newRow#form#submitButton')	// value
+				parent::lang('save')	// value
 			);
 		
 		// validate
 		if($form->validate()) {
 			
 			// set output
-			$return .= $this->p('class="edit_caption"',parent::lang('class.AdministrationView#newRow#caption#done'));
+			$return .= $this->p('class="edit_caption"',parent::lang('successful inserted row'));
 			
 			// get data
 			$data = $this->getFormValues($formIds);
@@ -1314,8 +1312,8 @@ class AdministrationView extends PageView {
 				
 				// check translation
 				$translated_field = '';
-				if(parent::lang('class.AdministrationView#tableRows#name#'.$field) != "class.AdministrationView#tableRows#name#$field not translated") {
-					$translated_field = parent::lang('class.AdministrationView#tableRows#name#'.$field);
+				if(parent::lang('usertable row '.$field) != 'usertable row '.$field) {
+					$translated_field = parent::lang('usertable row '.$field);
 				} else {
 					$translated_field = $field;
 				}
@@ -1325,7 +1323,11 @@ class AdministrationView extends PageView {
 				$sql_value .= '\''.$db->real_escape_string($value).'\',';
 				
 				// add fields to output
-				$return .= $this->p('',"$translated_field = '".nl2br(htmlentities(utf8_decode($value)))."'");
+				if(isset($tableConfig['fk'][$field]) && is_array($tableConfig['fk'][$field])) {
+					$return .= $this->p('', $translated_field.' = \''.nl2br(htmlentities($tableConfig['fk'][$field][$value])).'\'');
+				} else {
+					$return .= $this->p('', $translated_field.' = \''.nl2br(htmlentities($value)).'\'');
+				}
 			}
 			$sql_field = substr($sql_field,0,-1).')';
 			$sql_value = substr($sql_value,0,-1).')';
@@ -1343,7 +1345,7 @@ class AdministrationView extends PageView {
 			// add table content
 			$return .= $this->listTableContent($table,$this->get('page'));
 		} else {
-			$return .= $this->p('',parent::lang('class.AdministrationView#newRow#caption#edit'));
+			$return .= $this->p('',parent::lang('insert row'));
 			$return .= $form->render('', true);
 		}
 		
@@ -1376,7 +1378,7 @@ class AdministrationView extends PageView {
 		if($this->get('rid') !== false || $this->get('action') == 'new') {
 			
 			// pagecaption
-			$this->tpl->assign('pagecaption',parent::lang('class.AdministrationView#page#caption#defaults'));
+			$this->getTpl()->assign('pagecaption',parent::lang('default fields'));
 			
 			// check if row exists
 			if($this->rowExists('defaults',$rid) || $this->get('action') == 'new') {
@@ -1401,10 +1403,10 @@ class AdministrationView extends PageView {
 						// give link to enable
 						// smarty
 						$sE = new JudoIntranetSmarty();
-						$sE->assign('message', parent::lang('class.AdministrationView#defaults#disable#rowNotEnabled'));
+						$sE->assign('message', parent::lang('row disabled, enable now'));
 						$sE->assign('href', 'administration.php?id='.$this->get('id').'&action=enable&rid='.$rid);
-						$sE->assign('title', parent::lang('class.AdministrationView#defaults#disable#rowNotEnabled.enable'));
-						$sE->assign('content', parent::lang('class.AdministrationView#defaults#disable#rowNotEnabled.enable'));
+						$sE->assign('title', parent::lang('enable row'));
+						$sE->assign('content', parent::lang('enable row'));
 						
 						$content .= $sE->fetch('smarty.admin.dis-enable.tpl');
 					}
@@ -1423,10 +1425,10 @@ class AdministrationView extends PageView {
 						// give link to disable
 						// smarty
 						$sE = new JudoIntranetSmarty();
-						$sE->assign('message', parent::lang('class.AdministrationView#defaults#enable#rowNotDisabled'));
+						$sE->assign('message', parent::lang('row enabled, disable now'));
 						$sE->assign('href', 'administration.php?id='.$this->get('id').'&action=disable&rid='.$rid);
-						$sE->assign('title', parent::lang('class.AdministrationView#defaults#enable#rowNotDisabled.disable'));
-						$sE->assign('content', parent::lang('class.AdministrationView#defaults#enable#rowNotDisabled.disable'));
+						$sE->assign('title', parent::lang('disable row'));
+						$sE->assign('content', parent::lang('disable row'));
 						
 						$content .= $sE->fetch('smarty.admin.dis-enable.tpl');
 					}				
@@ -1448,8 +1450,8 @@ class AdministrationView extends PageView {
 		}
 		
 		// smarty
-		$this->tpl->assign('caption', parent::lang('class.AdministrationView#defaults#caption#name'));
-		$this->tpl->assign('tablelinks', '');
+		$this->getTpl()->assign('caption', parent::lang('manage defaults'));
+		$this->getTpl()->assign('tablelinks', '');
 		
 		// return
 		return $content;
@@ -1464,7 +1466,7 @@ class AdministrationView extends PageView {
 	private function useradmin() {
 		
 		// smarty caption
-		$this->tpl->assign('caption', parent::lang('class.AdministrationView#useradmin#caption#name'));
+		$this->getTpl()->assign('caption', parent::lang('manage user, groups and permissions'));
 		
 		// prepare variables
 		$content = '';
@@ -1501,33 +1503,33 @@ class AdministrationView extends PageView {
 		$sUserAdmin = new JudoIntranetSmarty();
 		// assign variables
 		$tabsJsOptions = '{ active: '.$active.' }';
-		$this->tpl->assign('tabsJs', true);
-		$this->tpl->assign('userAdminJs', true);
-		$this->tpl->assign('tabsJsOptions', $tabsJsOptions);
+		$this->getTpl()->assign('tabsJs', true);
+		$this->getTpl()->assign('userAdminJs', true);
+		$this->getTpl()->assign('tabsJsOptions', $tabsJsOptions);
 		// data array
 		$data = array(
 				0 => array(
-						'tab' => parent::lang('class.AdministrationView#useradmin#tabs#tab.user'),
-						'caption' => parent::lang('class.AdministrationView#useradmin#tabs#caption.user'),
+						'tab' => parent::lang('user management'),
+						'caption' => parent::lang('user managenemt'),
 						'content' => $this->userContent($sUserAdmin),
 						'action' => 'user',
 					),
 				1 => array(
-						'tab' => parent::lang('class.AdministrationView#useradmin#tabs#tab.group'),
-						'caption' => parent::lang('class.AdministrationView#useradmin#tabs#caption.group'),
+						'tab' => parent::lang('group management'),
+						'caption' => parent::lang('group management'),
 						'content' => $this->groupContent($sUserAdmin),
 						'action' => 'group',
 					),
 				2 => array(
-						'tab' => parent::lang('class.AdministrationView#useradmin#tabs#tab.permission'),
-						'caption' => parent::lang('class.AdministrationView#useradmin#tabs#caption.permission'),
+						'tab' => parent::lang('permission management'),
+						'caption' => parent::lang('permission management'),
 						'content' => $this->permissionContent($sUserAdmin),
 						'action' => 'permission',
 					),
 			);
 		
 		$sUserAdmin->assign('data', $data);
-		$sUserAdmin->assign('backName', parent::lang('class.AdministrationView#useradmin#backLink#name'));
+		$sUserAdmin->assign('backName', parent::lang('&lArr; back'));
 		
 		// fetch content
 		return $sUserAdmin->fetch('smarty.admin.useradmin.tpl');
@@ -1568,7 +1570,7 @@ class AdministrationView extends PageView {
 				
 				$ps[] = array(
 						'params' => 'class="bold"',
-						'content' => parent::lang('class.AdministrationView#userContent#caption#edit').' '.$user->get_userinfo('name'),
+						'content' => parent::lang('edit user:').' '.$user->get_userinfo('name'),
 					);
 				$sOutput->assign('ps', $ps);
 				
@@ -1590,7 +1592,7 @@ class AdministrationView extends PageView {
 						'label',		// type
 						'labelUsername',	// id/name
 						'username',			// for
-						parent::lang('class.AdministrationView#userContent#form#userUsername')	// label text
+						parent::lang('username')	// label text
 					);
 				$name = $form->add(
 								$formIds['username']['type'],		// type
@@ -1600,12 +1602,12 @@ class AdministrationView extends PageView {
 				$name->set_rule(
 						array(
 								'required' => array(
-										'error', parent::lang('class.AdministrationView#userContent#form#rule.required.username'),
+										'error', parent::lang('required username!'),
 									),
 								'regexp' => array(
 										$this->getGc()->get_config('name.regexp.zebra'),	// regexp
 										'error',	// error variable
-										parent::lang('class.AdministrationView#userContent#form#rule.regexp.allowedChars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+										parent::lang('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
 									),
 							)
 					);
@@ -1613,7 +1615,7 @@ class AdministrationView extends PageView {
 						'note',			// type
 						'noteUsername',		// id/name
 						'username',			// for
-						parent::lang('class.AdministrationView#global#info#help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
+						parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
 					);
 				
 				// password
@@ -1622,7 +1624,7 @@ class AdministrationView extends PageView {
 						'label',			// type
 						'labelPassword',	// id/name
 						'password',			// for
-						parent::lang('class.AdministrationView#userContent#form#userPassword')	// label text
+						parent::lang('password')	// label text
 					);
 				$password = $form->add(
 						$formIds['password']['type'],		// type
@@ -1636,7 +1638,7 @@ class AdministrationView extends PageView {
 						'label',				// type
 						'labelPasswordConfirm',	// id/name
 						'passwordConfirm',				// for
-						parent::lang('class.AdministrationView#userContent#form#userPasswordConfirm')	// label text
+						parent::lang('repeat password')	// label text
 					);
 				$passwordConfirm = $form->add(
 						$formIds['passwordConfirm']['type'],			// type
@@ -1647,7 +1649,7 @@ class AdministrationView extends PageView {
 				$passwordConfirm->set_rule(
 						array(
 							'compare' => array(
-								'password', 'error', parent::lang('class.AdministrationView#userContent#form#rule.checkPasswd'),
+								'password', 'error', parent::lang('has to be the same'),
 								
 							),
 						)
@@ -1659,7 +1661,7 @@ class AdministrationView extends PageView {
 						'label',		// type
 						'labelName',	// id/name
 						'name',			// for
-						parent::lang('class.AdministrationView#userContent#form#userName')	// label text
+						parent::lang('username')	// label text
 					);
 				$name = $form->add(
 								$formIds['name']['type'],		// type
@@ -1669,12 +1671,12 @@ class AdministrationView extends PageView {
 				$name->set_rule(
 						array(
 								'required' => array(
-										'error', parent::lang('class.AdministrationView#userContent#form#rule.required.name'),
+										'error', parent::lang('required name!'),
 									),
 								'regexp' => array(
 										$this->getGc()->get_config('name.regexp.zebra'),	// regexp
 										'error',	// error variable
-										parent::lang('class.AdministrationView#userContent#form#rule.regexp.allowedChars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+										parent::lang('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
 									),
 							)
 					);
@@ -1682,7 +1684,7 @@ class AdministrationView extends PageView {
 						'note',			// type
 						'noteName',		// id/name
 						'name',			// for
-						parent::lang('class.AdministrationView#global#info#help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
+						parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
 					);
 				
 				// email
@@ -1691,7 +1693,7 @@ class AdministrationView extends PageView {
 						'label',		// type
 						'labelEmail',	// id/name
 						'email',			// for
-						parent::lang('class.AdministrationView#userContent#form#userEmail')	// label text
+						parent::lang('emailaddress')	// label text
 					);
 				$name = $form->add(
 								$formIds['email']['type'],		// type
@@ -1701,11 +1703,11 @@ class AdministrationView extends PageView {
 				$name->set_rule(
 						array(
 								'required' => array(
-										'error', parent::lang('class.AdministrationView#userContent#form#rule.required.email'),
+										'error', parent::lang('required email address!'),
 									),
 								'email' => array(
 										'error',	// error variable
-										parent::lang('class.AdministrationView#userContent#form#rule.email'),	// message
+										parent::lang('valid email'),	// message
 									),
 							)
 					);
@@ -1713,7 +1715,7 @@ class AdministrationView extends PageView {
 						'note',			// type
 						'noteEmail',		// id/name
 						'email',			// for
-						parent::lang('class.AdministrationView#global#info#help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
+						parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
 					);
 				
 				// groups
@@ -1738,7 +1740,7 @@ class AdministrationView extends PageView {
 						'label',		// type
 						'labelGroups',	// id/name
 						'groups',			// for
-						parent::lang('class.AdministrationView#userContent#form#groups')	// label text
+						parent::lang('groups')	// label text
 					);
 				$groups = $form->add(
 						$formIds['groups']['type'],	// type
@@ -1754,14 +1756,14 @@ class AdministrationView extends PageView {
 						'note',		// type
 						'noteGroups',	// id/name
 						'groups',		// for
-						parent::lang('class.AdministrationView#global#info#help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
+						parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
 					);
 				
 				// submit button
 				$form->add(
 						'submit',		// type
 						'buttonSubmitUp',	// id/name
-						parent::lang('class.AdministrationView#userContent#form#submitButton.edit')	// value
+						parent::lang('save user')	// value
 					);
 				
 				// validate
@@ -1791,7 +1793,7 @@ class AdministrationView extends PageView {
 					// output success message
 					$ps[] = array(
 							'params' => '',
-							'content' => parent::lang('class.AdministrationView#userContent#message#edit.success').' '.$data['name'].' ('.$user->get_id().')',
+							'content' => parent::lang('successful saved user:').' '.$data['name'].' ('.$user->get_id().')',
 						);
 					$sOutput->assign('ps', $ps);
 					$content .= $sOutput->fetch('smarty.p.tpl');
@@ -1833,26 +1835,26 @@ class AdministrationView extends PageView {
 					$form->add(
 						'submit',		// type
 						'buttonSubmit',	// id/name
-						parent::lang('class.AdministrationView#userContent#form#delete.yes'),	// value
-						array('title' => parent::lang('class.AdministrationView#userContent#form#delete.yes'))
+						parent::lang('delete'),	// value
+						array('title' => parent::lang('delete'))
 					);
 					
 					// smarty-link
 					$link = array(
 									'params' => 'class="submit"',
 									'href' => 'administration.php?id=user&action=user',
-									'title' => parent::lang('class.AdministrationView#userContent#form#delete.cancel'),
-									'content' => parent::lang('class.AdministrationView#userContent#form#delete.cancel')
+									'title' => parent::lang('cancel'),
+									'content' => parent::lang('cancel')
 								);
 					$sConfirmation->assign('link', $link);
 					$sConfirmation->assign('spanparams', 'id="cancel"');
-					$sConfirmation->assign('message', parent::lang('class.AdministrationView#userContent#message#delete').'&nbsp;');//.$this->getHelp()->getMessage(HELP_MSG_DELETE));
+					$sConfirmation->assign('message', parent::lang('do you want to completely remove this user?').'&nbsp;');//.$this->getHelp()->getMessage(HELP_MSG_DELETE));
 					$sConfirmation->assign('form', $form->render('', true));
 					
 					// validate
 					if($form->validate()) {
 						
-						$sConfirmation->assign('message', parent::lang('class.AdministrationView#userContent#message#delete.success'));
+						$sConfirmation->assign('message', parent::lang('successful removed user!'));
 						$sConfirmation->assign('form', '');
 						
 						$user = new User(false);
@@ -1896,7 +1898,7 @@ class AdministrationView extends PageView {
 					'label',		// type
 					'labelUsername',	// id/name
 					'username',			// for
-					parent::lang('class.AdministrationView#userContent#form#userUsername')	// label text
+					parent::lang('username')	// label text
 				);
 			$name = $form->add(
 							$formIds['username']['type'],		// type
@@ -1906,12 +1908,12 @@ class AdministrationView extends PageView {
 			$name->set_rule(
 					array(
 							'required' => array(
-									'error', parent::lang('class.AdministrationView#userContent#form#rule.required.username'),
+									'error', parent::lang('required username!'),
 								),
 							'regexp' => array(
 									$this->getGc()->get_config('name.regexp.zebra'),	// regexp
 									'error',	// error variable
-									parent::lang('class.AdministrationView#userContent#form#rule.regexp.allowedChars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+									parent::lang('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
 								),
 						)
 				);
@@ -1919,7 +1921,7 @@ class AdministrationView extends PageView {
 					'note',			// type
 					'noteUsername',		// id/name
 					'username',			// for
-					parent::lang('class.AdministrationView#global#info#help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
+					parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
 				);
 			
 			// password
@@ -1928,7 +1930,7 @@ class AdministrationView extends PageView {
 					'label',			// type
 					'labelPassword',	// id/name
 					'password',			// for
-					parent::lang('class.AdministrationView#userContent#form#userPassword')	// label text
+					parent::lang('password')	// label text
 				);
 			$password = $form->add(
 					$formIds['password']['type'],		// type
@@ -1939,7 +1941,7 @@ class AdministrationView extends PageView {
 			$password->set_rule(
 					array(
 							'required' => array(
-									'error', parent::lang('class.AdministrationView#userContent#form#rule.required.password'),
+									'error', parent::lang('required password!'),
 								),
 						)
 				);
@@ -1949,7 +1951,7 @@ class AdministrationView extends PageView {
 					'label',				// type
 					'labelPasswordConfirm',	// id/name
 					'passwordConfirm',				// for
-					parent::lang('class.AdministrationView#userContent#form#userPasswordConfirm')	// label text
+					parent::lang('repeat password')	// label text
 				);
 			$passwordConfirm = $form->add(
 					$formIds['passwordConfirm']['type'],			// type
@@ -1960,7 +1962,7 @@ class AdministrationView extends PageView {
 			$passwordConfirm->set_rule(
 					array(
 						'compare' => array(
-							'password', 'error', parent::lang('class.AdministrationView#userContent#form#rule.checkPasswd'),
+							'password', 'error', parent::lang('has to be the same'),
 							
 						),
 					)
@@ -1972,7 +1974,7 @@ class AdministrationView extends PageView {
 					'label',		// type
 					'labelName',	// id/name
 					'name',			// for
-					parent::lang('class.AdministrationView#userContent#form#userName')	// label text
+					parent::lang('name')	// label text
 				);
 			$name = $form->add(
 							$formIds['name']['type'],		// type
@@ -1982,12 +1984,12 @@ class AdministrationView extends PageView {
 			$name->set_rule(
 					array(
 							'required' => array(
-									'error', parent::lang('class.AdministrationView#userContent#form#rule.required.name'),
+									'error', parent::lang('required name!'),
 								),
 							'regexp' => array(
 									$this->getGc()->get_config('name.regexp.zebra'),	// regexp
 									'error',	// error variable
-									parent::lang('class.AdministrationView#userContent#form#rule.regexp.allowedChars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+									parent::lang('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
 								),
 						)
 				);
@@ -1995,7 +1997,7 @@ class AdministrationView extends PageView {
 					'note',			// type
 					'noteName',		// id/name
 					'name',			// for
-					parent::lang('class.AdministrationView#global#info#help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
+					parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
 				);
 			
 			// email
@@ -2004,7 +2006,7 @@ class AdministrationView extends PageView {
 					'label',		// type
 					'labelEmail',	// id/name
 					'email',			// for
-					parent::lang('class.AdministrationView#userContent#form#userEmail')	// label text
+					parent::lang('emailaddress')	// label text
 				);
 			$name = $form->add(
 							$formIds['email']['type'],		// type
@@ -2014,11 +2016,11 @@ class AdministrationView extends PageView {
 			$name->set_rule(
 					array(
 							'required' => array(
-									'error', parent::lang('class.AdministrationView#userContent#form#rule.required.name'),
+									'error', parent::lang('required name!'),
 								),
 							'email' => array(
 									'error',	// error variable
-									parent::lang('class.AdministrationView#userContent#form#rule.email'),	// message
+									parent::lang('valid email'),	// message
 								),
 						)
 				);
@@ -2026,7 +2028,7 @@ class AdministrationView extends PageView {
 					'note',			// type
 					'noteEmail',		// id/name
 					'email',			// for
-					parent::lang('class.AdministrationView#global#info#help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
+					parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
 				);
 			
 			// groups
@@ -2046,7 +2048,7 @@ class AdministrationView extends PageView {
 					'label',		// type
 					'labelGroups',	// id/name
 					'groups',			// for
-					parent::lang('class.AdministrationView#userContent#form#groups')	// label text
+					parent::lang('groups')	// label text
 				);
 			$groups = $form->add(
 					$formIds['groups']['type'],	// type
@@ -2062,14 +2064,14 @@ class AdministrationView extends PageView {
 					'note',		// type
 					'noteGroups',	// id/name
 					'groups',		// for
-					parent::lang('class.AdministrationView#global#info#help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
+					parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
 				);
 			
 			// submit button
 			$form->add(
 					'submit',		// type
 					'buttonSubmitUp',	// id/name
-					parent::lang('class.AdministrationView#userContent#form#submitButton.new')	// value
+					parent::lang('add user')	// value
 				);
 			
 			// validate
@@ -2103,7 +2105,7 @@ class AdministrationView extends PageView {
 				$sOutput = new JudoIntranetSmarty();
 				$ps[] = array(
 						'params' => '',
-						'content' => parent::lang('class.AdministrationView#userContent#message#new.success').' '.$data['name'].' ('.$user->get_id().')',
+						'content' => parent::lang('successful added user:').' '.$data['name'].' ('.$user->get_id().')',
 					);
 				$sOutput->assign('ps', $ps);
 				$content .= $sOutput->fetch('smarty.p.tpl');
@@ -2153,7 +2155,7 @@ class AdministrationView extends PageView {
 				
 				$ps[] = array(
 						'params' => 'class="bold"',
-						'content' => parent::lang('class.AdministrationView#groupContent#caption#edit').' '.$group->getName(),
+						'content' => parent::lang('edit group:').' '.$group->getName(),
 					);
 				$sOutput->assign('ps', $ps);
 				// edit form
@@ -2174,7 +2176,7 @@ class AdministrationView extends PageView {
 						'label',		// type
 						'labelName',	// id/name
 						'name',			// for
-						parent::lang('class.AdministrationView#groupContent#form#groupName')	// label text
+						parent::lang('group name')	// label text
 					);
 				$name = $form->add(
 								$formIds['name']['type'],		// type
@@ -2184,12 +2186,12 @@ class AdministrationView extends PageView {
 				$name->set_rule(
 						array(
 								'required' => array(
-										'error', parent::lang('class.AdministrationView#groupContent#form#rule.required.name'),
+										'error', parent::lang('required name!'),
 									),
 								'regexp' => array(
 										$this->getGc()->get_config('name.regexp.zebra'),	// regexp
 										'error',	// error variable
-										parent::lang('class.AdministrationView#groupContent#form#rule.regexp.allowedChars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+										parent::lang('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
 									),
 							)
 					);
@@ -2197,7 +2199,7 @@ class AdministrationView extends PageView {
 						'note',			// type
 						'noteName',		// id/name
 						'name',			// for
-						parent::lang('class.AdministrationView#global#info#help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
+						parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
 					);
 				
 				// subgroup of
@@ -2219,7 +2221,7 @@ class AdministrationView extends PageView {
 						'label',		// type
 						'labelSubgroupOf',	// id/name
 						'subgroupOf',			// for
-						parent::lang('class.AdministrationView#groupContent#form#subgroupOf')	// label text
+						parent::lang('parent group')	// label text
 					);
 				$subgroupOf = $form->add(
 						$formIds['subgroupOf']['type'],	// type
@@ -2233,7 +2235,7 @@ class AdministrationView extends PageView {
 				$subgroupOf->set_rule(
 						array(
 								'required' => array(
-										'error', parent::lang('class.AdministrationView#groupContent#form#rule.required.subgroupOf')
+										'error', parent::lang('required paren group!')
 									),
 							)
 					);
@@ -2241,14 +2243,14 @@ class AdministrationView extends PageView {
 						'note',		// type
 						'noteSubgroupOf',	// id/name
 						'subgroupOf',		// for
-						parent::lang('class.AdministrationView#global#info#help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
+						parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
 					);
 				
 				// submit button
 				$form->add(
 						'submit',		// type
 						'buttonSubmitUp',	// id/name
-						parent::lang('class.AdministrationView#groupContent#form#submitButton.edit')	// value
+						parent::lang('save group')	// value
 					);
 				
 				// validate
@@ -2270,7 +2272,7 @@ class AdministrationView extends PageView {
 					// output success message
 					$ps[] = array(
 							'params' => '',
-							'content' => parent::lang('class.AdministrationView#groupContent#message#edit.success').' '.$data['name'].' ('.$group->getId().')',
+							'content' => parent::lang('successful saved group:').' '.$data['name'].' ('.$group->getId().')',
 						);
 					$sOutput->assign('ps', $ps);
 					$content .= $sOutput->fetch('smarty.p.tpl');
@@ -2312,26 +2314,26 @@ class AdministrationView extends PageView {
 					$form->add(
 						'submit',		// type
 						'buttonSubmit',	// id/name
-						parent::lang('class.AdministrationView#groupContent#form#delete.yes'),	// value
-						array('title' => parent::lang('class.AdministrationView#groupContent#form#delete.yes'))
+						parent::lang('delete'),	// value
+						array('title' => parent::lang('delete'))
 					);
 					
 					// smarty-link
 					$link = array(
 									'params' => 'class="submit"',
 									'href' => 'administration.php?id=user&action=group',
-									'title' => parent::lang('class.AdministrationView#groupContent#form#delete.cancel'),
-									'content' => parent::lang('class.AdministrationView#groupContent#form#delete.cancel')
+									'title' => parent::lang('cancel'),
+									'content' => parent::lang('cancel')
 								);
 					$sConfirmation->assign('link', $link);
 					$sConfirmation->assign('spanparams', 'id="cancel"');
-					$sConfirmation->assign('message', parent::lang('class.AdministrationView#groupContent#message#delete').'&nbsp;');//.$this->getHelp()->getMessage(HELP_MSG_DELETE));
+					$sConfirmation->assign('message', parent::lang('do you want to completely remove this group?').'&nbsp;');//.$this->getHelp()->getMessage(HELP_MSG_DELETE));
 					$sConfirmation->assign('form', $form->render('', true));
 					
 					// validate
 					if($form->validate()) {
 						
-						$sConfirmation->assign('message', parent::lang('class.AdministrationView#groupContent#message#delete.success'));
+						$sConfirmation->assign('message', parent::lang('successful deleted group!'));
 						$sConfirmation->assign('form', '');
 						
 						$group = new Group($gid);
@@ -2374,7 +2376,7 @@ class AdministrationView extends PageView {
 					'label',		// type
 					'labelName',	// id/name
 					'name',			// for
-					parent::lang('class.AdministrationView#groupContent#form#groupName')	// label text
+					parent::lang('group name')	// label text
 				);
 			$name = $form->add(
 							$formIds['name']['type'],		// type
@@ -2383,7 +2385,7 @@ class AdministrationView extends PageView {
 			$name->set_rule(
 					array(
 							'required' => array(
-									'error', parent::lang('class.AdministrationView#groupContent#form#rule.required.name'),
+									'error', parent::lang('required group name!'),
 								),
 							'regexp' => array(
 									$this->getGc()->get_config('name.regexp.zebra'),	// regexp
@@ -2396,7 +2398,7 @@ class AdministrationView extends PageView {
 					'note',			// type
 					'noteName',		// id/name
 					'name',			// for
-					parent::lang('class.AdministrationView#global#info#help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
+					parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
 				);
 			
 			// subgroup of
@@ -2416,7 +2418,7 @@ class AdministrationView extends PageView {
 					'label',		// type
 					'labelSubgroupOf',	// id/name
 					'subgroupOf',			// for
-					parent::lang('class.AdministrationView#groupContent#form#subgroupOf')	// label text
+					parent::lang('parent group')	// label text
 				);
 			$subgroupOf = $form->add(
 					$formIds['subgroupOf']['type'],	// type
@@ -2430,7 +2432,7 @@ class AdministrationView extends PageView {
 			$subgroupOf->set_rule(
 					array(
 							'required' => array(
-									'error', parent::lang('class.AdministrationView#groupContent#form#rule.required.subgroupOf')
+									'error', parent::lang('required parent group!')
 								),
 						)
 				);
@@ -2438,14 +2440,14 @@ class AdministrationView extends PageView {
 					'note',		// type
 					'noteSubgroupOf',	// id/name
 					'subgroupOf',		// for
-					parent::lang('class.AdministrationView#global#info#help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
+					parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
 				);
 			
 			// submit button
 			$form->add(
 					'submit',		// type
 					'buttonSubmitUp',	// id/name
-					parent::lang('class.AdministrationView#groupContent#form#submitButton.new')	// value
+					parent::lang('add group')	// value
 				);
 			
 			// validate
@@ -2468,7 +2470,7 @@ class AdministrationView extends PageView {
 				// output success message
 				$sOutput = new JudoIntranetSmarty();
 				$sOutput->assign('params', '');
-				$sOutput->assign('content', parent::lang('class.AdministrationView#groupContent#message#new.success').' '.$data['name'].' ('.$newId.')');
+				$sOutput->assign('content', parent::lang('successful added group:').' '.$data['name'].' ('.$newId.')');
 				$content .= $sOutput->fetch('smarty.p.tpl');
 			} else {
 				$content .= $form->render('', true);
@@ -2556,7 +2558,7 @@ class AdministrationView extends PageView {
 				$form->add(
 						'submit',		// type
 						'buttonSubmitUp',	// id/name
-						parent::lang('class.AdministrationView#permissionContent#form#submitButton')	// value
+						parent::lang('save')	// value
 					);
 				
 				// walk through navi and add to form
@@ -2571,7 +2573,7 @@ class AdministrationView extends PageView {
 				$form->add(
 						'submit',		// type
 						'buttonSubmitLow',	// id/name
-						parent::lang('class.AdministrationView#permissionContent#form#submitButton')	// value
+						parent::lang('save')	// value
 					);
 				
 				// validate
@@ -2588,7 +2590,7 @@ class AdministrationView extends PageView {
 					$sOutput = new JudoIntranetSmarty();
 					$data = array(
 							array('params' => 'class="bold"', 'content' => (!is_null($parentNavi) ? parent::lang($parentNavi->getName()).' &rarr; ' : '').parent::lang($navi->getName()).' ('.$navi->getRequiredPermission().') '),
-							array('params' => '', 'content' => parent::lang('class.AdministrationView#permissionContent#message#success')),
+							array('params' => '', 'content' => parent::lang('successful saved permissions')),
 						);
 					$sOutput->assign('ps', $data);
 					return $sOutput->fetch('smarty.p.tpl');
@@ -2628,7 +2630,7 @@ class AdministrationView extends PageView {
 		
 		// prepare images
 		// read
-		$imgReadText = parent::lang('class.AdministrationView#addPermissionEntry#permissions#read');
+		$imgReadText = parent::lang('permission: read/list');
 		$imgRead = array(
 				'params' => 'class="iconRead clickable" title="'.$imgReadText.'" onclick="selectRadio(\''.$radioName.'_r\')"',
 				'src' => 'img/permissions_read.png',
@@ -2638,7 +2640,7 @@ class AdministrationView extends PageView {
 		$sImgReadTemplate->assign('img', $imgRead);
 		
 		// edit
-		$imgEditText = parent::lang('class.AdministrationView#addPermissionEntry#permissions#edit');
+		$imgEditText = parent::lang('permission: edit');
 		$imgEdit = array(
 				'params' => 'class="iconEdit clickable" title="'.$imgEditText.'" onclick="selectRadio(\''.$radioName.'_w\')"',
 				'src' => 'img/permissions_edit.png',
@@ -2650,9 +2652,9 @@ class AdministrationView extends PageView {
 		// prepare clear radio link
 		$sImgClearTemplate = new JudoIntranetSmarty();
 		$img = array(
-				'params' => 'class="clickable" onclick="clearRadio(\''.$radioName.'\')" title="'.parent::lang('class.AdministrationView#addPermissionEntry#clearRadio#title').'"',
+				'params' => 'class="clickable" onclick="clearRadio(\''.$radioName.'\')" title="'.parent::lang('remove permissions').'"',
 				'src' => 'img/permissions_delete.png',
-				'alt' => parent::lang('class.AdministrationView#addPermissionEntry#clearRadio#name'),
+				'alt' => parent::lang('remove permissions'),
 			);
 		$sImgClearTemplate->assign('img', $img);
 		
@@ -2677,8 +2679,162 @@ class AdministrationView extends PageView {
 				'note',			// type
 				'note_'.$radioName,	// id/name
 				$radioName,		// for
-				parent::lang('class.AdministrationView#addPermissionEntry#clearRadio#note').':&nbsp;'.$sImgClearTemplate->fetch('smarty.img.tpl')	// note text
+				parent::lang('completely remove permission on this navi entry').':&nbsp;'.$sImgClearTemplate->fetch('smarty.img.tpl')	// note text
 			);
+	}
+	
+	
+	/**
+	 * manageTable() manages the actions on the table
+	 * 
+	 * @return string html code of the adminitration page
+	 */
+	private function manageTable() {
+		
+		// prepare return
+		$content = '';
+		
+		// check if row exists
+		$rid = $this->get('rid');
+		if($this->rowExists($this->get('field'),$rid)) {
+			
+			// check $_GET['action']
+			if($this->get('action') == 'new') {
+				$content .= $this->newRow($this->get('field'));				
+			} elseif($this->get('action') == 'edit') {
+				$content .= $this->editRow($this->get('field'),$rid);				
+			} elseif($this->get('action') == 'disable') {
+				
+				// check if row is enabled
+				if($this->isValid($this->get('field'),$rid)) {
+					
+					// set valid 0
+					$this->setValid($this->get('field'),$rid,0);
+					
+					// list table content
+					$content .= $this->listTableContent($this->get('field'),$this->get('page'));
+				} else {
+					
+					// give link to enable
+					// smarty
+					$sE = new JudoIntranetSmarty();
+					$sE->assign('message', parent::lang('row disabled, enable now'));
+					$sE->assign('href', 'administration.php?id='.$this->get('id').'&field='.$this->get('field').'&action=enable&rid='.$rid);
+					$sE->assign('title', parent::lang('enable row'));
+					$sE->assign('content', parent::lang('enable row'));
+					
+					$content .= $sE->fetch('smarty.admin.dis-enable.tpl');
+				}
+			} elseif($this->get('action') == 'enable') {
+				
+				// check if row is disabled
+				if(!$this->isValid($this->get('field'),$rid)) {
+					
+					// set valid 1
+					$this->setValid($this->get('field'),$rid,1);
+					
+					// list table content
+					$content .= $this->listTableContent($this->get('field'),$this->get('page'));
+				} else {
+					
+					// give link to enable
+					// smarty
+					$sE = new JudoIntranetSmarty();
+					$sE->assign('message', parent::lang('row enabled, disable now'));
+					$sE->assign('href', 'administration.php?id='.$this->get('id').'&field='.$this->get('field').'&action=disable&rid='.$rid);
+					$sE->assign('title', parent::lang('disable row'));
+					$sE->assign('content', parent::lang('disable row'));
+					
+					$content .= $sE->fetch('smarty.admin.dis-enable.tpl');
+				}
+			} elseif($this->get('action') == 'delete') {
+				
+				// add form and message
+				$content .= $this->deleteRow($this->get('field'),$rid);
+			} else {
+				
+				// list table content
+				$content .= $this->listTableContent($this->get('field'),$this->get('page'));
+			}
+		} else {
+			$errno = $this->getError()->error_raised('RowNotExists',$this->get('rid'));
+			$this->getError()->handle_error($errno);
+			return $this->getError()->to_html($errno);
+		}
+		
+		// return
+		return $content;
+	}
+	
+	
+	/**
+	 * clubadmin() handles the administration of clubs
+	 * 
+	 * @return string html-string with the club administration page
+	 */
+	private function clubadmin() {
+		
+		// redirect to club table
+		if($this->get('field') === false) {
+			$this->redirectTo('administration', array('id' => 'club', 'field' => 'club'));
+		}
+		
+		// set caption
+		$this->getTpl()->assign('caption', parent::lang('manage table').parent::lang('<b>club</b>').' ("'.$this->get('field').'")');
+		
+		// return
+		return $this->manageTable();
+	}
+	
+	
+	/**
+	 * getTableConfig($table) retrieves any configuration settings for $table and returns it
+	 * as array
+	 * 
+	 * @param string $table name of the table
+	 * @return array array of arrays containing the configuration settings
+	 */
+	private function getTableConfig($table) {
+		
+		// get config from db
+		$tableConfigJson = $this->getGc()->get_config('usertableConfig.'.$table);
+		
+		// get array from json if exists
+		$tableConfigArray = array();
+		if($tableConfigJson !== false) {
+			$tableConfigArray = json_decode($tableConfigJson, true);
+		} else {
+			return false;
+		}
+		
+		// prepare return array, add cols and orderBy
+		$tableConfig['cols'] = $tableConfigArray['cols'];
+		$tableConfig['orderBy'] = $tableConfigArray['orderBy'];
+		
+		// walk through foreign keys
+		$foreignKeys = array();
+		if(count($tableConfigArray['fk']) > 0) {
+			foreach($tableConfigArray['fk'] as $fk => $sql) {
+				
+				// get sql result for fk
+				$fkArray = Db::arrayValue($sql, MYSQL_ASSOC);
+				
+				if(!is_array($fkArray)) {
+					$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
+					$this->getError()->handle_error($errno);
+				}
+				
+				// put in array for select option
+				foreach($fkArray as $values) {
+					
+					$foreignKeys[$fk][$values['id']] = $values['readable_name'];
+				}
+			}
+		}
+		
+		// add foreign keys and return config
+		$tableConfig['fk'] = $foreignKeys;
+		return $tableConfig;
 	}
 }
 
