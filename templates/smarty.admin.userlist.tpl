@@ -22,17 +22,17 @@
  * ********************************************************************************************}
 <table class="content">
 	<tr>
-		<th>{Object::lang('class.AdministrationView#userContent#userList#captionName')}</th>
-		<th>{Object::lang('class.AdministrationView#userContent#userList#captionDelete')}</th>
+		<th>{lang}edit user{/lang}</th>
+		<th>{lang}delete user{/lang}</th>
 	</tr>
 {foreach $users as $user}
 {if $user->get_id() != 1}
 	<tr class="{cycle values="even,odd"}">
 		<td class="width400">
-			<a href="administration.php?id=user&amp;action={$action|escape}&amp;subaction=useredit&amp;uid={$user->get_id()|escape}" title="{$user->get_userinfo('name')} {Object::lang('class.AdministrationView#userContent#userList#editUser')}">{$user->get_userinfo('name')}</a>
+			<a href="administration.php?id=user&amp;action={$action|escape}&amp;subaction=useredit&amp;uid={$user->get_id()|escape}" title="{$user->get_userinfo('name')} {lang}edit{/lang}">{$user->get_userinfo('name')}</a>
 		</td>
 		<td>
-			{if !$user->getUsed()}<a href="administration.php?id=user&amp;action={$action|escape}&amp;subaction=userdelete&amp;uid={$user->get_id()|escape}" title="{$user->get_userinfo('name')} {Object::lang('class.AdministrationView#userContent#userList#deleteUser')}"><img src="img/user_delete.png" alt="{$user->get_userinfo('name')} {Object::lang('class.AdministrationView#userContent#userList#deleteUser')}"/></a>{/if}
+			{if !$user->getUsed()}<a href="administration.php?id=user&amp;action={$action|escape}&amp;subaction=userdelete&amp;uid={$user->get_id()|escape}" title="{$user->get_userinfo('name')} {lang}delete{/lang}"><img src="img/user_delete.png" alt="{$user->get_userinfo('name')} {lang}delete{/lang}"/></a>{/if}
 		</td>
 	</tr>
 {/if}

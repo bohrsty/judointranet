@@ -29,9 +29,9 @@
 	{rdelim});
 </script>
 <div class="message messageInfo">
-	<p><b>{$filename}</b> {Object::lang('imported successful', true)}</p>
+	<p><b>{$filename}</b> {lang}imported successful{/lang}</p>
 </div>
-<p id="toggleImportedResults" title="{Object::lang('toggle imported results', true)}">{Object::lang('toggle imported results', true)}</p>
+<p id="toggleImportedResults" title="{lang}toggle imported results{/lang}">{lang}toggle imported results{/lang}</p>
 <div id="imported_results">
 {foreach $result->getAgegroups() as $agegroup => $countAgegroups}
 	<div class="result_agegroup">

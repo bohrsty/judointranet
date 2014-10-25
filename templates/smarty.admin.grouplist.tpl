@@ -22,17 +22,17 @@
  * ********************************************************************************************}
 <table class="content">
 	<tr>
-		<th>{Object::lang('class.AdministrationView#groupContent#groupList#captionName')}</th>
-		<th>{Object::lang('class.AdministrationView#groupContent#groupList#captionDelete')}</th>
+		<th>{lang}edit group{/lang}</th>
+		<th>{lang}delete group{/lang}</th>
 	</tr>
 {foreach $groups as $gid => $group}
 {if $gid != 1}
 	<tr class="{cycle values="even,odd"}">
 		<td class="width400">
-			<a href="administration.php?id=user&amp;action={$action|escape}&amp;subaction=groupedit&amp;gid={$gid|escape}" title="{$group->getName()} {Object::lang('class.AdministrationView#groupContent#groupList#editGroup')}">{$group->getName()}</a>
+			<a href="administration.php?id=user&amp;action={$action|escape}&amp;subaction=groupedit&amp;gid={$gid|escape}" title="{$group->getName()} {lang}edit{/lang}">{$group->getName()}</a>
 		</td>
 		<td>
-			{if !$group->getUsed()}<a href="administration.php?id=user&amp;action={$action|escape}&amp;subaction=groupdelete&amp;gid={$gid|escape}" title="{$group->getName()} {Object::lang('class.AdministrationView#groupContent#groupList#deleteGroup')}"><img src="img/group_delete.png" alt="{$group->getName()} {Object::lang('class.AdministrationView#groupContent#groupList#deleteGroup')}"/></a>{/if}
+			{if !$group->getUsed()}<a href="administration.php?id=user&amp;action={$action|escape}&amp;subaction=groupdelete&amp;gid={$gid|escape}" title="{$group->getName()} {lang}delete{/lang}"><img src="img/group_delete.png" alt="{$group->getName()} {lang}delete{/lang}"/></a>{/if}
 		</td>
 	</tr>
 {/if}

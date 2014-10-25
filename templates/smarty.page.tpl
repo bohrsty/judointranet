@@ -53,12 +53,14 @@
 		<link rel="stylesheet" type="text/css" href="css/jtable/jtable_jqueryui.min.css" />
 {/if}
 		<script type="text/javascript">
+{if isset($usersettingsJsToToggle) && isset($usersettingsJsId) && isset($usersettingsJsTime)}
 			$(function() {
 				$("{$usersettingsJsToToggle}").hide();
 				$("{$usersettingsJsId}").click(function() {ldelim}
 					$("{$usersettingsJsToToggle}").slideToggle({$usersettingsJsTime});
 				{rdelim});
 			});
+{/if}
 {if isset($helpids) && isset($help)}
 {literal}
 			$(function() {

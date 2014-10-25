@@ -22,18 +22,18 @@
  * ********************************************************************************************}
 <table class="content">
 	<tr>
-		<th>{Object::lang('class.AdministrationView#permissionContent#naviList#captionName')}</th>
-		<th><img src="img/visible.png" alt="{Object::lang('class.AdministrationView#permissionContent#naviList#visible')}" title="{Object::lang('class.AdministrationView#permissionContent#naviList#visible')}">/<img src="img/not_visible.png" alt="{Object::lang('class.AdministrationView#permissionContent#naviList#notVisible')}" title="{Object::lang('class.AdministrationView#permissionContent#naviList#notVisible')}"></th>
+		<th>{lang}navigation entry{/lang}</th>
+		<th><img src="img/visible.png" alt="{lang}visible{/lang}" title="{lang}visible{/lang}">/<img src="img/not_visible.png" alt="{lang}not visible{/lang}" title="{lang}not visible{/lang}"></th>
 	</tr>
 {foreach $navi as $entry}
 {foreach $entry->getSubItems() as $subEntry}
 {if !in_array($subEntry->getId(), $entriesNotShown)}
 	<tr class="{cycle values="even,odd"}">
 		<td class="width400">
-			<a href="administration.php?id=user&amp;action={$action|escape}&amp;nid={$subEntry->getId()|escape}" title="{Object::lang($subEntry->getName())}">{Object::lang($entry->getName())} &rarr; {Object::lang($subEntry->getName())}</a>
+			<a href="administration.php?id=user&amp;action={$action|escape}&amp;nid={$subEntry->getId()|escape}" title="{lang}{$subEntry->getName()}{/lang}">{lang}{$entry->getName()}{/lang} &rarr; {lang}{$subEntry->getName()}{/lang}</a>
 		</td>
 		<td class="center">
-			{if $subEntry->getShow()==1}<img src="img/visible.png" alt="{Object::lang('class.AdministrationView#permissionContent#naviList#visible')}" title="{Object::lang('class.AdministrationView#permissionContent#naviList#visible')}">{else}<img src="img/not_visible.png" alt="{Object::lang('class.AdministrationView#permissionContent#naviList#notVisible')}" title="{Object::lang('class.AdministrationView#permissionContent#naviList#notVisible')}">{/if}
+			{if $subEntry->getShow()==1}<img src="img/visible.png" alt="{lang}visible{/lang}" title="{lang}visible{/lang}">{else}<img src="img/not_visible.png" alt="{lang}not visible{/lang}" title="{lang}not visible{/lang}">{/if}
 		</td>
 	</tr>
 {/if}

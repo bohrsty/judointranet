@@ -59,7 +59,7 @@ class FileTest extends PHPUnit_Framework_TestCase {
 		
 		$file->setFileType($data);
 		$this->assertEquals($data, $file->getFileType());
-		$fileTypeName = TestObject::lang('class.File#getFileTypeAs#name#'.str_replace('/', '_', $file->getFileTypeAs('mimetype')));
+		$fileTypeName = TestObject::lang($file->getFileTypeAs('mimetype'));
 		
 		$this->assertEquals('Textdokument', $file->getFileTypeAs('name'));
 		$this->assertEquals('text/plain', $file->getFileTypeAs('mimetype'));

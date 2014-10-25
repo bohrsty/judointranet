@@ -34,7 +34,7 @@
 {foreach $data as $entry}
 	<p class="details">{$entry}</p>
 {/foreach}
-	<p class="details">{Object::lang('class.ProtocolView#details#text#attached')}</p>
+	<p class="details">{lang}attached files{/lang}</p>
 {if isset($files) && count($files) > 0}
 	<ul>
 {foreach $files as $file}
@@ -42,7 +42,7 @@
 {/foreach}
 	</ul>
 {else}
-<p>{Object::lang('class.ProtocolView#details#text#none')}</p>
+<p>{lang}- none -{/lang}</p>
 {/if}
 {/if}
 </div>
