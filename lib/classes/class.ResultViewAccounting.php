@@ -64,7 +64,7 @@ class ResultViewAccounting extends ResultView {
 	public function show() {
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption', parent::lang('result accounting', true).'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FILELISTALL));
+		$this->getTpl()->assign('pagecaption', parent::lang('result accounting', true).'&nbsp;'.$this->helpButton(HELP_MSG_FILELISTALL));
 		
 		// check action
 		switch($this->get('action')) {

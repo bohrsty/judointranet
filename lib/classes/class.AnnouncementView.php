@@ -502,7 +502,7 @@ class AnnouncementView extends PageView {
 								);
 					$sConfirmation->assign('link', $link);
 					$sConfirmation->assign('spanparams', 'id="cancel"');
-					$sConfirmation->assign('message', parent::lang('you really want to delete').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_DELETE));
+					$sConfirmation->assign('message', parent::lang('you really want to delete').'&nbsp;'.$this->helpButton(HELP_MSG_DELETE));
 					$sConfirmation->assign('form', $form->render('', true));
 					
 					// validate

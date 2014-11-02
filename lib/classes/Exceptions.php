@@ -539,4 +539,35 @@ class PostInvalidCharsException extends CustomException {
 }
 
 
+
+/**
+ * ResultForFutureCalendarException is thrown, if there are invalid characters in post request
+ */
+class ResultForFutureCalendarException extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(false);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return Object::lang('Error: result not possible for future calendar entries!');
+	}
+}
+
+
 ?>

@@ -60,33 +60,71 @@ class ResultViewList extends ResultView {
 	public function show() {
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang('result list', true));//.'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FILELISTALL));
+		$this->getTpl()->assign('pagecaption',parent::lang('result list', true));//.'&nbsp;'.$this->helpButton(HELP_MSG_FILELISTALL));
 		
-		// smarty
-		$sTh = array(
-				'desc' => parent::lang('result desc', true),
-				'name' => parent::lang('event name', true),
-				'date' => parent::lang('event date', true),
-				'city' => parent::lang('event city', true),
-				'show' => parent::lang('show', true),
-				'admin' => parent::lang('admin', true),
-			);
-		// assign table header
-		$this->smarty->assign('th', $sTh);
-		// assign loggedin? admin links
-		$this->smarty->assign('loggedin', $this->getUser()->get_loggedin());
+		// return
+		return $this->getResultList();
+	}
+	
+	
+	/**
+	 * getResultList() generates the table config and returns the HTML element
+	 * 
+	 * @return string HTML element the list is shown in
+	 */
+	private function getResultList() {
 		
-		// get array of result objects (sorted by date)
-		$results = $this->readAllEntries();
+		// define div id for container
+		$containerId = 'ResultListTable';
 		
-		// get array for smarty
-		$resultList = $this->prepareResults($results, $this->get('cid'));		
+		// get Jtable object
+		$jtable = new Jtable();
+		// set settings
+		$jtable->setActions('result.php', 'ResultList', false, false, false, array('cid' => $this->get('cid'),));
+		// get JtableFields
+		$jtfDesc = new JtableField('desc');
+		$jtfDesc->setTitle(_l('result desc'));
+		$jtfDesc->setEdit(false);
+		$jtfDesc->setSorting(false);
+		$jtfDesc->setWidth('1%');
+		$jtfName = new JtableField('name');
+		$jtfName->setTitle(_l('event name'));
+		$jtfName->setEdit(false);
+		$jtfDate = new JtableField('date');
+		$jtfDate->setTitle(parent::lang('event date'));
+		$jtfDate->setEdit(false);
+		$jtfDate->setWidth('1%');
+		$jtfCity = new JtableField('city');
+		$jtfCity->setTitle(parent::lang('event city'));
+		$jtfCity->setEdit(false);
+		$jtfCity->setWidth('1%');
+		$jtfShow = new JtableField('show');
+		$jtfShow->setTitle(parent::lang('show'));
+		$jtfShow->setEdit(false);
+		$jtfShow->setSorting(false);
+		$jtfShow->setWidth('1%');
 		
-		// assign data
-		$this->smarty->assign('resultList', $resultList);
+		// add fields to $jtable
+		$jtable->addField($jtfDesc);
+		$jtable->addField($jtfName);
+		$jtable->addField($jtfDate);
+		$jtable->addField($jtfCity);
+		$jtable->addField($jtfShow);
 		
-		// smarty-return		
-		return $this->smarty->fetch('smarty.result.listall.tpl');
+		// get java script config
+		$jtableJscript = $jtable->asJavaScriptConfig();
+		
+		// add surrounding javascript
+		$jquery = '$("#'.$containerId.'").jtable('.$jtableJscript.');';
+		// add to jquery
+		$this->add_jquery($jquery);
+		$this->add_jquery('$("#'.$containerId.'").jtable("load");');
+		
+		// enable jtable in template
+		$this->getTpl()->assign('jtable', true);
+		
+		// return
+		return '<div id="'.$containerId.'" class="jTable"></div>';
 	}
 }
 

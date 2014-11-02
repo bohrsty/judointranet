@@ -790,6 +790,14 @@ p.dashHead {
 	float: left;
 }
 
+.jTable .ui-widget td {
+	font-size: 90%;
+}
+
+span.presetForm {
+	white-space: nowrap;
+}
+
 
 /*
  * override external library styles

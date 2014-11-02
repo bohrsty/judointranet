@@ -237,7 +237,7 @@ class FileView extends PageView {
 	private function listall() {
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang('listall').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FILELISTALL));
+		$this->getTpl()->assign('pagecaption',parent::lang('listall').'&nbsp;'.$this->helpButton(HELP_MSG_FILELISTALL));
 		
 		// read all entries
 		$entries = $this->readAllEntries();
@@ -283,7 +283,7 @@ class FileView extends PageView {
 		// prepare tabs
 		$this->getTpl()->assign('tabsJs', true);
 		// prepare admin help
-		$helpListAdmin = $this->getHelp()->getMessage(HELP_MSG_FILELISTADMIN);
+		$helpListAdmin = $this->helpButton(HELP_MSG_FILELISTADMIN);
 		if(isset($helpListAdmin)) {
 			$sListall->assign('helpListAdmin', $helpListAdmin);
 		}
@@ -512,7 +512,7 @@ class FileView extends PageView {
 						);
 			$sConfirmation->assign('link', $link);
 			$sConfirmation->assign('spanparams', 'id="cancel"');
-			$sConfirmation->assign('message', parent::lang('you really want to delete this file?').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_DELETE));
+			$sConfirmation->assign('message', parent::lang('you really want to delete this file?').'&nbsp;'.$this->helpButton(HELP_MSG_DELETE));
 			$sConfirmation->assign('form', $form->render('', true));
 			
 			// validate
@@ -553,7 +553,7 @@ class FileView extends PageView {
 	private function upload() {
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang('upload file').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FILEUPLOAD));
+		$this->getTpl()->assign('pagecaption',parent::lang('upload file').'&nbsp;'.$this->helpButton(HELP_MSG_FILEUPLOAD));
 		
 		// smarty-templates
 		$sD = new JudoIntranetSmarty();
@@ -590,7 +590,7 @@ class FileView extends PageView {
 				'note',			// type
 				'noteName',	// id/name
 				'name',		// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDNAME)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDNAME)	// note text
 			);
 		
 		// add rules
@@ -624,7 +624,7 @@ class FileView extends PageView {
 				'note',			// type
 				'noteFormContent',	// id/name
 				'formContent',		// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDFILE)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDFILE)	// note text
 			);
 		
 		// add rules
@@ -663,7 +663,7 @@ class FileView extends PageView {
 				'note',			// type
 				'notePublic',	// id/name
 				'public',		// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDISPUBLIC)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDISPUBLIC)	// note text
 			);
 		
 		// permissions
@@ -775,7 +775,7 @@ class FileView extends PageView {
 					'note',			// type
 					'noteName',	// id/name
 					'name',		// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDNAME)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDNAME)	// note text
 				);
 			
 			// add rules
@@ -809,7 +809,7 @@ class FileView extends PageView {
 					'note',			// type
 					'noteFormContent',	// id/name
 					'formContent',		// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDFILE)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDFILE)	// note text
 				);
 			
 			// add rules
@@ -848,7 +848,7 @@ class FileView extends PageView {
 					'note',			// type
 					'notePublic',	// id/name
 					'public',		// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDISPUBLIC)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDISPUBLIC)	// note text
 				);
 			
 			// permissions

@@ -130,6 +130,9 @@ $lang = array(
 	'Error: unknown task' => 'Diese Aufgabe ist unbekannt, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
 										Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
 										Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />',
+	'Error: result not possible for future calendar entries!' => 'Ergebnisse k&ouml;nnen nicht an zuk&uuml;nftige Termine angeh&auml;ngt werden, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+										Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+										Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />',
 	/*
 	 * API error messages
 	 */
@@ -171,7 +174,7 @@ $lang = array(
 	'next week' => 'n&auml;chste Woche',
 	'next two weeks' => 'n&auml;chste zwei Wochen',
 	'next month' => 'n&auml;chster Monat',
-	'next half year' => 'n&auml;chstes halbes Jahr',
+	'next halfyear' => 'n&auml;chstes halbes Jahr',
 	'next year' => 'n&auml;chstes Jahr',
 	'reset all filter' => 'Alle Filter zur&uuml;cksetzen',
 	'reset date filter' => 'Datumsfilter zur&uuml;cksetzen',
@@ -1025,6 +1028,11 @@ $lang = array(
 	'delete user' => 'Benutzer l&ouml;schen',
 	'text/plain' => 'Textdokument',
 	'application/pdf' => 'PDF-Dokument',
+	'- choose -' => '- w&auml;hlen -',
+	'* Please select an option' => '* Bitte wählen Sie eine Option',
+	'saving failed, please contact the system administrator' => 'Speichern fehlgeschlagen, bitte Systembetreuer kontaktieren',
+	'show older appointments' => '&auml;ltere Termine anzeigen...',
+	'archived appointments' => 'Archivierte Termine',
 //	'' => '',
 );
 

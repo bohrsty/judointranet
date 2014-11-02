@@ -36,10 +36,10 @@ class JudoIntranetSmarty extends Smarty {
 		parent::__construct();
 		
 		// set directories
-		$this->setTemplateDir('templates/');
-		$this->setCompileDir('templates/smarty/compile/');
-		$this->setConfigDir('templates/smarty/config/');
-		$this->setCacheDir('templates/smarty/cache/');
+		$this->setTemplateDir(JIPATH.'/templates/');
+		$this->setCompileDir(JIPATH.'/templates/smarty/compile/');
+		$this->setConfigDir(JIPATH.'/templates/smarty/config/');
+		$this->setCacheDir(JIPATH.'/templates/smarty/cache/');
 		
 		// add plugin
 		$this->registerPlugin('block', 'lang', array($this, 'smarty_block_lang'));

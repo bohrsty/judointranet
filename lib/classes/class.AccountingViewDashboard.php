@@ -60,7 +60,7 @@ class AccountingViewDashboard extends AccountingView {
 	public function show() {
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption', parent::lang('dashboard', true).'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_ACCOUNTINGDASHBOARD));
+		$this->getTpl()->assign('pagecaption', parent::lang('dashboard', true).'&nbsp;'.$this->helpButton(HELP_MSG_ACCOUNTINGDASHBOARD));
 		
 		// add dashs
 		$dashs[] = $this->getResultDash();
@@ -78,13 +78,77 @@ class AccountingViewDashboard extends AccountingView {
 	 */
 	private function getResultDash() {
 		
-		// get listing
-		$listing = new AccountingResultTaskListing();
+		// define div id for container
+		$containerId = 'resultTaskTable';
+		
+		// get Jtable object
+		$jtable = new Jtable();
+		// set settings
+		$jtable->setActions('accounting.php', 'AccountingResultTask', false, false, false);
+		
+		// prepare status image
+		$sStatusImg = new JudoIntranetSmarty();
+		$imgArray = array(
+				'params' => '',
+				'src' => 'img/tasks_confirmed.png',
+				'alt' => _l('state'),
+			);
+		$sStatusImg->assign('img', $imgArray);
+		$statusImg = $sStatusImg->fetch('smarty.img.tpl');
+		
+		// get JtableFields
+		$jtfState = new JtableField('state');
+		$jtfState->setTitle($statusImg);
+		$jtfState->setEdit(false);
+		$jtfState->setSorting(false);
+		$jtfState->setWidth('0.1%');
+		$jtfName = new JtableField('name');
+		$jtfName->setTitle(_l('name'));
+		$jtfName->setEdit(false);
+		$jtfDate = new JtableField('date');
+		$jtfDate->setTitle(_l('date'));
+		$jtfDate->setEdit(false);
+		$jtfDate->setWidth('1%');
+		$jtfDesc = new JtableField('desc');
+		$jtfDesc->setTitle(_l('desc'));
+		$jtfDesc->setEdit(false);
+		$jtfDesc->setSorting(false);
+		$jtfDesc->setWidth('1%');
+		$jtfLastModified = new JtableField('last_modified');
+		$jtfLastModified->setTitle(_l('last modified'));
+		$jtfLastModified->setEdit(false);
+		$jtfLastModified->setSorting(false);
+		$jtfLastModified->setWidth('1%');
+		$jtfActions = new JtableField('actions');
+		$jtfActions->setTitle(_l('actions'));
+		$jtfActions->setEdit(false);
+		$jtfActions->setSorting(false);
+		$jtfActions->setWidth('1%');
+		
+		// add fields to $jtable
+		$jtable->addField($jtfState);
+		$jtable->addField($jtfName);
+		$jtable->addField($jtfDate);
+		$jtable->addField($jtfDesc);
+		$jtable->addField($jtfLastModified);
+		$jtable->addField($jtfActions);
+		
+		// get java script config
+		$jtableJscript = $jtable->asJavaScriptConfig();
+		
+		// add surrounding javascript
+		$jquery = '$("#'.$containerId.'").jtable('.$jtableJscript.');';
+		// add to jquery
+		$this->add_jquery($jquery);
+		$this->add_jquery('$("#'.$containerId.'").jtable("load");');
+		
+		// enable jtable in template
+		$this->getTpl()->assign('jtable', true);
 		
 		// return
 		return array(
-				'head' => parent::lang('Results', true),
-				'content' => $listing->listingAsHtml('smarty.accounting.resultTaskList.tpl'),
+				'head' => _l('Results'),
+				'content' => '<div id="'.$containerId.'" class="jTable"></div>',
 			);
 	}
 }

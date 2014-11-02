@@ -57,12 +57,13 @@ class AccountingResultTaskListing extends Listing implements ListingInterface {
 	 * listingAsArray() returns the listing data as array of associative
 	 * arrays (column name => value)
 	 * 
+	 * @param array $getData GET data from jTable api call
 	 * @return array array of associative arrays (column name => value) to use with template
 	 */
-	public function listingAsArray() {
+	public function listingAsArray($getData = array()) {
 		
 		// return
-		return $this->getData();
+		return $this->getData($getData);
 	}
 	
 	
@@ -116,7 +117,7 @@ class AccountingResultTaskListing extends Listing implements ListingInterface {
 	 * 
 	 * @return array prepared data from db
 	 */
-	private function getData() {
+	private function getData($getData = array()) {
 		
 		// prepare return
 		$return = array();
@@ -132,16 +133,34 @@ class AccountingResultTaskListing extends Listing implements ListingInterface {
 		 * modified_by (not used in listing view)
 		 * id (not used in listing view)
 		 */
-		$result = Db::ArrayValue('
-			SELECT `at`.`state`, `c`.`name`, `c`.`date`, `r`.`desc`, `r`.`last_modified`, `r`.`modified_by`, `r`.`id`, `r`.`calendar_id`
-			FROM `accounting_tasks` AS `at`, `calendar` AS `c`, `result` AS `r`
-			WHERE `at`.`table_name`=\'result\'
-				AND `at`.`table_id`=`r`.`id`
-				AND `c`.`id`=`r`.`calendar_id`
-				AND `r`.`valid`=1
-				AND `c`.`valid`=1
+		// check jTable and get data
+		if(count($getData) > 0) {
+			
+			$sql = '
+				SELECT `at`.`state`, `c`.`name`, `c`.`date`, `r`.`desc`, `r`.`last_modified`, `r`.`modified_by`, `r`.`id`, `r`.`calendar_id`
+				FROM `accounting_tasks` AS `at`, `calendar` AS `c`, `result` AS `r`
+				WHERE `at`.`table_name`=\'result\'
+					AND `at`.`table_id`=`r`.`id`
+					AND `c`.`id`=`r`.`calendar_id`
+					AND `r`.`valid`=1
+					AND `c`.`valid`=1
+				'.$getData['orderBy'].'
+				'.$getData['limit'].'
+			';
+		} else {
+			
+			$sql = '
+				SELECT `at`.`state`, `c`.`name`, `c`.`date`, `r`.`desc`, `r`.`last_modified`, `r`.`modified_by`, `r`.`id`, `r`.`calendar_id`
+				FROM `accounting_tasks` AS `at`, `calendar` AS `c`, `result` AS `r`
+				WHERE `at`.`table_name`=\'result\'
+					AND `at`.`table_id`=`r`.`id`
+					AND `c`.`id`=`r`.`calendar_id`
+					AND `r`.`valid`=1
+					AND `c`.`valid`=1
 				ORDER BY `r`.`last_modified` DESC
-		',
+			';
+		}
+		$result = Db::ArrayValue($sql,
 		MYSQL_ASSOC,
 		array());
 		if($result === false) {
@@ -158,24 +177,28 @@ class AccountingResultTaskListing extends Listing implements ListingInterface {
 				
 				// save and unset result id
 				$resultId = $data['id'];
-				unset($data['id']);
 				
-				// prepare confirm task links
+				// prepare smarty templates for links and images
+				// state
+				$confirmation = 'unconfirm';
+				$confirmationImg = 'confirmed';
 				if($data['state'] == 0) {
-					$data['state'] = array(
-							'href' => 'accounting.php?id=task&task=confirmresult&rid='.$resultId,
-							'src' => 'unconfirmed',
-							'title' => parent::lang('click to confirm', true),
-							'alt' => parent::lang('unconfirmed', true),
-					 	);
-				} else {
-					$data['state'] = array(
-							'href' => 'accounting.php?id=task&task=unconfirmresult&rid='.$resultId,
-							'src' => 'confirmed',
-							'title' => parent::lang('click to unconfirm', true),
-							'alt' => parent::lang('confirmed', true),
-						);
+					$confirmation = 'confirm';
+					$confirmationImg = 'unconfirmed';
 				}
+				$smarty = new JudoIntranetSmarty();
+				$stateLinkArray = array(
+					array(
+							'href' => 'accounting.php?id=task&task='.$confirmation.'result&rid='.$resultId,
+							'title' => _l('click to '.$confirmation),
+							'name' => array(
+									'src' => 'img/tasks_'.$confirmationImg.'.png',
+									'alt' => _l($confirmation.'ed'),
+								),
+						)
+					);
+				$smarty->assign('data', $stateLinkArray);
+				$data['state'] = $smarty->fetch('smarty.a.img.tpl');
 				
 				// get username and unset modified by
 				$user = new User(false);
@@ -187,21 +210,30 @@ class AccountingResultTaskListing extends Listing implements ListingInterface {
 				$lastModified = date('d.m.Y', strtotime($data['last_modified']));
 				
 				// set last modified
-				$data['last_modified'] = array(
-						'text' => $lastModified,
-						'title' => parent::lang('modified by', true).' '.$username,
+				$spanArray = array(
+						'params' => '',
+						'content' => $lastModified,
+						'title' => _l('modified by').' '.$username,
 					);
+				$smarty->assign('span', $spanArray);
+				$data['last_modified'] = $smarty->fetch('smarty.span.tpl');
 				
 				// get formatted date
 				$data['date'] = date('d.m.Y', strtotime($data['date']));
 				
 				// add actions
-				$data['actions'][] = array(
-						'href' => 'result.php?id=accounting&action=billevent&cid='.$data['calendar_id'],
-						'src' => '',
-						'title' => parent::lang('bill as pdf', true),
-						'alt' => parent::lang('bill as pdf', true),
+				$actionsLinkArray = array(
+					array(
+							'href' => 'result.php?id=accounting&action=billevent&cid='.$data['calendar_id'],
+							'title' => _l('bill as pdf'),
+							'name' => array(
+									'src' => 'img/res_pdf.png',
+									'alt' => _l('bill as pdf'),
+								),
+						)
 					);
+				$smarty->assign('data', $actionsLinkArray);
+				$data['actions'] = $smarty->fetch('smarty.a.img.tpl');
 				
 				// put in return array
 				$return[] = $data;
@@ -213,6 +245,31 @@ class AccountingResultTaskListing extends Listing implements ListingInterface {
 		
 		// return
 		return $return;
+	}
+	
+	
+	/**
+	 * totalRowCount() returns the total number of rows for this listing
+	 * 
+	 * @return int total number of rows in this listing
+	 */
+	public function totalRowCount() {
+		
+		$countRows = Db::singleValue('
+				SELECT COUNT(DISTINCT `c`.`id`)
+				FROM `accounting_tasks` AS `at`, `calendar` AS `c`, `result` AS `r`
+				WHERE `at`.`table_name`=\'result\'
+					AND `at`.`table_id`=`r`.`id`
+					AND `c`.`id`=`r`.`calendar_id`
+					AND `r`.`valid`=1
+					AND `c`.`valid`=1
+			');
+		if($countRows === false) {
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		} else {
+			return $countRows;
+		}
 	}
 	
 }

@@ -80,13 +80,16 @@ class CalendarView extends PageView {
 					
 					case 'listall':
 						
+						// pagecaption
+						$this->getTpl()->assign('pagecaption',parent::lang('listall').'&nbsp;'.$this->helpButton(HELP_MSG_CALENDARLISTALL));
+						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('calendar: listall')));
+						$this->getTpl()->assign('title', $this->title(_l('calendar: listall')));
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', true);
 						
 						// prepare dates
-						$from = date('Y-m-d', strtotime('yesterday'));
+						$from = ($this->getUser()->get_loggedin() === true ? '1970-01-01' : date('Y-m-d', strtotime('yesterday')));
 						$to = '2100-01-01';
 
 						// check $_GET['from'] and $_GET['to']
@@ -96,7 +99,28 @@ class CalendarView extends PageView {
 						if($this->get('to') !== false) {
 							$to = $this->get('to');
 						}
-						$this->getTpl()->assign('main', $this->listall($to,$from));
+						
+						// show more older calendar entries if not logged in and no filter
+						$moreLink = '';
+						if($this->getUser()->get_loggedin() === false
+							&& $this->get('from') === false
+							&& $this->get('to') === false
+							&& $this->get('filter') === false) {
+							
+							// a
+							$sMoreLink = new JudoIntranetSmarty();
+							$sMoreLink->assign('params', '');
+							$sMoreLink->assign('href', 'calendar.php?id=listall&from='.date('d.m.Y', strtotime('first day of January this year')));
+							$sMoreLink->assign('title', _l('show older appointments'));
+							$sMoreLink->assign('content', _l('archived appointments'));
+							$aMoreLink = $sMoreLink->fetch('smarty.a.tpl');
+							// p
+							$sMoreLink->assign('content', $aMoreLink);
+							$moreLink = $sMoreLink->fetch('smarty.p.tpl');
+						}
+						
+						$calendarViewListall = new CalendarViewListall();
+						$this->getTpl()->assign('main', $this->getFilterLinks($this->get('id')).$calendarViewListall->show($from, $to).$moreLink);
 					break;
 					
 					case 'new':
@@ -215,273 +239,6 @@ class CalendarView extends PageView {
 	
 	
 	/**
-	 * listall lists all calendarentries less/equal than $time in table (paged)
-	 * shows only entrys for which the user has sufficient permissions
-	 * 
-	 * @param int $timeto unix-timestamp from that the entrys are shown
-	 * @param int $timefrom unix-timestamp from that the entrys are shown
-	 * @return void
-	 */
-	private function listall($timeto,$timefrom) {
-		
-		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang('listall').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_CALENDARLISTALL));
-			
-		// prepare return
-		$output = $tr_out = $th_out = '';
-		
-		// read all entries
-		$entries = Filter::filterItems($this->get('filter'), 'calendar', $timefrom, $timeto);
-		
-		// sort calendarentries
-		usort($entries,array($this,'callbackCompareCalendars'));
-		
-		// smarty-templates
-		$sListall = new JudoIntranetSmarty();
-		// sortlinks
-		$sListall->assign('filterlinks', $this->getFilterLinks($this->get('id')));
-		
-		// smarty
-		$sTh = array(
-				'date' => _l('date'),
-				'name' => _l('event'),
-				'city' => _l('city'),
-				'show' => _l('show'),
-				'admin' => _l('tasks')
-			);
-
-		$sListall->assign('th', $sTh);
-		// loggedin? admin links
-		$sListall->assign('loggedin', $this->getUser()->get_loggedin());
-		
-		// get public
-		$publicUser = new User(false);
-		// walk through entries
-		$counter = 0;
-		// smarty
-		$sList = array();
-		foreach($entries as $no => $entry) {
-			
-			// get draft value
-			$draftValue = 1;
-			if($entry->get_preset_id() != 0) {
-				$draftValue = Calendar::getDraftValue($entry->get_preset_id(), $entry->get_id());
-			}
-			
-			// check if valid
-			if($entry->get_valid() == 1) {
-				
-				// smarty
-				$sList[$counter] = array(
-						'name' => array(
-								'href' => 'calendar.php?id=details&cid='.$entry->get_id(),
-								'title' => $entry->get_name(),
-								'name' => $entry->get_name(),
-								'public' => $publicUser->hasPermission('calendar', $entry->get_id(), 'r') && $this->getUser()->get_loggedin(),
-							),
-						'date' => $entry->get_date('d.m.Y'),
-						'city' => $entry->getCity(),
-						
-					);
-				
-				// details and pdf if announcement
-				$sList[$counter]['show'][0] = array(
-						'href' => '',
-						'title' => '',
-						'src' => '',
-						'alt' => '',
-					);
-				$sList[$counter]['show'][1] = array(
-						'href' => '',
-						'title' => '',
-						'src' => '',
-						'alt' => '',
-					);
-				if(	($entry->get_preset_id() != 0
-						&& Calendar::check_ann_value($entry->get_id(),$entry->get_preset_id()) === true)
-					&& ($draftValue == 0
-						|| ($draftValue == 1 && $this->getUser()->get_loggedin()))) {
-					
-					// set draft for filenames and translation
-					$draftFilename = '';
-					$draftTranslate = '';
-					if($draftValue == 1) {
-						$draftFilename = '_draft_'.$this->getUser()->get_lang();
-						$draftTranslate = ' draft';
-					}
-					
-					$sList[$counter]['show'][0] = array(
-							'href' => 'announcement.php?id=details&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
-							'title' => parent::lang('show announcement'.$draftTranslate),
-							'src' => 'img/ann_details'.$draftFilename.'.png',
-							'alt' => parent::lang('show announcement'.$draftTranslate),
-						);
-					$sList[$counter]['show'][1] = array(
-							'href' => 'file.php?id=cached&table=calendar&tid='.$entry->get_id(),
-							'title' => parent::lang('show announcement pdf'.$draftTranslate),
-							'src' => 'img/ann_pdf'.$draftFilename.'.png',
-							'alt' => parent::lang('show announcement pdf'.$draftTranslate),
-						);
-				}
-				
-				// add attached file info
-				if($entry->getAdditionalFields()['files'] > 0) {
-					
-					$sList[$counter]['show'][2] = array(
-							'href' => 'calendar.php?id=details&cid='.$entry->get_id(),
-							'title' => parent::lang('existing attachments'),
-							'src' => 'img/attachment_info.png',
-							'alt' => parent::lang('existing attachments'),
-						);
-				} else {
-					
-					$sList[$counter]['show'][2] = array(
-							'href' => '',
-							'title' => '',
-							'src' => '',
-							'alt' => '',
-						);
-				}
-				
-				// add attached result info
-				if($entry->getAdditionalFields()['results'] > 0) {
-					
-					$sList[$counter]['show'][3] = array(
-							'href' => 'result.php?id=list&cid='.$entry->get_id(),
-							'title' => parent::lang('result attached', true),
-							'src' => 'img/result_info.png',
-							'alt' => parent::lang('result attached', true),
-						);
-				} else {
-					
-					$sList[$counter]['show'][3] = array(
-							'href' => '',
-							'title' => '',
-							'src' => '',
-							'alt' => '',
-						);
-				}
-					
-				// add admin
-				// logged in and write permissions;
-				$admin = $this->getUser()->get_loggedin() && $this->getUser()->hasPermission('calendar', $entry->get_id(), 'w'); 
-				if($admin === true) {
-					
-					// prepare admin help
-					$helpListAdmin = $this->getHelp()->getMessage(HELP_MSG_CALENDARLISTADMIN);
-					// smarty
-					// edit
-					$sList[$counter]['admin'][] = array(
-							'href' => 'calendar.php?id=edit&cid='.$entry->get_id(),
-							'title' => parent::lang('edits entry'),
-							'src' => 'img/edit.png',
-							'alt' => parent::lang('edit'),
-							'admin' => $admin
-						);
-					// delete
-					$sList[$counter]['admin'][] = array(
-							'href' => 'calendar.php?id=delete&cid='.$entry->get_id(),
-							'title' => parent::lang('deletes entry'),
-							'src' => 'img/delete.png',
-							'alt' => parent::lang('delete'),
-							'admin' => $admin
-						);
-					// attachment
-					$sList[$counter]['admin'][] = array(
-							'href' => 'file.php?id=attach&table=calendar&tid='.$entry->get_id(),
-							'title' => parent::lang('attach file(s)'),
-							'src' => 'img/attachment.png',
-							'alt' => parent::lang('attach file(s)'),
-							'admin' => $admin
-						);
-					
-					if($entry->get_preset_id() == 0) {
-						
-						// smarty
-						$sList[$counter]['annadmin'][] = array(
-								'href' => '',
-								'title' => '',
-								'src' => '',
-								'alt' => '',
-								'preset' => $entry->get_preset_id(),
-								'form' => $this->readPresetForm($entry),
-							);
-					} else {
-						
-						// get new or edit
-						$action = '';
-						if(Calendar::check_ann_value($entry->get_id(),$entry->get_preset_id()) === true) {
-							$action = 'edit';
-						} else {
-							$action = 'new';
-						}
-						
-						// smarty
-						// edit/new
-						$sList[$counter]['annadmin'][] = array(
-								'href' => 'announcement.php?id='.$action.'&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
-								'title' => parent::lang('edits announcement'),
-								'src' => 'img/ann_edit.png',
-								'alt' => parent::lang('edit announcement'),
-								'preset' => $entry->get_preset_id(),
-								'form' => ''
-							);
-						// delete
-						$sList[$counter]['annadmin'][] = array(
-								'href' => 'announcement.php?id=delete&cid='.$entry->get_id().'&pid='.$entry->get_preset_id(),
-								'title' => parent::lang('delete announcement'),
-								'src' => 'img/ann_delete.png',
-								'alt' => parent::lang('deletes announcement'),
-								'preset' => $entry->get_preset_id(),
-								'form' => ''
-							);
-						// add result
-						$sList[$counter]['annadmin'][] = array(
-								'href' => 'result.php?id=new&cid='.$entry->get_id(),
-								'title' => parent::lang('result new', true),
-								'src' => 'img/res_new.png',
-								'alt' => parent::lang('result new', true),
-								'preset' => $entry->get_preset_id(),
-								'form' => ''
-							);
-					}
-				} else {
-					
-					// smarty
-					$sList[$counter]['admin'][] = array(
-							'href' => '',
-							'title' => '',
-							'src' => '',
-							'alt' => '',
-							'admin' => $admin
-						);
-				}
-				
-				// increment counter
-				$counter++;
-			} else {
-				
-				// deleted items
-			}
-		}
-		
-		// smarty
-		$sListall->assign('list', $sList);
-		if(isset($helpListAdmin)) {
-			$sListall->assign('helpListAdmin', $helpListAdmin);
-		}
-		
-		// smarty-return
-		return $sListall->fetch('smarty.calendar.listall.tpl');
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
 	 * getFilterLinks($getid) returns links to list "week" "month" "year" etc
 	 * and filter
 	 * 
@@ -579,7 +336,7 @@ class CalendarView extends PageView {
 				'params' => 'id="toggleFilter" class="spanLink"',
 				'title' => parent::lang('show filter'),
 				'content' => parent::lang('show filter'),
-				'help' => $this->getHelp()->getMessage(HELP_MSG_CALENDARLISTSORTLINKS),
+				'help' => $this->helpButton(HELP_MSG_CALENDARLISTSORTLINKS),
 			);
 		$sS->assign('link', $link);
 		
@@ -671,7 +428,7 @@ class CalendarView extends PageView {
 				'note',			// type
 				'noteDate',		// id/name
 				'date',			// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDATE)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDATE)	// note text
 			);
 		
 		
@@ -704,7 +461,7 @@ class CalendarView extends PageView {
 				'note',			// type
 				'noteName',		// id/name
 				'name',			// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDNAME)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDNAME)	// note text
 			);
 		
 		
@@ -734,7 +491,7 @@ class CalendarView extends PageView {
 				'note',				// type
 				'noteShortname',	// id/name
 				'shortname',		// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDSHORTNAME)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDSHORTNAME)	// note text
 			);
 		
 		
@@ -766,7 +523,7 @@ class CalendarView extends PageView {
 				'note',		// type
 				'noteType',	// id/name
 				'type',		// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
 			);
 		
 		
@@ -796,7 +553,7 @@ class CalendarView extends PageView {
 				'note',			// type
 				'noteContent',	// id/name
 				'entryContent',		// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDCONTENT)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDCONTENT)	// note text
 			);
 		
 		// city
@@ -825,7 +582,7 @@ class CalendarView extends PageView {
 				'note',			// type
 				'noteCity',		// id/name
 				'city',			// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDCITY)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDCITY)	// note text
 			);
 		
 		
@@ -852,7 +609,7 @@ class CalendarView extends PageView {
 				'note',			// type
 				'noteFilter',	// id/name
 				'filter',		// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDSORT)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDSORT)	// note text
 			);
 		
 		
@@ -874,7 +631,7 @@ class CalendarView extends PageView {
 				'note',			// type
 				'notePublic',	// id/name
 				'public',		// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDISPUBLIC)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDISPUBLIC)	// note text
 			);
 		
 		// permissions
@@ -945,7 +702,7 @@ class CalendarView extends PageView {
 			return $sCD->fetch('smarty.calendar.details.tpl');
 		} else {
 			// pagecaption
-			$this->getTpl()->assign('pagecaption',parent::lang('create new entry').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_CALENDARNEW));
+			$this->getTpl()->assign('pagecaption',parent::lang('create new entry').'&nbsp;'.$this->helpButton(HELP_MSG_CALENDARNEW));
 			return $form->render('lib/zebraTemplate.php', true, array($formIds, 'smarty.zebra.permissions.tpl', $permissionConfig,));
 		}
 	}
@@ -1109,7 +866,7 @@ class CalendarView extends PageView {
 					'note',			// type
 					'noteDate',		// id/name
 					'date',			// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDATE)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDATE)	// note text
 				);
 			
 			
@@ -1142,7 +899,7 @@ class CalendarView extends PageView {
 					'note',			// type
 					'noteName',		// id/name
 					'name',			// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDNAME)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDNAME)	// note text
 				);
 			
 			
@@ -1172,7 +929,7 @@ class CalendarView extends PageView {
 					'note',				// type
 					'noteShortname',	// id/name
 					'shortname',		// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDSHORTNAME)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDSHORTNAME)	// note text
 				);
 			
 			
@@ -1204,7 +961,7 @@ class CalendarView extends PageView {
 					'note',		// type
 					'noteType',	// id/name
 					'type',		// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
 				);
 			
 			
@@ -1234,7 +991,7 @@ class CalendarView extends PageView {
 					'note',			// type
 					'noteContent',	// id/name
 					'content',		// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDCONTENT)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDCONTENT)	// note text
 				);
 			
 			// check if announcement exists, display field only if not
@@ -1265,7 +1022,7 @@ class CalendarView extends PageView {
 						'note',			// type
 						'noteCity',		// id/name
 						'city',			// for
-						parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDCITY)	// note text
+						parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDCITY)	// note text
 					);
 			}
 			
@@ -1293,7 +1050,7 @@ class CalendarView extends PageView {
 					'note',			// type
 					'noteFilter',	// id/name
 					'filter',		// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDSORT)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDSORT)	// note text
 				);
 			
 			
@@ -1315,7 +1072,7 @@ class CalendarView extends PageView {
 					'note',			// type
 					'notePublic',	// id/name
 					'public',		// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDISPUBLIC)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDISPUBLIC)	// note text
 				);
 			
 			// permissions
@@ -1468,7 +1225,7 @@ class CalendarView extends PageView {
 						);
 			$sConfirmation->assign('link', $link);
 			$sConfirmation->assign('spanparams', 'id="cancel"');
-			$sConfirmation->assign('message', parent::lang('you really want to delete').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_DELETE));
+			$sConfirmation->assign('message', parent::lang('you really want to delete').'&nbsp;'.$this->helpButton(HELP_MSG_DELETE));
 			$sConfirmation->assign('form', $form->render('', true));
 			
 			// validate
@@ -1513,87 +1270,6 @@ class CalendarView extends PageView {
 			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
 			$this->getError()->handle_error($errno);
 			return $this->getError()->to_html($errno);
-		}
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * readPresetForm($calendar) generates a zebra_form to choose the announcement-preset,
-	 * if validated redirect to announcement.php?id=new&cid=$id
-	 * 
-	 * @param object $calendar the actual calendarentry
-	 * @return string returns the generated form or redirects to listall if validated
-	 */
-	private function readPresetForm(&$calendar) {
-		
-		// check sort or from/to
-		$sort = ($this->get('filter') !== false ? "&amp;filter=".$this->get('filter') : '');
-		$from = ($this->get('from') !== false ? "&amp;from=".$this->get('from') : '');
-		$to = ($this->get('to') !== false ? "&amp;to=".$this->get('to') : '');
-		
-		// form
-		$form = new Zebra_Form(
-				'choose_preset_'.$calendar->get_id(),	 	// id/name
-				'post',						// method
-				'calendar.php?id=listall'.$sort.$from.$to	// action
-			);
-		// set language
-		$form->language('deutsch');
-		// set docktype xhtml
-		$form->doctype('xhtml');
-		
-		// add selectfield
-		$formIds['preset'] = array('valueType' => 'int', 'type' => 'select',);
-		$options = Preset::read_all_presets('calendar');
-		$preset = $form->add(
-				$formIds['preset']['type'],	// type
-				'preset',		// id/name
-				'',			// default
-				array(		// attributes
-					)
-			);
-		$preset->add_options($options);
-		$preset->set_rule(
-				array(
-					'custom' => array(
-						array(
-							array($this, 'callbackCheckSelect'),	// callback
-							null,		// optional argument
-							'error',	// error variable
-							parent::lang('select template'),	// error message
-						)
-					)
-				)
-			);
-		
-		// add submit
-		$form->add(
-				'submit',		// type
-				'submitPreset',	// id/name
-				parent::lang('+')	// value
-			);
-		
-		// validate
-		if($form->validate()) {
-			
-			// get data
-			$data = $this->getFormValues($formIds);
-			
-			// insert preset_id in calendar-entry
-			$update = array('preset_id' => $data['preset']);
-			$calendar->update($update);
-			$calendar->write_db('update');
-			
-			// redirect to listall
-			header('Location: calendar.php?id=listall'.$sort.$from.$to);
-			exit;
-		} else {
-			return $form->render('', true);
 		}
 	}
 	

@@ -144,7 +144,10 @@ class Jtable extends Object {
 	}
 	
 	// set api urls
-	public function setActions($apiBase, $provider, $create = true, $update = true, $delete = true) {
+	public function setActions($apiBase, $provider, $create = true, $update = true, $delete = true, $get = array()) {
+		
+		// get random id
+		$randomId = Object::getRandomId();
 		
 		// collect data for signature
 		$data = array(
@@ -152,20 +155,28 @@ class Jtable extends Object {
 				'apiBase' => $apiBase,
 				'time' => time(),
 			);
-		$_SESSION['api'] = $data;
+		$_SESSION['api'][$randomId] = $data;
 		$signedApi = base64_encode(hash_hmac('sha256', json_encode($data), $this->getGc()->get_config('global.apikey')));
+		
+		// prepare additional get values
+		$urlGet = '';
+		foreach($get as $key => $value) {
+			if($value !== false && $value != '') {
+				$urlGet .= '&'.$key.'='.$value;
+			}
+		}
 		
 		// set urls
 		$actions = array();
-		$actions['listAction'] = 'api/internal.php?signedApi='.$signedApi.'&action=list&provider='.$provider;
+		$actions['listAction'] = 'api/internal.php?id='.$randomId.'&signedApi='.$signedApi.'&action=list&provider='.$provider.$urlGet;
 		if($create === true) {
-			$actions['createAction'] = 'api/internal.php?signedApi='.$signedApi.'&action=create&provider='.$provider;
+			$actions['createAction'] = 'api/internal.php?id='.$randomId.'&signedApi='.$signedApi.'&action=create&provider='.$provider.$urlGet;
 		}
 		if($update === true) {
-			$actions['updateAction'] = 'api/internal.php?signedApi='.$signedApi.'&action=update&provider='.$provider;
+			$actions['updateAction'] = 'api/internal.php?id='.$randomId.'&signedApi='.$signedApi.'&action=update&provider='.$provider.$urlGet;
 		}
 		if($delete === true) {
-			$actions['deleteAction'] = 'api/internal.php?signedApi='.$signedApi.'&action=delete&provider='.$provider;
+			$actions['deleteAction'] = 'api/internal.php?id='.$randomId.'&signedApi='.$signedApi.'&action=delete&provider='.$provider.$urlGet;
 		}
 		
 		// set settings

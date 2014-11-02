@@ -233,7 +233,7 @@ class MainView extends PageView {
 		} else {
 			
 			// smarty message and form
-			$sLogin->assign('message', parent::lang($this->getUser()->get_login_message()).'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_LOGIN, array($this->getUser()->get_login_message() => '')));
+			$sLogin->assign('message', parent::lang($this->getUser()->get_login_message()).'&nbsp;'.$this->helpButton(HELP_MSG_LOGIN, array($this->getUser()->get_login_message() => '')));
 			$sLogin->assign('form', $form->render('', true));
 		}		
 		

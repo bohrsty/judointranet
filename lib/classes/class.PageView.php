@@ -214,31 +214,6 @@ class PageView extends Object {
 	
 	
 	
-	
-	/**
-	 * addHelpmessages() adds the given string to $helpmessages
-	 * 
-	 * @param string $content content to be added to $helpmessages
-	 */
-	public function addHelpmessages($id, $content) {
-		
-		// get help components
-		$helpmessages = $this->getHelpmessages();
-		$helpids = $this->getHelpids();
-		
-		// add and set back
-		$this->setHelpmessages($helpmessages.$content."\n");
-		if($this->getHelpids() == '') {
-			$this->setHelpids('\''.$id.'\'');
-		} else {
-			$this->setHelpids($helpids.', \''.$id.'\'');
-		}
-	}
-	
-	
-	
-	
-	
 	/**
 	 * title combines the title-prefix and the given title and returns it
 	 * 
@@ -474,7 +449,6 @@ class PageView extends Object {
 		// help messages
 		$help = array(
 				'buttonClass' => $this->getGc()->get_config('help.buttonClass'),
-				'dialogClass' => $this->getGc()->get_config('help.dialogClass'),
 				'effect' => $this->getGc()->get_config('help.effect'),
 				'effectDuration' => $this->getGc()->get_config('help.effectDuration'),
 				'closeText' => parent::lang('close'),
@@ -482,7 +456,7 @@ class PageView extends Object {
 		$this->getTpl()->assign('help', $help);
 		
 		// assign about
-		$helpabout = $this->getHelp()->getMessage(HELP_MSG_ABOUT, array('version' => str_pad($this->getGc()->get_config('global.version'), 3, '0', STR_PAD_LEFT)));
+		$helpabout = $this->helpButton(HELP_MSG_ABOUT);
 		$this->getTpl()->assign('helpabout', $helpabout);
 	}
 	
@@ -969,7 +943,7 @@ class PageView extends Object {
 						);
 			$sConfirmation->assign('link', $link);
 			$sConfirmation->assign('spanparams', 'id="cancel"');
-			$sConfirmation->assign('message', parent::lang('delete confirm', true).'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_DELETE));
+			$sConfirmation->assign('message', parent::lang('delete confirm', true).'&nbsp;'.$this->helpButton(HELP_MSG_DELETE));
 			$sConfirmation->assign('form', $form->render('', true));
 			
 			// validate
@@ -999,6 +973,30 @@ class PageView extends Object {
 		} else {
 			throw new NotAuthorizedException($this);
 		}
+	}
+	
+	
+	/**
+	 * helpButton($hid) generates the help button and returns it
+	 * 
+	 * @param int $hid id of the helpmessage
+	 * @return string HTML string of the button
+	 */
+	public function helpButton($hid) {
+		
+		// prepare template values
+		$templateValues = array(
+				'buttonClass' => $this->getGc()->get_config('help.buttonClass'),
+				'imgTitle' => _l('help'),
+				'messageId' => $hid,
+			);
+		
+		// smarty template
+		$helpTemplate = new JudoIntranetSmarty();
+		$helpTemplate->assign('help', $templateValues);
+		
+		// return button
+		return $helpTemplate->fetch('smarty.help.button.tpl');
 	}
 }
 

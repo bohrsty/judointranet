@@ -25,15 +25,10 @@
 class HelpTest extends PHPUnit_Framework_TestCase {
 	
 	// variables
-	private $page;
-	private $help;
 	
 	// setup
 	public function setUp() {
 		
-		$this->page = new TestView();
-		
-		$this->help = $this->page->getHelp();
 	}
 	
 	
@@ -44,35 +39,65 @@ class HelpTest extends PHPUnit_Framework_TestCase {
 	
 	public function testHelpMessageGenerationExistingId() {
 		
-		// register message 1
+		// test message 1
 		$mid = 1;
-		$message = $this->help->getMessage($mid);
-		// check output
-		$this->assertContains(TestObject::lang('help'), $message);
-		$this->assertContains('id="'.$this->page->getGc()->get_config('help.buttonClass'), $message);
+		$_GET['hid'] = $mid;
+		
+		// get objects
+		$page = new PageView();
+		$help = new Help();
+		
+		// get template
+		$replacements['version'] = $page->getGc()->get_config('global.version');
+		$smarty = new JudoIntranetSmarty();
+		$smarty->assign('object', $this);
+		$smarty->assign('replace', $replacements);
 		
 		// test output
-		$smarty = new JudoIntranetSmarty();
-		$smarty->assign('replace', array('version' => $this->page->getGc()->get_config('global.version')));
-		$this->assertContains($smarty->fetch('string:'.TestObject::lang('HELP_MESSAGE_1')), $this->page->getHelpmessages());
-		$this->assertContains('id="'.$this->page->getGc()->get_config('help.dialogClass'), $this->page->getHelpmessages());
+		$testOutput = json_encode(
+			array(
+					'result' => 'OK',
+					'title' => $smarty->fetch('string:'._l('HELP_TITLE_'.$mid)),
+					'content' => $smarty->fetch('string:'._l('HELP_MESSAGE_'.$mid)),
+				)
+		);
+		$this->expectOutputString($testOutput);
+		$help->handle();
 		
+		// test button 1
+		$button = $page->helpButton($mid);
+		$this->assertContains('id="'.$mid.'"', $button);
+		$this->assertContains('class="'.$page->getGc()->get_config('help.buttonClass').'"', $button);
+		$this->assertContains('title="'._l('help').'"', $button);
 	}
 	
 	
 	public function testHelpMessageGenerationNonExistingId() {
 		
 		// check nonexistent id
-		$message = $this->help->getMessage(-1);
-		$this->assertContains(TestObject::lang('HELP_MESSAGE_error'), $this->page->getHelpmessages());
-	}
-	
-	
-	public function testHelpMessageGenerationReplacement() {
+		$mid = -1;
+		$_GET['hid'] = $mid;
 		
-		// check replacement
-		$message = $this->help->getMessage(1,array('version' => $this->page->getGc()->get_config('global.version')));
-		$this->assertContains($this->page->getGc()->get_config('global.version'), $this->page->getHelpmessages());
+		// get objects
+		$page = new PageView();
+		$help = new Help();
+		
+		// get template
+		$replacements['version'] = $page->getGc()->get_config('global.version');
+		$smarty = new JudoIntranetSmarty();
+		$smarty->assign('object', $this);
+		$smarty->assign('replace', $replacements);
+		
+		// test output
+		$testOutput = json_encode(
+			array(
+					'result' => 'OK',
+					'title' => $smarty->fetch('string:'._l('HELP_TITLE_error')),
+					'content' => $smarty->fetch('string:'._l('HELP_MESSAGE_error')),
+				)
+		);
+		$this->expectOutputString($testOutput);
+		$help->handle();
 	}
 }
 

@@ -255,7 +255,7 @@ class AdministrationView extends PageView {
 				'title' => parent::lang('toggle table selection'),
 				'content' => parent::lang('toggle table selection'),
 				'params' => 'id="toggleTable"',
-				'help' => $this->getHelp()->getMessage(HELP_MSG_ADMINUSERTABLESELECT),
+				'help' => $this->helpButton(HELP_MSG_ADMINUSERTABLESELECT),
 			);
 		$sTl->assign('link', $link);
 		
@@ -420,7 +420,7 @@ class AdministrationView extends PageView {
 			
 			// prepare th
 			$i = 1;
-			$data[0]['th'][0]['content'] = parent::lang('tasks').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_ADMINUSERTABLETASKS);
+			$data[0]['th'][0]['content'] = parent::lang('tasks').'&nbsp;'.$this->helpButton(HELP_MSG_ADMINUSERTABLETASKS);
 			foreach($tinfo as $col) {
 				
 				// check usertableCols
@@ -1615,7 +1615,7 @@ class AdministrationView extends PageView {
 						'note',			// type
 						'noteUsername',		// id/name
 						'username',			// for
-						parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
+						parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
 					);
 				
 				// password
@@ -1684,7 +1684,7 @@ class AdministrationView extends PageView {
 						'note',			// type
 						'noteName',		// id/name
 						'name',			// for
-						parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
+						parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
 					);
 				
 				// email
@@ -1715,7 +1715,7 @@ class AdministrationView extends PageView {
 						'note',			// type
 						'noteEmail',		// id/name
 						'email',			// for
-						parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
+						parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
 					);
 				
 				// groups
@@ -1756,7 +1756,7 @@ class AdministrationView extends PageView {
 						'note',		// type
 						'noteGroups',	// id/name
 						'groups',		// for
-						parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
+						parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
 					);
 				
 				// submit button
@@ -1848,7 +1848,7 @@ class AdministrationView extends PageView {
 								);
 					$sConfirmation->assign('link', $link);
 					$sConfirmation->assign('spanparams', 'id="cancel"');
-					$sConfirmation->assign('message', parent::lang('do you want to completely remove this user?').'&nbsp;');//.$this->getHelp()->getMessage(HELP_MSG_DELETE));
+					$sConfirmation->assign('message', parent::lang('do you want to completely remove this user?').'&nbsp;');//.$this->helpButton(HELP_MSG_DELETE));
 					$sConfirmation->assign('form', $form->render('', true));
 					
 					// validate
@@ -1921,7 +1921,7 @@ class AdministrationView extends PageView {
 					'note',			// type
 					'noteUsername',		// id/name
 					'username',			// for
-					parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
+					parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
 				);
 			
 			// password
@@ -1997,7 +1997,7 @@ class AdministrationView extends PageView {
 					'note',			// type
 					'noteName',		// id/name
 					'name',			// for
-					parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
+					parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
 				);
 			
 			// email
@@ -2028,7 +2028,7 @@ class AdministrationView extends PageView {
 					'note',			// type
 					'noteEmail',		// id/name
 					'email',			// for
-					parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
+					parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
 				);
 			
 			// groups
@@ -2064,7 +2064,7 @@ class AdministrationView extends PageView {
 					'note',		// type
 					'noteGroups',	// id/name
 					'groups',		// for
-					parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
+					parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
 				);
 			
 			// submit button
@@ -2199,7 +2199,7 @@ class AdministrationView extends PageView {
 						'note',			// type
 						'noteName',		// id/name
 						'name',			// for
-						parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
+						parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
 					);
 				
 				// subgroup of
@@ -2243,7 +2243,7 @@ class AdministrationView extends PageView {
 						'note',		// type
 						'noteSubgroupOf',	// id/name
 						'subgroupOf',		// for
-						parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
+						parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
 					);
 				
 				// submit button
@@ -2327,7 +2327,7 @@ class AdministrationView extends PageView {
 								);
 					$sConfirmation->assign('link', $link);
 					$sConfirmation->assign('spanparams', 'id="cancel"');
-					$sConfirmation->assign('message', parent::lang('do you want to completely remove this group?').'&nbsp;');//.$this->getHelp()->getMessage(HELP_MSG_DELETE));
+					$sConfirmation->assign('message', parent::lang('do you want to completely remove this group?').'&nbsp;');//.$this->helpButton(HELP_MSG_DELETE));
 					$sConfirmation->assign('form', $form->render('', true));
 					
 					// validate
@@ -2398,7 +2398,7 @@ class AdministrationView extends PageView {
 					'note',			// type
 					'noteName',		// id/name
 					'name',			// for
-					parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_GROUPNAME)	// note text
+					parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
 				);
 			
 			// subgroup of
@@ -2440,7 +2440,7 @@ class AdministrationView extends PageView {
 					'note',		// type
 					'noteSubgroupOf',	// id/name
 					'subgroupOf',		// for
-					parent::lang('help').'&nbsp;'//.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
+					parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
 				);
 			
 			// submit button

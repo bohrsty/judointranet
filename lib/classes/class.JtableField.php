@@ -122,6 +122,14 @@ class JtableField extends Object {
 		$this->settings['options'] = $value;
 	}
 	
+	public function setSorting($value = true) {
+		$this->settings['sorting'] = $value;
+	}
+	
+	public function setWidth($value = '10%') {
+		$this->settings['width'] = $value;
+	}
+	
 	// set validation rules
 	public function validateAgainst($rules) {
 		

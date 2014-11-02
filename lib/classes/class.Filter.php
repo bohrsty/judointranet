@@ -351,5 +351,54 @@ class Filter extends Object {
 		$db->close();
 	}
 	
+	
+	/**
+	 * filterItemIdsAsArray($filterId, $table, $dateFrom, $dateTo) returns an array containing
+	 * all item ids that matches this filter
+	 * 
+	 * @param int $filterId the id of the filter to match
+	 * @param string $table the table to apply the filter to
+	 * @param string $dateFrom if filtered by date the "from" date
+	 * @param string $dateTo if filtered by date the "to" date
+	 * @return array array containig all item ids that matches this filter
+	 */
+	public static function filterItemIdsAsArray($filterId, $table, $dateFrom=null, $dateTo=null) {
+		
+		// get permitted items
+		$permittedItems = self::getUser()->permittedItems($table, 'w', $dateFrom, $dateTo);
+		
+		// filter items if filter given
+		if($filterId !== false) {
+			
+			// get filtered ids from database
+			$result = Db::ArrayValue('
+					SELECT item_id
+					FROM item2filter
+					WHERE item_table=\'#?\'
+						AND filter_id=#?
+				',
+				MYSQL_ASSOC,
+				array(
+						$table,
+						$filterId,
+					));
+			if($result === false) {
+				$n = null;
+				throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+			}
+			
+			// get filtered items
+			$filteredItems = array();
+			foreach($result as $row) {
+				$filteredItems = $row['id'];
+			}
+			
+			// intersect permitted and filtered items
+			return array_intersect($permittedItems, $filteredItems);
+		} else {
+			return $permittedItems;
+		}
+	}
+	
 }
 ?>

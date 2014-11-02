@@ -42,6 +42,9 @@ class JtableTest extends PHPUnit_Framework_TestCase {
 		// instance of
 		$api = new $data();
 		$this->assertEquals($data, get_class($api));
+		
+		// cleanup
+		unset($_SESSION['api']);
 	}
 	
 	public function testGetAsJavaScriptConfig() {
@@ -51,6 +54,9 @@ class JtableTest extends PHPUnit_Framework_TestCase {
 		
 		$this->assertStringStartsWith('{', $jtable->asJavaScriptConfig());
 		$this->assertStringEndsWith('}', $jtable->asJavaScriptConfig());
+		
+		// cleanup
+		unset($_SESSION['api']);
 	}
 	
 	public function testSetter() {
@@ -65,6 +71,9 @@ class JtableTest extends PHPUnit_Framework_TestCase {
 		// set bool
 		$jtable->setSetting('columnResizable', true);
 		$this->assertContains('"columnResizable":true', $jtable->asJavaScriptConfig());
+		
+		// cleanup
+		unset($_SESSION['api']);
 	}
 	
 	public function testSetActions() {
@@ -75,34 +84,74 @@ class JtableTest extends PHPUnit_Framework_TestCase {
 		
 		// list only
 		$jtable->setActions('test.php', $provider, false, false, false);
-		$this->assertContains('"listAction":"api\/internal.php?signedApi=', $jtable->asJavaScriptConfig());
+		// get random id
+		$randomId = '';
+		foreach($_SESSION['api'] as $key => $value) {
+			$randomId = $key;
+		}
+		$this->assertContains('"listAction":"api\/internal.php?id='.$randomId.'&signedApi=', $jtable->asJavaScriptConfig());
 		$this->assertContains('&action=list&provider='.$provider.'"', $jtable->asJavaScriptConfig());
+		
+		// cleanup
+		unset($_SESSION['api']);
 		
 		// list, create
 		$jtable->setActions('test.php', $provider, true, false, false);
-		$this->assertContains('"createAction":"api\/internal.php?signedApi=', $jtable->asJavaScriptConfig());
+		// get random id
+		$randomId = '';
+		foreach($_SESSION['api'] as $key => $value) {
+			$randomId = $key;
+		}
+		$this->assertContains('"createAction":"api\/internal.php?id='.$randomId.'&signedApi=', $jtable->asJavaScriptConfig());
 		$this->assertContains('&action=create&provider='.$provider.'"', $jtable->asJavaScriptConfig());
+		
+		// cleanup
+		unset($_SESSION['api']);
 		
 		// list, create, update
 		$jtable->setActions('test.php', $provider, true, true, false);
-		$this->assertContains('"updateAction":"api\/internal.php?signedApi=', $jtable->asJavaScriptConfig());
+		// get random id
+		$randomId = '';
+		foreach($_SESSION['api'] as $key => $value) {
+			$randomId = $key;
+		}
+		$this->assertContains('"updateAction":"api\/internal.php?id='.$randomId.'&signedApi=', $jtable->asJavaScriptConfig());
 		$this->assertContains('&action=update&provider='.$provider.'"', $jtable->asJavaScriptConfig());
+		
+		// cleanup
+		unset($_SESSION['api']);
 		
 		// list, create, update, delete
 		$jtable->setActions('test.php', $provider, true, true, true);
-		$this->assertContains('"deleteAction":"api\/internal.php?signedApi=', $jtable->asJavaScriptConfig());
+		// get random id
+		$randomId = '';
+		foreach($_SESSION['api'] as $key => $value) {
+			$randomId = $key;
+		}
+		$this->assertContains('"deleteAction":"api\/internal.php?id='.$randomId.'&signedApi=', $jtable->asJavaScriptConfig());
 		$this->assertContains('&action=delete&provider='.$provider.'"', $jtable->asJavaScriptConfig());
+		
+		// cleanup
+		unset($_SESSION['api']);
 		
 		// list, create, update, delete
 		$jtable->setActions('test.php', $provider);
-		$this->assertContains('"listAction":"api\/internal.php?signedApi=', $jtable->asJavaScriptConfig());
+		// get random id
+		$randomId = '';
+		foreach($_SESSION['api'] as $key => $value) {
+			$randomId = $key;
+		}
+		$this->assertContains('"listAction":"api\/internal.php?id='.$randomId.'&signedApi=', $jtable->asJavaScriptConfig());
 		$this->assertContains('&action=list&provider='.$provider.'"', $jtable->asJavaScriptConfig());
-		$this->assertContains('"createAction":"api\/internal.php?signedApi=', $jtable->asJavaScriptConfig());
+		$this->assertContains('"createAction":"api\/internal.php?id='.$randomId.'&signedApi=', $jtable->asJavaScriptConfig());
 		$this->assertContains('&action=create&provider='.$provider.'"', $jtable->asJavaScriptConfig());
-		$this->assertContains('"updateAction":"api\/internal.php?signedApi=', $jtable->asJavaScriptConfig());
+		$this->assertContains('"updateAction":"api\/internal.php?id='.$randomId.'&signedApi=', $jtable->asJavaScriptConfig());
 		$this->assertContains('&action=update&provider='.$provider.'"', $jtable->asJavaScriptConfig());
-		$this->assertContains('"deleteAction":"api\/internal.php?signedApi=', $jtable->asJavaScriptConfig());
+		$this->assertContains('"deleteAction":"api\/internal.php?id='.$randomId.'&signedApi=', $jtable->asJavaScriptConfig());
 		$this->assertContains('&action=delete&provider='.$provider.'"', $jtable->asJavaScriptConfig());
+		
+		// cleanup
+		unset($_SESSION['api']);
 	}
 	
 	public function testAddField() {
@@ -126,6 +175,9 @@ class JtableTest extends PHPUnit_Framework_TestCase {
 		$jtable->addField($field2);
 		$this->assertContains('"fields":{"'.$field1->getName().'":'.$field1Json, $jtable->asJavaScriptConfig());
 		$this->assertContains('"'.$field2->getName().'":'.$field2Json.'}', $jtable->asJavaScriptConfig());
+		
+		// cleanup
+		unset($_SESSION['api']);
 	}
 	
 }

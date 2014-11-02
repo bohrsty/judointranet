@@ -61,40 +61,6 @@
 				{rdelim});
 			});
 {/if}
-{if isset($helpids) && isset($help)}
-{literal}
-			$(function() {
-				$({/literal}{$helpids}{literal}).each(function() {
-					var i = this;
-					$( '#{/literal}{$help.dialogClass}{literal}-'+i ).dialog({
-						autoOpen: false,
-						show: {
-							effect: '{/literal}{$help.effect}{literal}',
-							duration: {/literal}{$help.effectDuration}{literal}
-						},
-						position: { 
-							my: 'right center', 
-							at: 'right center', 
-							of: window
-						},
-						closeText: '{/literal}{$help.closeText}{literal}',
-						minWidth: 600,
-						minHeight: 250,
-						maxHeight: 600
-					});
-					$( '#{/literal}{$help.buttonClass}{literal}-'+i ).click(function() {
-						$( "#{/literal}{$help.dialogClass}{literal}-"+i ).dialog( "open" );
-						var isOpen = $( "#{/literal}{$help.dialogClass}{literal}-"+i ).dialog( 'isOpen' );
-						if(isOpen) {
-							$( "#{/literal}{$help.dialogClass}{literal}-"+i ).dialog( 'moveToTop' );
-						} else {
-							$( "#{/literal}{$help.dialogClass}{literal}-"+i ).dialog( 'open' );
-						}
-					});
-				})
-			});
-{/literal}
-{/if}
 {if (isset($permissionJs) && $permissionJs) || (isset($userAdminJs) && $userAdminJs)}
 {literal}
 			function clearRadio(radioName) {
@@ -128,6 +94,49 @@
 				// jQuery functions go here...
 				{$manualjquery}
 			{rdelim});
+{if isset($help)}
+{literal}
+				$(function() {
+					$(".{/literal}{$help.buttonClass}{literal}").click(function() {
+						var id = this.id;
+						var dialogDiv = $('<div id="dialog_'+id+'" title="{/literal}{lang}help{/lang}{literal}" style="display: none"></div>');
+						$.ajax({
+							url: 'api/help.php?hid='+id,
+							cache: false
+						})
+						.done(function(data) {
+							var response = $.parseJSON(data);
+							dialogDiv.attr('title', response.title);
+							dialogDiv.append(response.content);
+						});
+						$('body').append(dialogDiv);
+						dialogDiv.dialog({
+							autoOpen: false,
+							show: {
+								effect: '{/literal}{$help.effect}{literal}',
+								duration: {/literal}{$help.effectDuration}{literal}
+							},
+							position: { 
+								my: 'right top', 
+								at: 'right top', 
+								of: window
+							},
+							closeText: '{/literal}{$help.closeText}{literal}',
+							minWidth: 600,
+							minHeight: 250,
+							maxHeight: 600,
+							close: function(event, ui) {dialogDiv.remove();}
+						});
+						var isOpen = dialogDiv.dialog('isOpen');
+						if(isOpen) {
+							dialogDiv.dialog('moveToTop');
+						} else {
+							dialogDiv.dialog('open');
+						}
+					})
+				});
+{/literal}
+{/if}
 		</script>
 {/if}
 {if isset($tinymce) and isset($tmce)}

@@ -94,6 +94,22 @@ class InternalApiJtable extends InternalApi {
 				return $this->actionListAccountSettingsCost();
 			break;
 			
+			case 'ResultListall':
+				return $this->actionListResultListall();
+			break;
+			
+			case 'ResultList':
+				return $this->actionListResultList();
+			break;
+			
+			case 'AccountingResultTask':
+				return $this->actionListAccountingResultTask();
+			break;
+			
+			case 'CalendarListall':
+				return $this->actionListCalendarListall();
+			break;
+			
 			default:
 				return array(
 					'Result' => 'ERROR',
@@ -193,6 +209,110 @@ class InternalApiJtable extends InternalApi {
 		return array(
 				'Result' => 'OK',
 				'Records' => $postData,
+			);
+	}
+	
+	
+	/**
+	 * actionListResultListall() handles the list action for jTable, gets and returns the
+	 * data from ResultListallListing class
+	 * 
+	 * @return array data for jTable
+	 */
+	private function actionListResultListall() {
+		
+		// prepare getData (jtStartIndex, jtPageSize)
+		$getData = array(
+				'limit' => ($this->get('jtStartIndex') !== false && $this->get('jtPageSize') !== false ? 'LIMIT '.$this->get('jtStartIndex').', '.$this->get('jtPageSize') : ''),
+				'orderBy' => ($this->get('jtSorting') !== false ? 'ORDER BY '.$this->get('jtSorting') : ''),
+			);
+		
+		// get object
+		$resultListallListing = new ResultListallListing();
+		
+		// prepare return
+		return array(
+				'Result' => 'OK',
+				'Records' => $resultListallListing->listingAsArray($getData),
+				'TotalRecordCount' => $resultListallListing->totalRowCount(),
+			);
+	}
+	
+	
+	/**
+	 * actionListResultList() handles the list action for jTable, gets and returns the
+	 * data from ResultListListing class
+	 * 
+	 * @return array data for jTable
+	 */
+	private function actionListResultList() {
+		
+		// prepare getData (jtStartIndex, jtPageSize)
+		$getData = array(
+				'limit' => ($this->get('jtStartIndex') !== false && $this->get('jtPageSize') !== false ? 'LIMIT '.$this->get('jtStartIndex').', '.$this->get('jtPageSize') : ''),
+				'orderBy' => ($this->get('jtSorting') !== false ? 'ORDER BY '.$this->get('jtSorting') : ''),
+			);
+		
+		// get object
+		$resultListListing = new ResultListListing();
+		
+		// prepare return
+		return array(
+				'Result' => 'OK',
+				'Records' => $resultListListing->listingAsArray($getData),
+				'TotalRecordCount' => $resultListListing->totalRowCount(),
+			);
+	}
+	
+	
+	/**
+	 * actionListAccountingResultTask() handles the list action for jTable, gets and returns the
+	 * data from AccountingResultTaskListing class
+	 * 
+	 * @return array data for jTable
+	 */
+	private function actionListAccountingResultTask() {
+		
+		// prepare getData (jtStartIndex, jtPageSize)
+		$getData = array(
+				'limit' => ($this->get('jtStartIndex') !== false && $this->get('jtPageSize') !== false ? 'LIMIT '.$this->get('jtStartIndex').', '.$this->get('jtPageSize') : ''),
+				'orderBy' => ($this->get('jtSorting') !== false ? 'ORDER BY '.$this->get('jtSorting') : ''),
+			);
+		
+		// get object
+		$accountingResultTastListing = new AccountingResultTaskListing();
+		
+		// prepare return
+		return array(
+				'Result' => 'OK',
+				'Records' => $accountingResultTastListing->listingAsArray($getData),
+				'TotalRecordCount' => $accountingResultTastListing->totalRowCount(),
+			);
+	}
+	
+	
+	/**
+	 * actionListCalendarListall() handles the list action for jTable, gets and returns the
+	 * data from CalendarListallListing class
+	 * 
+	 * @return array data for jTable
+	 */
+	private function actionListCalendarListall() {
+		
+		// prepare getData (jtStartIndex, jtPageSize)
+		$getData = array(
+				'limit' => ($this->get('jtStartIndex') !== false && $this->get('jtPageSize') !== false ? 'LIMIT '.$this->get('jtStartIndex').', '.$this->get('jtPageSize') : ''),
+				'orderBy' => ($this->get('jtSorting') !== false ? 'ORDER BY '.$this->get('jtSorting') : ''),
+			);
+		
+		// get object
+		$calendarListallListing = new CalendarListallListing();
+		
+		// prepare return
+		return array(
+				'Result' => 'OK',
+				'Records' => $calendarListallListing->listingAsArray($getData),
+				'TotalRecordCount' => $calendarListallListing->totalRowCount(),
 			);
 	}
 }

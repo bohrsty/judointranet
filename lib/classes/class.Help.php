@@ -34,35 +34,20 @@ class Help extends Object {
 	/*
 	 * class-variables
 	 */
-	private $pageView;
 	
 	/*
 	 * getter/setter
 	 */
-	private function getPageView() {
-		return $this->pageView;
-	}
-	private function setPageView($pageView) {
-		$this->pageView = $pageView;
-	}
 	
 	
 	/*
 	 * constructor/destructor
 	 */
-	public function __construct($pageView) {
+	public function __construct() {
 		
 		// setup parent
-		try {
-			parent::__construct();
-		} catch(Exception $e) {
-			
-			// handle error
-			$this->getError()->handle_error($e);
-		}
+		parent::__construct();
 		
-		// set classvariables
-		$this->setPageView($pageView);
 	}
 
 	
@@ -70,28 +55,27 @@ class Help extends Object {
 	 * methods
 	 */
 	/**
-	 * getMessage() get the HTML code of the helpmessage for the given
-	 * $messageId
-	 * 
-	 * @param int $messageId id of the message
-	 * @return string HTML code helpmessage
+	 * handle() handles the generation and translation of the help messages
 	 */
-	public function getMessage($messageId, $replacements=array()) {
+	public function handle() {
+		
+		// get message id
+		$messageId = $this->get('hid');
 		
 		// add version
 		$replacements['version'] = $this->getGc()->get_config('global.version');
 		
 		// translate
-		$translateTitle = parent::lang('HELP_TITLE_'.$messageId);
-		$translateMessage = parent::lang('HELP_MESSAGE_'.$messageId);
+		$translateTitle = _l('HELP_TITLE_'.$messageId);
+		$translateMessage = _l('HELP_MESSAGE_'.$messageId);
 		
 		// check $messageId
 		if($translateMessage == 'HELP_MESSAGE_'.$messageId ||
 			$translateTitle == 'HELP_TITLE_'.$messageId) {
 			
 			// set not found message
-			$translateTitle = parent::lang('HELP_TITLE_error');
-			$translateMessage = parent::lang('HELP_MESSAGE_error');
+			$translateTitle = _l('HELP_TITLE_error');
+			$translateMessage = _l('HELP_MESSAGE_error');
 		}
 		
 		// get smarty template
@@ -101,28 +85,13 @@ class Help extends Object {
 		$translateTitle = $replacementTemplate->fetch('string:'.$translateTitle);
 		$translateMessage = $replacementTemplate->fetch('string:'.$translateMessage);
 		
-		// prepare random-id
-		$randomId = base_convert(mt_rand(10000000, 99999999), 10, 36);
-		
-		// prepare template values
-		$templateValues = array(
-				'buttonClass' => $this->getGc()->get_config('help.buttonClass'),
-				'dialogClass' => $this->getGc()->get_config('help.dialogClass'),
-				'imgTitle' => parent::lang('help'),
+		// prepare output
+		$output = array(
+				'result' => 'OK',
 				'title' => $translateTitle,
-				'message' => $translateMessage,
-				'messageId' => $randomId,
+				'content' => $translateMessage,
 			);
-		
-		// smarty template
-		$helpTemplate = new JudoIntranetSmarty();
-		$helpTemplate->assign('help', $templateValues);
-		
-		// add dialog
-		$this->getPageView()->addHelpmessages($randomId, $helpTemplate->fetch('smarty.help.dialog.tpl'));
-		
-		// return button
-		return $helpTemplate->fetch('smarty.help.button.tpl');	
+		echo json_encode($output);
 	}
 
 }

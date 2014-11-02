@@ -26,9 +26,9 @@
 if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index.php.");}
 
 /**
- * class ResultViewListall implements the control of the id "listall" result page
+ * class CalendarViewListall implements the control of the id "listall" calendar page
  */
-class ResultViewListall extends ResultView {
+class CalendarViewListall extends CalendarView {
 	
 	/*
 	 * class-variables
@@ -45,13 +45,7 @@ class ResultViewListall extends ResultView {
 	public function __construct() {
 		
 		// setup parent
-		try {
-			parent::__construct();
-		} catch(Exception $e) {
-			
-			// handle error
-			$this->getError()->handle_error($e);
-		}
+		parent::__construct();
 		
 		// create smarty object
 		$this->smarty = new JudoIntranetSmarty();
@@ -59,71 +53,85 @@ class ResultViewListall extends ResultView {
 	
 	
 	/**
-	 * show() generates the output of the page
+	 * show($from, $to) generates the output of the page
 	 * 
+	 * @param string $from date from which the listing starts
+	 * @param string $to date where the listing ends
 	 * @return string output for the page to be added to the template
 	 */
-	public function show() {
+	public function show($from, $to = '2100-01-01') {
 		
-		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang('listall', true));//.'&nbsp;'.$this->helpButton(HELP_MSG_FILELISTALL));
-		
-		// return
-		return $this->getResultList();
+		// return		
+		return $this->getListallTable($from, $to);
 	}
 	
 	
 	/**
-	 * getResultList() generates the table config and returns the HTML element
+	 * getListallTable($from, $to) generates the calendar listall table
 	 * 
-	 * @return string HTML element the list is shown in
+	 * @param string $from date from which the listing starts
+	 * @param string $to date where the listing ends
+	 * @return string HTML string of the generated listall table
 	 */
-	private function getResultList() {
+	private function getListallTable($from, $to) {
 		
 		// define div id for container
-		$containerId = 'ResultListTable';
+		$containerId = 'calendarListallTable';
+		
+		// prepare public image
+		$sPublicImg = new JudoIntranetSmarty();
+		$imgArray = array(
+				'params' => 'class="icon" title="'._l('public').'"',
+				'src' => 'img/public.png',
+				'alt' => _l('public'),
+			);
+		$sPublicImg->assign('img', $imgArray);
+		$publicImg = $sPublicImg->fetch('smarty.img.tpl');
 		
 		// get Jtable object
 		$jtable = new Jtable();
 		// set settings
-		$jtable->setActions('result.php', 'ResultListall', false, false, false);
+		$jtable->setActions('calendar.php', 'CalendarListall', false, false, false, array('from' => $from, 'to' => $to, 'filter' => $this->get('filter')));
 		// get JtableFields
-		$jtfDesc = new JtableField('desc');
-		$jtfDesc->setTitle(_l('result desc'));
-		$jtfDesc->setEdit(false);
-		$jtfDesc->setSorting(false);
-		$jtfDesc->setWidth('1%');
-		$jtfName = new JtableField('name');
-		$jtfName->setTitle(_l('event name'));
-		$jtfName->setEdit(false);
 		$jtfDate = new JtableField('date');
-		$jtfDate->setTitle(parent::lang('event date'));
+		$jtfDate->setTitle(_l('date'));
 		$jtfDate->setEdit(false);
 		$jtfDate->setWidth('1%');
+		$jtfEvent = new JtableField('event');
+		$jtfEvent->setTitle(_l('event'));
+		$jtfEvent->setEdit(false);
 		$jtfCity = new JtableField('city');
-		$jtfCity->setTitle(parent::lang('event city'));
+		$jtfCity->setTitle(_l('city'));
 		$jtfCity->setEdit(false);
 		$jtfCity->setWidth('1%');
 		$jtfShow = new JtableField('show');
-		$jtfShow->setTitle(parent::lang('show'));
+		$jtfShow->setTitle(_l('show'));
 		$jtfShow->setEdit(false);
-		$jtfShow->setSorting(false);
 		$jtfShow->setWidth('1%');
-		$jtfAdmin = new JtableField('admin');
-		$jtfAdmin->setTitle(parent::lang('admin'));
-		$jtfAdmin->setEdit(false);
-		$jtfAdmin->setSorting(false);
-		$jtfAdmin->setWidth('1%');
+		$jtfShow->setSorting(false);
+		$jtfTasks = new JtableField('admin');
+		$jtfTasks->setTitle(_l('tasks').$this->helpButton(HELP_MSG_CALENDARLISTADMIN));
+		$jtfTasks->setEdit(false);
+		$jtfTasks->setWidth('5%');
+		$jtfTasks->setSorting(false);
+		$jtfPublic = new JtableField('public');
+		$jtfPublic->setTitle($publicImg);
+		$jtfPublic->setEdit(false);
+		$jtfPublic->setWidth('0.1%');
+		$jtfPublic->setSorting(false);
 		
 		// add fields to $jtable
-		$jtable->addField($jtfDesc);
-		$jtable->addField($jtfName);
 		$jtable->addField($jtfDate);
+		$jtable->addField($jtfEvent);
 		$jtable->addField($jtfCity);
+		// add public colum if logged in
+		if($this->getUser()->get_loggedin() === true) {
+			$jtable->addField($jtfPublic);
+		}
 		$jtable->addField($jtfShow);
 		// add admin colum if logged in
 		if($this->getUser()->get_loggedin() === true) {
-			$jtable->addField($jtfAdmin);
+			$jtable->addField($jtfTasks);
 		}
 		
 		// get java script config

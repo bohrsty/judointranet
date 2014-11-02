@@ -57,13 +57,16 @@ class InternalApi extends Object {
 	 */
 	public final function handle() {
 		
+		// get random id
+		$randomId = $this->get('id');
+		
 		// get $_SESSION data
-		$api = (isset($_SESSION['api']) ? $_SESSION['api'] : array('apiClass' => '', 'apiBase' => '', 'time' => 0));
+		$api = (isset($_SESSION['api'][$randomId]) ? $_SESSION['api'][$randomId] : array('apiClass' => '', 'apiBase' => '', 'time' => 0));
 		
 		// check signature
 		$signedError = false;
 		$timeoutError = false;
-		if($this->checkApiSignature() === false) {
+		if($this->checkApiSignature($randomId) === false) {
 			$signedError = true;
 		} elseif($api['time'] + $this->getGc()->get_config('internalApi.timeout') < time()) {
 			$timeoutError = true;
@@ -94,8 +97,12 @@ class InternalApi extends Object {
 				}
 			break;
 			
+			case 'PresetForm':
+				echo json_encode($this->calendarSetPreset());
+			break;
+			
 			default:
-				echo 'ERROR'._l('API call failed [unknown apiClass]');
+				echo 'ERROR: '._l('API call failed [unknown apiClass]');
 			break;
 		}
 	}
@@ -104,18 +111,70 @@ class InternalApi extends Object {
 	/**
 	 * checkApiSignature() checks if the submitted data is signed correctly
 	 * 
+	 * @param string $randomId random id to determine api call
 	 * @return bool false if signature is wrong, true if it is correct
 	 */
-	private final function checkApiSignature() {
+	private final function checkApiSignature($randomId) {
 		
 		// get $_GET data and decode
-		$api = (isset($_SESSION['api']) ? $_SESSION['api'] : array('apiClass' => '', 'apiBase' => '', 'time' => 0));
+		$api = (isset($_SESSION['api'][$randomId]) ? $_SESSION['api'][$randomId] : array('apiClass' => '', 'apiBase' => '', 'time' => 0));
 		$signedApi = $this->get('signedApi');
 		// get api key
 		$apiKey = $this->getGc()->get_config('global.apikey');
 	
 		// check signature
 		return base64_encode(hash_hmac('sha256', json_encode($api), $apiKey)) == $signedApi;
+	}
+	
+	
+	/**
+	 * calendarSetPreset() updates a calendar entry with the data taken from $_GET and returns
+	 * an array containing the status information
+	 * 
+	 * @return array array containing the result of the action and a message if necessary
+	 */
+	private function calendarSetPreset() {
+		
+		// prepare error message
+		$errorMessage = _l('saving failed, please contact the system administrator');
+		
+		// check data from $_GET
+		$cid = $this->get('cid');
+		$pid = $this->get('pid');
+		// data given?
+		if($cid === false || $pid === false) {
+			return array(
+					'result' => 'ERROR',
+					'message' => $errorMessage.' [data missing]',
+				);
+		}
+		// cid exists?
+		if(Page::exists('calendar', $cid) === false) {
+			return array(
+					'result' => 'ERROR',
+					'message' => $errorMessage.' [cid not exists]',
+				);
+		}
+		// pid exists?
+		if(Preset::check_preset($pid, 'calendar') === false) {
+			return array(
+					'result' => 'ERROR',
+					'message' => $errorMessage.' [pid not exists]',
+				);
+		}
+		
+		// get calendar object
+		$calendar = new Calendar($cid);
+		
+		// insert preset_id in calendar entry
+		$update = array('preset_id' => $pid);
+		$calendar->update($update);
+		$calendar->write_db('update');
+		
+		return array(
+				'result' => 'OK',
+				'message' => '',
+			);
 	}
 }
 

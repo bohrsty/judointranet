@@ -248,7 +248,7 @@ class ProtocolView extends PageView {
 	private function listall() {
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang('listall').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_PROTOCOLLISTALL));
+		$this->getTpl()->assign('pagecaption',parent::lang('listall').'&nbsp;'.$this->helpButton(HELP_MSG_PROTOCOLLISTALL));
 		
 		// read all entries
 		$entries = $this->readAllEntries();
@@ -440,7 +440,7 @@ class ProtocolView extends PageView {
 		// smarty
 		$sListall->assign('list', $sList);
 		// prepare admin help
-		$helpListAdmin = $this->getHelp()->getMessage(HELP_MSG_PROTOCOLLISTADMIN);
+		$helpListAdmin = $this->helpButton(HELP_MSG_PROTOCOLLISTADMIN);
 		if(isset($helpListAdmin)) {
 			$sListall->assign('helpListAdmin', $helpListAdmin);
 		}
@@ -520,7 +520,7 @@ class ProtocolView extends PageView {
 	private function newEntry() {
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang('new protocol').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_PROTOCOLNEW));
+		$this->getTpl()->assign('pagecaption',parent::lang('new protocol').'&nbsp;'.$this->helpButton(HELP_MSG_PROTOCOLNEW));
 		
 		// smarty-templates
 		$sD = new JudoIntranetSmarty();
@@ -561,7 +561,7 @@ class ProtocolView extends PageView {
 				'note',			// type
 				'notePreset',	// id/name
 				'preset',		// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDPRESET)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDPRESET)	// note text
 			);
 		$preset->add_options($options);
 		$preset->set_rule(
@@ -592,7 +592,7 @@ class ProtocolView extends PageView {
 				'note',			// type
 				'noteDate',		// id/name
 				'date',			// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDATE)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDATE)	// note text
 			);
 		// format/position
 		$date->format('d.m.Y');
@@ -629,7 +629,7 @@ class ProtocolView extends PageView {
 				'note',			// type
 				'noteType',	// id/name
 				'type',		// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
 			);
 		$type->add_options($options);
 		$type->set_rule(
@@ -657,7 +657,7 @@ class ProtocolView extends PageView {
 				'note',			// type
 				'noteLocation',	// id/name
 				'location',		// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDALLTEXT)	// note text
 			);
 		
 		// add rules
@@ -703,7 +703,7 @@ class ProtocolView extends PageView {
 				'note',			// type
 				'noteMember0',	// id/name
 				'member0',		// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDALLTEXT)	// note text
 			);
 		
 		// member1
@@ -723,7 +723,7 @@ class ProtocolView extends PageView {
 				'note',			// type
 				'noteMember1',	// id/name
 				'member1',		// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDALLTEXT)	// note text
 			);
 		
 		// add rules
@@ -754,7 +754,7 @@ class ProtocolView extends PageView {
 				'note',			// type
 				'noteMember2',	// id/name
 				'member2',		// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDALLTEXT)	// note text
 			);
 		
 		// add rules
@@ -785,7 +785,7 @@ class ProtocolView extends PageView {
 				'note',			// type
 				'noteRecorder',	// id/name
 				'recorder',		// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDALLTEXT)	// note text
 			);
 		
 		// add rules
@@ -819,7 +819,7 @@ class ProtocolView extends PageView {
 				'note',			// type
 				'noteProtocol',	// id/name
 				'protocol',		// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDALLTEXT)	// note text
 			);
 		
 		// add rules
@@ -863,7 +863,7 @@ class ProtocolView extends PageView {
 				'note',			// type
 				'notePublic',	// id/name
 				'public',		// for
-				parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDISPUBLIC)	// note text
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDISPUBLIC)	// note text
 			);
 		
 		// permissions
@@ -1068,7 +1068,7 @@ class ProtocolView extends PageView {
 					'note',			// type
 					'noteCorrectable',	// id/name
 					'correctable',		// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_PROTOCOLCORRECTABLE)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_PROTOCOLCORRECTABLE)	// note text
 				);
 			
 			// select correctors
@@ -1099,7 +1099,7 @@ class ProtocolView extends PageView {
 					'note',			// type
 					'noteCorrectors',	// id/name
 					'correctors',		// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_PROTOCOLCORRECTORS)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_PROTOCOLCORRECTORS)	// note text
 				);
 			$correctors->add_options($options, true);
 			
@@ -1124,7 +1124,7 @@ class ProtocolView extends PageView {
 					'note',			// type
 					'notePreset',	// id/name
 					'preset',		// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDPRESET)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDPRESET)	// note text
 				);
 			$preset->add_options($options);
 			$preset->set_rule(
@@ -1166,7 +1166,7 @@ class ProtocolView extends PageView {
 					'note',			// type
 					'noteDate',		// id/name
 					'date',			// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDDATE)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDATE)	// note text
 				);
 			
 			// type
@@ -1189,7 +1189,7 @@ class ProtocolView extends PageView {
 					'note',			// type
 					'noteType',	// id/name
 					'type',		// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
 				);
 			$type->add_options($options);
 			$type->set_rule(
@@ -1217,7 +1217,7 @@ class ProtocolView extends PageView {
 					'note',			// type
 					'noteLocation',	// id/name
 					'location',		// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDALLTEXT)	// note text
 				);
 			
 			// add rules
@@ -1252,7 +1252,7 @@ class ProtocolView extends PageView {
 					'note',			// type
 					'noteMember0',	// id/name
 					'member0',		// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDALLTEXT)	// note text
 				);
 			
 			// add rules
@@ -1283,7 +1283,7 @@ class ProtocolView extends PageView {
 					'note',			// type
 					'noteMember1',	// id/name
 					'member1',		// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDALLTEXT)	// note text
 				);
 			
 			// add rules
@@ -1314,7 +1314,7 @@ class ProtocolView extends PageView {
 					'note',			// type
 					'noteMember2',	// id/name
 					'member2',		// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDALLTEXT)	// note text
 				);
 			
 			// add rules
@@ -1345,7 +1345,7 @@ class ProtocolView extends PageView {
 					'note',			// type
 					'noteRecorder',	// id/name
 					'recorder',		// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDALLTEXT)	// note text
 				);
 			
 			// add rules
@@ -1380,7 +1380,7 @@ class ProtocolView extends PageView {
 					'note',			// type
 					'noteProtocol',	// id/name
 					'protocol',		// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDALLTEXT)	// note text
 				);
 			
 			// add rules
@@ -1424,7 +1424,7 @@ class ProtocolView extends PageView {
 					'note',			// type
 					'notePublic',	// id/name
 					'public',		// for
-					parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDISPUBLIC)	// note text
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDISPUBLIC)	// note text
 				);
 			
 			// permissions
@@ -1683,7 +1683,7 @@ class ProtocolView extends PageView {
 						);
 			$sConfirmation->assign('link', $link);
 			$sConfirmation->assign('spanparams', 'id="cancel"');
-			$sConfirmation->assign('message', parent::lang('delete confirm').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_DELETE));
+			$sConfirmation->assign('message', parent::lang('delete confirm').'&nbsp;'.$this->helpButton(HELP_MSG_DELETE));
 			$sConfirmation->assign('form', $form->render('', true));
 			
 			// validate
@@ -1915,7 +1915,7 @@ class ProtocolView extends PageView {
 					}
 					
 					// smarty
-					$sPCo->assign('caption',parent::lang('compare correction').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_PROTOCOLDIFF));
+					$sPCo->assign('caption',parent::lang('compare correction').'&nbsp;'.$this->helpButton(HELP_MSG_PROTOCOLDIFF));
 					
 				} else {
 					
@@ -1947,7 +1947,7 @@ class ProtocolView extends PageView {
 					}
 					
 					// smarty
-					$sPCo->assign('caption',parent::lang('list of existing corrections').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_PROTOCOLDIFFLIST));
+					$sPCo->assign('caption',parent::lang('list of existing corrections').'&nbsp;'.$this->helpButton(HELP_MSG_PROTOCOLDIFFLIST));
 					$sPCo->assign('list', $list);
 				}
 				
@@ -1956,7 +1956,7 @@ class ProtocolView extends PageView {
 			} else {
 				
 				// pagecaption
-				$this->getTpl()->assign('pagecaption',parent::lang('correct protocol').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_PROTOCOLCORRECT));
+				$this->getTpl()->assign('pagecaption',parent::lang('correct protocol').'&nbsp;'.$this->helpButton(HELP_MSG_PROTOCOLCORRECT));
 				
 				// get ProtocolCorretion object
 				$correction = new ProtocolCorrection($protocol);
@@ -1990,7 +1990,7 @@ class ProtocolView extends PageView {
 						'note',			// type
 						'noteProtocol',	// id/name
 						'protocol',		// for
-						parent::lang('help').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDALLTEXT)	// note text
+						parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDALLTEXT)	// note text
 					);
 				
 				// add rules
@@ -2063,7 +2063,7 @@ class ProtocolView extends PageView {
 	private function decisions($pid) {
 	
 		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang('show decisions').'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_PROTOCOLDECISIONS));
+		$this->getTpl()->assign('pagecaption',parent::lang('show decisions').'&nbsp;'.$this->helpButton(HELP_MSG_PROTOCOLDECISIONS));
 		
 		// check rights
 		if($this->getUser()->hasPermission('protocol', $pid) || $pid == false) {

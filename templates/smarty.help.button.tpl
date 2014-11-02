@@ -1,1 +1,1 @@
-<img src="img/helpButton.png" id="{$help.buttonClass}-{$help.messageId}" title="{$help.imgTitle}" alt="{$help.imgTitle}" />
+<img src="img/helpButton.png" id="{$help.messageId}" class="{$help.buttonClass}" title="{$help.imgTitle}" alt="{$help.imgTitle}" />

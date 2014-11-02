@@ -59,19 +59,26 @@ class ResultViewNew extends ResultView {
 	 */
 	public function show() {
 		
-		// check step
-		if(isset($_SESSION['import']) && is_array($_SESSION['import'])) {
-			// check form
-			if($this->post('name_resultUpload1') === false && $this->post('name_resultUpload2') === false) {
-				
-				unset($_SESSION['import']);
-				throw new ResultImportFailedException($this, 'Second step not possible; Session removed, please try again.');
-			} else {
-				return $this->secondStep();
-			}
-		}
+		// check date of calendar entry
+		$calendar = new Calendar($this->get('cid'));
+		if($calendar->get_date('U') > strtotime('today')) {
+			throw new ResultForFutureCalendarException($this, 'Result not possible for future calendar entries.');
+		} else {
 		
-		return $this->firstStep();
+			// check step
+			if(isset($_SESSION['import']) && is_array($_SESSION['import'])) {
+				// check form
+				if($this->post('name_resultUpload1') === false && $this->post('name_resultUpload2') === false) {
+					
+					unset($_SESSION['import']);
+					throw new ResultImportFailedException($this, 'Second step not possible; Session removed, please try again.');
+				} else {
+					return $this->secondStep();
+				}
+			}
+			
+			return $this->firstStep();
+		}
 	}
 	
 	
@@ -124,7 +131,7 @@ class ResultViewNew extends ResultView {
 				'note',		// type
 				'noteImporter',	// id/name
 				'importer',		// for
-				parent::lang('help', true).'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_RESULTIMPORTER)	// note text
+				parent::lang('help', true).'&nbsp;'.$this->helpButton(HELP_MSG_RESULTIMPORTER)	// note text
 			);
 		
 		// description
@@ -143,7 +150,7 @@ class ResultViewNew extends ResultView {
 				'note',			// type
 				'noteDesc',	// id/name
 				'desc',		// for
-				parent::lang('help', true).'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_RESULTDESC)	// note text
+				parent::lang('help', true).'&nbsp;'.$this->helpButton(HELP_MSG_RESULTDESC)	// note text
 			);
 		
 		// add rules
@@ -178,7 +185,7 @@ class ResultViewNew extends ResultView {
 				'note',			// type
 				'noteFormContent',	// id/name
 				'formContent',		// for
-				parent::lang('help', true).'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDFILE)	// note text
+				parent::lang('help', true).'&nbsp;'.$this->helpButton(HELP_MSG_FIELDFILE)	// note text
 			);
 		
 		// add rules
@@ -287,7 +294,7 @@ class ResultViewNew extends ResultView {
 				'note',		// type
 				'notePreset',	// id/name
 				'preset',		// for
-				parent::lang('help', true).'&nbsp;'.$this->getHelp()->getMessage(HELP_MSG_FIELDTYPE)	// note text
+				parent::lang('help', true).'&nbsp;'.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
 			);
 		
 		// add club check

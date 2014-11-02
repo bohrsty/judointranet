@@ -71,12 +71,6 @@ class Object {
 	public function setError($error) {
 		$GLOBALS['error'] = $error;
 	}
-	public function getHelp() {
-		return $GLOBALS['help'];
-	}
-	public function setHelp($help) {
-		$GLOBALS['help'] = $help;
-	}
 	public function get_get(){
 		return $this->get;
 	}
@@ -502,6 +496,17 @@ class Object {
 	 */
 	public function __toString() {
 		return get_class($this);
+	}
+	
+	
+	/**
+	 * getRandomId() generates a random string and returns it
+	 * 
+	 * @return string generated random string
+	 */
+	public static function getRandomId() {
+		
+		return base_convert(mt_rand(10000000, 99999999), 10, 36);
 	}
 }
 
