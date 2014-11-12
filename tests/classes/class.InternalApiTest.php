@@ -69,8 +69,10 @@ class InternalApiTest extends PHPUnit_Framework_TestCase {
 	public function testHandleWrongSignature() {
 		
 		// set $_GET values for JTable and wrong signature
-		$_SESSION['api'][$this->id] = array('apiClass' => 'JTable', 'apiBase' => 'test.php', 'time' => time());
-		$_GET['signedApi'] = base64_encode(json_encode($_SESSION['api'][$this->id]));
+		$data = array('apiClass' => 'JTable', 'apiBase' => 'test.php', 'randomId' => $this->id);
+		$_SESSION['api'][$this->id] = $data;
+		$_SESSION['api'][$this->id]['time'] = time();
+		$_GET['signedApi'] = base64_encode(json_encode($data));
 		
 		// get object
 		$api = new InternalApi();
@@ -86,8 +88,10 @@ class InternalApiTest extends PHPUnit_Framework_TestCase {
 	public function testHandleTimeout() {
 		
 		// set $_GET values for JTable and wrong signature
-		$_SESSION['api'][$this->id] = array('apiClass' => 'JTable', 'apiBase' => 'test.php', 'time' => (time() - $this->apiTimeout -10));
-		$_GET['signedApi'] = base64_encode(hash_hmac('sha256', json_encode($_SESSION['api'][$this->id]), $this->apiKey));
+		$data = array('apiClass' => 'JTable', 'apiBase' => 'test.php', 'randomId' => $this->id);
+		$_SESSION['api'][$this->id] = $data;
+		$_SESSION['api'][$this->id]['time'] = time() - $this->apiTimeout -10;
+		$_GET['signedApi'] = base64_encode(hash_hmac('sha256', json_encode($data), $this->apiKey));
 		
 		// get object
 		$api = new InternalApi();
@@ -103,8 +107,10 @@ class InternalApiTest extends PHPUnit_Framework_TestCase {
 	public function testHandleJtableCorrectSignature() {
 		
 		// set $_GET values for JTable and correct signature
-		$_SESSION['api'][$this->id] = array('apiClass' => 'JTable', 'apiBase' => 'test.php', 'time' => time());
-		$_GET['signedApi'] = base64_encode(hash_hmac('sha256', json_encode($_SESSION['api'][$this->id]), $this->apiKey));
+		$data = array('apiClass' => 'JTable', 'apiBase' => 'test.php', 'randomId' => $this->id);
+		$_SESSION['api'][$this->id] = $data;
+		$_SESSION['api'][$this->id]['time'] = time();
+		$_GET['signedApi'] = base64_encode(hash_hmac('sha256', json_encode($data), $this->apiKey));
 		
 		// get object
 		$api = new InternalApi();
@@ -120,8 +126,10 @@ class InternalApiTest extends PHPUnit_Framework_TestCase {
 	public function testHandleJtableActionListNoProvider() {
 		
 		// set $_GET values for JTable list action
-		$_SESSION['api'][$this->id] = array('apiClass' => 'JTable', 'apiBase' => 'test.php', 'time' => time());
-		$_GET['signedApi'] = base64_encode(hash_hmac('sha256', json_encode($_SESSION['api'][$this->id]), $this->apiKey));
+		$data = array('apiClass' => 'JTable', 'apiBase' => 'test.php', 'randomId' => $this->id);
+		$_SESSION['api'][$this->id] = $data;
+		$_SESSION['api'][$this->id]['time'] = time();
+		$_GET['signedApi'] = base64_encode(hash_hmac('sha256', json_encode($data), $this->apiKey));
 		$_GET['action'] = 'list';
 		
 		// get object
@@ -138,8 +146,10 @@ class InternalApiTest extends PHPUnit_Framework_TestCase {
 	public function testHandleJtableActionListProviderAccountsettingscost() {
 		
 		// set $_GET values for JTable list action
-		$_SESSION['api'][$this->id] = array('apiClass' => 'JTable', 'apiBase' => 'test.php', 'time' => time());
-		$_GET['signedApi'] = base64_encode(hash_hmac('sha256', json_encode($_SESSION['api'][$this->id]), $this->apiKey));
+		$data = array('apiClass' => 'JTable', 'apiBase' => 'test.php', 'randomId' => $this->id);
+		$_SESSION['api'][$this->id] = $data;
+		$_SESSION['api'][$this->id]['time'] = time();
+		$_GET['signedApi'] = base64_encode(hash_hmac('sha256', json_encode($data), $this->apiKey));
 		$_GET['action'] = 'list';
 		$_GET['provider'] = 'AccountingSettingsCosts';
 		

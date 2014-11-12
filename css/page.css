@@ -798,6 +798,11 @@ span.presetForm {
 	white-space: nowrap;
 }
 
+form.jtable-dialog-form div.jtable-textarea-input textarea.usertableTextarea {
+	min-width: 400px;
+	min-height: 150px;
+}
+
 
 /*
  * override external library styles

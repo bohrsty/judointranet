@@ -153,9 +153,10 @@ class Jtable extends Object {
 		$data = array(
 				'apiClass' => 'JTable',
 				'apiBase' => $apiBase,
-				'time' => time(),
+				'randomId' => $randomId,
 			);
 		$_SESSION['api'][$randomId] = $data;
+		$_SESSION['api'][$randomId]['time'] = time();
 		$signedApi = base64_encode(hash_hmac('sha256', json_encode($data), $this->getGc()->get_config('global.apikey')));
 		
 		// prepare additional get values
@@ -187,13 +188,20 @@ class Jtable extends Object {
 	public function addField($field) {
 		
 		// add field to settings
-		$this->fields[$field->getName()] = $field->asArray();
+		$this->fields[$field->getName()] = $field->asJavaScriptConfig();
 		
 		// check validation
 		$this->setValidate($this->getValidate() || $field->getValidate());
 	}
+	
 	public function getFields() {
-		return '"fields":'.json_encode($this->fields);
+		
+		// prepare field string
+		$fieldString = '';
+		foreach($this->fields as $name => $field) {
+			$fieldString .= '"'.$name.'":'.$field.',';
+		}
+		return '"fields":{'.substr($fieldString, 0, -1).'}';
 	}
 }
 

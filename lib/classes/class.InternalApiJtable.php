@@ -70,12 +70,60 @@ class InternalApiJtable extends InternalApi {
 				return $this->actionUpdate();
 			break;
 			
+			case 'create':
+				return $this->actionCreate();
+			break;
+			
+			case 'delete':
+				return $this->actionDelete();
+			break;
+			
 			default:
 				return array(
 					'Result' => 'OK',
 					'Records' => array(),
 				);
 			break;	
+		}
+	}
+	
+	
+	/**
+	 * checkReturn($return) checks the value of $return and generates the according message
+	 * 
+	 * @param mixed $return return value of the action to be checked
+	 * @return mixed array containing the message in case of error, true if successful
+	 */
+	private function checkReturn($return) {
+		
+		// success
+		if($return === true) {
+			return true;
+		}
+		
+		// switch return values and generate messages
+		switch($return) {
+			
+			case JTABLE_NOT_AUTORIZED:
+				return array(
+						'Result' => 'ERROR',
+						'Message' => _l('not authorized to perform this action'),
+					);
+			break;
+			
+			case JTABLE_ROW_NOT_EXISTS:
+				return array(
+						'Result' => 'ERROR',
+						'Message' => _l('provided row not exists'),
+					);
+			break;
+			
+			default:
+				return array(
+						'Result' => 'ERROR',
+						'Message' => _l('unknown error'),
+					);
+			break;
 		}
 	}
 	
@@ -108,6 +156,86 @@ class InternalApiJtable extends InternalApi {
 			
 			case 'CalendarListall':
 				return $this->actionListCalendarListall();
+			break;
+			
+			case 'UsertableField':
+				return $this->actionListUsertableField();
+			break;
+			
+			default:
+				return array(
+					'Result' => 'ERROR',
+					'Message' => _l('API call failed [unknown provider]'),
+				);
+			break;
+		}
+	}
+	
+	
+	/**
+	 * actionUpdate() handles the update action for jTable, gets and returns its data
+	 * 
+	 * @return array data for jTable
+	 */
+	private function actionUpdate() {
+		
+		// switch $_GET['provider']
+		switch($this->get('provider')) {
+			
+			case 'AccountingSettingsCosts':
+				return $this->actionUpdateAccountSettingsCost();
+			break;
+			
+			case 'UsertableField':
+				return $this->actionUpdateUsertableField();
+			break;
+			
+			default:
+				return array(
+					'Result' => 'ERROR',
+					'Message' => _l('API call failed [unknown provider]'),
+				);
+			break;
+		}
+	}
+	
+	
+	/**
+	 * actionDelete() handles the delete action for jTable, gets and returns its data
+	 * 
+	 * @return array data for jTable
+	 */
+	private function actionDelete() {
+		
+		// switch $_GET['provider']
+		switch($this->get('provider')) {
+			
+			case 'UsertableField':
+				return $this->actionDeleteUsertableField();
+			break;
+			
+			default:
+				return array(
+					'Result' => 'ERROR',
+					'Message' => _l('API call failed [unknown provider]'),
+				);
+			break;
+		}
+	}
+	
+	
+	/**
+	 * actionCreate() handles the create action for jTable, gets and returns its data
+	 * 
+	 * @return array data for jTable
+	 */
+	private function actionCreate() {
+		
+		// switch $_GET['provider']
+		switch($this->get('provider')) {
+			
+			case 'UsertableField':
+				return $this->actionCreateUsertableField();
 			break;
 			
 			default:
@@ -147,30 +275,6 @@ class InternalApiJtable extends InternalApi {
 	
 	
 	/**
-	 * actionUpdate() handles the update action for jTable, gets and returns its data
-	 * 
-	 * @return array data for jTable
-	 */
-	private function actionUpdate() {
-		
-		// switch $_GET['provider']
-		switch($this->get('provider')) {
-			
-			case 'AccountingSettingsCosts':
-				return $this->actionUpdateAccountSettingsCost();
-			break;
-			
-			default:
-				return array(
-					'Result' => 'ERROR',
-					'Message' => _l('API call failed [unknown provider]'),
-				);
-			break;
-		}
-	}
-	
-	
-	/**
 	 * actionUpdateAccountSettingsCost() handles the update action for jTable, gets and returns the
 	 * data from AccountSettingsCostListing class
 	 * 
@@ -179,23 +283,21 @@ class InternalApiJtable extends InternalApi {
 	private function actionUpdateAccountSettingsCost() {
 		
 		// prepare postData
-		// check data
-		if($this->post('id') === false) {
-			return array(
-					'Result' => 'ERROR',
-					'Message' => _l('API call failed [missing post data]'),
-				);
-		}
-		if($this->post('value') === false) {
-			return array(
-					'Result' => 'ERROR',
-					'Message' => _l('API call failed [missing post data]'),
-				);
-		}
-		$postData = array(
-				'id' => $this->post('id'),
-				'value' => $this->post('value'),
+		$postData = array();
+		$postDataArray = array(
+				'id',
+				'value',
 			);
+		// check data
+		foreach($postDataArray as $field) {
+			if($this->post($field) === false) {
+				return array(
+						'Result' => 'ERROR',
+						'Message' => _l('API call failed [missing post data]'),
+					);
+			}
+			$postData[$field] = $this->post($field);
+		}
 		
 		// get object
 		$accountingSettingsCost = new AccountingSettingsCostsListing();
@@ -205,7 +307,7 @@ class InternalApiJtable extends InternalApi {
 		$postData = $accountingSettingsCost->singleRow($this->post('id'));
 		
 		// prepare return
-		$postData['name'] = parent::lang('costs '.$postData['name']);
+		$postData['name'] = _l('costs '.$postData['name']);
 		return array(
 				'Result' => 'OK',
 				'Records' => $postData,
@@ -313,6 +415,169 @@ class InternalApiJtable extends InternalApi {
 				'Result' => 'OK',
 				'Records' => $calendarListallListing->listingAsArray($getData),
 				'TotalRecordCount' => $calendarListallListing->totalRowCount(),
+			);
+	}
+	
+	
+	/**
+	 * actionListUsertableField() handles the list action for jTable, gets and returns the
+	 * data from UsertableFieldListing class
+	 * 
+	 * @return array data for jTable
+	 */
+	private function actionListUsertableField() {
+		
+		// prepare getData (jtStartIndex, jtPageSize)
+		$getData = array(
+				'limit' => ($this->get('jtStartIndex') !== false && $this->get('jtPageSize') !== false ? 'LIMIT '.$this->get('jtStartIndex').', '.$this->get('jtPageSize') : ''),
+				'orderBy' => ($this->get('jtSorting') !== false ? 'ORDER BY '.$this->get('jtSorting') : ''),
+			);
+		
+		// get object
+		$usertableFieldListing = new AdministrationUsertableFieldListing();
+		
+		// prepare return
+		return array(
+				'Result' => 'OK',
+				'Records' => $usertableFieldListing->listingAsArray($getData),
+				'TotalRecordCount' => $usertableFieldListing->totalRowCount(),
+			);
+	}
+	
+	
+	/**
+	 * actionUpdateUsertableField() handles the update action for jTable, gets and returns the
+	 * data from AdministrationUsertableFieldListing class
+	 * 
+	 * @return array data for jTable
+	 */
+	private function actionUpdateUsertableField() {
+		
+		// get table config
+		$tableConfig = $this->getTableConfig($this->get('table'));
+		// get column names as array
+		$postDataArray = array_merge(array('id'), explode(',', $tableConfig['cols']));
+		
+		// prepare postData
+		$postData = array();
+		// check data
+		foreach($postDataArray as $field) {
+			
+			// check valid
+			if($field == 'valid' && $this->post($field) === false) {
+				$postData[$field] = 'false';
+			} else {
+				
+				if($this->post($field) === false) {
+					return array(
+							'Result' => 'ERROR',
+							'Message' => _l('API call failed [missing post data]'),
+						);
+				}
+				$postData[$field] = $this->post($field);
+			}
+		}
+		
+		// get object
+		$usertableField = new AdministrationUsertableFieldListing();
+		// add row
+		$returnValue = $usertableField->updateRow($postData);
+		// get result
+		$postData = $usertableField->singleRow($this->post('id'));
+		
+		// return
+		$return = $this->checkReturn($returnValue);
+		if($return !== true) {
+			return $return;
+		}
+		return array(
+				'Result' => 'OK',
+				'Records' => $postData,
+			);
+	}
+	
+	
+	/**
+	 * actionDeleteUsertableField() handles the delete action for jTable, gets and returns the
+	 * data from AdministrationUsertableFieldListing class
+	 * 
+	 * @return array data for jTable
+	 */
+	private function actionDeleteUsertableField() {
+		
+		// check if id given
+		if($this->post('id') === false) {
+			return array(
+					'Result' => 'ERROR',
+					'Message' => _l('API call failed [missing post data]'),
+				);
+		}
+		
+		// get object
+		$usertableField = new AdministrationUsertableFieldListing();
+		// add row
+		$returnValue = $usertableField->deleteRow($this->post('id'));
+		$return = $this->checkReturn($returnValue);
+		// return
+		if($return !== true) {
+			return $return;
+		}
+		return array(
+				'Result' => 'OK',
+			);
+	}
+	
+	
+	/**
+	 * actionCreateUsertableField() handles the create action for jTable, gets and returns the
+	 * data from AdministrationUsertableFieldListing class
+	 * 
+	 * @return array data for jTable
+	 */
+	private function actionCreateUsertableField() {
+		
+		// get table config
+		$tableConfig = $this->getTableConfig($this->get('table'));
+		// get column names as array
+		$postDataArray = explode(',', $tableConfig['cols']);
+		
+		// prepare postData
+		$postData = array();
+		// check data
+		foreach($postDataArray as $field) {
+			
+			// check valid
+			if($field == 'valid') {
+				$postData[$field] = 'true';
+			} else {
+				
+				if($this->post($field) === false) {
+					return array(
+							'Result' => 'ERROR',
+							'Message' => _l('API call failed [missing post data]'),
+						);
+				}
+				$postData[$field] = $this->post($field);
+			}
+		}
+		
+		// get object
+		$usertableField = new AdministrationUsertableFieldListing();
+		// add row
+		$returnValue = $usertableField->createRow($postData);
+		if($returnValue['return'] === true) {
+			// get result
+			$postData = $usertableField->singleRow($returnValue['newId']);
+		}
+		
+		// return
+		$return = $this->checkReturn($returnValue['return']);
+		if($return !== true) {
+			return $return;
+		}
+		return array(
+				'Result' => 'OK',
+				'Record' => $postData,
 			);
 	}
 }

@@ -20,31 +20,15 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-<span class="presetForm Zebra_Form">
-	<select id="select_{$id}" class="control validate[required]">
-		<option value="">{lang}- choose -{/lang}</option>{foreach $options as $key => $value}<option value="{$key}">{$value}</option>{/foreach}
-	</select>
-	<input id="input_{$id}" class="submit" type="submit" value="{lang}+{/lang}"></input>
-	<script type="text/javascript">
-		$("#input_{$id}").click(function() {ldelim}
-			var value = $("#select_{$id}").val();
-			if(value == "") {ldelim}
-				$("#select_{$id}").validationEngine("showPrompt", "{lang}* Please select an option{/lang}", "error", "topLeft", true);
-			{rdelim} else {ldelim}
-				$.ajax({ldelim}
-					url: "{$url}",
-					data: {ldelim}cid: "{$id}", pid: value{rdelim},
-					cache: false
-				{rdelim})
-				.done(function(data) {ldelim}
-					var response = $.parseJSON(data);
-					if(response.result == "OK") {ldelim}
-						$("div.jTable").jtable("reload");
-					{rdelim} else {ldelim}
-						$("#select_{$id}").validationEngine("showPrompt", response.message, "error", "topLeft", true);
-					{rdelim}
-				{rdelim});
-			{rdelim}
-		{rdelim});
-	</script>
-</span>
+<div id="tabs">
+	<ul>
+{for $i=0 to (count($data)-1)}
+		<li><a href="#tab-{$i}" title="{$data.$i.tab}">{$data.$i.tab}</a></li>
+{/for}
+	</ul>
+{for $i=0 to (count($data)-1)}
+	<div id="tab-{$i}">
+		{$data.$i.content}
+	</div>
+{/for}
+</div>

@@ -508,6 +508,61 @@ class Object {
 		
 		return base_convert(mt_rand(10000000, 99999999), 10, 36);
 	}
+	
+	
+	/**
+	 * getTableConfig($table) retrieves any configuration settings for $table and returns it
+	 * as array
+	 * 
+	 * @param string $table name of the table
+	 * @return array array of arrays containing the configuration settings
+	 */
+	protected function getTableConfig($table) {
+		
+		// get config from db
+		$tableConfigJson = $this->getGc()->get_config('usertableConfig.'.$table);
+		
+		// get array from json if exists
+		$tableConfigArray = array();
+		if($tableConfigJson !== false) {
+			$tableConfigArray = json_decode($tableConfigJson, true);
+		} else {
+			return false;
+		}
+		
+		// prepare return array, add cols and orderBy
+		$tableConfig['cols'] = $tableConfigArray['cols'];
+		$tableConfig['orderBy'] = $tableConfigArray['orderBy'];
+		$tableConfig['fieldType'] = $tableConfigArray['fieldType'];
+		
+		// walk through foreign keys
+		$foreignKeys = array();
+		if(count($tableConfigArray['fk']) > 0) {
+			foreach($tableConfigArray['fk'] as $fk => $sql) {
+				
+				// get sql result for fk
+				$fkArray = Db::arrayValue($sql, MYSQL_ASSOC);
+				
+				if(!is_array($fkArray)) {
+					$n = null;
+					throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+				}
+				
+				// put in array for select option
+				$fkStart = array('' => _l('- choose -'));
+				foreach($fkArray as $values) {
+					
+					$foreignKeys[$fk][$values['id']] = $values['readable_name'];
+				}
+				$foreignKeys[$fk] = $fkStart + $foreignKeys[$fk];
+			}
+		}
+		
+		// add foreign keys and return config
+		$tableConfig['fk'] = $foreignKeys;
+
+		return $tableConfig;
+	}
 }
 
 

@@ -111,6 +111,10 @@ define('DB_WRITE_UPDATE', 2);
 // exception handling
 define('HANDLE_EXCEPTION_VIEW', 1);
 define('HANDLE_EXCEPTION_JSON', 2);
+// jtable check return
+define('JTABLE_NOT_AUTHORIZED', 1);
+define('JTABLE_ROW_NOT_EXISTS', 2);
+
 
 
 

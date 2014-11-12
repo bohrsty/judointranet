@@ -36,6 +36,7 @@ class JtableField extends Object {
 	 */
 	private $name;
 	private $settings;
+	private $quote;
 	private $validate;
 	
 	/*
@@ -88,6 +89,44 @@ class JtableField extends Object {
 	public function asArray() {
 		return $this->settings;
 	}
+	/**
+	 * asJavaScriptConfig() returns the object as java script config string
+	 * 
+	 * @return string jTable as java script config
+	 */
+	public function asJavaScriptConfig() {
+		
+		// generate "java script"
+		$jScript = '{';
+		
+		// prepare JSON value check
+		$servicesJson = new Services_JSON();
+		
+		// walk through settings
+		foreach($this->settings as $setting => $nameValue) {
+			
+			// check $setting value and name for valid JSON characters
+			$name = $servicesJson->encode($setting);
+			$value = $servicesJson->encode($nameValue);
+			
+			// check quoting
+			if(isset($this->quote[$setting]) && $this->quote[$setting] === false) {
+				$jScript .= $name.':'.(gettype($this->settings[$setting]) == 'string' ? substr($value, 1, -1) : $value);
+			} else {
+				$jScript .= $name.':'.$value;
+			}
+			
+			// add ','
+			$jScript .= ',';
+		}
+		
+		// close }
+		$jScript = substr($jScript, 0, -1);
+		$jScript .= '}';
+		
+		// return
+		return $jScript;
+	}
 	
 	
 	// set title of table
@@ -114,12 +153,29 @@ class JtableField extends Object {
 	}
 	
 	// set type and options
-	public function setType($value = 'text') {
+	public function setType($value = 'text', $options = array(), $optionsSorting = null) {
+		
+		// check type
+		if($value == 'combobox') {
+			$this->setOptions($options, $optionsSorting);
+		}
+		if($value == 'checkbox'){
+			$this->setValues($options, $optionsSorting);
+		}
 		$this->settings['type'] = $value;
 	}
 	
-	public function setOptions($value = array()) {
-		$this->settings['options'] = $value;
+	public function setOptions($value = array(), $optionsSorting = null) {
+		foreach($value as $k => $v) {
+			$this->settings['options'][] = array('Value' => $k, 'DisplayText' => $v);
+		}
+		if(!is_null($optionsSorting)) {
+			$this->settings['optionsSorting'] = $optionsSorting;
+		}
+	}
+	
+	public function setValues($value = array()) {
+		$this->settings['values'] = $value;
 	}
 	
 	public function setSorting($value = true) {
@@ -130,6 +186,11 @@ class JtableField extends Object {
 		$this->settings['width'] = $value;
 	}
 	
+	public function setDisplay($value = 'function(data){}', $quote = false) {
+		$this->settings['display'] = $value;
+		$this->quote['display'] = $quote;
+	}
+	
 	// set validation rules
 	public function validateAgainst($rules) {
 		
@@ -137,10 +198,20 @@ class JtableField extends Object {
 		if($rules != '') {
 			
 			// add rules to addClass
-			$this->settings['inputClass'] = 'validate['.$rules.']';
+			$this->addInputClass('validate['.$rules.']');
 			
 			// set validate
 			$this->setValidate(true);
+		}
+	}
+	
+	public function addInputClass($value) {
+		
+		// check if already set
+		if(isset($this->settings['inputClass']) && $this->settings['inputClass'] != '') {
+			$this->settings['inputClass'] .= ' '.$value;
+		} else {
+			$this->settings['inputClass'] = $value;
 		}
 	}
 }

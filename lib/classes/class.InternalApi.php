@@ -61,15 +61,21 @@ class InternalApi extends Object {
 		$randomId = $this->get('id');
 		
 		// get $_SESSION data
-		$api = (isset($_SESSION['api'][$randomId]) ? $_SESSION['api'][$randomId] : array('apiClass' => '', 'apiBase' => '', 'time' => 0));
-		
+		$api = array(
+				'apiClass' => (isset($_SESSION['api'][$randomId]['apiClass']) ? $_SESSION['api'][$randomId]['apiClass'] : ''),
+				'apiBase' => (isset($_SESSION['api'][$randomId]['apiBase']) ? $_SESSION['api'][$randomId]['apiBase'] : ''),
+				'randomId' => (isset($_SESSION['api'][$randomId]['randomId']) ? $_SESSION['api'][$randomId]['randomId'] : ''),
+			);
 		// check signature
 		$signedError = false;
 		$timeoutError = false;
 		if($this->checkApiSignature($randomId) === false) {
 			$signedError = true;
-		} elseif($api['time'] + $this->getGc()->get_config('internalApi.timeout') < time()) {
+		} elseif($_SESSION['api'][$randomId]['time'] + $this->getGc()->get_config('internalApi.timeout') < time()) {
 			$timeoutError = true;
+		} else {
+			// reset timeout
+			$_SESSION['api'][$randomId]['time'] = time();
 		}
 			
 		// switch by 'apiClass'
@@ -117,7 +123,11 @@ class InternalApi extends Object {
 	private final function checkApiSignature($randomId) {
 		
 		// get $_GET data and decode
-		$api = (isset($_SESSION['api'][$randomId]) ? $_SESSION['api'][$randomId] : array('apiClass' => '', 'apiBase' => '', 'time' => 0));
+		$api = array(
+				'apiClass' => (isset($_SESSION['api'][$randomId]['apiClass']) ? $_SESSION['api'][$randomId]['apiClass'] : ''),
+				'apiBase' => (isset($_SESSION['api'][$randomId]['apiBase']) ? $_SESSION['api'][$randomId]['apiBase'] : ''),
+				'randomId' => (isset($_SESSION['api'][$randomId]['randomId']) ? $_SESSION['api'][$randomId]['randomId'] : ''),
+			);
 		$signedApi = $this->get('signedApi');
 		// get api key
 		$apiKey = $this->getGc()->get_config('global.apikey');

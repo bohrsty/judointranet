@@ -44,13 +44,7 @@ class AdministrationView extends PageView {
 	public function __construct() {
 		
 		// setup parent
-		try {
-			parent::__construct();
-		} catch(Exception $e) {
-			
-			// handle error
-			$this->getError()->handle_error($e);
-		}
+		parent::__construct();
 	}
 	
 	/*
@@ -64,7 +58,7 @@ class AdministrationView extends PageView {
 	public function init() {
 		
 		// set pagename
-		$this->getTpl()->assign('pagename',parent::lang('administration'));
+		$this->getTpl()->assign('pagename', _l('administration'));
 		
 		// init helpmessages
 		$this->initHelp();
@@ -80,17 +74,21 @@ class AdministrationView extends PageView {
 					
 					case 'field':
 						
+						// set caption
+						$this->getTpl()->assign('caption', _l('manage user tables'));
+						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('administration: manage user tables')));
+						$this->getTpl()->assign('title', $this->title(_l('administration: manage user tables')));
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', true);
-						$this->getTpl()->assign('main', $this->field());
+						$fieldAdmin = new AdministrationViewField();
+						$this->getTpl()->assign('main', $fieldAdmin->show());
 					break;
 					
 					case 'defaults':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('administration: manage defaults')));
+						$this->getTpl()->assign('title', $this->title(_l('administration: manage defaults')));
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', true);
 						$this->getTpl()->assign('main', $this->defaults());
@@ -99,7 +97,7 @@ class AdministrationView extends PageView {
 					case 'user':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('administration: manage users and permissions')));
+						$this->getTpl()->assign('title', $this->title(_l('administration: manage users and permissions')));
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', true);
 						$this->getTpl()->assign('main', $this->useradmin());
@@ -108,7 +106,7 @@ class AdministrationView extends PageView {
 					case 'club':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('administration: manage clubs')));
+						$this->getTpl()->assign('title', $this->title(_l('administration: manage clubs')));
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', true);
 						$this->getTpl()->assign('main', $this->clubadmin());
@@ -136,7 +134,7 @@ class AdministrationView extends PageView {
 			
 			// id not set
 			// smarty-title
-			$this->getTpl()->assign('title', $this->title(parent::lang('administration'))); 
+			$this->getTpl()->assign('title', $this->title(_l('administration'))); 
 			// smarty-main
 			$this->getTpl()->assign('main', $this->defaultContent());
 			// smarty-jquery
@@ -156,135 +154,11 @@ class AdministrationView extends PageView {
 	
 	
 	/**
-	 * field handles the administration of fields (i.e. user-defined dbs)
-	 * 
-	 * @return string html-string with the field-administration-page
-	 */
-	private function field() {
-		
-		// prepare content
-		$content = '';
-		
-		// check $_GET['field']
-		if($this->get('field') !== false) {
-			
-			// translate table name
-			if(parent::lang('<b>'.$this->get('field').'</b>') != '<b>'.$this->get('field').'</b>') {
-				$translatedField = parent::lang('<b>'.$this->get('field').'</b>');
-			} else {
-				$translatedField = $this->get('field');
-			}
-			
-			// set caption
-			$this->getTpl()->assign('caption', parent::lang('manage table').$translatedField.' ("'.$this->get('field').'")');
-			
-			// check if 'field' exists
-			if($this->checkUsertable($this->get('field')) !== false) {
-				
-				$content .= $this->manageTable();
-			} else {
-				$errno = $this->getError()->error_raised('UsertableNotExists',$this->get('field'));
-				$this->getError()->handle_error($errno);
-				return $this->getError()->to_html($errno);
-			}
-		} else {
-			
-			// set caption
-			$this->getTpl()->assign('caption', parent::lang('manage user tables'));
-		}
-		
-		// smarty
-		$this->getTpl()->assign('tablelinks', $this->createTableLinks());
-		
-		// return
-		return $content;
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * createTableLinks() creates the links to choose the table to manage
-	 * 
-	 * @return string html-string with the table-links
-	 */
-	private function createTableLinks() {
-		
-		// smarty-templates
-		$sTl = new JudoIntranetSmarty();
-		
-		// prepare return
-		$return = '';
-		
-		// get usertables
-		$usertables = $this->getUsertables();
-		
-		// create links
-		$a_out = '';
-		// smarty
-		$sTl->assign('class', 'class="usertable"');
-		foreach($usertables as $table) {
-			
-			// check table
-			if($this->get('field') === false || $this->get('field') != $table) {
-			
-				// translate table name
-				if(parent::lang('<b>'.$table.'</b>') != '<b>'.$table.'</b>') {
-					$translatedTable = parent::lang('<b>'.$table.'</b>');
-				} else {
-					$translatedTable = '<b>'.$table.'</b>';
-				}
-				// smarty
-				$data[] = array(
-						'params' => 'class="usertable"',
-						'href' => 'administration.php?id='.$this->get('id').'&field='.$table,
-						'title' => $translatedTable.' '.parent::lang('manage'),
-						'content' => $translatedTable.' '.parent::lang('manage')
-					);
-			}
-		}
-		
-		$sTl->assign('data', $data);
-		
-		// add slider-link
-		// smarty
-		$link = array(
-				'title' => parent::lang('toggle table selection'),
-				'content' => parent::lang('toggle table selection'),
-				'params' => 'id="toggleTable"',
-				'help' => $this->helpButton(HELP_MSG_ADMINUSERTABLESELECT),
-			);
-		$sTl->assign('link', $link);
-		
-		// add jquery
-		$sToggleSlide = new JudoIntranetSmarty();
-		$sToggleSlide->assign('id', '#toggleTable');
-		$sToggleSlide->assign('toToggle', '#tablelinks');
-		$sToggleSlide->assign('time', '');
-		$this->add_jquery($sToggleSlide->fetch('smarty.js-toggleSlide.tpl'));
-		
-		// return
-		return $sTl->fetch('smarty.admin.table_links.tpl');
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
 	 * getUsertables() returns an array containing all usertables
 	 * 
 	 * @return array array containing all user-editable tables
 	 */
-	private function getUsertables() {
-		
-		// get db-object
-		$db = Db::newDb();
+	protected function getUsertables() {
 		
 		// get all fields to administer
 		// get systemtables
@@ -293,51 +167,25 @@ class AdministrationView extends PageView {
 		// get user tables
 		$usertables = array();
 		
-		// prepare statement
-		$sql = 'SHOW TABLES';
+		// get tables from database
+		$result = Db::ArrayValue('
+			SHOW TABLES
+		',
+		MYSQL_NUM);
+		if($result === false) {
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		}
 		
-		// execute query
-		$result = $db->query($sql);
-		
-		// check result
-		if($result) {
-			while(list($table) = $result->fetch_array(MYSQL_NUM)) {
-				// check systemtable
-				if(!in_array($table,$systemtables)) {
-					$usertables[] = $table;
-				}
+		// get tables that are not system tables
+		foreach($result as $table) {
+			if(!in_array($table[0],$systemtables)) {
+				$usertables[] = $table[0];
 			}
-		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
-			$this->getError()->handle_error($errno);
 		}
 		
 		// return
 		return $usertables;
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * checkUsertable() checks if the given tablename exists in db
-	 * 
-	 * @return boolean true if given table exists, false otherwise
-	 */
-	private function checkUsertable($table) {
-		
-		// get tables
-		$usertables = $this->getUsertables();
-		
-		// check if $table in $usertable
-		if(in_array($table,$usertables,true)) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 	
 	
@@ -1510,7 +1358,7 @@ class AdministrationView extends PageView {
 		$data = array(
 				0 => array(
 						'tab' => parent::lang('user management'),
-						'caption' => parent::lang('user managenemt'),
+						'caption' => parent::lang('user management'),
 						'content' => $this->userContent($sUserAdmin),
 						'action' => 'user',
 					),
@@ -2784,57 +2632,6 @@ class AdministrationView extends PageView {
 		
 		// return
 		return $this->manageTable();
-	}
-	
-	
-	/**
-	 * getTableConfig($table) retrieves any configuration settings for $table and returns it
-	 * as array
-	 * 
-	 * @param string $table name of the table
-	 * @return array array of arrays containing the configuration settings
-	 */
-	private function getTableConfig($table) {
-		
-		// get config from db
-		$tableConfigJson = $this->getGc()->get_config('usertableConfig.'.$table);
-		
-		// get array from json if exists
-		$tableConfigArray = array();
-		if($tableConfigJson !== false) {
-			$tableConfigArray = json_decode($tableConfigJson, true);
-		} else {
-			return false;
-		}
-		
-		// prepare return array, add cols and orderBy
-		$tableConfig['cols'] = $tableConfigArray['cols'];
-		$tableConfig['orderBy'] = $tableConfigArray['orderBy'];
-		
-		// walk through foreign keys
-		$foreignKeys = array();
-		if(count($tableConfigArray['fk']) > 0) {
-			foreach($tableConfigArray['fk'] as $fk => $sql) {
-				
-				// get sql result for fk
-				$fkArray = Db::arrayValue($sql, MYSQL_ASSOC);
-				
-				if(!is_array($fkArray)) {
-					$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-					$this->getError()->handle_error($errno);
-				}
-				
-				// put in array for select option
-				foreach($fkArray as $values) {
-					
-					$foreignKeys[$fk][$values['id']] = $values['readable_name'];
-				}
-			}
-		}
-		
-		// add foreign keys and return config
-		$tableConfig['fk'] = $foreignKeys;
-		return $tableConfig;
 	}
 }
 
