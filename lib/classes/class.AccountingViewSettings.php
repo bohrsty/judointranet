@@ -60,7 +60,7 @@ class AccountingViewSettings extends AccountingView {
 	public function show() {
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption', parent::lang('settings', true).'&nbsp;'.$this->helpButton(HELP_MSG_ACCOUNTINGDASHBOARD));
+		$this->getTpl()->assign('pagecaption', parent::lang('settings', true));
 		
 		// add dashs
 		$dashs[] = $this->getCostsDash();
@@ -127,7 +127,7 @@ class AccountingViewSettings extends AccountingView {
 		
 		// return
 		return array(
-				'head' => parent::lang('Costs'),
+				'head' => parent::lang('Costs').'&nbsp;'.$this->helpButton(HELP_MSG_ACCOUNTINGSETTINGSCOSTS),
 				'content' => '<div id="'.$containerId.'" class="jTable"></div>',
 			);
 	}

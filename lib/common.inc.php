@@ -36,7 +36,7 @@ session_name('JudoIntranet');
 /*
  * define code version
  */
-define('CONF_GLOBAL_VERSION', '018');
+define('CONF_GLOBAL_VERSION', '019');
 
 /*
  * determine app path
@@ -103,8 +103,14 @@ define('HELP_MSG_PROTOCOLDIFF', 34);
 define('HELP_MSG_PROTOCOLDIFFLIST', 35);
 define('HELP_MSG_RESULTIMPORTER', 36);
 define('HELP_MSG_RESULTDESC', 37);
-define('HELP_MSG_ACCOUNTINGDASHBOARD', 38);
+define('HELP_MSG_ACCOUNTINGRESULTS', 38);
 define('HELP_MSG_FIELDCITY', 39);
+define('HELP_MSG_ADMINNEWYEAR', 40);
+define('HELP_MSG_RESULTLISTALL', 41);
+define('HELP_MSG_RESULTLIST', 42);
+define('HELP_MSG_ACCOUNTINGSETTINGSCOSTS', 43);
+define('HELP_MSG_RESULTLISTADMIN', 44);
+define('HELP_MSG_ISTEAM', 45);
 // write to db
 define('DB_WRITE_NEW', 1);
 define('DB_WRITE_UPDATE', 2);
@@ -145,6 +151,13 @@ spl_autoload_register(
 		// load Zebra_Form
 		} elseif($class == 'Zebra_Form') {
 			include_once(JIPATH.'/lib/zebra_form/Zebra_Form.php');
+		// load PHPExcel
+		} elseif(substr($class,0,8) == 'PHPExcel') {
+			// get path parts
+			$pathParts = explode('_', $class);
+			// get path
+			$path = implode('/', $pathParts);
+			include_once(JIPATH.'/lib/PHPExcel/Classes/'.$path.'.php');
 		// load classes
 		} else {
 			include_once(JIPATH.'/lib/classes/class.'.$class.'.php');
@@ -278,6 +291,7 @@ function handleExceptions($e, $outputType) {
 		case 'SmartyException':
 		case 'SmartyCompilerException':
 		case 'HTML2PDF_exception':
+		case 'PHPExcel_Reader_Exception':
 			
 			// check $outputType
 			if($outputType == HANDLE_EXCEPTION_JSON) {
@@ -298,12 +312,13 @@ function handleExceptions($e, $outputType) {
 
 
 /**
- * _($string) translates $string in the user choosen language
+ * _l($string) translates $string in the user choosen language
  * 
  * @param string $string string to translate
+ * @param array $replacements associative array where #?$key in $string will be replaced by $value
  * @return string translation of $string
  */
-function _l($string) {
+function _l($string, $replacements = array()) {
 	
 	// check user
 	$lang = 'de_DE';
@@ -319,11 +334,20 @@ function _l($string) {
 	}
 	
 	// check if is translated
-	if(!isset($lang[$string])) {
-		return htmlentities($string, ENT_QUOTES, 'UTF-8');
-	} else {
-		return $lang[$string];
+	$translation = htmlentities($string, ENT_QUOTES, 'UTF-8');
+	if(isset($lang[$string])) {
+		$translation = $lang[$string];
 	}
+	
+	// replace
+	if(count($replacements) > 0) {
+		foreach($replacements as $key => $value) {
+			$translation = str_replace('#?'.$key, $value, $translation);
+		}
+	}
+	
+	// return
+	return $translation;
 }
 
 ?>

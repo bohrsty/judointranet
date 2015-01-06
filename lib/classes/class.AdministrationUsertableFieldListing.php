@@ -181,7 +181,9 @@ class AdministrationUsertableFieldListing extends Listing implements ListingInte
 	public function updateRow($postData) {
 		
 		// check permissions
-		if($this->getUser()->hasPermission('navi', 35, 'w') === false) {
+		if(($this->get('table') == 'file_type' && !$this->getUser()->isAdmin())
+		|| ($this->get('table') == 'club' && $this->getUser()->isMemberOf(2) === false)
+		|| ($this->getUser()->hasPermission('navi', 35, 'w') === false)) {
 			return JTABLE_NOT_AUTHORIZED;
 		}
 		// check if row exists
@@ -279,7 +281,9 @@ class AdministrationUsertableFieldListing extends Listing implements ListingInte
 	public function deleteRow($id) {
 		
 		// check permissions
-		if($this->getUser()->hasPermission('navi', 35, 'w') === false) {
+		if(($this->get('table') == 'file_type' && !$this->getUser()->isAdmin())
+		|| ($this->get('table') == 'club' && $this->getUser()->isMemberOf(2) === false)
+		|| ($this->getUser()->hasPermission('navi', 35, 'w') === false)) {
 			return JTABLE_NOT_AUTHORIZED;
 		}
 		// check if row exists
@@ -313,7 +317,9 @@ class AdministrationUsertableFieldListing extends Listing implements ListingInte
 	public function createRow($postData) {
 		
 		// check permissions
-		if($this->getUser()->hasPermission('navi', 35, 'w') === false) {
+		if(($this->get('table') == 'file_type' && !$this->getUser()->isAdmin())
+		|| ($this->get('table') == 'club' && $this->getUser()->isMemberOf(2) === false)
+		|| ($this->getUser()->hasPermission('navi', 35, 'w') === false)) {
 			return array(
 				'return' => JTABLE_NOT_AUTHORIZED,
 				'newId' => null,

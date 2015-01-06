@@ -103,6 +103,21 @@ function elementsOneRow(firstSelector, secondSelector, dummySelector, display) {
 }
 
 
+/**
+ * attachFileDialog(id, value) attaches dialog functionality to zebra_form row elements
+ * by using the labels
+ * 
+ * @param int id the id of the actual $.each() element
+ * @param string value the value of the actual $.each() element
+ */
+function attachFileDialog(id, value) {
+	
+	// get parent
+	var element = $('#'+value).parent();
+	element.hide();
+}
+
+
 
 
 /***********************************************************************

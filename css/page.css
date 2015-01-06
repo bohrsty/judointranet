@@ -266,6 +266,7 @@ div.protocol-page-line {
 	height: 297mm;
 }
 
+.link,
 #toggleTable {
 	text-decoration: underline;
 	font-size: 90%;
@@ -425,9 +426,9 @@ div.navi_1_a a {
 }
 
 #accordion div.navi_1_a {
-	border-left: 1px solid #0a7db1;
-	border-top: 1px solid #0a7db1;
-	border-bottom: 1px solid #0a7db1;
+	border-left: 1px solid #a6c9e2;
+	border-top: 1px solid #a6c9e2;
+	border-bottom: 1px solid #a6c9e2;
 	border-right: 0;
 	border-top-left-radius: 3px;
 	border-bottom-left-radius: 3px;
@@ -460,7 +461,6 @@ div.navi_1_a a {
 }
 
 #accordion div.navi_1_a a {
-	color: #0a7db1;
 	text-decoration: none;
 	font-weight: bold;
 }
@@ -637,7 +637,7 @@ div.resetFilter {
 	font-weight: bold;
 }
 
-div.setupMessage {
+div.jiMessage {
 	font-family: sans-serif;
 	margin: auto;
 	width: 700px;
@@ -803,6 +803,34 @@ form.jtable-dialog-form div.jtable-textarea-input textarea.usertableTextarea {
 	min-height: 150px;
 }
 
+p.helpId {
+	font-size: 65%;
+}
+
+.ui-dialog .row .cell {
+    float: left;
+    margin-right: 5px;
+}
+
+.ui-dialog .row div.clear {
+    clear: both;
+}
+
+.ui-dialog .row label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.ui-dialog .row .cell label {
+    display: block;
+    font-weight: normal;
+    margin-bottom: 0px;
+}
+
+
+
+
 
 /*
  * override external library styles
@@ -902,6 +930,10 @@ img.Zebra_Form_Input_Prefix {
 .Zebra_Form table.content td {
 	padding: 5px;
 	vertical-align: middle;
+}
+
+.Zebra_Form label.disabled {
+	color: #ababab;
 }
 
 

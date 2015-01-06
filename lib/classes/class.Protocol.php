@@ -131,11 +131,19 @@ class Protocol extends Page {
 			$this->member = explode("|",$member);
 		}
 	}
-	public function get_owner(){
-		return $this->owner;
+	public function get_owner($info = 'id'){
+		
+		// check info
+		if($info == 'username') {
+			return $this->owner->get_userinfo('username');
+		} elseif($info == 'name') {
+			return $this->owner->get_userinfo('name');
+		}
+		return $this->owner->get_id();
 	}
 	public function set_owner($owner) {
-		$this->owner = $owner;
+		$this->owner = new User(false);
+		$this->owner->change_user($owner, false, 'id');
 	}
 	public function get_correctable($string=true){
 		
@@ -232,7 +240,7 @@ class Protocol extends Page {
 		$db = Db::newDb();
 		
 		// prepare sql-statement
-		$sql = "SELECT p.date,p.type,pt.name,p.location,p.member,p.protocol,p.preset_id,p.valid,u.name,p.correctable,p.recorder,p.last_modified
+		$sql = "SELECT p.date,p.type,pt.name,p.location,p.member,p.protocol,p.preset_id,p.valid,u.id,p.correctable,p.recorder,p.last_modified
 				FROM protocol AS p,protocol_types AS pt,user AS u
 				WHERE p.id = $id
 				AND p.type=pt.id
@@ -295,11 +303,7 @@ class Protocol extends Page {
 		} else {
 			$data['type'] = parent::lang('<span>kind:</span><br />').$this->get_type();
 		}
-		if(is_numeric($this->get_owner())) {
-			$data['owner'] = parent::lang('<span>owner:</span><br />').DB::returnValueById($this->get_owner(),'user','name');
-		} else {
-			$data['owner'] = parent::lang('<span>owner:</span><br />').$this->get_owner();
-		}
+		$data['owner'] = parent::lang('<span>owner:</span><br />').$this->get_owner('name');
 		
 		// return
 		return $data;
@@ -405,6 +409,7 @@ class Protocol extends Page {
 						preset_id=".$db->real_escape_string($this->get_preset()->get_id()).",
 						valid=".$db->real_escape_string($this->get_valid()).",
 						member='".$db->real_escape_string($this->get_member(true,"|"))."',
+						owner='".$db->real_escape_string($this->get_owner())."',
 						correctable='".$db->real_escape_string($this->get_correctable())."',
 						recorder='".$db->real_escape_string($this->get_recorder())."'
 					WHERE id = ".$db->real_escape_string($this->get_id());
@@ -627,7 +632,7 @@ class Protocol extends Page {
 		
 		// add additional permissions check
 		$return['permissions'] = array(
-				'result' => ($this->get_correctable(false)['status'] == 2 || $this->getUser()->get_userinfo('name') == $this->get_owner()),
+				'result' => ($this->get_correctable(false)['status'] == 2 || $this->getUser()->get_id() == $this->get_owner()),
 			);
 		
 		// return

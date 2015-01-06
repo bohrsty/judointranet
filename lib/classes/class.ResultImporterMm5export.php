@@ -34,11 +34,17 @@ class ResultImporterMm5export extends ResultImporter implements ResultImporterIn
 	/*
 	 * class-variables
 	 */
+	const filetypes = 'txt';
 	
 	
 	/*
 	 * getter/setter
 	 */
+	public function setFileContent($fileContent){
+		
+		// set file content
+		parent::setFileContent(file($fileContent, FILE_IGNORE_NEW_LINES));
+	}
 	
 	
 	/*
@@ -48,6 +54,9 @@ class ResultImporterMm5export extends ResultImporter implements ResultImporterIn
 		
 		// parent constructor
 		parent::__construct();
+		
+		// set team or single
+		$this->setIsTeam(false);
 		
 	}
 	
@@ -218,5 +227,17 @@ class ResultImporterMm5export extends ResultImporter implements ResultImporterIn
 		
 		// return data
 		return $this->getResultStore();
+	}
+	
+	
+	/**
+	 * returnFiletypes() returns the value of const filetypes
+	 * 
+	 * @return string allowed filetypes of this module
+	 */
+	public static function returnFiletypes() {
+		
+		// return data
+		return self::filetypes;
 	}
 }

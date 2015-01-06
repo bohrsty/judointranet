@@ -226,7 +226,7 @@ function message($data) {
 	$sInfo->assign('messageActions', (isset($data['actions']) ? $data['actions'] : array()));
 	
 	// return
-	return $sInfo->fetch('smarty.setup.message.tpl');
+	return $sInfo->fetch('smarty.message.tpl');
 }
 
 

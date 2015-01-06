@@ -249,6 +249,15 @@ class CalendarListing extends Listing implements ListingInterface {
 									'alt' => _l('deletes announcement'),
 								),
 						);
+					// refresh pdf
+					$annAdminArray[] = array(
+							'href' => 'announcement.php?id=refreshpdf&cid='.$row['id'],
+							'title' => _l('refresh announcement pdf file'),
+							'name' => array(
+									'src' => 'img/refresh_pdf.png',
+									'alt' => _l('refresh announcement pdf file'),
+								),
+						);
 					// add result if date <= today
 					if(strtotime($row['date']) <= strtotime('today')) {
 						$annAdminArray[] = array(

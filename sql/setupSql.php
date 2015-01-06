@@ -2475,4 +2475,377 @@ function mysql_18() {
 	return $return;
 }
 
+
+function mysql_19() {
+	
+	// prepare return
+	$return = array(
+			'returnValue' => true,
+			'returnMessage' => '',
+		);
+	
+	/*
+	 * move config usertableConfig.* to tableConfig.*
+	 */
+	// check if usertableConfig or tableConfig
+	$tableNum = Db::singleValue('
+		SELECT COUNT(*)
+		FROM `config`
+		WHERE `name` LIKE \'usertableConfig.%\'
+	');
+	if($tableNum === false) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	if($tableNum > 0) {
+		
+		// get table config entries
+		$configs = Db::arrayValue('
+			SELECT `name`
+			FROM `config`
+			WHERE `name` LIKE \'usertableConfig.%\'
+		',
+		MYSQL_NUM);
+		if(!$configs) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+		// walk through config and rename
+		foreach($configs as $row) {
+			
+			// get table
+			list($name, $table) = explode('.', $row[0]);
+			if(!Db::executeQuery('
+				UPDATE `config`
+				SET `name` = \'tableConfig.#?\'
+				WHERE `name` = \'#?\'
+			',
+			array(
+					$table,
+					$row[0],
+				))) {
+				$return['returnValue'] = false;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+				return $return;
+			}
+			
+			// add "fieldType" key to usertable
+			// get actual config as json
+			$json = Db::singleValue('
+				SELECT `value`
+				FROM `config`
+				WHERE `name`=\'tableConfig.#?\'
+			',
+			array(
+				$table,
+			));
+			if($json === false) {
+				$return['returnValue'] = false;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+				return $return;
+			}
+			
+			// add key
+			$jsonConfig = json_decode($json, true);
+			if(!isset($jsonConfig['fieldType'])) {
+				$jsonConfig['fieldType'] = array();
+			}
+			
+			// update value
+			$json = json_encode($jsonConfig);
+			if(!Db::executeQuery('
+				UPDATE `config`
+				SET `value` = \'#?\'
+				WHERE `name` = \'tableConfig.#?\'
+			',
+			array(
+					$json,
+					$table,
+				))) {
+				$return['returnValue'] = false;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+				return $return;
+			}	
+		}
+		
+		// add "fieldType" key to protocol_types
+		// get actual config as json
+		$json = Db::singleValue('
+				SELECT `value`
+				FROM `config`
+				WHERE `name`=\'tableConfig.protocol_types\'
+			'
+		);
+		if($json === false) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+		
+		// add key
+		$jsonConfig = json_decode($json, true);
+		if(!isset($jsonConfig['fieldType'])) {
+			$jsonConfig['fieldType'] = array();
+		}
+		
+		// update value
+		$json = json_encode($jsonConfig);
+		if(!Db::executeQuery('
+				UPDATE `config`
+				SET `value` = \'#?\'
+				WHERE `name` = \'tableConfig.protocol_types\'
+			',
+			array(
+				$json,
+			))) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+	}
+	
+	/*
+	 * update config for defaults table
+	 */
+	if(!Db::executeQuery('
+		UPDATE `config`
+		SET `value` = \'{"cols":"name,category,value,valid","fk":{"category":"SELECT `id`,`name` AS `readable_name` FROM `category` WHERE `valid`=1"},"fieldType":{"value":"textarea"},"orderBy":"ORDER BY `category` ASC"}\',
+			`comment` = \'configuration for table defaults\'
+		WHERE `name`=\'tableConfig.defaults\'
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	/*
+	 * delete navi entry for defaults
+	 */
+	if(!Db::executeQuery('
+		DELETE FROM `navi` WHERE `id` = 36
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	/*
+	 * update config for club table and make navi entry invisible
+	 */
+	// add table config
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+		VALUES
+			(\'tableConfig.club\', \'{"cols":"number,name,valid","fk":[],"fieldType":[],"orderBy":"ORDER BY `number` ASC"}\', \'configuration for table club\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	// make navi entry invisible
+	if(!Db::executeQuery('
+		UPDATE `navi`
+		SET `show` = 0
+		WHERE `id` = 46
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	/*
+	 * add unique index for number
+	 */
+	// get numbers
+	$numbers = Db::arrayValue('
+			SELECT `id`,`number`
+			FROM `club`
+			ORDER BY `id` ASC
+	',
+	MYSQL_ASSOC);
+	if(!$numbers) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	// walk through numbers and find dublicates
+	$dublicateIds = array();
+	foreach($numbers as $numberEntry) {
+		foreach($numbers as $test) {
+			if($numberEntry['number'] == $test['number'] && $numberEntry['id'] != $test['id']) {
+				$dublicateIds[] = $test['id'];
+			}
+		}
+	}
+	// make dublicate ids unique
+	$dublicateIds = array_merge(array_unique($dublicateIds, SORT_NUMERIC));
+	
+	// walk through ids and set number to 99999-x
+	$counter = 99999;
+	foreach($dublicateIds as $id) {
+		
+		if(!Db::executeQuery('
+			UPDATE `club`
+			SET `number` = #?
+			WHERE `id` = #?
+		',
+		array(
+				$counter,
+				$id,
+			))) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+		
+		// decrement counter
+		$counter--;
+	}
+	if(!Db::uniqueKeyExists('club', 'unique_number')) {
+		
+		if(!Db::executeQuery('
+			ALTER TABLE `club`
+			ADD UNIQUE KEY `unique_number` (`number`);
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+	}
+	
+	/*
+	 * insert navi entry for file download
+	 */
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `navi` (`id`, `name`, `parent`, `file_param`, `position`, `show`, `valid`, `last_modified`)
+			VALUES
+				(57, \'navi: filePage.download\', \'37\', \'file.php|download\', \'7\', \'0\', \'1\', CURRENT_TIMESTAMP)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	/*
+	 * add config for system table "file_type"
+	 */
+	// add column "valid"
+	if(!Db::columnExists('file_type', 'valid')) {
+		if(!Db::executeQuery('
+			ALTER TABLE `file_type`
+			ADD `valid` BOOLEAN NOT NULL DEFAULT TRUE
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+	}
+	// add table config
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+		VALUES
+			(\'tableConfig.file_type\', \'{"cols":"name,mimetype,extension,valid","fk":[],"fieldType":[],"orderBy":"ORDER BY `name` ASC"}\', \'configuration for table file_type\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	/*
+	 * insert navi entry for creation of new year
+	 */
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `navi` (`id`, `name`, `parent`, `file_param`, `position`, `show`, `valid`, `required_permission`, `last_modified`)
+			VALUES
+				(58, \'navi: administrationPage.newYear\', \'34\', \'administration.php|newyear\', \'1\', \'0\', \'1\', \'w\', CURRENT_TIMESTAMP)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	
+	
+	/*
+	 * insert global redirect timeout value
+	 */
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+			VALUES (\'global.redirectTimeout\', 3, \'global timeout for automatic javascript redirects (seconds)\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	
+	/*
+	 * add is_team to table "result", change standings that weightclass can be NULL
+	 */
+	// add is_team
+	if(!Db::columnExists('result', 'is_team')) {
+		if(!Db::executeQuery('
+			ALTER TABLE `result`
+			ADD `is_team` BOOLEAN NOT NULL AFTER `desc`
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+	}
+	
+	// change standings
+	if(!Db::executeQuery('
+		ALTER TABLE `standings`
+		CHANGE `weightclass` `weightclass` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	if(!Db::executeQuery('
+		ALTER TABLE `standings`
+		CHANGE `name` `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// add accounting costs settings for team participant
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `accounting_costs` (`id`, `name`, `type`, `value`, `last_modified`, `modified_by`, `valid`)
+		VALUES
+			(4, \'teamParticipant\', \'payback\', \'0,00\', CURRENT_TIMESTAMP, 0, TRUE),
+			(5, \'teamParticipant\', \'payment\', \'0,00\', CURRENT_TIMESTAMP, 0, TRUE)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	/*
+	 * insert navi entry for refresh announcement pdf
+	 */
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `navi` (`id`, `name`, `parent`, `file_param`, `position`, `show`, `valid`, `required_permission`, `last_modified`)
+			VALUES
+				(59, \'navi: announcementPage.refreshpdf\', \'18\', \'announcement.php|refreshpdf\', \'5\', \'0\', \'1\', \'w\', CURRENT_TIMESTAMP)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	
+	
+	
+	
+	// return
+	return $return;
+}
+
 ?>

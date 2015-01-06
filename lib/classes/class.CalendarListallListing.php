@@ -26,7 +26,7 @@
 if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index.php.");}
 
 /**
- * class CalendarListallListing implements the data handling of listing the calenddars from 
+ * class CalendarListallListing implements the data handling of listing the calendars from 
  * the database
  */
 class CalendarListallListing extends CalendarListing implements ListingInterface {

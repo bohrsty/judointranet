@@ -486,6 +486,24 @@ class Db {
 	
 	
 	/**
+	 * uniqueKeyExists($table, $keyName) checks if the given $keyName exists in given $table
+	 * 
+	 * @param string $table name of the table to be checked for existance of key
+	 * @param string $keyName name of the to be checked for existance
+	 * @return bool true if key exists, false otherwise
+	 */
+	public static function uniqueKeyExists($table, $keyName) {
+		
+		// prepare statement
+		$sql = 'SHOW KEYS FROM `#?` WHERE `Key_name` = \'#?\'';
+		
+		// get value and return
+		$result = self::executeQuery($sql, array($table, $keyName));
+		return self::$num_rows > 0;
+	}
+	
+	
+	/** 
 	 * isTableEmpty($table) checks if the given $table is empty
 	 * 
 	 * @param string $table name of the table to be checked if empty

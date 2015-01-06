@@ -189,6 +189,7 @@ class ResultViewNew extends ResultView {
 			);
 		
 		// add rules
+		$allowedFileTypes = ResultImporter::returnModuleFiletypes();
 		$formContent->set_rule(
 				array(
 						'upload' => array(
@@ -197,6 +198,11 @@ class ResultViewNew extends ResultView {
 								'error',
 								parent::lang('error upload', true),
 							),
+						'filetype' => array(
+								$allowedFileTypes,
+								'error',
+								parent::lang('only the following file extensions are allowed!').' ['.$allowedFileTypes.']',
+						),
 						'required' => array(
 								'error',
 								parent::lang('error required', true),
@@ -219,12 +225,17 @@ class ResultViewNew extends ResultView {
 			
 			// create importer
 			$importer = ResultImporter::factory($data['formContent']['tempFilename'], $data['importer']);
-			
+
 			// get data from importer
 			if($importer->validate() === false) {
+				
+				// unlink temp file
+				unlink($data['formContent']['tempFilename']);
+								
 				throw new ResultImportFailedException($this, 'No valid data for import module "'.$data['importer'].'".');
 			}
 			$_SESSION['import']['data'] = $importer->getDataAsArray();
+			$_SESSION['import']['isTeam'] = $importer->getIsTeam();
 			$_SESSION['import']['filename'] = $data['formContent']['filename'];
 			$_SESSION['import']['desc'] = $data['desc'];
 			
@@ -297,6 +308,45 @@ class ResultViewNew extends ResultView {
 				parent::lang('help', true).'&nbsp;'.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
 			);
 		
+		// isTeam
+		$attributes = array();
+		$sessionIsTeam = $_SESSION['import']['isTeam'];
+		$options = array(
+				_l('single'),
+				_l('team'),
+			);
+		if(!is_null($sessionIsTeam)) {
+			$attributes['disabled'] = 'disabled';
+		}
+		$formIds['isTeam'] = array('valueType' => 'int', 'type' => 'select',);
+		$form->add(
+				'label',		// type
+				'labelIsTeam',	// id/name
+				'isTeam',			// for
+				_l('single/team')	// label text
+			);
+		$isTeam = $form->add(
+				$formIds['isTeam']['type'],	// type
+				'isTeam',		// id/name
+				(is_null($sessionIsTeam) ? '' : ($sessionIsTeam === false ? 0 : 1)),		// default
+				$attributes
+			);
+		$isTeam->add_options($options);
+		$isTeam->set_rule(
+				array(
+						'required' => array(
+								'error',
+								_l('error select')
+							),
+					)
+			);
+		$form->add(
+				'note',		// type
+				'noteIsTeam',	// id/name
+				'isTeam',		// for
+				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_ISTEAM)	// note text
+			);
+		
 		// add club check
 		$this->addClubCheck($form, $formIds);
 		
@@ -318,9 +368,13 @@ class ResultViewNew extends ResultView {
 			
 			// get form data
 			$formData = $this->getFormValues($formIds);
+			if(!is_null($sessionIsTeam)) {
+				$formData['isTeam'] = ($sessionIsTeam === false ? 0 : 1);
+			}
 			
 			// create result
 			$result = new Result(0, $this->get('cid'));
+			$result->setIsTeam($formData['isTeam']);
 			
 			// walk through session data
 			for($i = 0; $i < count($data); $i++) {
@@ -337,14 +391,18 @@ class ResultViewNew extends ResultView {
 			$this->smarty->assign('result', $result);
 			$this->smarty->assign('filename', $_SESSION['import']['filename']);
 			
-			// add preset, desc and save result in database
+			// add preset, desc, isTeam and save result in database
 			$result->setPreset($formData['preset']);
 			$result->setDesc($_SESSION['import']['desc']);
+			$result->setIsTeam($formData['isTeam']);
 			$result->writeDb();
 			
 			// remove session
 			unset($_SESSION['import']);
-						
+			
+			// set js redirection
+			$this->jsRedirectTimeout('result.php?id=listall');
+					
 			// smarty
 			return $this->smarty->fetch('smarty.result.new.tpl');
 		} else {

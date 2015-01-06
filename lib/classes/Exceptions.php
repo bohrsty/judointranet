@@ -86,7 +86,7 @@ class CustomException extends Exception {
 			// get message
 			$message = 
 					'['.substr(get_class($this), 0, -9).': '.($this->getMessage() != '' ? '"'.$this->getMessage().'" | ' : '').$_SERVER['QUERY_STRING'].'"]
-					'.(file_exists(JIPATH.'/DEBUG_ALL') === true ? $this->getTraceAsString() : '');
+					'.(Object::staticDebugAll() === true ? $this->getTraceAsString() : '');
 			
 			// output jtable json
 			echo json_encode(array(
@@ -106,7 +106,7 @@ class CustomException extends Exception {
 					<h3 class="red">'.Object::lang('error', true).'</h3>
 					<p>'.$this->getInternalMessage().'</p>
 					['.$type.': '.($this->getMessage() != '' ? '"'.$this->getMessage().'" | ' : '').$view.' | "'.$_SERVER['QUERY_STRING'].'"]
-					'.(file_exists(JIPATH.'/DEBUG_ALL') === true ? $this->trace() : '').'
+					'.(Object::staticDebugAll() === true ? $this->trace() : '').'
 				</div>
 			';
 			
@@ -263,7 +263,7 @@ class ResultNotExistsException extends CustomException {
 
 
 /**
- * GetUnknownIdException is thrown, if the result "rid" is not in database
+ * GetUnknownIdException is thrown, if the $_GET parameter id is not handled
  */
 class GetUnknownIdException extends CustomException {
 	
@@ -566,6 +566,37 @@ class ResultForFutureCalendarException extends CustomException {
 	protected function getInternalMessage() {
 		
 		return Object::lang('Error: result not possible for future calendar entries!');
+	}
+}
+
+
+
+/**
+ * ProtocolIdNotExistsExeption is thrown, if a protocol id not exists
+ */
+class ProtocolIdNotExistsExeption extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(false);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return Object::lang('Error: protocol entry not exists');
 	}
 }
 

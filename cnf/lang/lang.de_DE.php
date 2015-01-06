@@ -133,14 +133,19 @@ $lang = array(
 	'Error: result not possible for future calendar entries!' => 'Ergebnisse k&ouml;nnen nicht an zuk&uuml;nftige Termine angeh&auml;ngt werden, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
 										Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
 										Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />',
+	'Error: protocol entry not exists' => 'Das Protokoll existiert nicht, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+										Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+										Wenn der Fehler weiterhin auftritt, wenden Sie sich bitte an den Systembetreuer.<br />',
 	/*
 	 * API error messages
 	 */
 	'API call failed [not signed]' => 'API-Aufruf fehlgeschlagen [keine Signatur]',
-	'API call failed [timeout]' => 'API-Aufruf fehlgeschlagen [Timeout, bitte Seite neu laden]',
+	'API call failed [timeout] #?reloadLink' => 'API-Aufruf fehlgeschlagen [Timeout, bitte #?reloadLink]',
 	'API call failed [unknown apiClass]' => 'API-Aufruf fehlgeschlagen [unbekannte Klasse]',
 	'API call failed [unknown provider]' => 'API-Aufruf fehlgeschlagen [unbekannter Provider]',
 	'API call failed [missing post data]' => 'API-Aufruf fehlgeschlagen [POST-Daten fehlen]',
+	'API call failed [not authorized]' => 'API-Aufruf fehlgeschlagen [keine Berechtigung]',
+	'API call failed [no listing data]' => 'API-Aufruf fehlgeschlagen [kein Daten erhalten]',
 	
 	/*
 	 * ************************
@@ -277,6 +282,7 @@ $lang = array(
 	'announcement: details' => 'Ausschreibung: Detailansicht',
 	'announcement: pdf' => 'Ausschreibung: als PDF',
 	'announcement: delete' => 'Ausschreibung: Ausschreibung l&ouml;schen',
+	'announcement: refreshpdf' => 'Ausschreibung: PDF erneuern',
 	'deletes the entry' => 'L&ouml;scht den Datensatz',
 	'inventory: own objects' => 'Inventar: Eigene Objekte',
 	'inventory' => 'Inventar',
@@ -347,7 +353,7 @@ $lang = array(
 	'administration: manage user tables' => 'Administration: benutzerdefinierte Tabellen verwalten',
 	'administration: manage defaults' => 'Administration: Vorgaben verwalten',
 	'administration: manage users and permissions' => 'Administration: Benutzer und Rechte verwalten',
-	'administration: manage clubs' => 'Administration: Vereine verwalten',
+	'administration: create new year' => 'Administration: neues Jahr erstellen',
 	'manage' => ' verwalten',
 	'toggle table selection' => 'Tabellenauswahl ein- oder ausblenden',
 	'manage user tables' => 'Benutzerdefinierte Tabellen verwalten',
@@ -516,13 +522,21 @@ $lang = array(
 	'HELP_TITLE_33' => 'Beschl&uuml;sse',
 	'HELP_TITLE_34' => 'Korrekturen vergleichen',
 	'HELP_TITLE_35' => 'Korrekturen auflisten',
+	'HELP_TITLE_36' => 'Ergebnisformat',
+	'HELP_TITLE_37' => 'Beschreibung des Ergebnisses',
+	'HELP_TITLE_38' => 'Ergebnis&uuml;bersicht',
 	'HELP_TITLE_39' => 'Ortsfeld',
+	'HELP_TITLE_40' => 'Neues Jahr erstellen',
+	'HELP_TITLE_41' => 'Ergebnisliste',
+	'HELP_TITLE_42' => 'Ergebnisliste einer Veranstaltung',
+	'HELP_TITLE_43' => 'Buchhaltung: Preise bearbeiten',
+	'HELP_TITLE_44' => 'Aufgaben in der Ergebnisliste',
 	'HELP_MESSAGE_error' => '<p>Dieses Hilfe-Thema konnte nicht gefunden werden.</p>',
 	'HELP_MESSAGE_1' => '<p><b>JudoIntranet</b></p>
 						<p>Author: Nils Bohrs<br />
 						Version: r{$replace.version}<br />Lizenz: MIT</p>
 						<p>&nbsp;</p>
-						<p>Copyright (c) 2011 Nils Bohrs</p>
+						<p>Copyright &copy; 2011-{date(\'Y\')} Nils Bohrs</p>
 						<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this
 						software and associated documentation files (the "Software"), to deal in the Software
 						without restriction, including without limitation the rights to use, copy, modify, merge,
@@ -577,7 +591,7 @@ $lang = array(
 						Formular l&auml;sst sich sonst nicht speichern.<br />Die erlaubten Zeichen
 						werden in der Hilfe des jeweiligen Feldes erl&auml;tert, bei Fehleingaben
 						wird eine entsprechende Meldung ausgegeben.</p>',
-	'HELP_MESSAGE_10' => '<p>Diese Seite listet alle Termine, die noch nicht abgelaufen
+	'HELP_MESSAGE_10' => '<p>Diese Seite listet alle Termine auf, die noch nicht abgelaufen
 						sind (inkl. des gesamten heutigen Tages). Ein Klick auf den unterstrichenen
 						Namen des Termins &ouml;ffnet dessen Details, wenn eine Ausschreibung zu
 						diesem Termin vorhanden ist, stehen folgende weitere Ansichten zur
@@ -590,8 +604,10 @@ $lang = array(
 						Ausschreibung direkt als PDF (ein entsprechendes Programm zur Anzeige
 						wie der AdobeReader vorausgesetzt), in dieser Ansicht kann die Ausschreibung
 						gedruckt oder gespeichert werden.</li>
-						<li><img src="img/attachment_info.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; zeigt an, ob
+						<li><img src="img/attachment_info.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; zeigt an, dass
 						Dateien am Termin angeh&auml;ngt sind, ein Klick darauf &ouml;ffnet die Detailansicht des Termins.</li>
+						<li><img src="img/result_info.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; zeigt an, dass
+						Ergebnisse zu diesem Termin importiert wurden, ein Klick darauf &ouml;ffnet die Ergebnisliste zu diesem Termins.</li>
 						</ul>',
 	'HELP_MESSAGE_11' => '<p>Die Administration eines Termins oder einer
 						Ausschreibung erfolgt &uuml;ber folgende Buttons:</p>
@@ -609,15 +625,20 @@ $lang = array(
 						nach R&uuml;ckfrage endg&uuml;ltig.</li>
 						<li><img src="img/attachment.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; &Ouml;ffnet den Dialog um
 						Dateien mit diesem Termin zu verkn&uuml;pfen.</li>
+						<li><img src="img/res_new.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; &Ouml;ffnet den Dialog um
+						ein Ergebnis zu diesem Termin zu importieren, die Funktion ist ab dem Veranstaltungstag erreichbar.</li>
+						<li><img src="img/refresh_pdf.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; Erzeugt die PDF-Ansicht der
+						Ausschreibung manuell neu, z.B. nach Änderungen an den Vorgaben oder Benutzerdefinierten Tabellen.</li>
 						<li><span class="Zebra_Form"><select class="control"><option>Ausschreibungsvorlage ausw&auml;hlen</option></select>
 						<input class="submit" type="submit" value="+" /></span>&nbsp;:&nbsp; Um eine Ausschreibung mit Daten
 						zu f&uuml;llen muss ihr eine Vorlage zugewiesen werden, die die zu verwendenden
 						Felder und das Aussehen festlegt.<br />
 						Das Zuweisen der Vorlage erfolgt durch das Ausw&auml;hlen der Vorlage aus dem
-						einzeiligen Auswahlfeld und anschlie&szlig;endem Zuf&uuml;gen durch den Button.</li>
+						einzeiligen Auswahlfeld und anschlie&szlig;endem Zuf&uuml;gen durch den Button "+".</li>
 						</ul>
-						<p>Das Symbol <img src="img/public.png" alt="Bild im Hilfetext" /> hinter dem Namen eines Termins zeigt den
-						eingeloggten Benutzern an, ob der Termin &ouml;ffentlich ist.</p>',
+						<p>Das Symbol <img src="img/public.png" alt="Bild im Hilfetext" /> in der entsprechenden Spalte zeigt den
+						eingeloggten Benutzern an, ob der Termin &ouml;ffentlich ist, also ob ein nicht angemeldeter Benutzer den
+						Termin (inkl. evtl. Ausschreibung) sehen kann.</p>',
 	'HELP_MESSAGE_12' => '<p>Der Klick auf "Ja" l&ouml;scht den Datensatz endg&uuml;ltig,
 						"Abbrechen" f&uuml;hrt zur&uuml;ck zur Liste.</p>',
 	'HELP_MESSAGE_13' => '<p>Die eingeblendete Filterauswahl besteht aus drei
@@ -825,12 +846,61 @@ $lang = array(
 						und das Datum der Erstellung angezeigt. Der Klick auf eine Korrektur, &ouml;ffnet die Vergleichsansicht.</p>
 						<p>Wenn hinter der Korrektur das Symbol <img src="img/done.png" alt="Bild im Hilfetext" /> angezeigt wird,
 						wurde diese Korrektur als "schon bearbeitet" markiert.</p>',
+	'HELP_MESSAGE_36' => '<p>Das Ergebnisformat muss ausgew&auml;hlt werden um den korrekten Import des Ergebnisses zu gew&auml;hrleisten.</p>',
+	'HELP_MESSAGE_37' => '<p>Da mehrere Ergebnisse zu einer Veranstaltung importiert werden k&ouml;nnen, muss eine Beschreibung
+						eine Beschreibung zur Unterscheidung eingegeben werden. Nicht nur bei mehreren Altersklassen empfiehlt sich diese
+						in der Beschreibung kenntlich zu machen.</p>',
+	'HELP_MESSAGE_38' => '<p>In der Ergebnis&uuml;bersicht werden alle Ergebnisse angezeigt, die den Veranstaltungen zugeordnet sind.
+						Der Klick auf <img src="img/res_pdf.png" alt="Bild im Hilfetext" /> erzeugt eine Abrechnung, in der die
+						Ausrichterpauschale und alle Meldegelder, aufgeschl&uuml;sselt pro Alterklasse und Verein, angegeben sind.</p>
+						<p><img src="img/tasks_confirmed.png" alt="Bild im Hilfetext" />/<img src="img/tasks_unconfirmed.png" alt="Bild im Hilfetext" />
+						zeigen den globalen Status der Bearbeitung des Ergebnisses an, der Status dient nur der Information und hat
+						keine weiteren Funktionen. Der Klick auf den Button &auml;ndert den Status jeweils in den anderen.</p>',
 	'HELP_MESSAGE_39' => '<p><b>Format</b>: <i>einzeiliger Text</i><br />
 						<b>Standardwert</b>: <i>keiner</i><br />
 						<b>Erlaubte Zeichen</b>: <i>"{$object->getGc()->get_config(\'name.desc\')|escape}"</i></p>
 						<p>Dieses Feld legt den Ort f&uuml;r diesen Datensatz fest, der Wert wird &uuml;berschrieben
 						sobald der Ort in der Ausschreibung festgelegt wird, beim L&ouml;schen der Ausschreibung verbleibt
 						der letzte Wert aus der Ausschreibung.</p>',
+	'HELP_MESSAGE_40' => '<p>Die Funktion "neues Jahr erstellen" kopiert sämtliche Einträge des aktuellen Jahrs und stellt sie deaktiviert
+						zur weiteren Bearbeitung zur Verf&uuml;gung. Die Funktion wird ohne R&uuml;ckfrage ausgef&uuml;hrt, kann beliebig oft
+						wiederholt werden und ist nicht r&uuml;ckg&auml;ngig zu machen.<br />Werte die sich im Vergleich zum laufenden Jahr
+						&auml;ndern (mind. Jahrg&auml;nge) m&uuml;ssen manuell angepasst werden und jeder Eintrag, der verwendet werden soll,
+						muss aktiviert werden.</p>',
+	'HELP_MESSAGE_41' => '<p>Diese Seite listet alle Ergebnisse auf. Ein Klick auf den unterstrichenen
+						Namen der Veranstaltung &ouml;ffnet ihre Details. Da es mehrere Ergebnisse zu einer Veranstaltung geben
+						kann, enth&auml;lt die erste Spalte eine Beschreibung, in der &uuml;blicherweise auch die Altersklasse
+						angegeben ist. Es stehen folgende weitere Ansichten zur Verf&uuml;gung:</p>
+						<ul>
+						<li><img src="img/res_details.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; &ouml;ffnet
+						das Ergebnis als Seitenansicht eingebettet in diese Seite, Drucken ist
+						in dieser Ansicht nicht m&ouml;glich.</li>
+						<li><img src="img/res_pdf.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; &ouml;ffnet das
+						Ergebnis direkt als PDF (ein entsprechendes Programm zur Anzeige
+						wie der AdobeReader vorausgesetzt), in dieser Ansicht kann die Ausschreibung
+						gedruckt oder gespeichert werden.</li>
+						</ul>',
+	'HELP_MESSAGE_42' => '<p>Diese Seite listet alle Ergebnisse der zugeh&ouml;rigen Veranstaltung auf. Ein Klick auf den unterstrichenen
+						Namen der Veranstaltung &ouml;ffnet ihre Details. Da es mehrere Ergebnisse zu einer Veranstaltung geben
+						kann, enth&auml;lt die erste Spalte eine Beschreibung, in der &uuml;blicherweise auch die Altersklasse
+						angegeben ist. Es stehen folgende weitere Ansichten zur Verf&uuml;gung:</p>
+						<ul>
+						<li><img src="img/res_details.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; &ouml;ffnet
+						das Ergebnis als Seitenansicht eingebettet in diese Seite, Drucken ist
+						in dieser Ansicht nicht m&ouml;glich.</li>
+						<li><img src="img/res_pdf.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; &ouml;ffnet das
+						Ergebnis direkt als PDF (ein entsprechendes Programm zur Anzeige
+						wie der AdobeReader vorausgesetzt), in dieser Ansicht kann die Ausschreibung
+						gedruckt oder gespeichert werden.</li>
+						</ul>',
+	'HELP_MESSAGE_43' => '<p>Der Wert der Preise kann an dieser Stelle angepasst werden, die Preise werden u.a. bei der Erstellung
+						der Rechnungen und Abrechnungen verwendet.</p>',
+	'HELP_MESSAGE_44' => '<p>Die Administration eines Ergebnisses in der Ergebnisliste besteht nur aus einer Aktion:</p>
+						<ul>
+						<li><img src="img/res_delete.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; l&ouml;scht das Ergebnis nach
+						R&uuml;ckfrage endg&uuml;ltig.</li>
+						</ul>
+						<p>Das Bearbeiten eines Ergebnisses im Nachhinein ist nicht m&ouml;glich.</p>',
 	/*
 	 * ************************
 	 */
@@ -861,6 +931,7 @@ $lang = array(
 	'navi: announcementPage.delete' => 'Eintrag l&ouml;schen',
 	'navi: announcementPage.details' => 'Details',
 	'navi: announcementPage.topdf' => 'Eintrag als PDF',
+	'navi: announcementPage.refreshpdf' => 'PDF erneuern',
 	'navi: protocolPage' => 'Protokolle',
 	'navi: protocolPage.listall' => 'Listenansicht',
 	'navi: protocolPage.new' => 'Neues Protokoll erstellen',
@@ -872,18 +943,20 @@ $lang = array(
 	'navi: protocolPage.correct' => 'Protokoll korrigieren',
 	'navi: protocolPage.showdecisions' => 'Alle Beschl&uuml;sse anzeigen',
 	'navi: administrationPage' => 'Administration',
-	'navi: administrationPage.field' => 'Ben. Tabellen verwalten',
+	'navi: administrationPage.field' => 'Tabellen verwalten',
 	'navi: administrationPage.defaults' => 'Vorgaben verwalten',
 	'navi: administrationPage.useradmin' => 'Benutzer/Gruppen/Rechte',
 	'navi: administrationPage.club' => 'Vereine verwalten',
+	'navi: administrationPage.newYear' => 'Neues Jahr erstellen',
 	'navi: filePage' => 'Dateien',
 	'navi: filePage.listall' => 'Dateien auflisten',
 	'navi: filePage.details' => 'Datei-Details',
 	'navi: filePage.edit' => 'Datei bearbeiten',
 	'navi: filePage.delete' => 'Datei l&ouml;schen',
 	'navi: filePage.upload' => 'Datei hochladen',
-	'navi: filePage.cached' => 'Datei herunterladen',
+	'navi: filePage.cached' => 'Datei herunterladen (zwischengespeichert)',
 	'navi: filePage.attach' => 'Datei anh&auml;ngen',
+	'navi: filePage.download' => 'Datei herunterladen (hochgeladen)',
 	'navi: resultPage' => 'Ergebnisse',
 	'navi: resultPage.listall' => 'Ergebnisse auflisten',
 	'navi: resultPage.details' => 'Ergebnis-Details',
@@ -918,6 +991,7 @@ $lang = array(
 	'cached' => 'Zwischengespeichert',
 	'table name calendar' => 'Ausschreibungen',
 	'table name protocol' => 'Protokolle',
+	'table name result' => 'Ergebnisse',
 	'back' => 'Zur&uuml;ck',
 	'download' => 'Herunterladen',
 	'you really want to delete this file?' => 'Wollen Sie diese Datei wirklich l&ouml;schen?',
@@ -960,7 +1034,8 @@ $lang = array(
 	'preset' => 'Vorlage',
 	'help' => 'Hilfe',
 	'import format' => 'Ergebnisformat',
-	'ResultImporterMm5export' => 'MM5 Textexport (.txt)',
+	'ResultImporterMm5export' => 'MM5 Textexport',
+	'ResultImporterSpreadsheet' => 'Tabellenvorlage',
 	'resultfile' => 'Ergebnisdatei ausw&auml;hlen',
 	'next' => 'Weiter',
 	'error date required' => 'Datum muss ausgew&auml;hlt werden!',
@@ -1008,6 +1083,7 @@ $lang = array(
 	'payback' => 'Auszahlung',
 	'costs base' => 'Sockelbetrag',
 	'costs singleParticipant' => 'Teilnehmer (Einzel)',
+	'costs teamParticipant' => 'Teilnehmer (Mannschaft)',
 	'settings' => 'Einstellungen',
 	'city' => 'Ort',
 	'city<br />' => '<span>Ort:</span><br />',
@@ -1034,10 +1110,25 @@ $lang = array(
 	'location' => 'Hallen',
 	'protocol_types' => 'Protokolltypen',
 	'staff' => 'Referenten',
+	'defaults' => 'Vorgabewerte',
 	'unknown error' => 'unbekannter Fehler',
 	'provided row not exists' => 'angegebene Zeile existiert nicht',
 	'not authorized to perform this action' => 'keine Berechtigung f&uuml;r diese Aktion',
 	'Refresh this table' => 'Diese Tabelle aktualisieren',
+	'read/list' => 'Lesen/Auflisten',
+	'file_type' => 'Dateityp',
+	'reload page' => 'Seite neu laden',
+	'Create new year' => 'Erstelle neues Jahr',
+	'New year created' => 'Neues Jahr erstellt',
+	'Successfully created year #?year' => 'Neues Jahr #?year erfolgreich erstellt',
+	'unknown/deleted' => 'unbekannt/gel&ouml;scht',
+	'go to protocol' => 'Protokolldetails anzeigen',
+	'open decisions' => 'Beschl&uuml;sse &ouml;ffnen',
+	'Click to choose from' => 'Datei w&auml;hlen aus',
+	'single/team' => 'Einzel/Mannschaft',
+	'single' => 'Einzel',
+	'team' => 'Mannschaft',
+	'refresh announcement pdf file' => 'PDF erneuern',
 //	'' => '',
 );
 

@@ -78,6 +78,28 @@ class AccountingCosts extends Object {
 		return $costs;
 	}
 	
+	
+	/**
+	 * toCalc($value) replaces all "," in $value(from database) to "." to be able to calculate
+	 * with the value
+	 * 
+	 * @param mixed $value value to calculate with
+	 */
+	public static function toCalc($value) {
+		return str_replace(',', '.', $value);
+	}
+	
+	
+	/**
+	 * toDisplay($value) replaces all "." in $value(from calculation) to "," to correctly display
+	 * the value
+	 * 
+	 * @param mixed $value value to display
+	 */
+	public static function toDisplay($value) {
+		return str_replace('.', ',', $value);
+	}
+	
 }
 
 ?>

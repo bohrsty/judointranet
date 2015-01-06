@@ -55,23 +55,6 @@ class PageView extends Object {
 	public function set_head($head) {
 		return $GLOBALS['head'] = $head;
 	}
-	public function getHelpmessages(){
-		return $GLOBALS['helpmessages'];
-	}
-	public function setHelpmessages($helpmessages) {
-		$GLOBALS['helpmessages'] = $helpmessages;
-	}
-	public function getHelpids($complete=false){
-		
-		if($complete === true) {
-			return '['.$GLOBALS['helpids'].']';
-		} else {
-			return $GLOBALS['helpids'];
-		}
-	}
-	public function setHelpids($helpids) {
-		$GLOBALS['helpids'] = $helpids;
-	}
 	public function getTpl() {
 		return $GLOBALS['tpl'];
 	}
@@ -101,17 +84,6 @@ class PageView extends Object {
 		}
 		if(!isset($GLOBALS['head'])) {
 			$this->set_head('');
-		}
-		if(!isset($GLOBALS['helpmessages'])) {
-			$this->setHelpmessages('');
-		}
-		if(!isset($GLOBALS['helpids'])) {
-			$this->setHelpids('');
-		}
-		
-		// initialize help
-		if(!isset($GLOBALS['help'])) {
-			$GLOBALS['help'] = new Help($this);
 		}
 		
 		// set logo
@@ -422,10 +394,6 @@ class PageView extends Object {
 		if($this->getGc()->get_config('navi.style') == 'accordion') {
 			$this->getTpl()->assign('accordionJs', true);
 		}
-		
-		// help messages
-		$this->getTpl()->assign('helpmessages', $this->getHelpmessages());
-		$this->getTpl()->assign('helpids', $this->getHelpids(true));
 		
 		// smarty-display
 		$this->getTpl()->display($template);
@@ -997,6 +965,29 @@ class PageView extends Object {
 		
 		// return button
 		return $helpTemplate->fetch('smarty.help.button.tpl');
+	}
+	
+	
+	/**
+	 * jsRedirectTimeout($uri, $timeout) redirects the browser to $uri per javascript timeout
+	 * function
+	 * 
+	 * @param string $uri the uri to redirect to
+	 * @param int $timeout timeout if global timeout should not be used
+	 * @return void
+	 */
+	public function jsRedirectTimeout($uri, $timeout = null) {
+		
+		// get global timeout if $timeout is null
+		$sTimeout = $this->getGc()->get_config('global.redirectTimeout');
+		if(!is_null($timeout)) {
+			$sTimeout = $timeout;
+		}
+		
+		// assign variables
+		$this->getTpl()->assign('jsRedirect', !$this->debugAll());
+		$this->getTpl()->assign('jsRedirectUri', $uri);
+		$this->getTpl()->assign('jsRedirectTimeout', ($sTimeout * 1000));
 	}
 }
 

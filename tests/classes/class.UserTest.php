@@ -109,6 +109,9 @@ class UserTest extends PHPUnit_Framework_TestCase {
 	
 	public function testUserLoginOut() {
 		
+		// get view
+		$view = new	PageView();
+		
 		// change user to admin
 		$this->user->change_user('admin', true);
 		$this->assertEquals(1, $this->user->get_id());
@@ -120,7 +123,7 @@ class UserTest extends PHPUnit_Framework_TestCase {
 		$this->assertInstanceOf('Group', $tempGroups[0]);
 		
 		// logout user
-		$logout = $this->user->logout();
+		$logout = $this->user->logout($view);
 		// user values
 		$this->assertEquals(0, $this->user->userid());
 		$this->assertEquals(array(), $this->user->groups());

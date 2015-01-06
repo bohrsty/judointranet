@@ -520,7 +520,7 @@ class Object {
 	protected function getTableConfig($table) {
 		
 		// get config from db
-		$tableConfigJson = $this->getGc()->get_config('usertableConfig.'.$table);
+		$tableConfigJson = $this->getGc()->get_config('tableConfig.'.$table);
 		
 		// get array from json if exists
 		$tableConfigArray = array();
@@ -562,6 +562,19 @@ class Object {
 		$tableConfig['fk'] = $foreignKeys;
 
 		return $tableConfig;
+	}
+	
+	
+	/**
+	 * debugAll() returns true if debug mode is on, false otherweise
+	 * 
+	 * @return bool true if debug mode is on, false otherwise
+	 */
+	public function debugAll() {
+		return file_exists(JIPATH.'/DEBUG_ALL') === true;
+	}
+	public static function staticDebugAll() {
+		return file_exists(JIPATH.'/DEBUG_ALL') === true;
 	}
 }
 

@@ -119,9 +119,27 @@ class ResultViewAccounting extends ResultView {
 					
 					// get number of paricipants per club
 					foreach($result->getAgegroups() as $agegroup => $countAgegroups) {
-						foreach($result->getWeightclasses($agegroup) as $weightclass => $countWeightclass) {
-							foreach($result->getStandings($agegroup, $weightclass) as $standing) {
-								
+						
+						// check single/team
+						if($result->getIsTeam() == 0) {
+							
+							foreach($result->getWeightclasses($agegroup) as $weightclass => $countWeightclass) {
+								foreach($result->getStandings($agegroup, $weightclass) as $standing) {
+									
+									// increment club count
+									if(!isset($clubCount[$i][$agegroup][$standing['club_id']])) {
+										$clubCount[$i][$agegroup][$standing['club_id']] = 1;
+									} else {
+										$clubCount[$i][$agegroup][$standing['club_id']]++;
+									}
+									// increment total count
+									$totalCount++;
+								}
+							}
+						} else {
+							
+							foreach($result->getStandings($agegroup, null) as $standing) {
+									
 								// increment club count
 								if(!isset($clubCount[$i][$agegroup][$standing['club_id']])) {
 									$clubCount[$i][$agegroup][$standing['club_id']] = 1;
@@ -162,6 +180,7 @@ class ResultViewAccounting extends ResultView {
 				}
 				
 				// prepare template
+				$this->smarty->assign('isTeam', $result->getIsTeam());
 				$this->smarty->assign('clubCount', $clubCount);
 				$this->smarty->assign('totalCount', $totalCount);
 				$this->smarty->assign('amounts', $amounts);
@@ -220,6 +239,14 @@ class ResultViewAccounting extends ResultView {
 			
 			// get clubArray
 			$cA = $this->clubArray;
+			
+			// check if $first and $second exists in array
+			if(!isset($cA[$first]) && isset($cA[$second])) {
+				return -1;
+			}
+			if(isset($cA[$first]) && !isset($cA[$second])) {
+				return 1;
+			}
 			
 			// compare key by club number
 			if($cA[$first]['number'] < $cA[$second]['number']) {

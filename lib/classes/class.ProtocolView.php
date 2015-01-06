@@ -79,8 +79,9 @@ class ProtocolView extends PageView {
 					case 'listall':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('protocols: listall')));
-						$this->getTpl()->assign('main', $this->listall());
+						$this->getTpl()->assign('title', $this->title(_l('protocols: listall')));
+						$protocolViewListall = new ProtocolViewListall();
+						$this->getTpl()->assign('main', $protocolViewListall->show());
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', false);
 						$this->getTpl()->assign('tinymce', false);
@@ -120,7 +121,7 @@ class ProtocolView extends PageView {
 						
 						// smarty
 						$this->getTpl()->assign('title', $this->title(parent::lang('protocols: show protocol')));
-						$this->getTpl()->assign('main', $this->show($this->get('pid')));
+						$this->getTpl()->assign('main', $this->showProtocol($this->get('pid')));
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', false);
 						$this->getTpl()->assign('tinymce', false);
@@ -160,7 +161,8 @@ class ProtocolView extends PageView {
 						
 						// smarty
 						$this->getTpl()->assign('title', $this->title(parent::lang('protocols: show decisions')));
-						$this->getTpl()->assign('main', $this->decisions($this->get('pid')));
+						$protocolViewDecisions = new ProtocolViewDecisions();
+						$this->getTpl()->assign('main', $protocolViewDecisions->show());
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', false);
 						$this->getTpl()->assign('tinymce', false);
@@ -231,252 +233,6 @@ class ProtocolView extends PageView {
 		
 		// return
 		return $sD->fetch('smarty.default.content.tpl');
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * listall lists all protocol entries (paged)
-	 * shows only entrys for which the user has sufficient rights
-	 * 
-	 * @return void
-	 */
-	private function listall() {
-		
-		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang('listall').'&nbsp;'.$this->helpButton(HELP_MSG_PROTOCOLLISTALL));
-		
-		// read all entries
-		$entries = $this->readAllEntries();
-				
-		// smarty-templates
-		$sListall = new JudoIntranetSmarty();
-		
-		// smarty
-		$sTh = array(
-				'date' => parent::lang('date'),
-				'type' => parent::lang('kind'),
-				'location' => parent::lang('location'),
-				'show' => parent::lang('show'),
-				'admin' => parent::lang('tasks')
-			);
-
-		$sListall->assign('th', $sTh);
-		// loggedin? admin links
-		$sListall->assign('loggedin', $this->getUser()->get_loggedin());
-		
-		// walk through entries
-		$counter = 0;
-		// smarty
-		$sList = array();
-		foreach($entries as $no => $entry) {
-			
-			// check if valid
-			if($entry->get_valid() == 1) {
-				
-				// get status
-				$correctable = $entry->get_correctable(false);
-				
-				// smarty
-				$sList[$counter] = array(
-						'date' => array(
-								'href' => 'protocol.php?id=details&pid='.$entry->get_id(),
-								'title' => parent::lang('date'),
-								'date' => $entry->get_date('d.m.Y')
-							),
-						'type' => $entry->get_type(),
-						'location' => $entry->get_location()
-						
-					);
-				
-				// check status
-				if($correctable['status'] == 2 || $this->getUser()->get_userinfo('name') == $entry->get_owner()) {
-					
-					// show
-					$sList[$counter]['show'][0] = array(
-							'href' => 'protocol.php?id=show&pid='.$entry->get_id(),
-							'title' => parent::lang('show protocol'),
-							'src' => 'img/prot_details.png',
-							'alt' => parent::lang('show protocol'),
-							'show' => true
-						);
-					$sList[$counter]['show'][1] = array(
-							'href' => 'file.php?id=cached&table=protocol&tid='.$entry->get_id(),
-							'title' => parent::lang('protocol as PDF'),
-							'src' => 'img/prot_pdf.png',
-							'alt' => parent::lang('protocol as PDF'),
-							'show' => true
-						);
-				} else {
-					
-					$sList[$counter]['show'][0] = array(
-							'href' => '',
-							'title' => '',
-							'src' => '',
-							'alt' => '',
-							'show' => false
-						);
-					$sList[$counter]['show'][1] = array(
-							'href' => '',
-							'title' => '',
-							'src' => '',
-							'alt' => '',
-							'show' => false
-						);
-				}
-				
-				// add attached file info
-				if(count(File::attachedTo('protocoll', $entry->get_id())) > 0) {
-					
-					$sList[$counter]['show'][2] = array(
-							'href' => 'protocol.php?id=details&pid='.$entry->get_id(),
-							'title' => parent::lang('existing attachments'),
-							'src' => 'img/attachment_info.png',
-							'alt' => parent::lang('existing attachments'),
-							'show' => true
-						);
-				} else {
-					
-					$sList[$counter]['show'][2] = array(
-							'href' => '',
-							'title' => '',
-							'src' => '',
-							'alt' => '',
-							'show' => false
-						);
-				}
-					
-				// add admin
-				
-				// if user is loggedin add admin-links
-				if($this->getUser()->get_loggedin() === true) {
-					
-					// edit and delete only for author
-					if($this->getUser()->get_userinfo('name') == $entry->get_owner()
-						|| $this->getUser()->get_id() == 1) {
-						
-						// smarty
-						// edit
-						$sList[$counter]['admin'][] = array(
-								'href' => 'protocol.php?id=edit&pid='.$entry->get_id(),
-								'title' => parent::lang('edit protocol'),
-								'src' => 'img/prot_edit.png',
-								'alt' => parent::lang('edit protocol')
-							);
-						// delete
-						$sList[$counter]['admin'][] = array(
-								'href' => 'protocol.php?id=delete&pid='.$entry->get_id(),
-								'title' => parent::lang('delete protocol'),
-								'src' => 'img/prot_delete.png',
-								'alt' => parent::lang('delete protocol')
-							);
-						// attachment
-						$sList[$counter]['admin'][] = array(
-								'href' => 'file.php?id=attach&table=protocol&tid='.$entry->get_id(),
-								'title' => parent::lang('attach file(s)'),
-								'src' => 'img/attachment.png',
-								'alt' => parent::lang('attach file(s)')
-							);
-					}
-					
-					// correction
-					if($correctable['status'] == 1 && in_array($this->getUser()->get_id(),$correctable['correctors']) && $this->getUser()->get_userinfo('name') != $entry->get_owner()) {
-						
-						// check if correction is finished
-						$correction = new ProtocolCorrection($entry);
-						
-						if($correction->get_finished() == 1) {
-							$sList[$counter]['admin'][] = array(
-									'href' => false,
-									'title' => parent::lang('finished correction'),
-									'src' => 'img/done.png',
-									'alt' => parent::lang('finished correction')
-								);
-						} else {
-							$sList[$counter]['admin'][] = array(
-									'href' => 'protocol.php?id=correct&pid='.$entry->get_id(),
-									'title' => parent::lang('correct protocol'),
-									'src' => 'img/prot_correct.png',
-									'alt' => parent::lang('correct protocol')
-								);
-						}
-					}
-					
-					// corrected
-					if($correctable['status'] == 1 && $this->getUser()->get_userinfo('name') == $entry->get_owner() && $entry->hasCorrections()) {
-						
-						$sList[$counter]['admin'][] = array(
-								'href' => 'protocol.php?id=correct&pid='.$entry->get_id().'&action=diff',
-								'title' => parent::lang('existing corrections, please check'),
-								'src' => 'img/prot_corrected.png',
-								'alt' => parent::lang('existing corrections, please check')
-							);
-					}
-					
-				} else {
-					
-					// smarty
-					$sList[$counter]['admin'][] = array(
-							'href' => '',
-							'title' => '',
-							'src' => '',
-							'alt' => ''
-						);
-				}
-				
-				// increment counter
-				$counter++;
-
-			} else {
-				
-				// deleted items
-			}
-		}
-		
-		// smarty
-		$sListall->assign('list', $sList);
-		// prepare admin help
-		$helpListAdmin = $this->helpButton(HELP_MSG_PROTOCOLLISTADMIN);
-		if(isset($helpListAdmin)) {
-			$sListall->assign('helpListAdmin', $helpListAdmin);
-		}
-		
-		// smarty-return
-		return $sListall->fetch('smarty.protocol.listall.tpl');
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * readAllEntries() get all protocol-entries from db for that the actual
-	 * user has sufficient rights. returns an array with protocol-objects
-	 * 
-	 * @return array all entries as calendar-objects
-	 */
-	private function readAllEntries() {
-		
-		// prepare return
-		$protocols = array();
-		
-		// get protocol objects
-		$protocol_entries = $this->getUser()->permittedItems('protocol', 'w');
-		foreach($protocol_entries as $protocolId) {
-			$protocols[] = new Protocol($protocolId);
-		}
-		
-		// sort protocol-entries
-		usort($protocols, array($this, 'callbackCompareProtocols'));
-		
-		// return protocol-objects
-		return $protocols;
 	}
 	
 	
@@ -919,6 +675,9 @@ class ProtocolView extends PageView {
 			$fid = File::idFromCache('protocol|'.$protocol->get_id());
 			$protocol->createCachedFile($fid);
 			
+			// set js redirection
+			$this->jsRedirectTimeout('protocol.php?id=listall');
+			
 			// smarty
 			$sCD = new JudoIntranetSmarty();
 			$sCD->assign('data', $protocol->details());
@@ -953,7 +712,7 @@ class ProtocolView extends PageView {
 			$correctable = $protocol->get_correctable(false);
 			// check status
 			$status = false;
-			if($correctable['status'] == 2 || $this->getUser()->get_userinfo('name') == $protocol->get_owner()) {
+			if($correctable['status'] == 2 || $this->getUser()->get_id() == $protocol->get_owner()) {
 				$status = true;
 			}
 			
@@ -1041,6 +800,9 @@ class ProtocolView extends PageView {
 			// set docktype xhtml
 			$form->doctype('xhtml');
 			
+			// get all users
+			$users = $this->getUser()->return_all_users();
+			
 			// get correction status and correctors
 			$correctable = $protocol->get_correctable(false);
 			
@@ -1071,12 +833,38 @@ class ProtocolView extends PageView {
 					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_PROTOCOLCORRECTABLE)	// note text
 				);
 			
+			
+			// select change owner if admin
+			if($this->getUser()->isAdmin()) {
+				
+				$options = array();
+				foreach($users as $user) {
+					$options[$user->get_userinfo('id')] = $user->get_userinfo('name');
+				}
+				
+				$formIds['owner'] = array('valueType' => 'array', 'type' => 'select',);
+				$form->add(
+						'label',		// type
+						'labelOwner',	// id/name
+						'owner',		// for
+						_l('owner').':'	// label text
+					);
+				$owner = $form->add(
+						$formIds['owner']['type'],	// type
+						'owner',					// id/name
+						$protocol->get_owner()		// default
+					);
+				$owner->add_options($options);
+			}
+			
 			// select correctors
 			// get all users and put id and name to options
-			$users = $this->getUser()->return_all_users(array($this->getUser()->get_userinfo('username')));
 			$options = array();
 			foreach($users as $user) {
-				$options[$user->get_userinfo('id')] = $user->get_userinfo('name');
+				// exclude own user
+				if($user->get_id() != $this->getUser()->get_id()) {
+					$options[$user->get_userinfo('id')] = $user->get_userinfo('name');
+				}
 			}
 			
 			$formIds['correctors'] = array('valueType' => 'array', 'type' => 'select',);
@@ -1450,7 +1238,7 @@ class ProtocolView extends PageView {
 				$permissions = $this->getFormPermissions($permissionConfig['ids']);
 				
 				// set owner
-				$data['owner'] = $protocol->get_owner();
+				$data['owner'] = (isset($data['owner']) ? $data['owner'] : $protocol->get_owner());
 				
 				// add public access
 				if($data['public'] == 1) {
@@ -1501,6 +1289,9 @@ class ProtocolView extends PageView {
 					$fileObjects[] = new File($id);
 				}
 				
+				// set js redirection
+				$this->jsRedirectTimeout('protocol.php?id=listall');
+				
 				// smarty
 				$sCD = new JudoIntranetSmarty();
 				$sCD->assign('data', $protocol->details());
@@ -1527,12 +1318,12 @@ class ProtocolView extends PageView {
 	
 	
 	/**
-	 * show returns the protocoltext as html-string
+	 * showProtocol returns the protocoltext as html-string
 	 * 
 	 * @param int $pid entry-id for protocol
 	 * @return string html-string with the protocoltext
 	 */
-	private function show($pid) {
+	private function showProtocol($pid) {
 	
 		// pagecaption
 		$this->getTpl()->assign('pagecaption',parent::lang('show protocol'));
@@ -1544,7 +1335,7 @@ class ProtocolView extends PageView {
 		$correctable = $protocol->get_correctable(false);
 			
 		// check rights
-		if($this->getUser()->hasPermission('protocol', $pid) && ($correctable['status'] == 2 || $this->getUser()->get_userinfo('name') == $protocol->get_owner())) {
+		if($this->getUser()->hasPermission('protocol', $pid) && ($correctable['status'] == 2 || $this->getUser()->get_id() == $protocol->get_owner())) {
 			
 			// smarty
 			$sP = new JudoIntranetSmarty();
@@ -1708,6 +1499,9 @@ class ProtocolView extends PageView {
 					File::delete($fid);
 					// delete attachements
 					File::deleteAttachedFiles('protocol',$protocol->get_id());
+					
+					// set js redirection
+					$this->jsRedirectTimeout('protocol.php?id=listall');
 				} catch(Exception $e) {
 					$this->getError()->handle_error($e);
 					return $this->getError()->to_html($e);
@@ -1756,10 +1550,10 @@ class ProtocolView extends PageView {
 		$this->getTpl()->assign('tmce',$tmce);
 		
 		// check rights
-		if($this->getUser()->hasPermission('protocol', $pid) && (in_array($this->getUser()->get_id(),$correctable['correctors']) || $this->getUser()->get_userinfo('name') == $protocol->get_owner())) {
+		if($this->getUser()->hasPermission('protocol', $pid) && (in_array($this->getUser()->get_id(),$correctable['correctors']) || $this->getUser()->get_id() == $protocol->get_owner())) {
 			
 			// check owner
-			if($this->getUser()->get_userinfo('name') == $protocol->get_owner()) {
+			if($this->getUser()->get_id() == $protocol->get_owner()) {
 				
 				// pagecaption
 				$this->getTpl()->assign('pagecaption',parent::lang('correct protocol'));
@@ -2045,126 +1839,6 @@ class ProtocolView extends PageView {
 			$this->getError()->handle_error($errno);
 			return $this->getError()->to_html($errno);
 		}
-	}
-
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * decissions shows the decissions of this or all protocols
-	 * 
-	 * @param int $pid entry-id for protocol
-	 * @return string html of the decissions page
-	 */
-	private function decisions($pid) {
-	
-		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang('show decisions').'&nbsp;'.$this->helpButton(HELP_MSG_PROTOCOLDECISIONS));
-		
-		// check rights
-		if($this->getUser()->hasPermission('protocol', $pid) || $pid == false) {
-			
-			// prepare template
-			$sD = new JudoIntranetSmarty();
-			
-			// check pid all or single
-			if($pid === false) {
-				
-				// get protocols
-				$protocols = array();
-				$protocolIds = self::getUser()->permittedItems('protocol', 'w');
-				foreach($protocolIds as $protocolId) {
-					$protocols[$protocolId] = new Protocol($protocolId);
-				}
-				
-				// sort array by protocols date
-				usort($protocols,array($this,'callbackCompareProtocols'));
-				
-				// walk through ids
-				$counter = 0;
-				foreach($protocols as $protocol) {
-					
-					// assign data
-					$data[$counter] = array(	'date' => array( 
-														'href' => 'protocol.php?id=details&pid='.$protocol->get_id(),
-														'title' => parent::lang('go to protocol'),
-														'date' => $protocol->get_date('d.m.Y'),
-													),
-												'type' => $protocol->get_type(),
-												'location' => $protocol->get_location(),
-												'decisions' => $this->parseHtml($protocol->get_protocol(),'<p class="tmceDecision">|</p>'));
-					
-					// check if protocol has decisions
-					if(count($data[$counter]['decisions']) == 0) {
-						unset($data[$counter]);
-					}
-					$data = array_merge($data);
-					
-					// add to template
-					$sD->assign('data',$data);
-					
-					// increment counter
-					$counter++;
-				}
-			} else {
-				
-				// get protocol object
-				$protocol = new Protocol($pid);
-								
-				// assign data
-				$data[] = array(	'date' => $protocol->get_date('d.m.Y'),
-									'type' => $protocol->get_type(),
-									'location' => $protocol->get_location(),
-									'decisions' => $this->parseHtml($protocol->get_protocol(),'<p class="tmceDecision">|</p>'));
-				
-				// add to template
-				$sD->assign('data',$data);
-			}
-			
-			// add to template
-			$sD->assign('pid', $pid);
-			
-				// return
-				return $sD->fetch('smarty.protocol.showdecisions.tpl');
-		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
-		}
-	}
-
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * parseHtml parses $text and returns an array containing the text between $tag
-	 * 
-	 * @param string $text the HTML text to be parsed
-	 * @param string $tag the complete HTML tag (open and close, devided by |)
-	 * @return array array containing the text between the given HTML tags
-	 */
-	private function parseHtml($text,$tag) {
-	
-		// split tag
-		list($open,$close) = explode("|",$tag);
-		
-		// match text
-		$matches = array();
-		$preg = "|$open(.*)$close|U";
-		$result = preg_match_all($preg,$text,$matches);
-		
-		// return
-		return $matches[1];
 	}
 }
 

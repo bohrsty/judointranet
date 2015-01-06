@@ -71,6 +71,9 @@ class ResultViewDelete extends ResultView {
 		// check if result exists
 		if(Page::exists('result', $this->get('rid'))) {
 			
+			// set js redirection
+			$this->jsRedirectTimeout('result.php?id=listall');
+			
 			// call and return parent delete()
 			return $this->delete($config);
 		} else {

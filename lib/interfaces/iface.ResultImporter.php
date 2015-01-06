@@ -50,6 +50,13 @@ interface ResultImporterInterface {
 	 * @return array array containing the validated data
 	 */
 	public function getDataAsArray();
+	
+	/**
+	 * returnFiletypes() returns the constant list of allowed file types
+	 * 
+	 * @return string comma separated list of allowed file types
+	 */
+	public static function returnFiletypes();
 }
 
 ?>

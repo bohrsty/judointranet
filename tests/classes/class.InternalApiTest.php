@@ -96,9 +96,17 @@ class InternalApiTest extends PHPUnit_Framework_TestCase {
 		// get object
 		$api = new InternalApi();
 		// test output
+		// get link
+		$sLink = new JudoIntranetSmarty();
+		$data = array(
+				'params' => 'class="link" onclick="location.reload();"',
+				'title' => _l('reload page'),
+				'content' => _l('reload page'),
+			);
+		$sLink->assign('span', $data);
 		$result = array(
 				'Result' => 'ERROR',
-				'Message' => _l('API call failed [timeout]'),
+				'Message' => _l('API call failed [timeout] #?reloadLink', array('reloadLink' => $sLink->fetch('smarty.span.tpl'))),
 			);
 		$this->expectOutputString(json_encode($result), $api->handle());
 	}

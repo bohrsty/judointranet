@@ -699,6 +699,9 @@ class CalendarView extends PageView {
 			// pagecaption
 			$this->getTpl()->assign('pagecaption',parent::lang('create new entry'));
 			
+			// set js redirection
+			$this->jsRedirectTimeout('calendar.php?id=listall');
+			
 			return $sCD->fetch('smarty.calendar.details.tpl');
 		} else {
 			// pagecaption
@@ -1148,6 +1151,9 @@ class CalendarView extends PageView {
 						$fileObjects[] = new File($id);
 					}
 					
+					// set js redirection
+					$this->jsRedirectTimeout('calendar.php?id=listall');
+					
 					// smarty
 					$sCD->assign('data', $calendar->detailsToHtml());
 					$sCD->assign('files', $fileObjects);
@@ -1256,6 +1262,9 @@ class CalendarView extends PageView {
 					foreach(Result::getIdsForCalendar($cid) as $resultId) {
 						Result::delete($resultId);
 					}
+					
+					// set js redirection
+					$this->jsRedirectTimeout('calendar.php?id=listall');
 				} catch(Exception $e) {
 					$this->getError()->handle_error($e);
 					return $this->getError()->to_html($e);

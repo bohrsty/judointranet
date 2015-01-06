@@ -60,7 +60,7 @@ class ResultViewList extends ResultView {
 	public function show() {
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang('result list', true));//.'&nbsp;'.$this->helpButton(HELP_MSG_FILELISTALL));
+		$this->getTpl()->assign('pagecaption',parent::lang('result list', true).'&nbsp;'.$this->helpButton(HELP_MSG_RESULTLIST));
 		
 		// return
 		return $this->getResultList();

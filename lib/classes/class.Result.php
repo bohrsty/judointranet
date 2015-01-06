@@ -40,6 +40,7 @@ class Result extends Page {
 	private $preset;
 	private $desc;
 	private $clubArray;
+	private $isTeam;
 	
 	/*
 	 * getter/setter
@@ -73,9 +74,17 @@ class Result extends Page {
 			if($data[0] == 'agegroups') {
 				return $this->resultStore['agegroups'];
 			} elseif($data[0] == 'weightclasses') {
-				return $this->resultStore['weightclasses'][$data[1]];
+				// check single or team
+				if($this->getIsTeam() == 0) {
+					return $this->resultStore['weightclasses'][$data[1]];
+				}
 			} elseif($data[0] == 'standings') {
-				return $this->resultStore['standings'][$data[1]][$data[2]];
+				// check single or team
+				if($this->getIsTeam() == 0) {
+					return $this->resultStore['standings'][$data[1]][$data[2]];
+				} else {
+					return $this->resultStore['standings'][$data[1]];
+				}
 			} else {
 				return false;
 			}
@@ -95,21 +104,38 @@ class Result extends Page {
 				$this->resultStore['agegroups'][$data['agegroup']]++;
 			}
 			
-			// add agegroup->weightclass
-			if(!isset($this->resultStore['weightclasses'][$data['agegroup']][$data['weightclass']])) {
-				$this->resultStore['weightclasses'][$data['agegroup']][$data['weightclass']] = 1;
+			// check single or team
+			if($this->getIsTeam() == 0) {
+				
+				// single
+				// add agegroup->weightclass
+				if(!isset($this->resultStore['weightclasses'][$data['agegroup']][$data['weightclass']])) {
+					$this->resultStore['weightclasses'][$data['agegroup']][$data['weightclass']] = 1;
+				} else {
+					$this->resultStore['weightclasses'][$data['agegroup']][$data['weightclass']]++;
+				}
+				
+				// add standings
+				$this->resultStore['standings'][$data['agegroup']][$data['weightclass']][] = array(
+						'place' => $data['place'],
+						'name' => $data['name'],
+						'club_id' => $data['club_id'],
+						'club_name' => (isset($this->clubArray[$data['club_id']]) ? $this->clubArray[$data['club_id']]['name'] : ''),
+						'club_number' => (isset($this->clubArray[$data['club_id']]) ? $this->clubArray[$data['club_id']]['number'] : ''),
+					);
 			} else {
-				$this->resultStore['weightclasses'][$data['agegroup']][$data['weightclass']]++;
-			}
-			
-			// add standings
-			$this->resultStore['standings'][$data['agegroup']][$data['weightclass']][] = array(
-					'place' => $data['place'],
-					'name' => $data['name'],
-					'club_id' => $data['club_id'],
-					'club_name' => (isset($this->clubArray[$data['club_id']]) ? $this->clubArray[$data['club_id']]['name'] : ''),
-					'club_number' => (isset($this->clubArray[$data['club_id']]) ? $this->clubArray[$data['club_id']]['number'] : ''),
+				
+				// team
+				// add standings
+				$clubName = (isset($this->clubArray[$data['club_id']]) ? $this->clubArray[$data['club_id']]['name'] : '');
+				$this->resultStore['standings'][$data['agegroup']][] = array(
+						'place' => $data['place'],
+						'name' => (is_null($data['name']) ? $clubName : ''),
+						'club_id' => $data['club_id'],
+						'club_name' => $clubName,
+						'club_number' => (isset($this->clubArray[$data['club_id']]) ? $this->clubArray[$data['club_id']]['number'] : ''),
 				);
+			}
 		}
 		
 		return true;
@@ -131,6 +157,12 @@ class Result extends Page {
 	}
 	public function setClubArray($clubArray) {
 		$this->clubArray = $clubArray;
+	}
+	public function getIsTeam(){
+		return $this->isTeam;
+	}
+	public function setIsTeam($isTeam) {
+		$this->isTeam = $isTeam;
 	}
 	
 	/*
@@ -247,7 +279,7 @@ class Result extends Page {
 		
 		// get result values from db
 		$result = Db::ArrayValue('
-			SELECT `calendar_id`, `preset_id`, `desc`, `last_modified`, `modified_by`, `valid`
+			SELECT `calendar_id`, `preset_id`, `desc`, `is_team`, `last_modified`, `modified_by`, `valid`
 			FROM `result`
 			WHERE `id`=#?	
 		',
@@ -261,6 +293,7 @@ class Result extends Page {
 		$this->setCalendar(new Calendar($result[0]['calendar_id']));
 		$this->setPreset($result[0]['preset_id']);
 		$this->setDesc($result[0]['desc']);
+		$this->setIsTeam($result[0]['is_team']);
 		$this->setLastModified((strtotime($result[0]['last_modified']) < 0 ? 0 : strtotime($result[0]['last_modified'])));
 		$this->setModifiedBy($result[0]['modified_by']);
 		$this->setValid($result[0]['valid']);
@@ -300,12 +333,13 @@ class Result extends Page {
 			
 			// write result
 			if(!Db::executeQuery('
-				INSERT INTO `result` (`id`, `calendar_id`, `preset_id`, `desc`, `last_modified`, `modified_by`, `valid`)
-				VALUES (#?, #?, #?, \'#?\', CURRENT_TIMESTAMP, #?, #?)
+				INSERT INTO `result` (`id`, `calendar_id`, `preset_id`, `desc`, `is_team`, `last_modified`, `modified_by`, `valid`)
+				VALUES (#?, #?, #?, \'#?\', #?, CURRENT_TIMESTAMP, #?, #?)
 				ON DUPLICATE KEY UPDATE
 					`calendar_id`=#?,
 					`preset_id`=#?,
 					`desc`=\'#?\',
+					`is_team`=#?,
 					`last_modified`=CURRENT_TIMESTAMP,
 					`modified_by`=#?,
 					`valid`=#?
@@ -315,12 +349,14 @@ class Result extends Page {
 					$this->getCalendar()->getId(),
 					$this->getPreset(),
 					$this->getDesc(),
+					$this->getIsTeam(),
 					$this->getUser()->get_id(), 
 					$this->getValid(),
 					// update
 					$this->getCalendar()->getId(),
 					$this->getPreset(),
-					$this->getDesc(), 
+					$this->getDesc(),
+					$this->getIsTeam(),
 					$this->getUser()->get_id(), 
 					$this->getValid(),))) {
 				$n = null;
@@ -350,14 +386,28 @@ class Result extends Page {
 			// walk through agegroups
 			foreach($this->getAgegroups() as $agegroup => $countAgegroups) {
 				
-				// walk through weightclasses
-				foreach($this->getWeightclasses($agegroup) as $weightclass => $countWeightclasses) {
+				// check single or team
+				if($this->getIsTeam() == 0) {
 					
-					// walk though standings
-					foreach($this->getStandings($agegroup, $weightclass) as $standing) {
+					// single
+					// walk through weightclasses
+					foreach($this->getWeightclasses($agegroup) as $weightclass => $countWeightclasses) {
 						
-						$sql .= '(NULL, #?, \'#?\', \'#?\', \'#?\', #?, #?),';
-						array_push($sqlParams, $newId, $agegroup, $weightclass, $standing['name'], $standing['club_id'], $standing['place']);
+						// walk though standings
+						foreach($this->getStandings($agegroup, $weightclass) as $standing) {
+							
+							$sql .= '(NULL, #?, \'#?\', \'#?\', \'#?\', #?, #?),';
+							array_push($sqlParams, $newId, $agegroup, $weightclass, $standing['name'], $standing['club_id'], $standing['place']);
+						}
+					}
+				} else {
+					
+					// team
+					// walk through standings
+					foreach($this->getStandings($agegroup, null) as $standing) {
+							
+						$sql .= '(NULL, #?, \'#?\', #?, \'#?\', #?, #?),';
+						array_push($sqlParams, $newId, $agegroup, 'NULL', $standing['name'], $standing['club_id'], $standing['place']);
 					}
 				} 
 			}
@@ -483,7 +533,7 @@ class Result extends Page {
 	
 	
 	/**
-	 * addMarks($infos, $html) the marks and values to the given array
+	 * addMarks($infos) the marks and values to the given array
 	 * 
 	 * @param array $infos array to fill with marks and values
 	 * @return void

@@ -82,7 +82,7 @@ some;very;important;result;data';
 		$importer = ResultImporter::factory($this->fileName, $type);
 		
 		$this->assertInstanceOf('ResultImporter', $importer);
-		$this->assertEquals($fileContent, $importer->getFileContent());
+		$this->assertEquals($this->fileName, $importer->getFileContent());
 		$this->assertTrue(is_array($importer->getResultStore()));
 		
 		// call factory with non-existing type (object should be of class ResultImporter)
@@ -91,7 +91,7 @@ some;very;important;result;data';
 		$importer = ResultImporter::factory($this->fileName, $type);
 		
 		$this->assertInstanceOf('ResultImporter', $importer);
-		$this->assertEquals($fileContent, $importer->getFileContent());
+		$this->assertEquals($this->fileName, $importer->getFileContent());
 		$this->assertTrue(is_array($importer->getResultStore()));
 		
 	}

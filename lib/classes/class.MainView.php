@@ -87,7 +87,7 @@ class MainView extends PageView {
 					
 					// smarty
 					$this->getTpl()->assign('title', $this->title(parent::lang('logout')));
-					$this->getTpl()->assign('main', $this->getUser()->logout());
+					$this->getTpl()->assign('main', $this->getUser()->logout($this));
 					
 				break;
 				

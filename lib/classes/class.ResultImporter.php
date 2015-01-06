@@ -35,8 +35,9 @@ class ResultImporter extends Object {
 	 */
 	private $fileContent;
 	private $resultStore;
+	private $isTeam;
 	// register import modules
-	const modules = 'Mm5export,Blafasel';
+	const modules = 'Mm5export,Spreadsheet';
 	
 	
 	/*
@@ -54,6 +55,12 @@ class ResultImporter extends Object {
 	public function setResultStore($resultStore) {
 		$this->resultStore = $resultStore;
 	}
+	public function getIsTeam(){
+		return $this->isTeam;
+	}
+	public function setIsTeam($isTeam) {
+		$this->isTeam = $isTeam;
+	}
 	
 	
 	/*
@@ -63,6 +70,9 @@ class ResultImporter extends Object {
 		
 		// parent constructor
 		parent::__construct();
+		
+		// set team or single
+		$this->setIsTeam(null);
 		
 	}
 	
@@ -93,7 +103,7 @@ class ResultImporter extends Object {
 		
 		// set data
 		// fileContent
-		$importer->setFileContent(file($fileName, FILE_IGNORE_NEW_LINES));
+		$importer->setFileContent($fileName);
 		
 		// resultStore
 		$importer->setResultStore(array());
@@ -117,11 +127,43 @@ class ResultImporter extends Object {
 		// walk through modules
 		foreach(explode(',', self::modules) as $module) {
 			if(@class_exists('ResultImporter'.$module)) {
-				$modules[$module] = parent::lang('ResultImporter'.$module, true);
+				$modules[$module] = _l('ResultImporter'.$module).' ('.self::returnModuleFiletypes('ResultImporter'.$module).')';
 			}
 		}
 		
 		// return
 		return $modules;
+	}
+	
+	
+	/**
+	 * returnModuleFiletypes() returns a comma separated list of file extensions allowed in all
+	 * modules
+	 * 
+	 * @param string $class return only the filetypes of the given class
+	 * @return string comma separated list of file extensions
+	 */
+	public static function returnModuleFiletypes($class = null) {
+		
+		// check $class
+		if(!is_null($class)) {
+			return $class::filetypes;
+		} else {
+			
+			// prepare return
+			$filetypes = '';
+			
+			// walk through modules
+			foreach(explode(',', self::modules) as $module) {
+				
+				$class = 'ResultImporter'.$module;
+				if(@class_exists($class)) {
+					$filetypes .= $class::returnFiletypes().', ';
+				}
+			}
+			
+			// return
+			return substr($filetypes, 0, -2);
+		}
 	}
 }

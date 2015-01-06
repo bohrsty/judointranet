@@ -45,13 +45,7 @@ class ResultViewListall extends ResultView {
 	public function __construct() {
 		
 		// setup parent
-		try {
-			parent::__construct();
-		} catch(Exception $e) {
-			
-			// handle error
-			$this->getError()->handle_error($e);
-		}
+		parent::__construct();
 		
 		// create smarty object
 		$this->smarty = new JudoIntranetSmarty();
@@ -66,7 +60,7 @@ class ResultViewListall extends ResultView {
 	public function show() {
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang('listall', true));//.'&nbsp;'.$this->helpButton(HELP_MSG_FILELISTALL));
+		$this->getTpl()->assign('pagecaption',parent::lang('listall', true).'&nbsp;'.$this->helpButton(HELP_MSG_RESULTLISTALL));
 		
 		// return
 		return $this->getResultList();
@@ -110,7 +104,7 @@ class ResultViewListall extends ResultView {
 		$jtfShow->setSorting(false);
 		$jtfShow->setWidth('1%');
 		$jtfAdmin = new JtableField('admin');
-		$jtfAdmin->setTitle(parent::lang('admin'));
+		$jtfAdmin->setTitle(parent::lang('admin').$this->helpButton(HELP_MSG_RESULTLISTADMIN));
 		$jtfAdmin->setEdit(false);
 		$jtfAdmin->setSorting(false);
 		$jtfAdmin->setWidth('1%');

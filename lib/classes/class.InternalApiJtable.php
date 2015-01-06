@@ -135,6 +135,12 @@ class InternalApiJtable extends InternalApi {
 	 */
 	private function actionList() {
 		
+		// prepare error message
+		$errorNotAuthorized = array(
+				'Result' => 'ERROR',
+				'Message' => _l('API call failed [not authorized]'),
+			);
+		
 		// switch $_GET['provider']
 		switch($this->get('provider')) {
 			
@@ -159,7 +165,27 @@ class InternalApiJtable extends InternalApi {
 			break;
 			
 			case 'UsertableField':
-				return $this->actionListUsertableField();
+				
+				// check permission
+				if(($this->get('table') == 'file_type' && !$this->getUser()->isAdmin())
+				|| ($this->get('table') == 'club' && $this->getUser()->isMemberOf(2) === false)
+				|| ($this->getUser()->hasPermission('navi', 35, 'r') === false)) {
+					return $errorNotAuthorized;
+				} else {
+					return $this->actionListUsertableField();
+				}
+			break;
+			
+			case 'ProtocolListall':
+				return $this->actionListProtocolListall();
+			break;
+			
+			case 'ProtocolDecisions':
+				return $this->actionListProtocolDecisions();
+			break;
+			
+			case 'FileListall':
+				return $this->actionListFileListall();
 			break;
 			
 			default:
@@ -179,6 +205,12 @@ class InternalApiJtable extends InternalApi {
 	 */
 	private function actionUpdate() {
 		
+		// prepare error message
+		$errorNotAuthorized = array(
+				'Result' => 'ERROR',
+				'Message' => _l('API call failed [not authorized]'),
+			);
+		
 		// switch $_GET['provider']
 		switch($this->get('provider')) {
 			
@@ -187,7 +219,13 @@ class InternalApiJtable extends InternalApi {
 			break;
 			
 			case 'UsertableField':
-				return $this->actionUpdateUsertableField();
+				
+				// check permission
+				if($this->getUser()->hasPermission('navi', 35, 'w')) {
+					return $this->actionUpdateUsertableField();
+				} else {
+					return $errorNotAuthorized;
+				}
 			break;
 			
 			default:
@@ -207,11 +245,23 @@ class InternalApiJtable extends InternalApi {
 	 */
 	private function actionDelete() {
 		
+		// prepare error message
+		$errorNotAuthorized = array(
+				'Result' => 'ERROR',
+				'Message' => _l('API call failed [not authorized]'),
+			);
+		
 		// switch $_GET['provider']
 		switch($this->get('provider')) {
 			
 			case 'UsertableField':
-				return $this->actionDeleteUsertableField();
+				
+				// check permission
+				if($this->getUser()->hasPermission('navi', 35, 'w')) {
+					return $this->actionDeleteUsertableField();
+				} else {
+					return $errorNotAuthorized;
+				}
 			break;
 			
 			default:
@@ -231,11 +281,23 @@ class InternalApiJtable extends InternalApi {
 	 */
 	private function actionCreate() {
 		
+		// prepare error message
+		$errorNotAuthorized = array(
+				'Result' => 'ERROR',
+				'Message' => _l('API call failed [not authorized]'),
+			);
+		
 		// switch $_GET['provider']
 		switch($this->get('provider')) {
 			
 			case 'UsertableField':
-				return $this->actionCreateUsertableField();
+				
+				// check permission
+				if($this->getUser()->hasPermission('navi', 35, 'w')) {
+					return $this->actionCreateUsertableField();
+				} else {
+					return $errorNotAuthorized;
+				}
 			break;
 			
 			default:
@@ -578,6 +640,84 @@ class InternalApiJtable extends InternalApi {
 		return array(
 				'Result' => 'OK',
 				'Record' => $postData,
+			);
+	}
+	
+	
+	/**
+	 * actionListProtocolListall() handles the list action for jTable, gets and returns the
+	 * data from ProtocolListallListing class
+	 * 
+	 * @return array data for jTable
+	 */
+	private function actionListProtocolListall() {
+		
+		// prepare getData (jtStartIndex, jtPageSize)
+		$getData = array(
+				'limit' => ($this->get('jtStartIndex') !== false && $this->get('jtPageSize') !== false ? 'LIMIT '.$this->get('jtStartIndex').', '.$this->get('jtPageSize') : ''),
+				'orderBy' => ($this->get('jtSorting') !== false ? 'ORDER BY '.$this->get('jtSorting') : ''),
+			);
+		
+		// get object
+		$protocolListallListing = new ProtocolListallListing();
+		
+		// prepare return
+		return array(
+				'Result' => 'OK',
+				'Records' => $protocolListallListing->listingAsArray($getData),
+				'TotalRecordCount' => $protocolListallListing->totalRowCount(),
+			);
+	}
+	
+	
+	/**
+	 * actionListProtocolDecisions() handles the list action for jTable, gets and returns the
+	 * data from ProtocolDecisionsListing class
+	 * 
+	 * @return array data for jTable
+	 */
+	private function actionListProtocolDecisions() {
+		
+		// prepare getData (jtStartIndex, jtPageSize)
+		$getData = array(
+				'limit' => ($this->get('jtStartIndex') !== false && $this->get('jtPageSize') !== false ? 'LIMIT '.$this->get('jtStartIndex').', '.$this->get('jtPageSize') : ''),
+				'orderBy' => ($this->get('jtSorting') !== false ? 'ORDER BY '.$this->get('jtSorting') : ''),
+			);
+		
+		// get object
+		$protocolDecisionsListing = new ProtocolDecisionsListing();
+		
+		// prepare return
+		return array(
+				'Result' => 'OK',
+				'Records' => $protocolDecisionsListing->listingAsArray($getData),
+				'TotalRecordCount' => $protocolDecisionsListing->totalRowCount(),
+			);
+	}
+	
+	
+	/**
+	 * actionListFileListall() handles the list action for jTable, gets and returns the
+	 * data from FileListallListing class
+	 * 
+	 * @return array data for jTable
+	 */
+	private function actionListFileListall() {
+		
+		// prepare getData (jtStartIndex, jtPageSize)
+		$getData = array(
+				'limit' => ($this->get('jtStartIndex') !== false && $this->get('jtPageSize') !== false ? 'LIMIT '.$this->get('jtStartIndex').', '.$this->get('jtPageSize') : ''),
+				'orderBy' => ($this->get('jtSorting') !== false ? 'ORDER BY '.$this->get('jtSorting') : ''),
+			);
+		
+		// get object
+		$fileListallListing = new FileListallListing();
+		
+		// prepare return
+		return array(
+				'Result' => 'OK',
+				'Records' => $fileListallListing->listingAsArray($getData),
+				'TotalRecordCount' => $fileListallListing->totalRowCount(),
 			);
 	}
 }

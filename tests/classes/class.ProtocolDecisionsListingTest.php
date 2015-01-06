@@ -1,4 +1,5 @@
-{* ********************************************************************************************
+<?php
+/* ********************************************************************************************
  * Copyright (c) 2011 Nils Bohrs
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this
@@ -19,16 +20,39 @@
  * 
  * Thirdparty licenses see LICENSE
  * 
- * ********************************************************************************************}
-<div class="setupMessage {$messageType}">
-	<h3 class="{$messageType}">{$messageCaption}</h3>
-	<p>{$messageMessage}</p>
-	<p class="monospace bgGrey">{$messageValue}</p>
-{if isset($messageActions)}
-	<p>
-		{foreach $messageActions as $link}
-			<span class="Zebra_Form"><input class="submit" type="button" onclick="window.location='{$link.href|escape}'" title="{$link.title}" value="{$link.name|escape}" /></span>
-		{/foreach}
-	</p>
-{/if}
-</div>
+ * ********************************************************************************************/
+
+class ProtocolDecisionsListingTest extends PHPUnit_Framework_TestCase {
+	
+	// setup
+	public function setUp() {
+		
+	}
+	
+	
+	public function tearDown() {
+		
+	}
+	
+	
+	public function testConstruction() {
+		
+		$data = 'ProtocolDecisionsListing';
+		
+		// instance of
+		$listing = new $data();
+		$this->assertEquals($data, get_class($listing));
+		
+		// methods defined
+		$listingMethods = get_class_methods($listing);
+		$this->assertContains('listingAsArray', $listingMethods);
+		$this->assertContains('listingAsHtml', $listingMethods);
+		
+		// method results
+		$this->assertTrue(is_array($listing->listingAsArray()));
+		$this->assertTrue(is_string($listing->listingAsHtml('')));
+		$this->assertEquals('', $listing->listingAsHtml(''));
+	}
+	
+}
+?>

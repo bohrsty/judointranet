@@ -155,6 +155,9 @@ class ResultTest extends PHPUnit_Framework_TestCase {
 		// get object
 		$result = new Result(0, 1);
 		
+		// set is_team
+		$result->setIsTeam(0);
+		
 		// test write without standings
 		$this->assertFalse($result->writeDb());
 		

@@ -65,17 +65,12 @@ class JudoIntranetSmarty extends Smarty {
 		// check parameters
 		if(count($params) > 0) {
 			
-			// translate
-			$translation = Object::lang($content, true);
-			 
-			// walk through params and replace
-			foreach($params as $name => $value) {
-				return str_replace('#?'.$name, $value, $translation);
-			}
+			// translate with replacement
+			return _l($content, $params);
 		} else {
 			
 			// just translate and return
-			return Object::lang($content, true);
+			return _l($content);
 		}
 	}
 

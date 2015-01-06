@@ -122,6 +122,12 @@ class ResultListallListing extends ResultListing implements ListingInterface {
 		// get permitted result ids
 		$resultIds = $this->getUser()->permittedItems('result', 'w');
 		
+		// check if empty result
+		$mysqlData = implode(',', $resultIds);
+		if(count($resultIds) == 0) {
+			$mysqlData = 'SELECT FALSE';
+		}
+		
 		// check jTable and get data
 		if(count($getData) > 0) {
 			
@@ -149,7 +155,7 @@ class ResultListallListing extends ResultListing implements ListingInterface {
 		}
 		$result = Db::ArrayValue($sql,
 		MYSQL_ASSOC,
-		array(implode(',', $resultIds),));
+		array($mysqlData,));
 		if($result === false) {
 			$n = null;
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');

@@ -39,6 +39,8 @@ class Jtable extends Object {
 	private $settingQuote;
 	private $fields;
 	private $validate;
+	private $id;
+	private $actionsJscriptGet;
 	
 	/*
 	 * getter/setter
@@ -136,18 +138,63 @@ class Jtable extends Object {
 		$value = $servicesJson->encode($this->settingValue[$setting]);
 		
 		// check quoting
+		$return = '';
 		if($this->settingQuote[$setting] === false) {
-			return $name.':'.(gettype($this->settingValue[$setting]) == 'string' ? substr($value, 1, -1) : $value);
+			$return = $name.':'.(gettype($this->settingValue[$setting]) == 'string' ? substr($value, 1, -1) : $value);
 		} else {
-			return $name.':'.$value;
+			$return = $name.':'.$value;
 		}
+		
+		if(count($this->actionsJscriptGet) > 0 && $setting == 'actions') {
+			
+			// check if more than one action
+			$work = array();
+			if(strpos($return, '","') !== false) {
+				$work = explode('","', $return);
+				$work[count($work)-1] = substr($work[count($work)-1], 0, -2);
+			} else {
+				$work = substr($return, 0, -2);
+			}
+			
+			// walk through array
+			foreach($this->actionsJscriptGet as $get => $jscriptValue) {
+				
+				// quote $get and put togehter
+				$get = '&'.substr($servicesJson->encode($get), 1, -1).'="+'.$jscriptValue.'+"';
+				
+				// check number of actions
+				if(is_array($work)) {
+					
+					// walk through actions
+					for($i = 0; $i < count($work); $i++) {
+						$work[$i] .= $get;
+					}
+				} else {
+					$work .= $get;
+				}
+			}
+			
+			// reassemble actions
+			if(is_array($work)) {
+				$work[count($work)-1] = substr($work[count($work)-1], 0, -2);
+				$return = implode(',"', $work);
+			} else {
+				$return = substr($work, 0, -2).'}';
+			}
+		}
+		
+		return $return;
 	}
 	
 	// set api urls
-	public function setActions($apiBase, $provider, $create = true, $update = true, $delete = true, $get = array()) {
+	public function setActions($apiBase, $provider, $create = true, $update = true, $delete = true, $get = array(), $jscriptGet = array()) {
+		
+		// set $jscriptGet
+		$this->actionsJscriptGet = $jscriptGet;
 		
 		// get random id
 		$randomId = Object::getRandomId();
+		$this->id = $randomId;
 		
 		// collect data for signature
 		$data = array(
@@ -202,6 +249,10 @@ class Jtable extends Object {
 			$fieldString .= '"'.$name.'":'.$field.',';
 		}
 		return '"fields":{'.substr($fieldString, 0, -1).'}';
+	}
+	
+	public function getId() {
+		return $this->id;
 	}
 }
 

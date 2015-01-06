@@ -27,6 +27,6 @@
 <span class="iconspacer16"></span>
 {/if}
 {else}
-<a href="{$data.$i.href|escape}" title="{$data.$i.title}">{if is_array($data.$i.name)}<img src="{$data.$i.name.src}" alt="{$data.$i.name.alt}" class="icon" />{else}{$data.$i.name}{/if}</a>
+{if $data.$i.href !== false}<a href="{$data.$i.href|escape}" title="{$data.$i.title}">{/if}{if is_array($data.$i.name)}<img src="{$data.$i.name.src}" alt="{$data.$i.name.alt}" class="icon" />{else}{$data.$i.name}{/if}{if $data.$i.href !== false}</a>{/if}
 {/if}
 {/for}

@@ -305,7 +305,7 @@ class Field extends Object {
 					'note',			// type
 					'note'.ucfirst($elementId),	// id/name
 					$elementId,		// for
-					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDATE)	// note text
+					parent::lang('help').'&nbsp;'.$this->getView()->helpButton(HELP_MSG_FIELDDATE)	// note text
 				);
 		} elseif($this->get_type() == 'checkbox') {
 			
@@ -344,7 +344,7 @@ class Field extends Object {
 					'note',			// type
 					'note'.ucfirst($elementId),	// id/name
 					$elementId,		// for
-					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDCHECKBOX)	// note text
+					parent::lang('help').'&nbsp;'.$this->getView()->helpButton(HELP_MSG_FIELDCHECKBOX)	// note text
 				);
 		} elseif($this->get_type() == 'dbselect') {
 			
@@ -389,7 +389,7 @@ class Field extends Object {
 			if($this->get_required() == 1) {
 				$rules['required'] = array(
 						'error',
-						parent::lang('class.Field#element#rule#required.select'),
+						parent::lang('required select'),
 					);
 				
 				// add rules
@@ -404,7 +404,7 @@ class Field extends Object {
 					'note',			// type
 					'note'.ucfirst($elementId),	// id/name
 					$elementId,		// for
-					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDBSELECT)	// note text
+					parent::lang('help').'&nbsp;'.$this->getView()->helpButton(HELP_MSG_FIELDDBSELECT)	// note text
 				);
 		} elseif($this->get_type() == 'dbhierselect') {
 			
@@ -1151,8 +1151,19 @@ class Field extends Object {
 				'note',			// type
 				'note'.ucfirst($select2Id),	// id/name
 				$select2Id,		// for
-				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDBHIERSELECT)	// note text
+				parent::lang('help').'&nbsp;'.$this->getView()->helpButton(HELP_MSG_FIELDDBHIERSELECT)	// note text
 			);
+		
+		// add required rule if field is required
+		if($this->get_required() == 1) {
+			$rules['required'] = array(
+					'error',
+					parent::lang('required select'),
+				);
+			
+			// add rules
+			$select1->set_rule($rules);
+		}
 		
 		// add rule to check second select to be selected if first is
 		$select2->set_rule(
@@ -1273,7 +1284,7 @@ class Field extends Object {
 				'note',			// type
 				'note'.ucfirst($elementId.'-defaults'),	// id/name
 				$elementId.'-defaults',		// for
-				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDTEXT)	// note text
+				parent::lang('help').'&nbsp;'.$this->getView()->helpButton(HELP_MSG_FIELDTEXT)	// note text
 			);
 		
 		// create smarty template and add variables

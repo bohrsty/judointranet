@@ -38,6 +38,7 @@ class JtableField extends Object {
 	private $settings;
 	private $quote;
 	private $validate;
+	private $childTable;
 	
 	/*
 	 * getter/setter
@@ -53,6 +54,12 @@ class JtableField extends Object {
 	}
 	public function setValidate($validate) {
 		$this->validate = $validate;
+	}
+	public function getChildTable() {
+		return $this->childTable;
+	}
+	public function setChildTable($childTable) {
+		$this->childTable = $childTable;
 	}
 	
 	/*
@@ -70,6 +77,8 @@ class JtableField extends Object {
 		$this->settings = array();
 		// prepare validation
 		$this->setValidate(false);
+		// prepare child table
+		$this->setChildTable(false);
 		
 		// set default values
 		$this->setList();
@@ -105,12 +114,19 @@ class JtableField extends Object {
 		// walk through settings
 		foreach($this->settings as $setting => $nameValue) {
 			
-			// check $setting value and name for valid JSON characters
+			// check $setting value and name for valid JSON characters, if not display and child table
 			$name = $servicesJson->encode($setting);
-			$value = $servicesJson->encode($nameValue);
+			if($setting == 'display' && $this->getChildTable() === true) {
+				$value = $nameValue;
+			} else {
+				$value = $servicesJson->encode($nameValue);
+			}
 			
 			// check quoting
-			if(isset($this->quote[$setting]) && $this->quote[$setting] === false) {
+			if(	isset($this->quote[$setting])
+				&& $this->quote[$setting] === false
+				&& !($setting == 'display'
+				&& $this->getChildTable() === true)) {
 				$jScript .= $name.':'.(gettype($this->settings[$setting]) == 'string' ? substr($value, 1, -1) : $value);
 			} else {
 				$jScript .= $name.':'.$value;
@@ -213,6 +229,15 @@ class JtableField extends Object {
 		} else {
 			$this->settings['inputClass'] = $value;
 		}
+	}
+	
+	public function addChildTable($subTable, $img, $containerId) {
+		
+		// put jscript function together
+		$display = 'function (parentData) { var img = $(\''.$img.'\'); img.click(function () { $(\'#'.$containerId.'\').jtable(\'openChildTable\', img.closest(\'tr\'), '.$subTable->asJavaScriptConfig().', function (data) { data.childTable.jtable(\'load\'); }); }); return img; }';
+		// set display
+		$this->setDisplay($display);
+		$this->setChildTable(true);
 	}
 }
 

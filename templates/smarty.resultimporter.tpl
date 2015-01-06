@@ -32,14 +32,25 @@
 	{$elements.preset.note}
 {/if}
 </div>
+<div class="row">
+{if isset($elements.isTeam.label) && $elements.isTeam.label!=''}
+	{$elements.isTeam.label}
+{/if}
+{if isset($elements.isTeam.element) && $elements.isTeam.element!=''}
+	{$elements.isTeam.element}
+{/if}
+{if isset($elements.isTeam.note) && $elements.isTeam.note!=''}
+	{$elements.isTeam.note}
+{/if}
+</div>
 <table class="content">
 	<tr>
 		<th>{lang}result import name{/lang}</th>
-		<th>{lang}('result import club orig{/lang}</th>
-		<th>{lang}('result import club correct{/lang}</th>
-		<th>{lang}('result import agegroup{/lang}</th>
-		<th>{lang}('result import weightclass{/lang}</th>
-		<th>{lang}('result import place{/lang}</th>
+		<th>{lang}result import club orig{/lang}</th>
+		<th>{lang}result import club correct{/lang}</th>
+		<th>{lang}result import agegroup{/lang}</th>
+		<th>{lang}result import weightclass{/lang}</th>
+		<th>{lang}result import place{/lang}</th>
 	</tr>
 {for $i=0 to count($data)-1}
 	<tr class="resultImportCorrect{cycle values=" even, odd"}">

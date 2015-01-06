@@ -135,6 +135,9 @@
     "xsl"   :   ["application\/xml", "text\/xsl", "text\/xml"],
     "xspf"  :   application\/xspf+xml,
     "zip"   :   ["application\/x-zip", "application\/zip", "application\/x-zip-compressed", "application\/s-compressed", "multipart\/x-zip"],
-    "zsh"   :   text\/x-scriptzsh
+    "zsh"   :   text\/x-scriptzsh,
+    "ods"   :   application/vnd.oasis.opendocument.spreadsheet,
+    "ots"   :   application/vnd.oasis.opendocument.spreadsheet-template,
+    "xltx"  :   ["application\/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application\/zip", "application\/vnd.ms-excel", "application\/msword", "application\/x-zip"]
 
 }

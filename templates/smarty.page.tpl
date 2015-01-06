@@ -88,13 +88,9 @@
 {/literal}
 {/if}
 		</script>
-{if isset($manualjquery) && $manualjquery!=''}
+{if isset($manualjquery) && $manualjquery!='' || isset($help)}
 		<script type="text/javascript">
 			$(document).ready(function(){ldelim}
-				// jQuery functions go here...
-				{$manualjquery}
-			{rdelim});
-{if isset($help)}
 {literal}
 				$(function() {
 					$(".{/literal}{$help.buttonClass}{literal}").click(function() {
@@ -106,8 +102,9 @@
 						})
 						.done(function(data) {
 							var response = $.parseJSON(data);
-							dialogDiv.attr('title', response.title);
+							dialogDiv.append('<h3>'+response.title+'</h3>');
 							dialogDiv.append(response.content);
+							dialogDiv.append('<p class="helpId">['+id+']</p>');
 						});
 						$('body').append(dialogDiv);
 						dialogDiv.dialog({
@@ -136,7 +133,14 @@
 					})
 				});
 {/literal}
+{if isset($jsRedirect) && $jsRedirect === true}
+				setTimeout(function() {ldelim}
+					window.location.replace('{$jsRedirectUri}');
+				{rdelim},
+				{$jsRedirectTimeout});
 {/if}
+				{$manualjquery}
+			{rdelim});
 		</script>
 {/if}
 {if isset($tinymce) and isset($tmce)}

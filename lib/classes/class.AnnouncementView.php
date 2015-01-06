@@ -123,6 +123,16 @@ class AnnouncementView extends PageView {
 						$this->getTpl()->assign('zebraform', false);
 					break;
 					
+					case 'refreshpdf':
+						
+						// smarty
+						$this->getTpl()->assign('title', $this->title(_l('announcement: refreshpdf')));
+						$refreshPdf = new AnnouncementViewRefreshpdf();
+						$this->getTpl()->assign('main', $refreshPdf->show());
+						$this->getTpl()->assign('jquery', false);
+						$this->getTpl()->assign('zebraform', false);
+					break;
+					
 					default:
 						
 						// id set, but no functionality
@@ -257,6 +267,9 @@ class AnnouncementView extends PageView {
 						
 						// add field-names and -values to array
 						$preset->add_marks($announcement);
+						
+						// set js redirection
+						$this->jsRedirectTimeout('calendar.php?id=listall');
 						
 						// get field name and value
 						$values = array();
@@ -400,6 +413,9 @@ class AnnouncementView extends PageView {
 						// add field-names and -values to array
 						$preset->add_marks($announcement);
 						
+						// set js redirection
+						$this->jsRedirectTimeout('calendar.php?id=listall');
+						
 						// get field name and value
 						$values = array();
 						foreach($fields as $field) {
@@ -542,6 +558,9 @@ class AnnouncementView extends PageView {
 						// smarty
 						$sConfirmation->assign('message', parent::lang('entry successful deleted'));
 						$sConfirmation->assign('form', '');
+						
+						// set js redirection
+						$this->jsRedirectTimeout('calendar.php?id=listall');
 						
 						// write entry
 						try {

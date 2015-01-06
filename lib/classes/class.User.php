@@ -228,9 +228,10 @@ class User extends Object {
 	 * logout logs the user out and sets all properties back to public access,
 	 * returns logout-message
 	 * 
+	 * @param object $view the main view to act directly on templates etc.
 	 * @return string html-string of logout-message
 	 */
-	public function logout() {
+	public function logout(&$view) {
 		
 		// smarty-template
 		$sLogout = new JudoIntranetSmarty();
@@ -269,6 +270,9 @@ class User extends Object {
 		$sLogout->assign('caption', parent::lang('logout'));
 		$sLogout->assign('message', parent::lang('successfully logged off'));
 		$sLogout->assign('form', '');
+		
+		// set redirect
+		$view->jsRedirectTimeout('index.php?id=login');
 		
 		// return
 		return $sLogout->fetch('smarty.login.tpl');

@@ -78,8 +78,9 @@ class FileView extends PageView {
 					case 'listall':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('files: listall')));
-						$this->getTpl()->assign('main', $this->listall());
+						$this->getTpl()->assign('title', $this->title(_l('files: listall')));
+						$fileViewListall = new FileViewListall();
+						$this->getTpl()->assign('main', $fileViewListall->show());
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', false);
 						$this->getTpl()->assign('tinymce', false);
@@ -220,77 +221,6 @@ class FileView extends PageView {
 		
 		// return
 		return $sD->fetch('smarty.default.content.tpl');
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * listall() lists all file entries (paged)
-	 * shows only entrys for which the user has sufficient rights
-	 * 
-	 * @return void
-	 */
-	private function listall() {
-		
-		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang('listall').'&nbsp;'.$this->helpButton(HELP_MSG_FILELISTALL));
-		
-		// read all entries
-		$entries = $this->readAllEntries();
-				
-		// smarty-templates
-		$sListall = new JudoIntranetSmarty();
-		
-		// smarty
-		$sTh = array(
-				'name' => parent::lang('name'),
-				'filetype' => parent::lang('filetype'),
-				'filename' => parent::lang('filename'),
-				'show' => parent::lang('show'),
-				'admin' => parent::lang('tasks')
-			);
-
-		$sListall->assign('th', $sTh);
-		// loggedin? admin links
-		$sListall->assign('loggedin', $this->getUser()->get_loggedin());
-		
-		// walk through entries (split into cached and not cached)
-		$files = array();
-		$cachedFiles = array();
-		foreach($entries as $entry) {
-			
-			// check $entry->cached
-			if($entry->isCached()) {
-				$cachedFiles[] = $entry;
-			} else {
-				$files[] = $entry;
-			}
-		}
-		
-		// prepare arrays for smarty
-		$fileList = $this->prepareFiles($files);
-		$cachedList = $this->prepareCached($cachedFiles);
-		
-		// smarty
-		$sListall->assign('fileList', $fileList);
-		$sListall->assign('cachedList', $cachedList);
-		$sListall->assign('tabDownload', parent::lang('uploaded'));
-		$sListall->assign('tabCached', parent::lang('cached'));
-		// prepare tabs
-		$this->getTpl()->assign('tabsJs', true);
-		// prepare admin help
-		$helpListAdmin = $this->helpButton(HELP_MSG_FILELISTADMIN);
-		if(isset($helpListAdmin)) {
-			$sListall->assign('helpListAdmin', $helpListAdmin);
-		}
-		
-		
-		// smarty-return
-		return $sListall->fetch('smarty.file.listall.tpl');
 	}
 	
 	
@@ -531,6 +461,8 @@ class FileView extends PageView {
 				// write entry
 				$file->writeDb();
 				
+				// set js redirection
+				$this->jsRedirectTimeout('file.php?id=listall');
 			}
 			
 			// smarty return
@@ -713,6 +645,9 @@ class FileView extends PageView {
 			$file->dbDeletePermission();
 			$file->dbWritePermission($permissions);
 			
+			// set js redirection
+			$this->jsRedirectTimeout('file.php?id=listall');
+			
 			// smarty
 			$sCD = new JudoIntranetSmarty();
 			$sCD->assign('data', $file->details());
@@ -894,6 +829,9 @@ class FileView extends PageView {
 				// write permissions
 				$file->dbDeletePermission();
 				$file->dbWritePermission($permissions);
+				
+				// set js redirection
+				$this->jsRedirectTimeout('file.php?id=listall');
 				
 				// smarty
 				$sCD = new JudoIntranetSmarty();
@@ -1088,10 +1026,16 @@ class FileView extends PageView {
 		
 		// smarty
 		$sList = array();
+		$descList = array();
 		foreach($files as $entry) {
 			
 			// get table
 			$table = $entry->getCached(false)['table'];
+			
+			// prepare desc info
+			if($table == 'result') {
+				$descList[] = $table;
+			}
 			
 			// check if valid
 			if($entry->getValid() == 1) {
@@ -1107,11 +1051,11 @@ class FileView extends PageView {
 				if(strlen($entry->getFilename()) > 35) {
 					$shortFilename = substr($entry->getFilename(), 0, 6).'[...]'.substr($entry->getFilename(), -19);
 				}
-				$sList[$table]['name'] = parent::lang('table name '.$table);
+				$sList[$table]['name'] = _l('table name '.$table);
 				$sList[$table][$counter[$table]] = array(
 						'name' => array(
 								'href' => 'file.php?id=details&fid='.$entry->getId(),
-								'title' => parent::lang('name'),
+								'title' => _l('name'),
 								'name' => $entry->getName(),
 							),
 						'filetype' => $entry->getFileTypeAs('name'),
@@ -1120,12 +1064,17 @@ class FileView extends PageView {
 								'title' => $entry->getFilename(),
 							),
 					);
+				// desc
+				if($table == 'result') {
+					$result = new Result($entry->getCached(false)['tableId']);
+					$sList[$table][$counter[$table]]['desc'] = $result->getDesc();
+				}
 				// show
 				$sList[$table][$counter[$table]]['show'][] = array(
 						'href' => 'file.php?id=cached&table='.$table.'&tid='.$entry->getCached(false)['tableId'],
-						'title' => $entry->getName().parent::lang('filename'),
+						'title' => $entry->getName()._l('filename'),
 						'src' => 'img/file_download.png',
-						'alt' => '\''.$entry->getFilename().'\''.parent::lang('filename'),
+						'alt' => '\''.$entry->getFilename().'\''._l('filename'),
 					);
 				
 				// increment counter
@@ -1138,7 +1087,7 @@ class FileView extends PageView {
 		}
 				
 		// return
-		return $sList;
+		return array($descList, $sList);
 	}
 	
 	
@@ -1209,6 +1158,19 @@ class FileView extends PageView {
 				// set docktype xhtml
 				$form->doctype('xhtml');
 				
+				// add jquery for dialogs
+				$this->add_jquery('
+							$(function() {
+								var element = $("#labelFiles").parent();
+								var p = $(\'<p>'._l('Click to choose from').' <span id="labelFilesLink" class="spanLink">'._l('uploaded').'</span></p>\');
+								element.before(p);
+								element.hide();
+								$("#labelFilesLink").click(function() {
+									element.slideToggle();
+								});
+							});
+						');
+				
 				// prepare formid
 				// files
 				$formIds['files'] = array('valueType' => 'array', 'type' => 'checkboxes', 'default' => 1);
@@ -1231,17 +1193,31 @@ class FileView extends PageView {
 					
 					// translate tableName
 					$transTableName = parent::lang('table name '.$tableName);
+					// label name
+					$labelName = 'label'.$tableName.'Files';
+					// add jquery for dialogs
+					$this->add_jquery('
+							$(function() {
+								var element = $("#'.$labelName.'").parent(); 
+								var p = $(\'<p>'._l('Click to choose from').' <span id="'.$labelName.'Link" class="spanLink">'.$transTableName.'</span></p>\');
+								element.before(p);
+								element.hide();
+								$("#'.$labelName.'Link").click(function() {
+									element.slideToggle();
+								});
+							});
+						');
 					
 					// cached files
 					$formIds[$tableName.'Files'] = array('valueType' => 'array', 'type' => 'checkboxes', 'default' => 1);
 					// add radio list
 					$form->add(
 							'label',		// type
-							'label'.$tableName.'Files',	// id/name
+							$labelName,	// id/name
 							$tableName.'Files',		// for
 							$transTableName	// label text
 						);
-					$form->add(
+					$element = $form->add(
 							$formIds[$tableName.'Files']['type'],	// type
 							$tableName.'Files[]',			// id/name
 							$cachedFiles,		// values

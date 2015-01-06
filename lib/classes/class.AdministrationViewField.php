@@ -62,6 +62,16 @@ class AdministrationViewField extends AdministrationView {
 		// get all user tables
 		$usertables = $this->getUsertables();
 		sort($usertables);
+		// add club if permitted
+		if($this->getUser()->isMemberOf(2)) {
+			array_unshift($usertables, 'club');
+		}
+		// add file_type if admin
+		if($this->getUser()->isAdmin()) {
+			array_unshift($usertables, 'file_type');
+		}
+		// add defaults
+		array_unshift($usertables, 'defaults');
 		
 		// activate tabs
 		$this->getTpl()->assign('tabsJs', true);
@@ -167,7 +177,9 @@ class AdministrationViewField extends AdministrationView {
 			}
 			
 			// validate field
-			$jtField->validateAgainst('required');
+			if($colum != 'valid') {
+				$jtField->validateAgainst('required');
+			}
 			
 			// add field
 			$jtable->addField($jtField);
@@ -186,7 +198,43 @@ class AdministrationViewField extends AdministrationView {
 		$this->getTpl()->assign('jtable', true);
 		
 		// return
-		return '<div id="'.$containerId.'" class="jTable"></div>';
+		return $this->getContentBeforeTable($table).'<div id="'.$containerId.'" class="jTable"></div>';
+	}
+	
+	
+	/**
+	 * getContentBeforeTable($table) generates the output of the content before the table
+	 * 
+	 * @param string $table name of the table
+	 * @return string output for the content before the table
+	 */
+	private function getContentBeforeTable($table) {
+		
+		// prepare return
+		$return = '';
+		
+		// check table
+		if($table == 'judo' && $this->getUser()->hasPermission('navi', 58, 'w')) {
+			// prepare smarty template
+			$data = array(
+					'p' => array(
+							'params' => '',
+							'contentBefore' => '',
+							'contentAfter' => '&nbsp;'.$this->helpButton(HELP_MSG_ADMINNEWYEAR),
+						),
+					'a' => array(
+							'params' => '',
+							'href' => 'administration.php?id=newyear&table=judo',
+							'title' => _l('Create new year'),
+							'content' => _l('Create new year'),
+						),
+				);
+			$this->smarty->assign('pa', $data);
+			$return = $this->smarty->fetch('smarty.pa.tpl');
+		}
+		
+		// return		
+		return $return;
 	}
 }
 
