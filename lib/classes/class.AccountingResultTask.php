@@ -89,7 +89,7 @@ class AccountingResultTask extends Task {
 			UPDATE `accounting_tasks`
 			SET `state`=#?
 			WHERE `table_name`=\'result\'
-				AND `table_id`=#?
+				AND `table_id` IN (SELECT `id` FROM `result` WHERE `calendar_id`=(SELECT `calendar_id` FROM `result` WHERE `id`=#?))
 		',
 		array($state, $resultId))) {
 			$n = null;

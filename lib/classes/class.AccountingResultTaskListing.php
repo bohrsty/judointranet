@@ -169,78 +169,73 @@ class AccountingResultTaskListing extends Listing implements ListingInterface {
 		}
 		
 		// walk through data
-		$calendarIds = array();
 		foreach($result as $data) {
 			
-			// check calendar id
-			if(!in_array($data['calendar_id'], $calendarIds)) {
-				
-				// save and unset result id
-				$resultId = $data['id'];
-				
-				// prepare smarty templates for links and images
-				// state
-				$confirmation = 'unconfirm';
-				$confirmationImg = 'confirmed';
-				if($data['state'] == 0) {
-					$confirmation = 'confirm';
-					$confirmationImg = 'unconfirmed';
-				}
-				$smarty = new JudoIntranetSmarty();
-				$stateLinkArray = array(
-					array(
-							'href' => 'accounting.php?id=task&task='.$confirmation.'result&rid='.$resultId,
-							'title' => _l('click to '.$confirmation),
-							'name' => array(
-									'src' => 'img/tasks_'.$confirmationImg.'.png',
-									'alt' => _l($confirmation.'ed'),
-								),
-						)
-					);
-				$smarty->assign('data', $stateLinkArray);
-				$data['state'] = $smarty->fetch('smarty.a.img.tpl');
-				
-				// get username and unset modified by
-				$user = new User(false);
-				$user->change_user($data['modified_by'], false, 'id');
-				$username = $user->get_userinfo('name');
-				unset($data['modified_by']);
-				
-				// get formatted last modified date
-				$lastModified = date('d.m.Y', strtotime($data['last_modified']));
-				
-				// set last modified
-				$spanArray = array(
-						'params' => '',
-						'content' => $lastModified,
-						'title' => _l('modified by').' '.$username,
-					);
-				$smarty->assign('span', $spanArray);
-				$data['last_modified'] = $smarty->fetch('smarty.span.tpl');
-				
-				// get formatted date
-				$data['date'] = date('d.m.Y', strtotime($data['date']));
-				
-				// add actions
-				$actionsLinkArray = array(
-					array(
-							'href' => 'result.php?id=accounting&action=billevent&cid='.$data['calendar_id'],
-							'title' => _l('bill as pdf'),
-							'name' => array(
-									'src' => 'img/res_pdf.png',
-									'alt' => _l('bill as pdf'),
-								),
-						)
-					);
-				$smarty->assign('data', $actionsLinkArray);
-				$data['actions'] = $smarty->fetch('smarty.a.img.tpl');
-				
-				// put in return array
-				$return[] = $data;
-				
-				// add to calendar id array
-				$calendarIds[] = $data['calendar_id'];
+			// save and unset result id
+			$resultId = $data['id'];
+			
+			// prepare smarty templates for links and images
+			// state
+			$confirmation = 'unconfirm';
+			$confirmationImg = 'confirmed';
+			if($data['state'] == 0) {
+				$confirmation = 'confirm';
+				$confirmationImg = 'unconfirmed';
 			}
+			$smarty = new JudoIntranetSmarty();
+			$stateLinkArray = array(
+				array(
+						'href' => 'accounting.php?id=task&task='.$confirmation.'result&rid='.$resultId,
+						'title' => _l('click to '.$confirmation),
+						'name' => array(
+								'src' => 'img/tasks_'.$confirmationImg.'.png',
+								'alt' => _l($confirmation.'ed'),
+							),
+					)
+				);
+			$smarty->assign('data', $stateLinkArray);
+			$data['state'] = $smarty->fetch('smarty.a.img.tpl');
+			
+			// get username and unset modified by
+			$user = new User(false);
+			$user->change_user($data['modified_by'], false, 'id');
+			$username = $user->get_userinfo('name');
+			unset($data['modified_by']);
+			
+			// get formatted last modified date
+			$lastModified = date('d.m.Y', strtotime($data['last_modified']));
+			
+			// set last modified
+			$spanArray = array(
+					'params' => '',
+					'content' => $lastModified,
+					'title' => _l('modified by').' '.$username,
+				);
+			$smarty->assign('span', $spanArray);
+			$data['last_modified'] = $smarty->fetch('smarty.span.tpl');
+			
+			// get formatted date
+			$data['date'] = date('d.m.Y', strtotime($data['date']));
+			
+			// add actions
+			$actionsLinkArray = array(
+				array(
+						'href' => 'result.php?id=accounting&action=billevent&cid='.$data['calendar_id'],
+						'title' => _l('bill as pdf'),
+						'name' => array(
+								'src' => 'img/res_pdf.png',
+								'alt' => _l('bill as pdf'),
+							),
+					)
+				);
+			$smarty->assign('data', $actionsLinkArray);
+			$data['actions'] = $smarty->fetch('smarty.a.img.tpl');
+			
+			// put in return array
+			$return[] = $data;
+			
+			// add to calendar id array
+			$calendarIds[] = $data['calendar_id'];
 		}
 		
 		// return
@@ -256,7 +251,7 @@ class AccountingResultTaskListing extends Listing implements ListingInterface {
 	public function totalRowCount() {
 		
 		$countRows = Db::singleValue('
-				SELECT COUNT(DISTINCT `c`.`id`)
+				SELECT COUNT(*)
 				FROM `accounting_tasks` AS `at`, `calendar` AS `c`, `result` AS `r`
 				WHERE `at`.`table_name`=\'result\'
 					AND `at`.`table_id`=`r`.`id`
