@@ -175,6 +175,8 @@ $lang = array(
 	'calendar: details' => 'Kalender: Termindetails',
 	'calendar: edit' => 'Kalender: Termin bearbeiten',
 	'calendar: delete' => 'Kalender: Termin l&ouml;schen',
+	'calendar: calendar' => 'Kalender: Kalenderansicht',
+	'calendarview' => 'Kalenderansicht',
 	'tomorrow' => 'Morgen',
 	'next week' => 'n&auml;chste Woche',
 	'next two weeks' => 'n&auml;chste zwei Wochen',
@@ -531,6 +533,10 @@ $lang = array(
 	'HELP_TITLE_42' => 'Ergebnisliste einer Veranstaltung',
 	'HELP_TITLE_43' => 'Buchhaltung: Preise bearbeiten',
 	'HELP_TITLE_44' => 'Aufgaben in der Ergebnisliste',
+	'HELP_TITLE_45' => 'Auswahl Einzel oder Mannschaft',
+	'HELP_TITLE_46' => 'Kalenderansicht',
+	'HELP_TITLE_47' => 'Farbfeld',
+	'HELP_TITLE_48' => 'Feld externer Termin',
 	'HELP_MESSAGE_error' => '<p>Dieses Hilfe-Thema konnte nicht gefunden werden.</p>',
 	'HELP_MESSAGE_1' => '<p><b>JudoIntranet</b></p>
 						<p>Author: Nils Bohrs<br />
@@ -629,12 +635,12 @@ $lang = array(
 						ein Ergebnis zu diesem Termin zu importieren, die Funktion ist ab dem Veranstaltungstag erreichbar.</li>
 						<li><img src="img/refresh_pdf.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; Erzeugt die PDF-Ansicht der
 						Ausschreibung manuell neu, z.B. nach Änderungen an den Vorgaben oder Benutzerdefinierten Tabellen.</li>
-						<li><span class="Zebra_Form"><select class="control"><option>Ausschreibungsvorlage ausw&auml;hlen</option></select>
-						<input class="submit" type="submit" value="+" /></span>&nbsp;:&nbsp; Um eine Ausschreibung mit Daten
-						zu f&uuml;llen muss ihr eine Vorlage zugewiesen werden, die die zu verwendenden
-						Felder und das Aussehen festlegt.<br />
-						Das Zuweisen der Vorlage erfolgt durch das Ausw&auml;hlen der Vorlage aus dem
-						einzeiligen Auswahlfeld und anschlie&szlig;endem Zuf&uuml;gen durch den Button "+".</li>
+						<li><img src="img/show_presetform.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; Um eine Ausschreibung mit Daten
+						zu f&uuml;llen muss ihr eine Vorlage zugewiesen werden, die die zu verwendenden Felder und das Aussehen festlegt.
+						Ein Klick auf den Button &ouml;ffnet das Formularfeld zur Auswahl.
+						<span class="Zebra_Form"><select class="control"><option>Ausschreibungsvorlage ausw&auml;hlen</option></select>
+						<input class="submit" type="submit" value="+" /></span><br />Das Zuweisen der Vorlage erfolgt durch das
+						Ausw&auml;hlen der Vorlage aus dem einzeiligen Auswahlfeld und anschlie&szlig;endem Zuf&uuml;gen durch den Button "+".</li>
 						</ul>
 						<p>Das Symbol <img src="img/public.png" alt="Bild im Hilfetext" /> in der entsprechenden Spalte zeigt den
 						eingeloggten Benutzern an, ob der Termin &ouml;ffentlich ist, also ob ein nicht angemeldeter Benutzer den
@@ -901,6 +907,19 @@ $lang = array(
 						R&uuml;ckfrage endg&uuml;ltig.</li>
 						</ul>
 						<p>Das Bearbeiten eines Ergebnisses im Nachhinein ist nicht m&ouml;glich.</p>',
+	'HELP_MESSAGE_45' => '<p><b>Format</b>: <i>einzeiliges Auswahlfeld</i></p>
+						<p>F&uuml;r einige Ergebnisformate ist nicht festgelegt, ob sie von einer Einzel- oder Mannschaftsveranstaltung
+						stammen. Um in den Abrechnungsfunktionen die korrekten Werte zugrunde zu legen ist die Auswahl erforderlich und
+						ein Pflichtfeld.</p>',
+	'HELP_MESSAGE_46' => '<p>Diese Seite stellt alle Termine in einem Kalender dar. Die Navigation durch die Monate oder Wochen erfolgt
+						in der Kopfzeile des Kalenders. Der Klick auf einen Termineintrag &ouml;ffnet dessen Details wie in der
+						Listenansicht.</p>',
+	'HELP_MESSAGE_47' => '<p><b>Format</b>: <i>Farbauswahl</i></p>
+						<p>Durch Anklicken des farbigen Feldes &ouml;ffnet sich eine vorgegebene Auswahl an Farben, die dem Termin
+						zugeordnet werden k&ouml;nnen. Der Klick auf eines der vorgegebenen Farbfelder &auml;ndert die Farbe entsprechend.</p>',
+	'HELP_MESSAGE_48' => '<p><b>Format</b>: <i>Auswahlbox</i></p>
+						<p>Das Anhaken der Auswahlbox markiert diesen Datensatz als externen Termin,
+						ein externer Termin dient nur der Information und es kann keine Ausschreibung daf&uuml;r erstellt werden.</p>',
 	/*
 	 * ************************
 	 */
@@ -916,6 +935,7 @@ $lang = array(
 	'navi: calendarPage.details' => 'Detailansicht',
 	'navi: calendarPage.edit' => 'Eintrag editieren',
 	'navi: calendarPage.delete' => 'Eintrag l&ouml;schen',
+	'navi: calendarPage.calendar' => 'Kalenderansicht',
 	'navi: inventoryPage' => 'Inventar',
 	'navi: inventoryPage.my' => 'Eigene verwalten',
 	'navi: inventoryPage.listall' => 'Listenansicht',
@@ -958,11 +978,12 @@ $lang = array(
 	'navi: filePage.attach' => 'Datei anh&auml;ngen',
 	'navi: filePage.download' => 'Datei herunterladen (hochgeladen)',
 	'navi: resultPage' => 'Ergebnisse',
-	'navi: resultPage.listall' => 'Ergebnisse auflisten',
+	'navi: resultPage.listall' => 'Ergebnisse pro Termin auflisten',
 	'navi: resultPage.details' => 'Ergebnis-Details',
 	'navi: resultPage.delete' => 'Ergebnisse l&ouml;schen',
 	'navi: resultPage.list' => 'Ergebnisse auflisten',
 	'navi: resultPage.new' => 'Neues Ergebnis',
+	'navi: resultPage.accounting' => 'Ergebnis Buchhaltung',
 	'navi: accountingPage' => 'Buchhaltung',
 	'navi: accountingPage.dashboard' => '&Uuml;bersicht',
 	'navi: accountingPage.task' => 'Aufgabe',
@@ -1129,6 +1150,24 @@ $lang = array(
 	'single' => 'Einzel',
 	'team' => 'Mannschaft',
 	'refresh announcement pdf file' => 'PDF erneuern',
+	'start date' => 'Beginn',
+	'end date' => 'Ende',
+	'start date<br />' => '<span>Beginn</span><br />',
+	'end date<br />' => '<span>Ende</span><br />',
+	'end date after start date' => 'Ende muss nach Beginn liegen',
+	'error loading entries' => 'Fehler beim Laden der Eintr&auml;ge',
+	'loading...' => 'wird geladen...',
+	'by' => 'von',
+	'modified' => 'ge&auml;ndert',
+	'appointment' => 'Termin',
+	'color<br />' => '<span>Farbe:</span><br />',
+	'color' => 'Farbe',
+	'is external<br />' => '<span>extern:</span><br />',
+	'is external' => 'extern',
+	'is external appointment' => 'externer Termin',
+	'Saving this as "external" appointment will delete any existing announcement! Continue?' => 'Wenn dieser Termin als "extern" gespeichert wird, werden vorhandene Ausschreibungen gelöscht! Fortfahren?',
+	'show preset selection' => 'Vorlagenauswahl einblenden',
+	'external' => 'extern',
 //	'' => '',
 );
 

@@ -42,6 +42,15 @@
 		<script type="text/javascript" src="{if is_file('js/validationEngine.jquery/languages/jquery.validationEngine-{$sLang}.js')}js/validationEngine.jquery/languages/jquery.validationEngine-{$sLang}.js{else}js/validationEngine.jquery/languages/jquery.validationEngine-de.js{/if}"></script>
 		<link rel="stylesheet" type="text/css" href="css/validationEngine.jquery.css" />
 {/if}
+{if isset($fullcalendar) and $fullcalendar}
+		<script type="text/javascript" src="js/moment-with-locales.min.js"></script>
+		<script type="text/javascript" src="js/fullcalendar/fullcalendar.min.js"></script>
+		<script type="text/javascript" src="{if is_file('js/fullcalendar/lang/{$sLang}.js')}js/fullcalendar/lang/{$sLang}.js{else}js/fullcalendar/lang/de.js{/if}"></script>
+		<link rel="stylesheet" type="text/css" href="css/fullcalendar.min.css" />
+{/if}
+{if isset($simpleColor) and $simpleColor}
+		<script type="text/javascript" src="js/jquery-simple-color/jquery.simple-color.min.js"></script>
+{/if}
 {if isset($jsdifflib) and $jsdifflib}
 		<script type="text/javascript" src="js/difflib.js"></script>
 		<script type="text/javascript" src="js/diffview.js"></script>
@@ -54,47 +63,30 @@
 {/if}
 		<script type="text/javascript">
 {if isset($usersettingsJsToToggle) && isset($usersettingsJsId) && isset($usersettingsJsTime)}
-			$(function() {
-				$("{$usersettingsJsToToggle}").hide();
-				$("{$usersettingsJsId}").click(function() {ldelim}
-					$("{$usersettingsJsToToggle}").slideToggle({$usersettingsJsTime});
-				{rdelim});
-			});
+			$(function() { $("{$usersettingsJsToToggle}").hide(); $("{$usersettingsJsId}").click(function() {ldelim} $("{$usersettingsJsToToggle}").slideToggle({$usersettingsJsTime}); {rdelim}); });
 {/if}
 {if (isset($permissionJs) && $permissionJs) || (isset($userAdminJs) && $userAdminJs)}
 {literal}
-			function clearRadio(radioName) {
-				$('[name=' + radioName + ']').prop('checked', false)
-			}
-			function selectRadio(radioId) {
-				$('[id=' + radioId + ']').prop('checked', true)
-			}
+			function clearRadio(radioName) { $('[name=' + radioName + ']').prop('checked', false) }
+			function selectRadio(radioId) { $('[id=' + radioId + ']').prop('checked', true) }
 {/literal}
 {/if}
 {if isset($tabsJs) && $tabsJs}
-			$(function() {ldelim}
-				$( "#tabs" ).tabs({if isset($tabsJsOptions)}{$tabsJsOptions}{/if});
-			{rdelim});
+			$(function() {ldelim} $( "#tabs" ).tabs({if isset($tabsJsOptions)}{$tabsJsOptions}{/if}); {rdelim});
 {/if}
 {if isset($accordionJs) && $accordionJs}
 {literal}
-			$(function() {
-				$( "#accordion" ).accordion({
-					icons: false,
-					heightStyle: "content",
-					active: {/literal}{$accordionActive}{literal} 
-				});
-			});
+			$(function() { $( "#accordion" ).accordion({ icons: false, heightStyle: "content", active: {/literal}{$accordionActive}{literal} }); });
 {/literal}
 {/if}
 		</script>
 {if isset($manualjquery) && $manualjquery!='' || isset($help)}
 		<script type="text/javascript">
-			$(document).ready(function(){ldelim}
+			$(document).ready(function() {ldelim}
 {literal}
 				$(function() {
 					$(".{/literal}{$help.buttonClass}{literal}").click(function() {
-						var id = this.id;
+						var id = this.id.substr(1);
 						var dialogDiv = $('<div id="dialog_'+id+'" title="{/literal}{lang}help{/lang}{literal}" style="display: none"></div>');
 						$.ajax({
 							url: 'api/help.php?hid='+id,
@@ -134,10 +126,7 @@
 				});
 {/literal}
 {if isset($jsRedirect) && $jsRedirect === true}
-				setTimeout(function() {ldelim}
-					window.location.replace('{$jsRedirectUri}');
-				{rdelim},
-				{$jsRedirectTimeout});
+				setTimeout(function() {ldelim} window.location.replace('{$jsRedirectUri}'); {rdelim}, {$jsRedirectTimeout});
 {/if}
 				{$manualjquery}
 			{rdelim});

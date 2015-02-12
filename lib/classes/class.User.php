@@ -667,7 +667,7 @@ class User extends Object {
 		// prepare date
 		$sqlDate = '';
 		if(!is_null($dateFrom) && !is_null($dateTo)) {
-			$sqlDate = (isset($ownGroups[1]) ? ' WHERE' : ' AND').' t.date>=\''.$dateFrom.'\' AND t.date<=\''.$dateTo.'\'';
+			$sqlDate = (isset($ownGroups[1]) ? ' WHERE' : ' AND').' (`t`.`date` BETWEEN \''.$dateFrom.'\' AND \''.$dateTo.'\' OR `t`.`end_date` BETWEEN \''.$dateFrom.'\' AND  \''.$dateTo.'\' OR \''.$dateFrom.'\' BETWEEN `t`.`date` AND `t`.`end_date` OR \''.$dateTo.'\' BETWEEN `t`.`date` AND `t`.`end_date`)';
 		}
 		// admin is permitted to anything
 		if(isset($ownGroups[1])) {

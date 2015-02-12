@@ -24,9 +24,14 @@
 
 class ResultTest extends PHPUnit_Framework_TestCase {
 	
+	private $testPresetId;
+	
 	// setup
 	public function setUp() {
 		
+		// get preset id for result
+		$result = TestDb::singleValue('SELECT `id` FROM `preset` WHERE `table`=\'result\' LIMIT 1');
+		$this->testPresetId = (TestDb::$num_rows != 0 ? $result : 0);
 	}
 	
 	
@@ -223,7 +228,7 @@ class ResultTest extends PHPUnit_Framework_TestCase {
 		$this->assertFalse($result->writeDb());
 		
 		// add preset
-		$result->setPreset(1);
+		$result->setPreset($this->testPresetId);
 		
 		// write db
 		$resultId = $result->writeDb();

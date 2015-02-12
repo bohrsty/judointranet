@@ -434,6 +434,14 @@ class Result extends Page {
 				throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 			}
 			
+			// set id
+			$this->set_id($newId);
+			// read announcement values
+			$this->readAnnouncementValues();
+			
+			// create cached file
+			$this->createCachedFile(File::idFromCache('result|'.$newId));
+			
 			// return
 			return $newId;
 		} else {
@@ -682,5 +690,17 @@ class Result extends Page {
 		
 		// return
 		return $return;
+	}
+	
+	
+	/**
+	 * deleteEntry() calls the static delete() method
+	 */
+	public function deleteEntry() {
+		
+		// call static delete method
+		self::delete($this->get_id());
+		// delete task
+		AccountingResultTask::delete($this->get_id());
 	}
 }

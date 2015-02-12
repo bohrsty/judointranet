@@ -306,6 +306,18 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 		// return
 		return $clubs;
 	}
+	
+	
+	/**
+	 * deleteEntry() is a wrapper for deletion of the object (can be setting valid or delete etc.)
+	 * override in child classes
+	 */
+	public function deleteEntry() {
+		
+		// set valid as default
+		$this->setValid(0);
+		$this->writeDb();
+	}
  	
  	
  }

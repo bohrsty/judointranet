@@ -132,27 +132,6 @@ class CalendarView extends PageView {
 						$this->getTpl()->assign('zebraform', true);
 					break;
 					
-					case 'details':
-						
-						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('calendar: details')));
-						$this->getTpl()->assign('jquery', true);
-						$this->getTpl()->assign('zebraform', false);
-						
-						// if cid does not exist, error
-						if(Calendar::check_id($this->get('cid'))) {
-							// smarty
-							$this->getTpl()->assign('main', $this->details($this->get('cid')));
-						} else {
-							
-							// error
-							$errno = $this->getError()->error_raised('CidNotExists','details',$this->get('cid'));
-							$this->getError()->handle_error($errno);$this->add_output(array('main' => $this->getError()->to_html($errno)),true);
-							// smarty
-							$this->getTpl()->assign('main', $this->getError()->to_html($errno));
-						}
-					break;
-					
 					case 'edit':
 						
 						// smarty
@@ -193,6 +172,20 @@ class CalendarView extends PageView {
 							// smarty
 							$this->getTpl()->assign('main', $this->getError()->to_html($errno));
 						}
+					break;
+					
+					case 'calendar':
+						
+						// pagecaption
+						$this->getTpl()->assign('pagecaption', _l('calendarview').'&nbsp;'.$this->helpButton(HELP_MSG_CALENDARCALENDAR));
+						
+						// smarty
+						$this->getTpl()->assign('title', $this->title(_l('calendar: calendar')));
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', false);
+						
+						$calendarViewCalendar = new CalendarViewCalendar();
+						$this->getTpl()->assign('main', $calendarViewCalendar->show());
 					break;
 					
 					default:
@@ -397,13 +390,70 @@ class CalendarView extends PageView {
 		$form->doctype('xhtml');
 		
 		// elements
+		// checkbox isExternal
+		$formIds['isExternal'] = array('valueType' => 'int', 'type' => 'checkbox', 'default' => 1);
+		$form->add(
+				'label',		// type
+				'labelIsExternal',	// id/name
+				'isExternal',		// for
+				_l('is external appointment')	// label text
+			);
+		$public = $form->add(
+				$formIds['isExternal']['type'],		// type
+				'isExternal',						// id/name
+				'1',							// value
+				null							// default
+			);
+		$form->add(
+				'note',			// type
+				'noteIsExternal',	// id/name
+				'public',		// for
+				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDISEXTERNAL)	// note text
+			);
+		// hide not used fields
+		$this->add_jquery('
+			function slideExternal() {
+					var shortname = $(\'#shortname\').parent();
+					if(shortname.prop(\'tagName\') == \'SPAN\') {
+						shortname.parent().slideToggle();
+					} else {
+						shortname.slideToggle();
+					}
+					$(\'#filter\').parent().slideToggle();
+					$(\'#type\').parent().toggleClass(\'even\');
+					var content = $(\'#entryContent\').parent();
+					if(content.prop(\'tagName\') == \'SPAN\') {
+						content.parent().toggleClass(\'even\');
+					} else {
+						content.toggleClass(\'even\');
+					}
+					var city = $(\'#city\').parent();
+					if(city.prop(\'tagName\') == \'SPAN\') {
+						city.parent().toggleClass(\'even\');
+					} else {
+						city.toggleClass(\'even\');
+					}
+				}
+				$(\'#isExternal_1\').on(\'change\', function() {
+					slideExternal();
+					if($(\'#isExternal_1\').prop(\'checked\') == true) {
+						$(\'#type\').val(\'external\');
+						$(\'#color\').setColor(\''.$this->getGc()->get_config('calendar.defaultExternalColor').'\');
+					} else {
+						$(\'#type\').val(\'\');
+						$(\'#color\').setColor(\''.$this->getGc()->get_config('calendar.defaultColor').'\');
+					}
+				});
+		');
+		
+		
 		// date
 		$formIds['date'] = array('valueType' => 'string', 'type' => 'date',);
 		$form->add(
 				'label',		// type
 				'labelDate',	// id/name
 				'date',			// for
-				parent::lang('date')	// label text
+				parent::lang('start date')	// label text
 			);
 		$date = $form->add(
 						$formIds['date']['type'],			// type
@@ -430,6 +480,68 @@ class CalendarView extends PageView {
 				'date',			// for
 				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDATE)	// note text
 			);
+
+		// enddate
+		$formIds['endDate'] = array('valueType' => 'string', 'type' => 'date',);
+		$form->add(
+				'label',		// type
+				'labelEndDate',	// id/name
+				'endDate',		// for
+				parent::lang('end date')	// label text
+		);
+		$endDate = $form->add(
+				$formIds['endDate']['type'],	// type
+				'endDate'			// id/name
+		);
+		// format/position
+		$endDate->format('d.m.Y');
+		$endDate->inside(false);
+		// rules
+		$endDate->set_rule(
+				array(
+						'date' => array(
+								'error', parent::lang('check date')
+						),
+				)
+		);
+		$form->add(
+				'note',			// type
+				'noteEndDate',		// id/name
+				'endDate',			// for
+				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDATE)	// note text
+		);
+		
+		
+		// color
+		$formIds['color'] = array('valueType' => 'string', 'type' => 'text',);
+		$form->add(
+				'label',		// type
+				'labelColor',	// id/name
+				'color',			// for
+				_l('color')	// label text
+		);
+		$color = $form->add(
+				$formIds['color']['type'],		// type
+				'color',				// id/name
+				$this->getGc()->get_config('calendar.defaultColor')	// default
+		);
+		$form->add(
+				'note',			// type
+				'noteColor',	// id/name
+				'color',			// for
+				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDCOLOR)	// note text
+		);
+		$this->getTpl()->assign('simpleColor', true);
+		$this->add_jquery('
+			$(\'#color\').simpleColor({
+				columns: 3,
+				cellWidth: 20,
+				cellHeight: 20,
+				colors:
+					'.$this->getGc()->get_config('calendar.colors').',
+				livePreview: true,	
+			});
+		');
 		
 		
 		// name
@@ -663,14 +775,22 @@ class CalendarView extends PageView {
 				$permissions[0]['value'] = 'r';
 			}
 			
+			// check end date
+			if(strtotime($data['endDate']) <= strtotime($data['date'])) {
+				$data['endDate'] = '';
+			}
+			
 			// create calendar
 			$calendar = new Calendar(array(
 								'date' => $data['date'],
+								'endDate' => ($data['endDate'] != '' ? $data['endDate'] : null),
 								'name' => $data['name'],
 								'shortname' => $data['shortname'],
 								'type' => $data['type'],
 								'content' => $data['entryContent'],
 								'city' => $data['city'],
+								'color' => ($data['color'] != '' ? $data['color'] : null),
+								'isExternal' => $data['isExternal'] == 1,
 								'filter' => $data['filter'],
 								'valid' => 1,
 								)
@@ -693,7 +813,7 @@ class CalendarView extends PageView {
 			$sCD = new JudoIntranetSmarty();
 			$sCD->assign('data', $calendar->detailsToHtml());
 			$sCD->assign('files', array());
-			$sCD->assign('attached', parent::lang('attached files'));
+			$sCD->assign('attached', parent::lang('attached files<br />'));
 			$sCD->assign('none', parent::lang('- none -'));
 			
 			// pagecaption
@@ -734,55 +854,6 @@ class CalendarView extends PageView {
 		}
 		if($first->get_date() > $second->get_date()) {
 			return 1;
-		}
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * details returns the details of a calendar-entry as html-string
-	 * 
-	 * @param int $cid entry-id for calendar
-	 * @return string html-string with the details of the calendar entry
-	 */
-	private function details($cid) {
-	
-		// pagecaption
-		$this->getTpl()->assign('pagecaption', parent::lang('details'));
-		
-		// check permissions
-		if($this->getUser()->hasPermission('calendar', $cid)) {
-				
-			// get calendar-object
-			$calendar = new Calendar($cid);
-			
-			// smarty-template
-			$sCD = new JudoIntranetSmarty();
-			
-			// create file objects
-			$fileIds = File::attachedTo('calendar', $cid);
-			$fileObjects = array();
-			foreach($fileIds as $id) {
-				$fileObjects[] = new File($id);
-			}
-			
-			// smarty
-			$sCD->assign('data', $calendar->detailsToHtml());
-			$sCD->assign('files', $fileObjects);
-			$sCD->assign('attached', parent::lang('files attached<br />'));
-			$sCD->assign('none', parent::lang('- none -'));
-			$sCD->assign('fileHref', 'file.php?id=download&fid=');
-			return $sCD->fetch('smarty.calendar.details.tpl');
-		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
 		}
 	}
 	
@@ -838,13 +909,79 @@ class CalendarView extends PageView {
 			}
 			
 			// elements
+			// checkbox isExternal
+			$formIds['isExternal'] = array('valueType' => 'int', 'type' => 'checkbox', 'default' => 1);
+			$form->add(
+					'label',		// type
+					'labelIsExternal',	// id/name
+					'isExternal',		// for
+					_l('is external appointment')	// label text
+				);
+			$public = $form->add(
+					$formIds['isExternal']['type'],		// type
+					'isExternal',						// id/name
+					'1',							// value
+					($calendar->getIsExternal() === true ? array('checked' => true) : null)		// default
+				);
+			$form->add(
+					'note',			// type
+					'noteIsExternal',	// id/name
+					'public',		// for
+					_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDISEXTERNAL)	// note text
+				);
+			// hide not used fields
+			$this->add_jquery('
+				function slideExternal() {
+					var shortname = $(\'#shortname\').parent();
+					if(shortname.prop(\'tagName\') == \'SPAN\') {
+						shortname.parent().slideToggle();
+					} else {
+						shortname.slideToggle();
+					}
+					$(\'#filter\').parent().slideToggle();
+					$(\'#type\').parent().toggleClass(\'even\');
+					var content = $(\'#entryContent\').parent();
+					if(content.prop(\'tagName\') == \'SPAN\') {
+						content.parent().toggleClass(\'even\');
+					} else {
+						content.toggleClass(\'even\');
+					}
+					var city = $(\'#city\').parent();
+					if(city.prop(\'tagName\') == \'SPAN\') {
+						city.parent().toggleClass(\'even\');
+					} else {
+						city.toggleClass(\'even\');
+					}
+				}
+				if($(\'#isExternal_1\').prop(\'checked\') == true) {
+					slideExternal();
+				}
+				$(\'#isExternal_1\').on(\'change\', function() {
+					if($(\'#isExternal_1\').prop(\'checked\') == true) {
+						if(confirm(\''._l('Saving this as "external" appointment will delete any existing announcement! Continue?').'\')) {
+							slideExternal();
+							$(\'#type\').val(\'external\');
+							$(\'#color\').setColor(\''.$this->getGc()->get_config('calendar.defaultExternalColor').'\');
+						} else {
+							$(\'#isExternal_1\').prop(\'checked\', false);
+						}
+					} else {
+						slideExternal();
+						$(\'#type\').val(\'\');
+						$(\'#color\').setColor(\''.$this->getGc()->get_config('calendar.defaultColor').'\');
+					}
+				});
+			');
+			
+			
+			
 			// date
 			$formIds['date'] = array('valueType' => 'string', 'type' => 'date',);
 			$form->add(
 					'label',		// type
 					'labelDate',	// id/name
 					'date',			// for
-					parent::lang('date')	// label text
+					parent::lang('start date')	// label text
 				);
 			$date = $form->add(
 							$formIds['date']['type'],			// type
@@ -871,6 +1008,70 @@ class CalendarView extends PageView {
 					'date',			// for
 					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDATE)	// note text
 				);
+			
+
+			// enddate
+			$formIds['endDate'] = array('valueType' => 'string', 'type' => 'date',);
+			$form->add(
+					'label',		// type
+					'labelEndDate',	// id/name
+					'endDate',			// for
+					parent::lang('end date')	// label text
+			);
+			$endDate = $form->add(
+					$formIds['endDate']['type'],			// type
+					'endDate',			// id/name
+					$calendar->getEndDate('d.m.Y')	// default
+			);
+			// format/position
+			$endDate->format('d.m.Y');
+			$endDate->inside(false);
+			// rules
+			$endDate->set_rule(
+					array(
+							'date' => array(
+									'error', parent::lang('check date')
+							),
+					)
+			);
+			$form->add(
+					'note',			// type
+					'noteEndDate',		// id/name
+					'endDate',			// for
+					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDATE)	// note text
+			);
+			
+			
+			// color
+			$formIds['color'] = array('valueType' => 'string', 'type' => 'text',);
+			$form->add(
+					'label',		// type
+					'labelColor',	// id/name
+					'color',			// for
+					_l('color')	// label text
+			);
+			$color = $form->add(
+					$formIds['color']['type'],		// type
+					'color',				// id/name
+					$calendar->getColor()	// default
+			);
+			$form->add(
+					'note',			// type
+					'noteColor',	// id/name
+					'color',			// for
+					_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDCOLOR)	// note text
+			);
+			$this->getTpl()->assign('simpleColor', true);
+			$this->add_jquery('
+				$(\'#color\').simpleColor({
+					columns: 3,
+					cellWidth: 20,
+					cellHeight: 20,
+					colors:
+						'.$this->getGc()->get_config('calendar.colors').',
+					livePreview: true,	
+				});
+			');
 			
 			
 			// name
@@ -1112,16 +1313,58 @@ class CalendarView extends PageView {
 					$permissions[0]['value'] = 'r';
 				}
 				
+				// check end date
+				if(strtotime($data['endDate']) <= strtotime($data['date'])) {
+					$data['endDate'] = '';
+				}
+				
+				// set values
 				$calendar_new = array(
 						'date' => $data['date'],
+						'endDate' => ($data['endDate'] != '' ? $data['endDate'] : null),
 						'name' => $data['name'],
 						'shortname' => $data['shortname'],
 						'type' => $data['type'],
 						'content' => $data['entryContent'],
-						'city' => $data['city'],
+						'color' => ($data['color'] != '' ? $data['color'] : null),
+						'isExternal' => $data['isExternal'] == 1,
 						'filter' => $data['filter'],
-						'valid' => 1
-					);
+						'valid' => 1,
+				);
+				
+				// delete announcement and files if external
+				if($data['isExternal'] == 1) {
+					
+					// get preset
+					$preset = new Preset($calendar->get_preset_id(),'calendar',$calendar->getId());
+					
+					// get fields
+					$fields = $preset->get_fields();
+					
+					// delete values of the fields
+					if(Calendar::check_ann_value($calendar->get_id()) === true) {
+							
+						foreach($fields as $field) {
+					
+							// delete value
+							$field->deleteValue();
+						}
+					}
+					
+					// set preset 0
+					$calendar_new['preset_id'] = 0;
+					
+					// delete cached file
+					$fid = File::idFromCache('calendar|'.$calendar->get_id());
+					if($fid !== false) {
+						File::delete($fid);
+					}
+				}
+				
+				// check if city was set
+				if(isset($data['city'])) {
+					$calendar_new['city'] = $data['city'];
+				}
 					
 				// update calendar
 				$calendar->update($calendar_new);
@@ -1157,7 +1400,7 @@ class CalendarView extends PageView {
 					// smarty
 					$sCD->assign('data', $calendar->detailsToHtml());
 					$sCD->assign('files', $fileObjects);
-					$sCD->assign('attached', parent::lang('files attached'));
+					$sCD->assign('attached', parent::lang('files attached<br />'));
 					$sCD->assign('none', parent::lang('- none -'));
 					$sCD->assign('fileHref', 'file.php?id=download&fid=');
 					return $sCD->fetch('smarty.calendar.details.tpl');

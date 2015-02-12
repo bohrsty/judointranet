@@ -794,8 +794,15 @@ p.dashHead {
 	font-size: 90%;
 }
 
-span.presetForm {
+p.presetForm {
 	white-space: nowrap;
+	z-index: 99;
+	padding: 5px;
+	position: relative;
+	left: -300px;
+	top: -20px;
+	background-color: #b6d6e4;
+	border-radius: 3px;
 }
 
 form.jtable-dialog-form div.jtable-textarea-input textarea.usertableTextarea {
@@ -826,6 +833,57 @@ p.helpId {
     display: block;
     font-weight: normal;
     margin-bottom: 0px;
+}
+
+#apiError {
+	display: none;
+	text-align: center;
+	border: 1px dashed #f00;
+	border-radius: 3px;
+	font-weight: bold;
+	font-size: 110%;
+	color: #f00;
+}
+
+#loading {
+	display: none;
+}
+
+#loading span {
+	border: 1px solid #a6c9e2;
+	background-color: #3a9ec8;
+	border-radius: 3px;
+	font-weight: bold;
+	font-size: 110%;
+	color: #fff;
+	padding: 2px;
+}
+
+.ui-tooltip {
+	white-space: pre-line;
+}
+
+.font8 {
+	font-size: 8pt;
+}
+
+.alignRight {
+	text-align: right;
+}
+
+div.color {
+	width: 16px;
+	height: 16px;
+}
+
+td.color {
+	border-radius: 3px;
+	border-width: 1px;
+	border-style: solid;
+}
+
+.nowrap {
+	white-space: nowrap;
 }
 
 

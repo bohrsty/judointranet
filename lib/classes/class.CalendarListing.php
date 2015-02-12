@@ -96,14 +96,12 @@ class CalendarListing extends Listing implements ListingInterface {
 			// name
 			$smarty = new JudoIntranetSmarty();
 			$nameLinkArray = array(
-					array(
-							'href' => 'calendar.php?id=details&cid='.$row['id'],
-							'title' => $row['event'],
-							'name' => $row['event'],
-						),
+					'params' => 'id="c'.$row['id'].'" class="calendarDetails spanLink"',
+					'title' => $row['event'],
+					'content' => $row['event'],
 				);
-			$smarty->assign('data', $nameLinkArray);
-			$nameLink = $smarty->fetch('smarty.a.img.tpl');
+			$smarty->assign('span', $nameLinkArray);
+			$nameLink = $smarty->fetch('smarty.span.tpl');
 			
 			// show icons for details and pdf
 			$showArray = array();
@@ -145,7 +143,8 @@ class CalendarListing extends Listing implements ListingInterface {
 			if($row['files'] > 0) {
 				
 				$showArray[] = array(
-						'href' => 'calendar.php?id=details&cid='.$row['id'],
+						'span' => true,
+						'params' => 'id="f'.$row['id'].'" class="calendarDetails spanLink"',
 						'title' => _l('existing attachments'),
 						'name' => array(
 								'src' => 'img/attachment_info.png',
@@ -174,6 +173,18 @@ class CalendarListing extends Listing implements ListingInterface {
 			$smarty->assign('data', $showArray);
 			$smarty->assign('spacer', true);
 			$show = $smarty->fetch('smarty.a.img.tpl');
+			
+			// external
+			$isExternal = '';
+			if($row['is_external'] == 1) {
+				$imgArray = array(
+						'params' => 'class="icon" title="'._l('is external').'"',
+						'src' => 'img/external.png',
+						'alt' => _l('is external'),
+					);
+				$smarty->assign('img', $imgArray);
+				$isExternal = $smarty->fetch('smarty.img.tpl');
+			}
 				
 			// add admin
 			$adminArray = array();
@@ -212,66 +223,69 @@ class CalendarListing extends Listing implements ListingInterface {
 				$smarty->assign('data', $adminArray);
 				$admin = $smarty->fetch('smarty.a.img.tpl');
 				
-				// add announcement admin
-				// check for preset form
-				$presetForm = $this->checkPresetForm($row['preset_id'], $row['id']);
+				// add announcement admin if not external
 				$annAdminArray = array();
-				if($presetForm['return'] === true) {
+				if($row['is_external'] == 0) {
 					
-					// smarty
-					$annAdmin = $presetForm['form'];
-				} else {
-					
-					// get new or edit
-					$action = '';
-					if($row['has_ann_value'] == 1) {
-						$action = 'edit';
+					// check for preset form
+					$presetForm = $this->checkPresetForm($row['preset_id'], $row['id']);
+					if($presetForm['return'] === true) {
+						
+						// smarty
+						$annAdmin = $presetForm['form'];
 					} else {
-						$action = 'new';
-					}
-					
-					// smarty
-					// edit/new
-					$annAdminArray[] = array(
-							'href' => 'announcement.php?id='.$action.'&cid='.$row['id'].'&pid='.$row['preset_id'],
-							'title' => _l('edits announcement'),
-							'name' => array(
-									'src' => 'img/ann_edit.png',
-									'alt' => _l('edit announcement'),
-								),
-						);
-					// delete
-					$annAdminArray[] = array(
-							'href' => 'announcement.php?id=delete&cid='.$row['id'].'&pid='.$row['preset_id'],
-							'title' => _l('delete announcement'),
-							'name' => array(
-									'src' => 'img/ann_delete.png',
-									'alt' => _l('deletes announcement'),
-								),
-						);
-					// refresh pdf
-					$annAdminArray[] = array(
-							'href' => 'announcement.php?id=refreshpdf&cid='.$row['id'],
-							'title' => _l('refresh announcement pdf file'),
-							'name' => array(
-									'src' => 'img/refresh_pdf.png',
-									'alt' => _l('refresh announcement pdf file'),
-								),
-						);
-					// add result if date <= today
-					if(strtotime($row['date']) <= strtotime('today')) {
+						
+						// get new or edit
+						$action = '';
+						if($row['has_ann_value'] == 1) {
+							$action = 'edit';
+						} else {
+							$action = 'new';
+						}
+						
+						// smarty
+						// edit/new
 						$annAdminArray[] = array(
-								'href' => 'result.php?id=new&cid='.$row['id'],
-								'title' => _l('result new'),
+								'href' => 'announcement.php?id='.$action.'&cid='.$row['id'].'&pid='.$row['preset_id'],
+								'title' => _l('edits announcement'),
 								'name' => array(
-										'src' => 'img/res_new.png',
-										'alt' => _l('result new'),
+										'src' => 'img/ann_edit.png',
+										'alt' => _l('edit announcement'),
 									),
 							);
+						// delete
+						$annAdminArray[] = array(
+								'href' => 'announcement.php?id=delete&cid='.$row['id'].'&pid='.$row['preset_id'],
+								'title' => _l('delete announcement'),
+								'name' => array(
+										'src' => 'img/ann_delete.png',
+										'alt' => _l('deletes announcement'),
+									),
+							);
+						// refresh pdf
+						$annAdminArray[] = array(
+								'href' => 'announcement.php?id=refreshpdf&cid='.$row['id'],
+								'title' => _l('refresh announcement pdf file'),
+								'name' => array(
+										'src' => 'img/refresh_pdf.png',
+										'alt' => _l('refresh announcement pdf file'),
+									),
+							);
+						// add result if date <= today
+						if(strtotime($row['date']) <= strtotime('today')) {
+							$annAdminArray[] = array(
+									'href' => 'result.php?id=new&cid='.$row['id'],
+									'title' => _l('result new'),
+									'name' => array(
+											'src' => 'img/res_new.png',
+											'alt' => _l('result new'),
+										),
+								);
+						}
+						
+						$smarty->assign('data', $annAdminArray);
+						$annAdmin = $smarty->fetch('smarty.a.img.tpl');
 					}
-					
-					$smarty->assign('data', $annAdminArray);
-					$annAdmin = $smarty->fetch('smarty.a.img.tpl');
 				}
 			
 				// public indicator
@@ -291,7 +305,9 @@ class CalendarListing extends Listing implements ListingInterface {
 			$return[] = array(
 					'event' => $nameLink,
 					'date' => date('d.m.Y', strtotime($row['date'])),
+					'endDate' => (!is_null($row['end_date']) ? date('d.m.Y', strtotime($row['end_date'])) : ''),
 					'city' => $row['city'],
+					'isExternal' => $isExternal,
 					'public' => $public,
 					'show' => $show,
 					'admin' => $admin.$annAdmin

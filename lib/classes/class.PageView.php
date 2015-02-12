@@ -145,6 +145,17 @@ class PageView extends Object {
 	 */
 	public function add_jquery($content,$reset=false) {
 		
+		// minimize javascript (remove \n)
+		$javaScript = '';
+		$lines = explode("\n", $content);
+		foreach($lines as $line) {
+			
+			// remove whitespaces
+			$line = trim($line);
+			// add to string
+			$javaScript .= $line;
+		}
+		
 		// get jquery
 		$jquery = $this->get_jquery();
 		
@@ -152,11 +163,11 @@ class PageView extends Object {
 		if($reset === true) {
 			
 			// replace
-			$jquery = $content."\n";
+			$jquery = $javaScript."\n";
 		} else {
 			
 			// add
-			$jquery .= $content."\n";
+			$jquery .= $javaScript."\n";
 		}
 		
 		// set jquery
@@ -920,9 +931,8 @@ class PageView extends Object {
 				// check table for delete action
 				if(strtolower($config['table']) == 'result') {
 					
-					// set valid
-					$object->setValid(0);
-					$object->writeDb();
+					// call deletion wrapper
+					$object->deleteEntry();
 					
 					// delete cached file
 					$fid = File::idFromCache(strtolower($config['table']).'|'.$config['tid']);
@@ -956,7 +966,7 @@ class PageView extends Object {
 		$templateValues = array(
 				'buttonClass' => $this->getGc()->get_config('help.buttonClass'),
 				'imgTitle' => _l('help'),
-				'messageId' => $hid,
+				'messageId' => 'h'.$hid,
 			);
 		
 		// smarty template

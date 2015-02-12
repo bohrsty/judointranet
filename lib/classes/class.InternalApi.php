@@ -117,6 +117,29 @@ class InternalApi extends Object {
 				echo json_encode($this->calendarSetPreset());
 			break;
 			
+			case 'Fullcalendar':
+				
+				// check error
+				if($signedError === true) {
+					// signature error
+					echo json_encode(array(
+							'Result' => 'ERROR',
+							'Message' => _l('API call failed [not signed]')
+					));
+				} elseif($timeoutError === true) {
+					// timeout error
+					echo json_encode(array(
+							'Result' => 'ERROR',
+							'Message' => _l('API call failed [timeout]')
+					));
+				} else {
+					
+					// get object
+					$fullcalendar = new CalendarFullcalendar();
+					echo json_encode($fullcalendar->getEvents());
+				}
+			break;
+			
 			default:
 				echo 'ERROR: '._l('API call failed [unknown apiClass]');
 			break;

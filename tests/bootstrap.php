@@ -23,11 +23,15 @@
  * ********************************************************************************************/
 
 // set $_SERVER array
+$_SERVER['HTTP_HOST'] = 'localhost';
 $_SERVER['REQUEST_URI'] = '';
 $_SERVER['SCRIPT_FILENAME'] = __FILE__;
 
 // setup autoload
 require('lib/common.inc.php');
+
+// document root
+$_SERVER['DOCUMENT_ROOT'] = JIPATH;
 
 // global test classes
 

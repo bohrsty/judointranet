@@ -36,7 +36,7 @@ session_name('JudoIntranet');
 /*
  * define code version
  */
-define('CONF_GLOBAL_VERSION', '019');
+define('CONF_GLOBAL_VERSION', '020');
 
 /*
  * determine app path
@@ -111,6 +111,9 @@ define('HELP_MSG_RESULTLIST', 42);
 define('HELP_MSG_ACCOUNTINGSETTINGSCOSTS', 43);
 define('HELP_MSG_RESULTLISTADMIN', 44);
 define('HELP_MSG_ISTEAM', 45);
+define('HELP_MSG_CALENDARCALENDAR', 46);
+define('HELP_MSG_FIELDCOLOR', 47);
+define('HELP_MSG_FIELDISEXTERNAL', 48);
 // write to db
 define('DB_WRITE_NEW', 1);
 define('DB_WRITE_UPDATE', 2);
@@ -321,22 +324,27 @@ function handleExceptions($e, $outputType) {
 function _l($string, $replacements = array()) {
 	
 	// check user
-	$lang = 'de_DE';
+	$locale = 'de_DE';
 	if(Object::staticGetUser()) {
-		$lang = Object::staticGetUser()->get_lang();
+		$locale = Object::staticGetUser()->get_lang();
 	}
 	
-	// import lang-file
-	if(is_file(JIPATH.'/cnf/lang/lang.'.$lang.'.php')) {
-		include(JIPATH.'/cnf/lang/lang.'.$lang.'.php');
-	} else {
-		return htmlentities('[language "'.$lang.'" not found]', ENT_QUOTES, 'UTF-8');
+	// check if already included locale
+	if(!isset($GLOBALS['lang'][$locale])) {
+		
+		// import lang-file
+		if(is_file(JIPATH.'/cnf/lang/lang.'.$locale.'.php')) {
+			include(JIPATH.'/cnf/lang/lang.'.$locale.'.php');
+			$GLOBALS['lang'][$locale] = $lang;
+		} else {
+			return htmlentities('[language "'.$locale.'" not found]', ENT_QUOTES, 'UTF-8');
+		}
 	}
 	
 	// check if is translated
 	$translation = htmlentities($string, ENT_QUOTES, 'UTF-8');
-	if(isset($lang[$string])) {
-		$translation = $lang[$string];
+	if(isset($GLOBALS['lang'][$locale][$string])) {
+		$translation = $GLOBALS['lang'][$locale][$string];
 	}
 	
 	// replace

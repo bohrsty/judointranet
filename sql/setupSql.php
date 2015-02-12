@@ -2848,4 +2848,99 @@ function mysql_19() {
 	return $return;
 }
 
+
+function mysql_20() {
+	
+	// prepare return
+	$return = array(
+			'returnValue' => true,
+			'returnMessage' => '',
+		);
+	
+	/*
+	 * add col end_date for date ranges
+	 */
+	if(!Db::columnExists('calendar', 'end_date')) {
+		if(!Db::executeQuery('
+			ALTER TABLE `calendar`
+			ADD `end_date` DATE NULL DEFAULT NULL AFTER `date`
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+	}
+	
+	/*
+	 * insert navi entry for calendar page
+	 */
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `navi` (`id`, `name`, `parent`, `file_param`, `position`, `show`, `valid`, `required_permission`, `last_modified`)
+			VALUES
+				(60, \'navi: calendarPage.calendar\', \'4\', \'calendar.php|calendar\', \'5\', \'1\', \'1\', \'r\', CURRENT_TIMESTAMP)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	/*
+	 * insert navi entry for calendar page
+	 */
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `navi` (`id`, `name`, `parent`, `file_param`, `position`, `show`, `valid`, `required_permission`, `last_modified`)
+			VALUES
+				(61, \'navi: resultPage.accounting\', \'47\', \'result.php|accounting\', \'5\', \'0\', \'1\', \'r\', CURRENT_TIMESTAMP)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	/*
+	 * add color
+	 */
+	if(!Db::columnExists('calendar', 'color')) {
+		if(!Db::executeQuery('
+			ALTER TABLE `calendar`
+			ADD `color` VARCHAR(7) NULL DEFAULT NULL AFTER `preset_id`
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+	}
+	
+	// default colors for simple-color into config
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+			VALUES (\'calendar.colors\', \'["56bbe5", "e48ed1", "ffac75", "ffe25d", "bfff63", "78daff",]\', \'Colors for calendars color picker (without #)\'),
+				(\'calendar.defaultColor\', \'#56bbe5\', \'Default color for calendar (incl. #)\'),
+				(\'calendar.defaultExternalColor\', \'#ffac75\', \'Default color for external calendar entries (incl. #)\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	/*
+	 * add is_external
+	 */
+	if(!Db::columnExists('calendar', 'is_external')) {
+		if(!Db::executeQuery('
+			ALTER TABLE `calendar`
+			ADD `is_external` BOOLEAN NOT NULL DEFAULT FALSE AFTER `color`
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+	}
+	
+	
+		
+	// return
+	return $return;
+}
+
 ?>

@@ -239,6 +239,16 @@ class JtableField extends Object {
 		$this->setDisplay($display);
 		$this->setChildTable(true);
 	}
+	
+	public function addListClass($value) {
+		
+		// check if already set
+		if(isset($this->settings['listClass']) && $this->settings['listClass'] != '') {
+			$this->settings['listClass'] .= ' '.$value;
+		} else {
+			$this->settings['listClass'] = $value;
+		}
+	}
 }
 
 ?>

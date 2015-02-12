@@ -66,7 +66,7 @@ class HelpTest extends PHPUnit_Framework_TestCase {
 		
 		// test button 1
 		$button = $page->helpButton($mid);
-		$this->assertContains('id="'.$mid.'"', $button);
+		$this->assertContains('id="h'.$mid.'"', $button);
 		$this->assertContains('class="'.$page->getGc()->get_config('help.buttonClass').'"', $button);
 		$this->assertContains('title="'._l('help').'"', $button);
 	}

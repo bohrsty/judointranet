@@ -75,18 +75,28 @@ class CalendarViewListall extends CalendarView {
 	 */
 	private function getListallTable($from, $to) {
 		
+		// add jquery for detail "popup"
+		$recordsLoaded = 'function(event, data) { $(\'.calendarDetails\').click(function() {var id = this.id.substr(1); var dialogDiv = $(\'<div id="dialog_\'+this.id+\'" title="'._l('appointment').'" style="display: none"></div>\'); dialogDiv.load(\'api/calendar/details/\'+id+\'?html=1\'); $(\'body\').append(dialogDiv); dialogDiv.dialog({ autoOpen: true, modal: true, position: { my: \'center\', at: \'center\', of: window }, closeText: \''._l('close').'\', minWidth: 600, minHeight: 250, maxHeight: 600, close: function(event, ui) {dialogDiv.remove();} }); }) }';
+		
 		// define div id for container
 		$containerId = 'calendarListallTable';
 		
 		// prepare public image
-		$sPublicImg = new JudoIntranetSmarty();
+		$sImg = new JudoIntranetSmarty();
 		$imgArray = array(
 				'params' => 'class="icon" title="'._l('public').'"',
 				'src' => 'img/public.png',
 				'alt' => _l('public'),
 			);
-		$sPublicImg->assign('img', $imgArray);
-		$publicImg = $sPublicImg->fetch('smarty.img.tpl');
+		$sImg->assign('img', $imgArray);
+		$publicImg = $sImg->fetch('smarty.img.tpl');
+		$imgArray = array(
+				'params' => 'class="icon" title="'._l('is external').'"',
+				'src' => 'img/external.png',
+				'alt' => _l('is external'),
+		);
+		$sImg->assign('img', $imgArray);
+		$externalImg = $sImg->fetch('smarty.img.tpl');
 		
 		// get Jtable object
 		$jtable = new Jtable();
@@ -94,9 +104,14 @@ class CalendarViewListall extends CalendarView {
 		$jtable->setActions('calendar.php', 'CalendarListall', false, false, false, array('from' => $from, 'to' => $to, 'filter' => $this->get('filter')));
 		// get JtableFields
 		$jtfDate = new JtableField('date');
-		$jtfDate->setTitle(_l('date'));
+		$jtfDate->setTitle(_l('start date'));
 		$jtfDate->setEdit(false);
 		$jtfDate->setWidth('1%');
+		$jtfEndDate = new JtableField('endDate');
+		$jtfEndDate->setTitle(_l('end date'));
+		$jtfEndDate->setEdit(false);
+		$jtfEndDate->setSorting(false);
+		$jtfEndDate->setWidth('1%');
 		$jtfEvent = new JtableField('event');
 		$jtfEvent->setTitle(_l('event'));
 		$jtfEvent->setEdit(false);
@@ -108,6 +123,7 @@ class CalendarViewListall extends CalendarView {
 		$jtfShow->setTitle(_l('show'));
 		$jtfShow->setEdit(false);
 		$jtfShow->setWidth('1%');
+		$jtfShow->addListClass('nowrap');
 		$jtfShow->setSorting(false);
 		$jtfTasks = new JtableField('admin');
 		$jtfTasks->setTitle(_l('tasks').$this->helpButton(HELP_MSG_CALENDARLISTADMIN));
@@ -119,11 +135,18 @@ class CalendarViewListall extends CalendarView {
 		$jtfPublic->setEdit(false);
 		$jtfPublic->setWidth('0.1%');
 		$jtfPublic->setSorting(false);
+		$jtfExternal = new JtableField('isExternal');
+		$jtfExternal->setTitle($externalImg);
+		$jtfExternal->setEdit(false);
+		$jtfExternal->setWidth('0.1%');
+		$jtfExternal->setSorting(false);
 		
 		// add fields to $jtable
 		$jtable->addField($jtfDate);
+		$jtable->addField($jtfEndDate);
 		$jtable->addField($jtfEvent);
 		$jtable->addField($jtfCity);
+		$jtable->addField($jtfExternal);
 		// add public colum if logged in
 		if($this->getUser()->get_loggedin() === true) {
 			$jtable->addField($jtfPublic);
@@ -133,6 +156,9 @@ class CalendarViewListall extends CalendarView {
 		if($this->getUser()->get_loggedin() === true) {
 			$jtable->addField($jtfTasks);
 		}
+		
+		// set recordsLoaded
+		$jtable->setSetting('recordsLoaded', $recordsLoaded, false);
 		
 		// get java script config
 		$jtableJscript = $jtable->asJavaScriptConfig();

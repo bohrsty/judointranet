@@ -20,12 +20,24 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-<span class="presetForm Zebra_Form">
+<span class="spanLink"><img id="pi{$id}" src="img/show_presetform.png" alt="{lang}show preset selection{/lang}" title="{lang}show preset selection{/lang}" /></span>
+<p id="p{$id}" class="presetForm Zebra_Form">
 	<select id="select_{$id}" class="control validate[required]">
 		<option value="">{lang}- choose -{/lang}</option>{foreach $options as $key => $value}<option value="{$key}">{$value}</option>{/foreach}
 	</select>
 	<input id="input_{$id}" class="submit" type="submit" value="{lang}+{/lang}"></input>
 	<script type="text/javascript">
+		$("#p{$id}").hide();
+		$("#pi{$id}").click(function() {ldelim}
+			$("#p{$id}").fadeToggle();
+		{rdelim});
+		$(document).click(function(event) {ldelim}
+			if($(event.target).closest("#p{$id}").length == 0 && $(event.target).closest("#pi{$id}").length == 0) {ldelim}
+				if($("#p{$id}").is(":visible")) {ldelim}
+					$("#p{$id}").fadeToggle();
+				{rdelim}
+			{rdelim}
+		{rdelim});
 		$("#input_{$id}").click(function() {ldelim}
 			var value = $("#select_{$id}").val();
 			if(value == "") {ldelim}
@@ -47,4 +59,4 @@
 			{rdelim}
 		{rdelim});
 	</script>
-</span>
+</p>

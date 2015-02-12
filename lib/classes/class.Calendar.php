@@ -45,6 +45,9 @@ class Calendar extends Page {
 	private $filter;
 	private $additionalFields;
 	private $city;
+	private $endDate;
+	private $color;
+	private $isExternal;
 	
 	/*
 	 * getter/setter
@@ -127,6 +130,35 @@ class Calendar extends Page {
 	public function setCity($city) {
 		$this->city = $city;
 	}
+	public function getEndDate($format = ''){
+		
+		// check if set
+		if(is_null($this->endDate)) {
+			return null;
+		}
+		
+		// check if format given
+		if($format != '') {
+			return date($format, strtotime($this->endDate));
+		} else {
+			return $this->endDate;
+		}
+	}
+	public function setEndDate($endDate) {
+		$this->endDate = $endDate;
+	}
+	public function getColor(){
+		return $this->color;
+	}
+	public function setColor($color) {
+		$this->color = $color;
+	}
+	public function getIsExternal(){
+		return $this->isExternal;
+	}
+	public function setIsExternal($isExternal) {
+		$this->isExternal = $isExternal;
+	}
 	
 	/*
 	 * constructor/destructor
@@ -139,26 +171,36 @@ class Calendar extends Page {
 		// if $arg is array, create new entry, else get entry from db by given id
 		if(is_array($arg)) {
 			
-			// prepare shortname
+			// prepare shortname and filter
 			$shortname = $arg['shortname'];
-			if($shortname == '') {
-				$shortname = strtoupper(substr($arg['name'],0,3));
+			$filter = array();
+			if($arg['isExternal'] === true) {
+				$shortname = '';
+			} else {
+				
+				// set shortname
+				if($shortname == '') {
+					$shortname = strtoupper(substr($arg['name'],0,3));
+				}
+				
+				// get filter objects
+				foreach($arg['filter'] as $filterId) {
+					$filter[$filterId] = new Filter($filterId);
+				}
 			}
 			
-			// get filter objects
-			$filter = array();
-			foreach($arg['filter'] as $filterId) {
-				$filter[$filterId] = new Filter($filterId);
-			}
 			// set variables to object
 			$this->set_id(null);
 			$this->set_name($arg['name']);
 			$this->set_shortname($shortname);
 			$this->set_date($arg['date']);
+			$this->setEndDate((isset($arg['endDate']) ? $arg['endDate'] : null));
 			$this->set_type($arg['type']);
 			$this->set_content($arg['content']);
 			$this->setCity($arg['city']);
 			$this->set_preset_id(0);
+			$this->setColor($arg['color']);
+			$this->setIsExternal($arg['isExternal']);
 			$this->set_valid($arg['valid']);
 			$this->setFilter($filter);
 		} else {
@@ -184,10 +226,13 @@ class Calendar extends Page {
 			SELECT `c`.`name`,
 				`c`.`shortname`,
 				`c`.`date`,
+				`c`.`end_date`,
 				`c`.`type`,
 				`c`.`content`,
 				`c`.`city`,
 				`c`.`preset_id`,
+				`c`.`color`,
+				`c`.`is_external`,
 				`c`.`valid`,
 				`c`.`last_modified`,
 				`c`.`modified_by`,
@@ -212,10 +257,13 @@ class Calendar extends Page {
 		$this->set_name($result[0]['name']);
 		$this->set_shortname($result[0]['shortname']);
 		$this->set_date($result[0]['date']);
+		$this->setEndDate((!is_null($result[0]['end_date']) ? $result[0]['end_date'] : null));
 		$this->set_type($result[0]['type']);
 		$this->set_content($result[0]['content']);
 		$this->setCity($result[0]['city']);
 		$this->set_preset_id($result[0]['preset_id']);
+		$this->setColor($result[0]['color']);
+		$this->setIsExternal($result[0]['is_external'] == 1);
 		$this->set_valid($result[0]['valid']);
 		$this->setLastModified((strtotime($result[0]['last_modified']) < 0 ? 0 : strtotime($result[0]['last_modified'])));
 		$this->setModifiedBy($result[0]['modified_by']);
@@ -240,19 +288,23 @@ class Calendar extends Page {
 		
 		// prepare timestamp
 		$timestamp = date('Y-m-d',strtotime($this->get_date()));
+		$endTimestamp = (is_null($this->getEndDate()) ? null : date('Y-m-d',strtotime($this->getEndDate())));
 		
 		// insert into database
 		if(!Db::executeQuery('
-				INSERT INTO calendar (`id`,`name`,`shortname`,`date`,`type`,`content`,`city`,`preset_id`,`valid`,`last_modified`,`modified_by`)
-				VALUES (#?, \'#?\', \'#?\', \'#?\', \'#?\', \'#?\', \'#?\', #?, #?, CURRENT_TIMESTAMP, #?)
+				INSERT INTO calendar (`id`,`name`,`shortname`,`date`,`end_date`,`type`,`content`,`city`,`preset_id`,`color`,`is_external`,`valid`,`last_modified`,`modified_by`)
+				VALUES (#?, \'#?\', \'#?\', \'#?\', '.(is_null($endTimestamp) ? '#?' : '\'#?\'').', \'#?\', \'#?\', \'#?\', #?, \'#?\',\'#?\', #?, CURRENT_TIMESTAMP, #?)
 				ON DUPLICATE KEY UPDATE
 					`name`=\'#?\',
 					`shortname`=\'#?\',
 					`date`=\'#?\',
+					`end_date`='.(is_null($endTimestamp) ? '#?' : '\'#?\'').',
 					`type`=\'#?\',
 					`content`=\'#?\',
 					`city`=\'#?\',
 					`preset_id`=#?,
+					`color`=\'#?\',
+					`is_external`=\'#?\',
 					`valid`=#?,
 					`last_modified`=CURRENT_TIMESTAMP,
 					`modified_by`=#?
@@ -262,20 +314,26 @@ class Calendar extends Page {
 					$this->get_name(),
 					$this->get_shortname(),
 					$timestamp,
+					(is_null($endTimestamp) ? 'NULL' : $endTimestamp),
 					$this->get_type(),
 					$this->get_content(),
 					$this->getCity(),
 					$this->get_preset_id(),
+					$this->getColor(),
+					$this->getIsExternal(),
 					$this->get_valid(),
 					(int)$this->getUser()->get_id(),
 					// update
 					$this->get_name(),
 					$this->get_shortname(),
 					$timestamp,
+					(is_null($endTimestamp) ? 'NULL' : $endTimestamp),
 					$this->get_type(),
 					$this->get_content(),
 					$this->getCity(),
 					$this->get_preset_id(),
+					$this->getColor(),
+					$this->getIsExternal(),
 					$this->get_valid(),
 					(int)$this->getUser()->get_id(),))) {
 				$n = null;
@@ -317,10 +375,13 @@ class Calendar extends Page {
 		$data = array(
 					'name' => _l('event<br />').$this->get_name(),
 					'shortname' => _l('shortname<br />').$this->get_shortname(),
-					'date' => _l('date<br />').$this->get_date('d.m.Y'),
+					'date' => _l('start date<br />').$this->get_date('d.m.Y'),
+					'endDate' => _l('end date<br />').$this->getEndDate('d.m.Y'),
 					'type' => _l('type<br />').$this->return_type('translated'),
 					'content' => _l('description<br />').nl2br($this->get_content()),
 					'city' => _l('city<br />').$this->getCity(),
+					'color' => _l('color<br />').'<div class="color" style="background-color: '.$this->getColor().';">&nbsp;</div>',
+					'isExternal' => _l('is external<br />').($this->getIsExternal() === true ? _l('yes') : _l('no')),
 					'filter' => _l('filter<br />').$filterNames,
 					'public' => _l('public access<br />').($this->isPermittedFor(0) ? parent::lang('yes') : parent::lang('no')),
 		);
@@ -364,9 +425,11 @@ class Calendar extends Page {
 		
 		// fill array
 		$return = array(
-					'event' => parent::lang('competition/championship'),
-					'training' => parent::lang('course')
+					'event' => _l('competition/championship'),
+					'training' => _l('course'),
+					'external' => _l('is external'),
 		);
+		asort($return, SORT_NATURAL | SORT_FLAG_CASE);
 		
 		// return
 		return $return;
@@ -403,6 +466,8 @@ class Calendar extends Page {
 			// check $name
 			if($name == 'date') {
 				$this->set_date($value);
+			} elseif($name == 'endDate') {
+				$this->setEndDate($value);
 			} elseif($name == 'name') {
 				$this->set_name($value);
 			} elseif($name == 'shortname') {
@@ -413,12 +478,18 @@ class Calendar extends Page {
 				$this->set_content($value);
 			} elseif($name == 'city') {
 				$this->setCity($value);
+			} elseif($name == 'color') {
+				$this->setColor($value);
+			} elseif($name == 'isExternal') {
+				$this->setIsExternal($value);
 			} elseif($name == 'filter') {
 				
 				// get filter objects
 				$filter = array();
-				foreach($value as $filterId) {
-					$filter[$filterId] = new Filter($filterId);
+				if($calendar['isExternal'] === true) {
+					foreach($value as $filterId) {
+						$filter[$filterId] = new Filter($filterId);
+					}
 				}
 				$this->setFilter($filter);
 			} elseif($name == 'valid') {
@@ -487,8 +558,22 @@ class Calendar extends Page {
 			$announcement['calendar_date_d_m_Y'] = nl2br(htmlentities($this->get_date('d.m.Y'),ENT_QUOTES,'UTF-8'));
 			$announcement['calendar_date_dmY'] = nl2br(htmlentities($this->get_date('dmY'),ENT_QUOTES,'UTF-8'));
 			$announcement['calendar_date_j_F_Y'] = nl2br(htmlentities(strftime('%e. %B %Y',$this->get_date('U')),ENT_QUOTES,'UTF-8'));
+			if(!is_null($this->getEndDate())) {
+				$announcement['calendar_enddate'] = nl2br(htmlentities($this->getEndDate(),ENT_QUOTES,'UTF-8'));
+				$announcement['calendar_enddate_d_m_Y'] = nl2br(htmlentities($this->getEndDate('d.m.Y'),ENT_QUOTES,'UTF-8'));
+				$announcement['calendar_enddate_dmY'] = nl2br(htmlentities($this->getEndDate('dmY'),ENT_QUOTES,'UTF-8'));
+				$announcement['calendar_enddate_j_F_Y'] = nl2br(htmlentities(strftime('%e. %B %Y',$this->getEndDate('U')),ENT_QUOTES,'UTF-8'));
+			} else {
+				$announcement['calendar_enddate'] = '';
+				$announcement['calendar_enddate_d_m_Y'] = '';
+				$announcement['calendar_enddate_dmY'] = '';
+				$announcement['calendar_enddate_j_F_Y'] = '';
+			}
 			$announcement['calendar_type'] = nl2br(htmlentities($this->get_type(),ENT_QUOTES,'UTF-8'));
 			$announcement['calendar_content'] = nl2br(htmlentities($this->get_content(),ENT_QUOTES,'UTF-8'));
+			$announcement['calendar_date_complete_d_m_y'] = nl2br(htmlentities($this->getCompleteDate('%d.', '%m.', '%Y'),ENT_QUOTES,'UTF-8'));
+			$announcement['calendar_date_complete_dmy'] = nl2br(htmlentities($this->getCompleteDate('%d', '%m', '%Y'),ENT_QUOTES,'UTF-8'));
+			$announcement['calendar_date_complete_j_F_Y'] = nl2br(htmlentities($this->getCompleteDate('%e.', ' %B', ' %Y'),ENT_QUOTES,'UTF-8'));
 		} else {
 			$announcement['calendar_name'] = $this->get_name();
 			$announcement['calendar_shortname'] = $this->get_shortname();
@@ -496,8 +581,22 @@ class Calendar extends Page {
 			$announcement['calendar_date_d_m_Y'] = $this->get_date('d.m.Y');
 			$announcement['calendar_date_dmY'] = $this->get_date('dmY');
 			$announcement['calendar_date_j_F_Y'] = strftime('%e. %B %Y',$this->get_date('U'));
+			if(!is_null($this->getEndDate())) {
+				$announcement['calendar_enddate'] = $this->getEndDate();
+				$announcement['calendar_enddate_d_m_Y'] = $this->getEndDate('d.m.Y');
+				$announcement['calendar_enddate_dmY'] = $this->getEndDate('dmY');
+				$announcement['calendar_enddate_j_F_Y'] = strftime('%e. %B %Y',$this->getEndDate('U'));
+			} else {
+				$announcement['calendar_enddate'] = '';
+				$announcement['calendar_enddate_d_m_Y'] = '';
+				$announcement['calendar_enddate_dmY'] = '';
+				$announcement['calendar_enddate_j_F_Y'] = '';
+			}
 			$announcement['calendar_type'] = $this->get_type();
 			$announcement['calendar_content'] = $this->get_content();
+			$announcement['calendar_date_complete_d_m_y'] = $this->getCompleteDate('%d.', '%m.', '%Y');
+			$announcement['calendar_date_complete_dmy'] = $this->getCompleteDate('%d', '%m', '%Y');
+			$announcement['calendar_date_complete_j_F_Y'] = $this->getCompleteDate('%e.', ' %B', ' %Y');
 		}
 	}
 	
@@ -593,7 +692,7 @@ class Calendar extends Page {
 	 * @return string name of this object
 	 */
 	public function getName() {
-		return $this->get_name().' '.$this->get_date('d.m.Y');
+		return $this->get_name().' '.$this->get_date('d.m.Y').(!is_null($this->getEndDate()) ? '-'.$this->getEndDate('d.m.Y') : '');
 	}
 	
 	
@@ -646,6 +745,58 @@ class Calendar extends Page {
 					throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 				}
 		}
+	}
+	
+	
+	/**
+	 * getCompleteDate($dFormat, $mFormat, $yFormat) determines the date range and returns it in
+	 * a compressed human readable string formatted by the format parameter (strftime())
+	 * 
+	 * @param string $dFormat format (incl. the separator) of the day in strftime()
+	 * @param string $mFormat format (incl. the separator) of the month in strftime()
+	 * @param string $yFormat format (incl. the separator) of the year in strftime()
+	 * @return string compressed and human readable date range
+	 */
+	public function getCompleteDate($dFormat, $mFormat, $yFormat) {
+		
+		// get dates
+		$startDate = $this->get_date('U');
+		$endDate = $this->getEndDate('U');
+		
+		// format start dates
+		$day = strftime($dFormat, $startDate);
+		$month = strftime($mFormat, $startDate);
+		$year = strftime($yFormat, $startDate);
+		
+		// check if end date set
+		if(is_null($endDate)) {
+			return $day.$month.$year;
+		}
+		
+		// format dates
+		// start date numeric
+		$numMonth = strftime('%m', $startDate);
+		$numYear = strftime('%Y', $startDate);
+		// end date
+		$endDay = strftime($dFormat, $endDate);
+		$endMonth = strftime($mFormat, $endDate);
+		$endYear = strftime($yFormat, $endDate);
+		// end date numeric
+		$numEndMonth = strftime('%m', $endDate);
+		$numEndYear = strftime('%Y', $endDate);
+		
+		// check if same year
+		if($numYear != $numEndYear) {
+			return $day.$month.$year.' - '.$endDay.$endMonth.$endYear;
+		}
+		
+		// check same month
+		if($numMonth != $numEndMonth) {
+			return $day.$month.' - '.$endDay.$endMonth.$endYear;
+		}
+		
+		// is same month
+		return $day.' - '.$endDay.$endMonth.$endYear;
 	}
 }
 

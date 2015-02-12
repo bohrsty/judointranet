@@ -120,6 +120,25 @@ class AccountingResultTask extends Task {
 		// set state
 		$this->setState($resultId, 0);
 	}
+	
+	
+	/**
+	 * delete($resultId) deletes the task for the given $resultId
+	 * 
+	 * @param int $resultId result id to delete task for
+	 */
+	public static function delete($resultId) {
+		
+		if(!Db::executeQuery('
+			DELETE FROM `accounting_tasks`
+			WHERE `table_name`=\'result\'
+				AND `table_id`=#?
+		',
+		array($resultId,))) {
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		}
+	}
 }
 
 ?>

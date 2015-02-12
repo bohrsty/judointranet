@@ -24,6 +24,25 @@
  
  
 /*
- * Dummy
+ * required lib
  */
+require('../lib/common.inc.php');
+
+/*
+ * start session
+ */
+session_start();
+
+/*
+ * catch exceptions
+ */
+try {
+
+	$api = new Api();
+	
+	$api->handle();
+}
+catch(Exception $e) {
+	handleExceptions($e, HANDLE_EXCEPTION_JSON);
+}
 ?>
