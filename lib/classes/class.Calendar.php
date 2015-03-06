@@ -221,7 +221,7 @@ class Calendar extends Page {
 	 */
 	private function get_from_db($id) {
 		
-		// get values from db MysqlErrorException
+		// get values from db
 		$result = Db::ArrayValue('
 			SELECT `c`.`name`,
 				`c`.`shortname`,

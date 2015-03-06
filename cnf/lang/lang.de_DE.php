@@ -136,6 +136,15 @@ $lang = array(
 	'Error: protocol entry not exists' => 'Das Protokoll existiert nicht, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
 										Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
 										Wenn der Fehler weiterhin auftritt, wenden Sie sich bitte an den Systembetreuer.<br />',
+	'Error: holiday function is not callable' => 'Eine Funktion um einen Feiertag zu bestimmen ist nicht aufrufbar, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+										Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+										Wenn der Fehler weiterhin auftritt, wenden Sie sich bitte an den Systembetreuer.<br />',
+	'Error: holiday calculation error' => 'Ein Eintrag in den Einstellungen der Feiertage ist nicht berechnbar, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+										Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+										Wenn der Fehler weiterhin auftritt, wenden Sie sich bitte an den Systembetreuer.<br />',
+	'Error: holiday year not valid' => 'Das gew&auml;hlte Jahr ist nicht g&uuml;ltig oder zu weit in der Zukunft, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+										Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+										Wenn der Fehler weiterhin auftritt, wenden Sie sich bitte an den Systembetreuer.<br />',
 	/*
 	 * API error messages
 	 */
@@ -356,6 +365,7 @@ $lang = array(
 	'administration: manage defaults' => 'Administration: Vorgaben verwalten',
 	'administration: manage users and permissions' => 'Administration: Benutzer und Rechte verwalten',
 	'administration: create new year' => 'Administration: neues Jahr erstellen',
+	'administration: manage school holidays' => 'Administration: Schulferien verwalten',
 	'manage' => ' verwalten',
 	'toggle table selection' => 'Tabellenauswahl ein- oder ausblenden',
 	'manage user tables' => 'Benutzerdefinierte Tabellen verwalten',
@@ -537,6 +547,8 @@ $lang = array(
 	'HELP_TITLE_46' => 'Kalenderansicht',
 	'HELP_TITLE_47' => 'Farbfeld',
 	'HELP_TITLE_48' => 'Feld externer Termin',
+	'HELP_TITLE_49' => 'Auswahl des Schulferienjahrs',
+	'HELP_TITLE_50' => 'Schulferien verwalten',
 	'HELP_MESSAGE_error' => '<p>Dieses Hilfe-Thema konnte nicht gefunden werden.</p>',
 	'HELP_MESSAGE_1' => '<p><b>JudoIntranet</b></p>
 						<p>Author: Nils Bohrs<br />
@@ -920,6 +932,14 @@ $lang = array(
 	'HELP_MESSAGE_48' => '<p><b>Format</b>: <i>Auswahlbox</i></p>
 						<p>Das Anhaken der Auswahlbox markiert diesen Datensatz als externen Termin,
 						ein externer Termin dient nur der Information und es kann keine Ausschreibung daf&uuml;r erstellt werden.</p>',
+	'HELP_MESSAGE_49' => '<p>Diese Seite bietet das aktuelle und die beiden folgenden Jahre zur Schulferienverwaltung an. Ein Klick auf
+						einen Eintrag &ouml;ffnet das entsprechende Jahr zur Bearbeitung.</p>',
+	'HELP_MESSAGE_50' => '<p>Bei der Bearbeitung der Schulferientermine unterscheiden sich die Eintr&auml;ge durch festgelegte oder variable
+						Namen. Die vorgegebenen haben einen unver&auml;nderbaren Namen, bei den Variablen kann er angepasst werden.<br />
+						F&uuml;r jeden vorgegebenen Ferientermin ist das "von"-Datum ein Pflichtfeld, bei den variablen ist der Name ein
+						Pflichtfeld. Wenn der Name eines variablen Ferienentrages nicht ge&auml;ndert wird (Vorgabe: "benutzerdefiniert_X", wobei
+						"X" eine fortlaufende Zahl ist), wird der komplette Eintrag ignoriert. Wenn variable Ferientermine eingegeben werden,
+						werden bei der nächsten Bearbeitung wieder f&uuml;nf Felder zur Bearbeitung angeboten.</p>',
 	/*
 	 * ************************
 	 */
@@ -968,6 +988,7 @@ $lang = array(
 	'navi: administrationPage.useradmin' => 'Benutzer/Gruppen/Rechte',
 	'navi: administrationPage.club' => 'Vereine verwalten',
 	'navi: administrationPage.newYear' => 'Neues Jahr erstellen',
+	'navi: administrationPage.schoolholidays' => 'Schulferien verwalten',
 	'navi: filePage' => 'Dateien',
 	'navi: filePage.listall' => 'Dateien auflisten',
 	'navi: filePage.details' => 'Datei-Details',
@@ -1168,6 +1189,12 @@ $lang = array(
 	'Saving this as "external" appointment will delete any existing announcement! Continue?' => 'Wenn dieser Termin als "extern" gespeichert wird, werden vorhandene Ausschreibungen gelöscht! Fortfahren?',
 	'show preset selection' => 'Vorlagenauswahl einblenden',
 	'external' => 'extern',
+	'manage school holidays' => 'Schulferien verwalten',
+	'Please choose a year to edit:' => 'Bitte ein Jahr zur Bearbeitung ausw&auml;hlen:',
+	'Edit school holiday for year #?year' => 'Schulferien f&uuml;r das Jahr #?year bearbeiten',
+	'from:' => 'von:',
+	'to:' => 'bis:',
+	'userdefined' => 'benutzerdefiniert',
 //	'' => '',
 );
 

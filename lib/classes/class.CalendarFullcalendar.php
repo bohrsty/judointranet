@@ -59,7 +59,13 @@ class CalendarFullcalendar extends Object {
 	public function getEvents() {
 		
 		// prepare return
-		$return = array();
+		$result = array();
+		
+		// add school holidays
+		$result = $this->addSchoolHolidays($result);
+		
+		// add holidays
+		$result = $this->addHolidays($result);
 		
 		// get permitted and filtered ids
 		if($this->get('filter') == '') {
@@ -80,16 +86,112 @@ class CalendarFullcalendar extends Object {
 			WHERE `c`.`id` IN (#?)
 				AND `c`.`valid`=TRUE
 		';
-		$result = Db::ArrayValue($sql,
-		MYSQL_ASSOC,
-		array($mysqlData,));
-		if($result === false) {
+		$sqlResult = Db::ArrayValue($sql,
+			MYSQL_ASSOC,
+			array($mysqlData,));
+		if($sqlResult === false) {
 			$n = null;
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// return
+		return array_merge($result, $sqlResult);
+	}
+	
+	
+	/**
+	 * addHolidays($result) adds the holiday as background events to $result
+	 * 
+	 * @param array $result array containing the result from calendar table
+	 * @return array result array with added holidays
+	 */
+	private function addHolidays($result) {
+		
+		// prepare calculations
+		$start = strtotime($this->get('start'));
+		$end = strtotime($this->get('end'));
+		
+		// get holidays
+		$startHolidays = Holiday::getHolidays(date('Y', $start));
+		
+		// prepare and add background events for start year
+		foreach($startHolidays as $name => $timestamp) {
+			
+			// check if between start and end
+			if($timestamp >= $start && $timestamp <= $end) {
+				$result[] = array(
+						'start' => date('Y-m-d', $timestamp),
+						'end' => null,
+						'title' => htmlentities($name),
+						'rendering' => 'background',
+					);
+			}
+		}
+		
+		// check end year
+		if(date('Y', $start) != date('Y', $end)) {
+			
+			// get holidays
+			$endHolidays = Holiday::getHolidays(date('Y', $end));
+			
+			// prepare and add background events for end year
+			foreach($endHolidays as $name => $timestamp) {
+					
+				// check if between start and end
+				if($timestamp >= $start && $timestamp <= $end) {
+					$result[] = array(
+							'start' => date('Y-m-d', $timestamp),
+							'end' => null,
+							'title' => htmlentities($name),
+							'rendering' => 'background',
+					);
+				}
+			}
+		}
+		
+		// return
 		return $result;
+	}
+	
+	
+	/**
+	 * addSchoolHolidays($result) adds the school holiday as background events to $result
+	 * 
+	 * @param array $result array containing the result from calendar table
+	 * @return array result array with added school holidays
+	 */
+	private function addSchoolHolidays($result) {
+		
+		// prepare dates
+		$start = $this->get('start');
+		$end = $this->get('end');
+		
+		// prepare sql
+		$sql = '
+			SELECT `date` AS `start`, IF(ISNULL(`end_date`), NULL, ADDDATE(`end_date`,1)) AS `end`, `name` AS `title`, TRUE AS `allDay`, \'background\' AS `rendering`
+			FROM `holiday`
+			WHERE `date` BETWEEN \'#?\' AND \'#?\' 
+				OR `end_date` BETWEEN \'#?\' AND  \'#?\'
+				OR \'#?\' BETWEEN `date` AND `end_date`
+				OR \'#?\' BETWEEN `date` AND `end_date`
+		';
+		
+		$sqlResult = Db::ArrayValue($sql,
+				MYSQL_ASSOC,
+				array($start,
+						$end,
+						$start,
+						$end,
+						$start,
+						$end,
+					));
+		if($sqlResult === false) {
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		}
+		
+		// return
+		return array_merge($result, $sqlResult);
 	}
 }
 ?>

@@ -2943,4 +2943,87 @@ function mysql_20() {
 	return $return;
 }
 
+
+function mysql_21() {
+	
+	// prepare return
+	$return = array(
+			'returnValue' => true,
+			'returnMessage' => '',
+		);
+	
+	// create table protocol
+	if(!Db::executeQuery('
+		CREATE TABLE IF NOT EXISTS `holiday` (
+		  `name` varchar(150) NOT NULL,
+		  `date` date NOT NULL,
+		  `end_date` date DEFAULT NULL,
+		  `year` varchar(4) NOT NULL,
+		  `valid` tinyint(1) NOT NULL,
+		  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		  `modified_by` int(11) NOT NULL,
+		  PRIMARY KEY (`name`,`year`),
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// insert test holiday
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `holiday`
+			(`name`, `date`, `end_date`, `year`, `valid`, `last_modified`, `modified_by`) 
+			VALUES (\'Test Holiday\', \'1970-01-01\', \'1970-01-02\', \'1970\', 0, CURRENT_TIMESTAMP, 0)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// default holiday country and settings
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+			VALUES (\'holiday.country\', \'germany\', \'Country to read holiday settings for\'),
+				(\'holiday.settings\', \'{"germany":{"holidays":[{"name":"Neujahr","type":"fixed","date":"01.01."},{"name":"Karfreitag","type":"moving","distance":"-2","from":"Ostersonntag"},{"name":"Ostersonntag","type":"function","function":"easter_date"},{"name":"Ostermontag","type":"moving","distance":"+1","from":"Ostersonntag"},{"name":"Tag der Arbeit","type":"fixed","date":"01.05."},{"name":"Christi Himmelfahrt","type":"moving","distance":"+39","from":"Ostersonntag"},{"name":"Pfingstsonntag","type":"moving","distance":"+49","from":"Ostersonntag"},{"name":"Pfingstmontag","type":"moving","distance":"+50","from":"Ostersonntag"},{"name":"Tag der deutschen Einheit","type":"fixed","date":"03.10."},{"name":"1. Weihnachtstag","type":"fixed","date":"25.12."},{"name":"2. Weihnachtstag","type":"fixed","date":"26.12."}],"school holidays":["Winterferien","Oster-\/Frühjahrsferien","Himmelfahrtsferien","Pfingstferien","Sommerferien","Herbstferien","Weihnachtsferien"]}}\', \'Settings for the holidays and school holidays\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	/*
+	 * insert navi entry for school holiday page
+	 */
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `navi` (`id`, `name`, `parent`, `file_param`, `position`, `show`, `valid`, `required_permission`, `last_modified`)
+			VALUES
+				(62, \'navi: administrationPage.schoolholidays\', \'34\', \'administration.php|schoolholidays\', \'2\', \'1\', \'1\', \'w\', CURRENT_TIMESTAMP)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	/*
+	 * make zebra_form csrf feature configurable
+	 */
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+			VALUES (\'global.zebraFormCsrf\', \'1\', \'Enable or disable csrf feature in zebra_forms\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	
+	
+	
+		
+	// return
+	return $return;
+}
+	
+
 ?>

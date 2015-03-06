@@ -601,4 +601,98 @@ class ProtocolIdNotExistsExeption extends CustomException {
 }
 
 
+
+/**
+ * HolidayFunctionNotCallableExeption is thrown, if a given function name for holiday is
+ * not callable
+ */
+class HolidayFunctionNotCallableExeption extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(true);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return _l('Error: holiday function is not callable');
+	}
+}
+
+
+
+/**
+ * HolidayCalculationErrorExeption is thrown, if a holiday settings are not calculatable
+ */
+class HolidayCalculationErrorExeption extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(true);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return _l('Error: holiday calculation error');
+	}
+}
+
+
+
+/**
+ * HolidayYearNotValidException is thrown, if a given year is not valid
+ */
+class HolidayYearNotValidException extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(false);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return _l('Error: holiday year not valid');
+	}
+}
+
+
 ?>

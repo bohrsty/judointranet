@@ -44,6 +44,9 @@ class Object {
 	public function getGc() {
 		return $GLOBALS['GC'];
 	}
+	public static  function staticGetGc() {
+		return $GLOBALS['GC'];
+	}
 	public function setGc($gc) {
 		$GLOBALS['GC'] = $gc;
 	}

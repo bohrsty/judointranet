@@ -886,6 +886,22 @@ td.color {
 	white-space: nowrap;
 }
 
+.schoolHoliday th {
+	text-align: left;
+}
+
+.schoolHoliday .name {
+	width: 300px;
+}
+
+.schoolHoliday .date {
+	width: 150px;
+}
+
+.schoolHoliday .endDate {
+	width: 150px;
+}
+
 
 
 

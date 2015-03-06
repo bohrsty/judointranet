@@ -103,6 +103,19 @@ class AdministrationView extends PageView {
 						$this->getTpl()->assign('main', $this->createNewYear());
 					break;
 					
+					case 'schoolholidays':
+						
+						// set caption
+						$this->getTpl()->assign('caption', _l('manage school holidays').'&nbsp;'.$this->helpButton(HELP_MSG_MANAGESCHOOLHOLIDAYS));
+						
+						// smarty
+						$this->getTpl()->assign('title', $this->title(_l('administration: manage school holidays')));
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', true);
+						$holidayAdmin = new AdministrationViewSchoolholidays();
+						$this->getTpl()->assign('main', $holidayAdmin->show());
+					break;
+					
 					default:
 						
 						// id set, but no functionality
