@@ -39,6 +39,9 @@ Thirdparty licenses see LICENSE
 [++] added management for school holidays
 [cc] calendar view uses school holidays as background events
 --
+[!!] make jtable vertically scrollable (for smaller screens)
+[!!] translation "location" -> "city" in protocol new and edit
+--
 
 
 

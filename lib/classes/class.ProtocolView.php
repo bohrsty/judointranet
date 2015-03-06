@@ -402,7 +402,7 @@ class ProtocolView extends PageView {
 				'label',		// type
 				'labelLocation',	// id/name
 				'location',			// for
-				parent::lang('location'),	// label text
+				parent::lang('city'),	// label text
 				array('inside' => true,)	// label inside
 			);
 		$location = $form->add(
@@ -994,7 +994,7 @@ class ProtocolView extends PageView {
 					'label',		// type
 					'labelLocation',	// id/name
 					'location',			// for
-					parent::lang('location')	// label text
+					parent::lang('city')	// label text
 				);
 			$location = $form->add(
 							$formIds['location']['type'],		// type

@@ -902,6 +902,11 @@ td.color {
 	width: 150px;
 }
 
+.jTable {
+	width: 100%;
+	overflow: auto;
+}
+
 
 
 
