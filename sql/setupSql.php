@@ -2962,7 +2962,7 @@ function mysql_21() {
 		  `valid` tinyint(1) NOT NULL,
 		  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		  `modified_by` int(11) NOT NULL,
-		  PRIMARY KEY (`name`,`year`),
+		  PRIMARY KEY (`name`,`year`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 	')) {
 		$return['returnValue'] = false;
@@ -3011,6 +3011,31 @@ function mysql_21() {
 	if(!Db::executeQuery('
 		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
 			VALUES (\'global.zebraFormCsrf\', \'1\', \'Enable or disable csrf feature in zebra_forms\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	/*
+	 * insert navi entry for appointment schedule
+	 */
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `navi` (`id`, `name`, `parent`, `file_param`, `position`, `show`, `valid`, `required_permission`, `last_modified`)
+			VALUES
+				(63, \'navi: calendarPage.schedule\', \'4\', \'calendar.php|schedule\', \'6\', \'1\', \'1\', \'r\', CURRENT_TIMESTAMP)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	/*
+	 * preset id for appointment schedule
+	 */
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+			VALUES (\'schedule.presetId\', \'0\', \'Preset id for appointment schedule\')
 	')) {
 		$return['returnValue'] = false;
 		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';

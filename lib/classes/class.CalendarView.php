@@ -188,6 +188,17 @@ class CalendarView extends PageView {
 						$this->getTpl()->assign('main', $calendarViewCalendar->show());
 					break;
 					
+					case 'schedule':
+						
+						// smarty
+						$this->getTpl()->assign('title', $this->title(_l('calendar: schedule')));
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', false);
+						
+						$calendarViewSchedule = new CalendarViewSchedule();
+						$this->getTpl()->assign('main', $calendarViewSchedule->show());
+					break;
+					
 					default:
 						
 						// id set, but no functionality
@@ -439,9 +450,11 @@ class CalendarView extends PageView {
 					if($(\'#isExternal_1\').prop(\'checked\') == true) {
 						$(\'#type\').val(\'external\');
 						$(\'#color\').setColor(\''.$this->getGc()->get_config('calendar.defaultExternalColor').'\');
+						$(\'#color\').val(\''.$this->getGc()->get_config('calendar.defaultExternalColor').'\');
 					} else {
 						$(\'#type\').val(\'\');
 						$(\'#color\').setColor(\''.$this->getGc()->get_config('calendar.defaultColor').'\');
+						$(\'#color\').val(\''.$this->getGc()->get_config('calendar.defaultColor').'\');
 					}
 				});
 		');
@@ -813,7 +826,7 @@ class CalendarView extends PageView {
 			$sCD = new JudoIntranetSmarty();
 			$sCD->assign('data', $calendar->detailsToHtml());
 			$sCD->assign('files', array());
-			$sCD->assign('attached', parent::lang('attached files<br />'));
+			$sCD->assign('attached', parent::lang('<b>attached files</b>'));
 			$sCD->assign('none', parent::lang('- none -'));
 			
 			// pagecaption
@@ -1400,7 +1413,7 @@ class CalendarView extends PageView {
 					// smarty
 					$sCD->assign('data', $calendar->detailsToHtml());
 					$sCD->assign('files', $fileObjects);
-					$sCD->assign('attached', parent::lang('files attached<br />'));
+					$sCD->assign('attached', parent::lang('<b>files attached</b>'));
 					$sCD->assign('none', parent::lang('- none -'));
 					$sCD->assign('fileHref', 'file.php?id=download&fid=');
 					return $sCD->fetch('smarty.calendar.details.tpl');

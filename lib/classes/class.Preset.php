@@ -109,7 +109,7 @@ class Preset extends Object {
 	/*
 	 * constructor/destructor
 	 */
-	public function __construct($id,$table,$table_id, &$view=null) {
+	public function __construct($id,$table,$table_id=null, &$view=null) {
 	
 		// parent constructor
 		parent::__construct();
@@ -119,7 +119,9 @@ class Preset extends Object {
 		
 		// get field for given id
 		$this->get_from_db($id);
-		$this->read_fields($id,$table,$table_id);
+		if(!is_null($table_id)) {
+			$this->read_fields($id,$table,$table_id);
+		}
 	}
 	
 	/*

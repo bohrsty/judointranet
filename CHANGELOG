@@ -42,6 +42,9 @@ Thirdparty licenses see LICENSE
 [!!] make jtable vertically scrollable (for smaller screens)
 [!!] translation "location" -> "city" in protocol new and edit
 --
+[++] generation of appointment schedule per year for all public appointments and holidays
+[!!] changed translation texts "files attached"
+[!!] simple-color setColor() does not set the value correctly, added manually 
 
 
 

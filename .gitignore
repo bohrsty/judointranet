@@ -8,6 +8,8 @@
 !/templates/protocols/tcme_default.css
 /templates/results/*
 !/templates/results/index.php
+/templates/schedules/*
+!/templates/schedules/index.php
 /.project
 /templates/test.*
 *.z
