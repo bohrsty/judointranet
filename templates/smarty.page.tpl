@@ -26,7 +26,7 @@
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 		<title>{$title}</title>
 		<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
-		<script type="text/javascript" src="js/jquery-ui-1.10.3.custom.min.js"></script>
+		<script type="text/javascript" src="js/jquery-ui-1.11.4.min.js"></script>
 		<script type="text/javascript" src="{if is_file('js/jquery.ui.datepicker-{$sLang}.js')}js/jquery.ui.datepicker-{$sLang}.js{else}js/jquery.ui.datepicker-de.js{/if}"></script>
 {if isset($zebraform) and $zebraform}
 		<link rel="stylesheet" type="text/css" href="css/zebra_form/zebra_form.css" />
@@ -56,7 +56,7 @@
 		<script type="text/javascript" src="js/diffview.js"></script>
 {/if}
 		<script type="text/javascript" src="js/page.js"></script>
-		<link rel="stylesheet" type="text/css" href="css/start/jquery-ui-1.10.3.custom.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/start/jquery-ui-1.11.4.min.css" />
 		<link rel="stylesheet" type="text/css" href="css/page.css" />
 {if isset($jtable) and $jtable}
 		<link rel="stylesheet" type="text/css" href="css/jtable/jtable_jqueryui.min.css" />
