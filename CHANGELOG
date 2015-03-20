@@ -38,6 +38,8 @@ Thirdparty licenses see LICENSE
 [cc] updated jquery-ui to 1.11.4, changed to non-customized version and cleaned up old js and css files
 --
 [!!] added holiday table to systemtables in config
+--
+[++] added testimonial table and table config
 
 
 

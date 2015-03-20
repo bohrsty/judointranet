@@ -3060,6 +3060,49 @@ function mysql_21() {
 	// return
 	return $return;
 }
+
+
+function mysql_22() {
+	
+	// prepare return
+	$return = array(
+			'returnValue' => true,
+			'returnMessage' => '',
+		);
+	
+	// create table protocol
+	if(!Db::executeQuery('
+		CREATE TABLE IF NOT EXISTS `testimonials` ( 
+		  `id` INT(11) NOT NULL AUTO_INCREMENT , 
+		  `name` VARCHAR(100) NOT NULL , 
+		  `valid` BOOLEAN NOT NULL , 
+		  `last_modified` DATETIME on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+		  `modified_by` INT(11) NOT NULL,
+		  PRIMARY KEY (`id`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	// add table config
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+		VALUES
+			(\'tableConfig.testimonials\', \'{"cols":"name,valid","fk":[],"fieldType":[],"orderBy":"ORDER BY `name` ASC"}\', \'configuration for table testimonials\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	
+	
+	
+		
+	// return
+	return $return;
+}
 	
 
 ?>

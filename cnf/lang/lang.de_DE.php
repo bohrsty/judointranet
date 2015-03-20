@@ -1199,6 +1199,7 @@ $lang = array(
 	'to:' => 'bis:',
 	'userdefined' => 'benutzerdefiniert',
 	'schedule' => 'Terminplan',
+	'testimonials' => 'Ehrengaben',
 //	'' => '',
 );
 
