@@ -36,6 +36,8 @@ Thirdparty licenses see LICENSE
   r022:
 -----------------------------------------------------------------------------------------
 [cc] updated jquery-ui to 1.11.4, changed to non-customized version and cleaned up old js and css files
+--
+[!!] added holiday table to systemtables in config
 
 
 
