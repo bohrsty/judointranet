@@ -126,7 +126,6 @@ $lang = array(
 	'Error: result not exists' => 'Dieses Ergebnis existiert nicht, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
 										Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
 										Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />',
-	
 	'Error: unknown task' => 'Diese Aufgabe ist unbekannt, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
 										Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
 										Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />',
@@ -145,6 +144,9 @@ $lang = array(
 	'Error: holiday year not valid' => 'Das gew&auml;hlte Jahr ist nicht g&uuml;ltig oder zu weit in der Zukunft, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
 										Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
 										Wenn der Fehler weiterhin auftritt, wenden Sie sich bitte an den Systembetreuer.<br />',
+	'Error: tribute not exists' => 'Diese Ehrung existiert nicht, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+										Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+										Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />',
 	/*
 	 * API error messages
 	 */
@@ -551,6 +553,9 @@ $lang = array(
 	'HELP_TITLE_48' => 'Feld externer Termin',
 	'HELP_TITLE_49' => 'Auswahl des Schulferienjahrs',
 	'HELP_TITLE_50' => 'Schulferien verwalten',
+	'HELP_TITLE_51' => 'Neue Ehrung planen',
+	'HELP_TITLE_52' => 'Auflistung der geplanten und durchgef&uuml;hrten Ehrungen',
+	'HELP_TITLE_53' => 'Ehrung bearbeiten',
 	'HELP_MESSAGE_error' => '<p>Dieses Hilfe-Thema konnte nicht gefunden werden.</p>',
 	'HELP_MESSAGE_1' => '<p><b>JudoIntranet</b></p>
 						<p>Author: Nils Bohrs<br />
@@ -942,6 +947,35 @@ $lang = array(
 						Pflichtfeld. Wenn der Name eines variablen Ferienentrages nicht ge&auml;ndert wird (Vorgabe: "benutzerdefiniert_X", wobei
 						"X" eine fortlaufende Zahl ist), wird der komplette Eintrag ignoriert. Wenn variable Ferientermine eingegeben werden,
 						werden bei der nächsten Bearbeitung wieder f&uuml;nf Felder zur Bearbeitung angeboten.</p>',
+	'HELP_MESSAGE_51' => '<p>Formular zur Erstellung einer neuen Ehrungsplanung. Alle Felder, die mit einem roten <span class="required">*</span>
+						gekennzeichnet sind, m&uuml;ssen ausgef&uuml;llt werden, das Formular l&auml;sst sich sonst nicht speichern.<br />Die erlaubten
+						Zeichen werden in der Hilfe des jeweiligen Feldes erl&auml;tert, bei Fehleingaben wird eine entsprechende Meldung ausgegeben.</p>',
+	'HELP_MESSAGE_52' => '<p>Diese Seite listet alle geplanten und durchgef&uuml;hrten Ehrungen auf. Die Liste l&auml;sst sich &uuml;ber
+						die oberhalb der Liste befindlichen Auswahlfelder und dem Suchfeld einschr&auml;nken.
+						<ul>
+						<li>Das Auswahlfeld <span class="Zebra_Form"><select class="control"><option>- Jahr ausw&auml;hlen -</option></select></span>
+						bietet alle Jahre zur Auswahl an, f&uuml;r die es Eintr&auml;ge in der Datenbank gibt.<br />Das Jahr wird aus den Daten
+						"Beginn der Planung", "Ehrung geplant" und "Datum der Ehrung" berechnet. Es wird hierbei immer das kleinste Datum verwendet,
+						das feststeht, wenn also die Erhung noch nicht erfolgt ist, wird das Jahr der geplanten &Uuml;bergabe verwendet, wenn auch dieses
+						noch nicht feststeht, das Jahr in dem die Planung begonnen wurde.</li>
+						<li>Das Auswahlfeld <span class="Zebra_Form"><select class="control"><option>- Ehrengabe ausw&auml;hlen -</option></select></span>
+						bietet alle in den angelegten Ehrungen verwendete Ehrengaben zur Auswahl an.</li>
+						<li>Das Textfeld <span class="Zebra_Form"><input class="ui-autocomplete-input" type="text" /></span>
+						kann zur direkten Suche nach den Namen der zu Ehrenden verwendet werden, ein Klick auf einen Ergebniseintrag &ouml;ffnet diesen in
+						der Bearbeitungsansicht.</li>
+						</ul>
+						</p>
+						<p>Die folgenden administrativen Funktionen stehen unter Aufgaben zur Verf&uuml;gung:</p>
+						<ul>
+						<li><img src="img/tribute_edit.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; &ouml;ffnet
+						die Ehrung zur Bearbeitung.</li>
+						<li><img src="img/tribute_delete.png" alt="Bild im Hilfetext" />&nbsp;:&nbsp; l&ouml;scht die Ehrung, &Auml;nderungen
+						sind dann nicht mehr m&ouml;glich.</li>
+						</ul>',
+	'HELP_MESSAGE_53' => '<p>Seite zur Bearbeitung einer Ehrungsplanung, das Formular entspricht dem einer neuen Planung, es sind die bereits gespeicherten
+						Daten vorausgef&uuml;llt.<br />Im unteren Bereich findet sich die Historie der Bearbeitungen, es k&ouml;nnen hier die bestehenden
+						Verlaufseintr&auml;ge eingesehen werden (ein Klick auf einen Eintrag &ouml;ffnet die weiteren Daten) oder ein neuer Eintrag angelegt
+						werden.</p>',
 	/*
 	 * ************************
 	 */
@@ -1012,6 +1046,9 @@ $lang = array(
 	'navi: accountingPage.dashboard' => '&Uuml;bersicht',
 	'navi: accountingPage.task' => 'Aufgabe',
 	'navi: accountingPage.settings' => 'Einstellungen',
+	'navi: tributePage' => 'Ehrungen',
+	'navi: tributePage.listall' => 'Ehrungen auflisten',
+	'navi: tributePage.new' => 'Neue Ehrung planen',
 	/*
 	 * ************************
 	 */
@@ -1200,6 +1237,40 @@ $lang = array(
 	'userdefined' => 'benutzerdefiniert',
 	'schedule' => 'Terminplan',
 	'testimonials' => 'Ehrengaben',
+	'Tributes' => 'Ehrungen',
+	'Tributes: listall' => 'Ehrungen auflisten',
+	'Tributes: new' => 'Neue Ehrung planen',
+	'Tributes: delete' => 'Ehrung l&ouml;schen',
+	'plan new tribute' => 'Neue Ehrung planen',
+	'list tributes' => 'Ehrungen auflisten',
+	'year' => 'Jahr',
+	'testimonial' => 'Ehrengabe',
+	'planned date' => 'geplant',
+	'tribute start date' => 'begonnen',
+	'tribute date' => 'geehrt',
+	'select year' => 'Jahr ausw&auml;hlen',
+	'select testimonial' => 'Ehrengabe ausw&auml;hlen',
+	'Show all' => 'Alle anzeigen',
+	'edit tribute' => 'Ehrung bearbeiten',
+	'delete tribute' => 'Ehrung l&ouml;schen',
+	'no results' => 'keine Ergebnisse',
+	'planned tribute on' => 'Ehrung geplant am',
+	'tribute given on' => 'Ehrung &uuml;berreicht am',
+	'description' => 'Beschreibung',
+	'tribute_history_type' => 'Ehrungsverlaufseintr&auml;ge',
+	'System entry' => 'Systemeintrag',
+	'Started planning tribute' => 'Planung begonnen',
+	'Saved successfully.' => 'Erfolgreich gespeichert.',
+	'Tributes: edit' => 'Ehrung bearbeiten',
+	'edit tribute' => 'Ehrung bearbeiten',
+	'Add new history entry' => 'Neuen Verlaufseintrag hinzuf&uuml;gen',
+	'saving' => 'wird gespeichert',
+	'save entry' => 'Eintrag speichern',
+	'missing data' => 'fehlende Daten',
+	'Subject' => 'Betreff',
+	'Type' => 'Typ',
+	'Content' => 'Eintrag',
+	'delete tribute' => 'Ehrung l&ouml;schen',
 //	'' => '',
 );
 

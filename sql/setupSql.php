@@ -3070,7 +3070,7 @@ function mysql_22() {
 			'returnMessage' => '',
 		);
 	
-	// create table protocol
+	// create table testimonials
 	if(!Db::executeQuery('
 		CREATE TABLE IF NOT EXISTS `testimonials` ( 
 		  `id` INT(11) NOT NULL AUTO_INCREMENT , 
@@ -3090,6 +3090,189 @@ function mysql_22() {
 		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
 		VALUES
 			(\'tableConfig.testimonials\', \'{"cols":"name,valid","fk":[],"fieldType":[],"orderBy":"ORDER BY `name` ASC"}\', \'configuration for table testimonials\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// create table tribute
+	if(!Db::executeQuery('
+		CREATE TABLE IF NOT EXISTS `tribute` (
+		  `id` int(11) NOT NULL AUTO_INCREMENT,
+		  `name` varchar(50) NOT NULL,
+		  `year` int(4) NOT NULL,
+		  `start_date` date NOT NULL,
+		  `planned_date` date DEFAULT NULL,
+		  `date` date DEFAULT NULL,
+		  `testimonial_id` int(11) NOT NULL,
+		  `description` text NOT NULL,
+		  `valid` tinyint(1) NOT NULL,
+		  `last_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		  `modified_by` int(11) NOT NULL,
+		  PRIMARY KEY (`id`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// update systemtables
+	if(!Db::executeQuery('
+		UPDATE `config`
+			SET `value` = \'calendar,category,config,defaults,field,fields2presets,group,group2group,inventory,inventory_movement,preset,rights,user,user2group,value,protocol,protocol_correction,helpmessages,user2groups,permissions,navi,item2filter,groups,filter,file,file_type,files_attached,club,result,standings,accounting_tasks,accounting_costs,holiday,tribute\'
+		WHERE `name` = \'systemtables\'
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// insert test testimonial
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `testimonials`
+			(`id`, `name`, `valid`, `last_modified`, `modified_by`) 
+			VALUES (1, \'Default Testimonial\', 0, CURRENT_TIMESTAMP, 0)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// insert test tribute
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `tribute`
+			(`id`, `name`, `year`, `start_date`, `planned_date`, `date`, `testimonial_id`, `description`, `valid`, `last_modified`, `modified_by`) 
+			VALUES (1, \'Bob Builder\', \'1970\', \'1970-01-01\', \'1970-02-01\', \'1970-12-31\', 1, \'Tribute for everything\', 0, CURRENT_TIMESTAMP, 0)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// set navi position: administration
+	if(!Db::executeQuery('
+		UPDATE `navi`
+		SET `position`=11
+		WHERE `id`=34
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// fix navi position: result
+	if(!Db::executeQuery('
+		UPDATE `navi`
+		SET `position`=8
+		WHERE `id`=47
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// fix navi position: accounting
+	if(!Db::executeQuery('
+		UPDATE `navi`
+		SET `position`=9
+		WHERE `id`=53
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+
+	// insert navi entries
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `navi` (`id`, `name`, `parent`, `file_param`, `position`, `show`, `valid`, `last_modified`)
+			VALUES
+				(64, \'navi: tributePage\', \'0\', \'tribute.php|\', \'10\', \'1\', \'1\', CURRENT_TIMESTAMP),
+				(65, \'navi: tributePage.listall\', \'64\', \'tribute.php|listall\', \'0\', \'1\', \'1\', CURRENT_TIMESTAMP),
+				(66, \'navi: tributePage.new\', \'64\', \'tribute.php|new\', \'1\', \'1\', \'1\', CURRENT_TIMESTAMP)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	/*
+	 * tribute history
+	 */
+	// create table tribute_history_type
+	if(!Db::executeQuery('
+		CREATE TABLE IF NOT EXISTS `tribute_history_type` ( 
+		  `id` INT(11) NOT NULL AUTO_INCREMENT , 
+		  `name` VARCHAR(100) NOT NULL , 
+		  `valid` BOOLEAN NOT NULL , 
+		  `last_modified` DATETIME on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+		  `modified_by` INT(11) NOT NULL,
+		  PRIMARY KEY (`id`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	// add table config
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+		VALUES
+			(\'tableConfig.tribute_history_type\', \'{"cols":"name,valid","fk":[],"fieldType":[],"orderBy":"ORDER BY `name` ASC"}\', \'configuration for table tribute_history_type\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// insert test tribute history type
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `tribute_history_type`
+			(`id`, `name`, `valid`, `last_modified`, `modified_by`) 
+			VALUES (1, \'Default Type\', 0, CURRENT_TIMESTAMP, 0)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// create table tribute_history
+	if(!Db::executeQuery('
+		CREATE TABLE IF NOT EXISTS `tribute_history` (
+		  `id` int(11) NOT NULL AUTO_INCREMENT,
+		  `tribute_id` int(11) NOT NULL,
+		  `history_type_id` int(11) NOT NULL,
+		  `user_id` int(11) NOT NULL,
+		  `subject` varchar(100) NOT NULL,
+		  `content` text NOT NULL,
+		  `valid` tinyint(1) NOT NULL,
+		  `last_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		  PRIMARY KEY (`id`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// update systemtables
+	if(!Db::executeQuery('
+		UPDATE `config`
+			SET `value` = \'calendar,category,config,defaults,field,fields2presets,group,group2group,inventory,inventory_movement,preset,rights,user,user2group,value,protocol,protocol_correction,helpmessages,user2groups,permissions,navi,item2filter,groups,filter,file,file_type,files_attached,club,result,standings,accounting_tasks,accounting_costs,holiday,tribute,tribute_history\'
+		WHERE `name` = \'systemtables\'
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// insert test tribute_history
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `tribute_history`
+			(`id`, `tribute_id`, `history_type_id`, `user_id`, `subject`, `content`, `valid`, `last_modified`) 
+			VALUES (1, 1, 1, 1, \'Test entry\', \'Test content\', 0, CURRENT_TIMESTAMP)
 	')) {
 		$return['returnValue'] = false;
 		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';

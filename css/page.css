@@ -907,6 +907,54 @@ td.color {
 	overflow: auto;
 }
 
+div.divHistorySubject {
+	padding: 2px;
+	cursor: pointer;
+}
+
+span.historyDate,
+span.historySubject,
+span.historyType {
+	display: inline-block;
+	width: 33%;
+}
+
+div.divHistoryContent {
+	display: none;
+	padding: 3px;
+}
+
+#newHistoryEntryButton {
+	margin-top: 40px;
+	padding: 3px;
+	cursor: pointer;
+}
+
+#newHistoryEntryForm {
+	display: none;
+	padding: 3px;
+}
+
+#historyType {
+	display: inline-block;
+}
+
+#historyContent {
+	width: 95%;
+	height: 100px;
+}
+
+#historySubject {
+	display: inline-block;
+}
+
+.historyError {
+	background-color: red;
+	padding: 2px;
+}
+
+
+
 
 
 

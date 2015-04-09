@@ -20,51 +20,30 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-{$error}
-<div id="tabs">
-	<ul>
-		<li><a href="#tab-1" title="{$tabElements}">{$tabElements}</a></li>
-		<li><a href="#tab-2" title="{$tabPermissions}">{$tabPermissions}</a></li>
-	</ul>
-	<div id="tab-1">
-{if isset($preForm)}{$preForm}{/if}
-{foreach $elements as $element}
-		<div class="row{cycle values=", even"}">
-{if isset($element.label) && $element.label!=''}
-			{$element.label}
-{/if}
-{if isset($element.element) && $element.element!=''}
-{if is_array($element.element)}
-{foreach $element.element as $multiElement}
-			<div class="cell">{$multiElement.element}</div><div class="cell">{$multiElement.label}</div><div class="clear"></div>
-{/foreach}
+{if isset($error) && $error===true}
+	<div class="tributeHistoryEntry">
+	 	<div class="divHistorySubject ui-corner-all historyError">
+			<span class="historyError">{$errorMessage}</span>
+		</div>
+		<div class="divHistoryContent">
+			&nbsp;
+		</div>
+	</div>
 {else}
-			{$element.element}
-{/if}
-{/if}
-{if isset($element.note) && $element.note!=''}
-			{$element.note}
+{assign var=historyType value=$entry->getType()}
+	<div class="tributeHistoryEntry">
+	 	<div class="divHistorySubject ui-corner-all ui-state-default">
+			<span class="historyDate">{date('d.m.Y H:i', strtotime($entry->getLastModified()))}</span> <span class="historySubject">{$entry->getSubject()}</span> <span class="historyType">{$historyType.name}</span>
+		</div>
+		<div class="divHistoryContent">
+{if $entry->getContent() != ''}
+			{$entry->getContent()}
+{else}
+			&nbsp;
 {/if}
 		</div>
-{/foreach}
-{if isset($postForm)}{$postForm}{/if}
 	</div>
-	<div id="tab-2">
-{foreach $permissions as $permissionName => $permission}
-		<div class="row{cycle values=", even"}">
-{if isset($permission.element) && $permission.element!=''}
-			{$iconRead.$permissionName}{$permission.element.r}&nbsp;{$iconEdit.$permissionName}{$permission.element.w}
+{if isset($isApi) && $isApi === true}
+	<script type="text/javascript">$(".divHistorySubject").unbind("click").click(function() { $(this).parent().find(".divHistoryContent").slideToggle(); });</script>
 {/if}
-{if isset($permission.label) && $permission.label!=''}
-			{$permission.label}
 {/if}
-{if isset($permission.note) && $permission.note!=''}
-			{$permission.note}
-{/if}
-		</div>
-{/foreach}
-	</div>
-</div>
-<div class="row last">
-	{$buttonSubmit}
-</div>

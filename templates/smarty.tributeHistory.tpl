@@ -20,51 +20,28 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-{$error}
-<div id="tabs">
-	<ul>
-		<li><a href="#tab-1" title="{$tabElements}">{$tabElements}</a></li>
-		<li><a href="#tab-2" title="{$tabPermissions}">{$tabPermissions}</a></li>
-	</ul>
-	<div id="tab-1">
-{if isset($preForm)}{$preForm}{/if}
-{foreach $elements as $element}
-		<div class="row{cycle values=", even"}">
-{if isset($element.label) && $element.label!=''}
-			{$element.label}
-{/if}
-{if isset($element.element) && $element.element!=''}
-{if is_array($element.element)}
-{foreach $element.element as $multiElement}
-			<div class="cell">{$multiElement.element}</div><div class="cell">{$multiElement.label}</div><div class="clear"></div>
+<div id="newHistoryEntryButton" class="ui-corner-all ui-state-active">
+{lang}Add new history entry{/lang}
+</div>
+<div id="newHistoryEntryForm" class="Zebra_Form">
+	<div class="row">
+		{lang}Subject{/lang}: <input type="text" class="control text" name="historySubject" id="historySubject" />
+		{lang}Type{/lang}: <select name="historyType" class="control" id="historyType">
+			<option value="">{lang}- choose -{/lang}</option>
+{foreach $typeOptions as $option}
+			<option value="{$option.id}">{$option.name}</option>
 {/foreach}
-{else}
-			{$element.element}
-{/if}
-{/if}
-{if isset($element.note) && $element.note!=''}
-			{$element.note}
-{/if}
-		</div>
-{/foreach}
-{if isset($postForm)}{$postForm}{/if}
+		</select>
 	</div>
-	<div id="tab-2">
-{foreach $permissions as $permissionName => $permission}
-		<div class="row{cycle values=", even"}">
-{if isset($permission.element) && $permission.element!=''}
-			{$iconRead.$permissionName}{$permission.element.r}&nbsp;{$iconEdit.$permissionName}{$permission.element.w}
-{/if}
-{if isset($permission.label) && $permission.label!=''}
-			{$permission.label}
-{/if}
-{if isset($permission.note) && $permission.note!=''}
-			{$permission.note}
-{/if}
-		</div>
-{/foreach}
+	<div class="row">
+		{lang}Content{/lang}: <textarea name="historyContent" class="control" id="historyContent"></textarea>
+	</div>
+	<div class="row last">
+		<input type="button" class="submit" name="historySubmit" id="historySubmit" value="{lang}save entry{/lang}" />
 	</div>
 </div>
-<div class="row last">
-	{$buttonSubmit}
+<div id="tributeHistoryEntries">
+{foreach $tributeHistory as $entry}
+{include file="smarty.tributeHistoryEntry.tpl" entry=$entry}
+{/foreach}
 </div>

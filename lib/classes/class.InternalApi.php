@@ -140,6 +140,74 @@ class InternalApi extends Object {
 				}
 			break;
 			
+			case 'TributeSearch':
+				
+				// check error
+				if($signedError === true) {
+					// signature error
+					echo json_encode(array(
+							'label' => _l('ERROR').': '._l('API call failed [not signed]'),
+							'value' => 'tribute.php?id=listall',
+					));
+				} elseif($timeoutError === true) {
+					// timeout error
+					echo json_encode(array(
+							'label' => _l('ERROR').': '._l('API call failed [timeout]'),
+							'value' => 'tribute.php?id=listall',
+					));
+				} else {
+					
+					// get object
+					echo json_encode(TributeListallListing::apiSearch($this->get('term')));
+				}
+			break;
+			
+			case 'TributeHistoryEntry':
+				
+				// get template
+				$template = new JudoIntranetSmarty();
+				
+				// check error
+				if($signedError === true) {
+					
+					// signature error
+					$template->assign('error', true);
+					$template->assign('errorMessage', _l('ERROR').': '._l('API call failed [not signed]'));
+				} elseif($timeoutError === true) {
+					
+					// timeout error
+					$template->assign('error', true);
+					$template->assign('errorMessage', _l('ERROR').': '._l('API call failed [timeout]'));
+				} else {
+					
+					// insert history entry and check result
+					$historyData = array(
+							'tributeId' => $this->post('tributeId'),
+							'type' => $this->post('historyType'),
+							'subject' => $this->post('historySubject'),
+							'content' => $this->post('historyContent'),
+							'valid' => '1',
+						);
+					$historyFactory = TributeHistory::factoryInsert($historyData);
+					if($historyFactory['result'] == 'OK') {
+						
+						// assign object
+						$template->assign('error', false);
+						$template->assign('entry', $historyFactory['data']);
+						// assign api indication for javascript
+						$template->assign('isApi', true);
+					} else {
+						
+						// error on insert
+						$template->assign('error', true);
+						$template->assign('errorMessage', $historyFactory['data']);
+					}
+				}
+				
+				// echo template
+				echo $template->fetch('smarty.tributeHistoryEntry.tpl');
+			break;
+			
 			default:
 				echo 'ERROR: '._l('API call failed [unknown apiClass]');
 			break;

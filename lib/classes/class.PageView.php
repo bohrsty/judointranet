@@ -927,19 +927,9 @@ class PageView extends Object {
 			
 			// validate
 			if($form->validate()) {
-			
-				// check table for delete action
-				if(strtolower($config['table']) == 'result') {
-					
-					// call deletion wrapper
-					$object->deleteEntry();
-					
-					// delete cached file
-					$fid = File::idFromCache(strtolower($config['table']).'|'.$config['tid']);
-					File::delete($fid);
-					// delete attachements
-					File::deleteAttachedFiles(strtolower($config['table']), $config['tid']);
-				}
+				
+				// call deletion wrapper
+				$object->deleteEntry();
 				
 				// smarty
 				$sConfirmation->assign('message', parent::lang('delete done', true));

@@ -20,51 +20,22 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-{$error}
-<div id="tabs">
-	<ul>
-		<li><a href="#tab-1" title="{$tabElements}">{$tabElements}</a></li>
-		<li><a href="#tab-2" title="{$tabPermissions}">{$tabPermissions}</a></li>
-	</ul>
-	<div id="tab-1">
-{if isset($preForm)}{$preForm}{/if}
-{foreach $elements as $element}
-		<div class="row{cycle values=", even"}">
-{if isset($element.label) && $element.label!=''}
-			{$element.label}
-{/if}
-{if isset($element.element) && $element.element!=''}
-{if is_array($element.element)}
-{foreach $element.element as $multiElement}
-			<div class="cell">{$multiElement.element}</div><div class="cell">{$multiElement.label}</div><div class="clear"></div>
+<p>
+	<span class="Zebra_Form">
+		<span class="spanLink" id="reset">{lang}Show all{/lang}</span>&nbsp;
+		<select name="{$yearId}" id="{$yearId}">
+			<option value="">- {lang}select year{/lang} -</option>
+{foreach Tribute::getAllYears() as $year}
+			<option value="{$year}">{$year}</option>'
 {/foreach}
-{else}
-			{$element.element}
-{/if}
-{/if}
-{if isset($element.note) && $element.note!=''}
-			{$element.note}
-{/if}
-		</div>
+		</select>
+		<select name="{$testimonialId}" id="{$testimonialId}">
+			<option value="">- {lang}select testimonial{/lang} -</option>
+{foreach Tribute::getAllTestimonials() as $testimonial}
+			<option value="{$testimonial.id}">{$testimonial.name}</option>
 {/foreach}
-{if isset($postForm)}{$postForm}{/if}
-	</div>
-	<div id="tab-2">
-{foreach $permissions as $permissionName => $permission}
-		<div class="row{cycle values=", even"}">
-{if isset($permission.element) && $permission.element!=''}
-			{$iconRead.$permissionName}{$permission.element.r}&nbsp;{$iconEdit.$permissionName}{$permission.element.w}
-{/if}
-{if isset($permission.label) && $permission.label!=''}
-			{$permission.label}
-{/if}
-{if isset($permission.note) && $permission.note!=''}
-			{$permission.note}
-{/if}
-		</div>
-{/foreach}
-	</div>
-</div>
-<div class="row last">
-	{$buttonSubmit}
-</div>
+		</select>
+		<input type="text" name="{$searchId}" id="{$searchId}" />
+	</span>
+</p>
+<div id="{$containerId}" class="jTable"></div>

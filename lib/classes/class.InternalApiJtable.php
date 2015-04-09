@@ -188,6 +188,10 @@ class InternalApiJtable extends InternalApi {
 				return $this->actionListFileListall();
 			break;
 			
+			case 'TributeListall':
+				return $this->actionListTributeListall();
+			break;
+			
 			default:
 				return array(
 					'Result' => 'ERROR',
@@ -718,6 +722,32 @@ class InternalApiJtable extends InternalApi {
 				'Result' => 'OK',
 				'Records' => $fileListallListing->listingAsArray($getData),
 				'TotalRecordCount' => $fileListallListing->totalRowCount(),
+			);
+	}
+	
+	
+	/**
+	 * actionListTributeListall() handles the list action for jTable, gets and returns the
+	 * data from TributeListallListing class
+	 * 
+	 * @return array data for jTable
+	 */
+	private function actionListTributeListall() {
+		
+		// prepare getData (jtStartIndex, jtPageSize)
+		$getData = array(
+				'limit' => ($this->get('jtStartIndex') !== false && $this->get('jtPageSize') !== false ? 'LIMIT '.$this->get('jtStartIndex').', '.$this->get('jtPageSize') : ''),
+				'orderBy' => ($this->get('jtSorting') !== false ? 'ORDER BY '.$this->get('jtSorting') : ''),
+			);
+		
+		// get object
+		$tributeListallListing = new TributeListallListing();
+		
+		// prepare return
+		return array(
+				'Result' => 'OK',
+				'Records' => $tributeListallListing->listingAsArray($getData),
+				'TotalRecordCount' => $tributeListallListing->totalRowCount(),
 			);
 	}
 }

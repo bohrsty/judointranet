@@ -702,5 +702,11 @@ class Result extends Page {
 		self::delete($this->get_id());
 		// delete task
 		AccountingResultTask::delete($this->get_id());
+		// delete files
+		// delete cached file
+		$fid = File::idFromCache('result|'.$this->getId());
+		File::delete($fid);
+		// delete attachements
+		File::deleteAttachedFiles('result', $this->getId());
 	}
 }
