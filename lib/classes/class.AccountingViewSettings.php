@@ -60,7 +60,7 @@ class AccountingViewSettings extends AccountingView {
 	public function show() {
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption', parent::lang('settings', true));
+		$this->getTpl()->assign('pagecaption', _l('settings'));
 		
 		// add dashs
 		$dashs[] = $this->getCostsDash();
@@ -91,20 +91,20 @@ class AccountingViewSettings extends AccountingView {
 		$jtfId->setList(false);
 		$jtfId->setEdit(false);
 		$jtfName = new JtableField('name');
-		$jtfName->setTitle(parent::lang('name'));
+		$jtfName->setTitle(_l('name'));
 		$jtfName->setEdit(false);
 		$jtfType = new JtableField('type');
-		$jtfType->setTitle(parent::lang('type'));
+		$jtfType->setTitle(_l('type'));
 		$jtfType->setEdit(false);
 		$jtfType->setType('combobox');
 		$jtfType->setOptions(
 				array(
-						'payback' => parent::lang('payback'),
-						'payment' => parent::lang('payment'),
+						'payback' => _l('payback'),
+						'payment' => _l('payment'),
 					)
 			);
 		$jtfValue = new JtableField('value');
-		$jtfValue->setTitle(parent::lang('value [EUR]'));
+		$jtfValue->setTitle(_l('value [EUR]'));
 		$jtfValue->validateAgainst('required');
 		
 		// add fields to $jtable
@@ -127,7 +127,7 @@ class AccountingViewSettings extends AccountingView {
 		
 		// return
 		return array(
-				'head' => parent::lang('Costs').'&nbsp;'.$this->helpButton(HELP_MSG_ACCOUNTINGSETTINGSCOSTS),
+				'head' => _l('Costs').'&nbsp;'.$this->helpButton(HELP_MSG_ACCOUNTINGSETTINGSCOSTS),
 				'content' => '<div id="'.$containerId.'" class="jTable"></div>',
 			);
 	}

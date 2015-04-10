@@ -103,7 +103,7 @@ class CustomException extends Exception {
 			
 			$message = '
 				<div class="exception">
-					<h3 class="red">'.Object::lang('error', true).'</h3>
+					<h3 class="red">'._l('error').'</h3>
 					<p>'.$this->getInternalMessage().'</p>
 					['.$type.': '.($this->getMessage() != '' ? '"'.$this->getMessage().'" | ' : '').$view.' | "'.$_SERVER['QUERY_STRING'].'"]
 					'.(Object::staticDebugAll() === true ? $this->trace() : '').'
@@ -118,7 +118,7 @@ class CustomException extends Exception {
 		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 		<html xmlns="http://www.w3.org/1999/xhtml">
 			<head>
-				<title>'.Object::lang('error', true).'</title>
+				<title>'._l('error').'</title>
 				<link rel="stylesheet" type="text/css" href="css/page.css" />
 			</head>
 			<body>
@@ -133,7 +133,7 @@ class CustomException extends Exception {
 			} else {
 				
 				// set "title" and "main" in view
-				$view->getTpl()->assign('title', $view->title(Object::lang('error', true)));
+				$view->getTpl()->assign('title', $view->title(_l('error')));
 				$view->getTpl()->assign('main', $message);
 				// show page
 				$view->showPage('smarty.main.tpl');
@@ -218,7 +218,7 @@ class NotAuthorizedException extends CustomException {
 	protected function getInternalMessage() {
 		
 		// translate message
-		$errorMessage = Object::lang('Error: not authorized');
+		$errorMessage = _l('Error: not authorized');
 		
 		// get template
 		$smarty = new JudoIntranetSmarty();
@@ -256,7 +256,7 @@ class ResultNotExistsException extends CustomException {
 	 */
 	protected function getInternalMessage() {
 		
-		return Object::lang('Error: result not exists');
+		return _l('Error: result not exists');
 	}
 }
 
@@ -287,7 +287,7 @@ class GetUnknownIdException extends CustomException {
 	 */
 	protected function getInternalMessage() {
 		
-		return Object::lang('Error: link unknown param');
+		return _l('Error: link unknown param');
 	}
 }
 
@@ -318,7 +318,7 @@ class MysqlErrorException extends CustomException {
 	 */
 	protected function getInternalMessage() {
 		
-		return Object::lang('Error: database error');
+		return _l('Error: database error');
 	}
 }
 
@@ -349,7 +349,7 @@ class ResultImportFailedException extends CustomException {
 	 */
 	protected function getInternalMessage() {
 		
-		return Object::lang('Error: result import failed');
+		return _l('Error: result import failed');
 	}
 }
 
@@ -380,7 +380,7 @@ class CalendarIdNotExistsExeption extends CustomException {
 	 */
 	protected function getInternalMessage() {
 		
-		return Object::lang('Error: calendar entry not exists');
+		return _l('Error: calendar entry not exists');
 	}
 }
 
@@ -411,7 +411,7 @@ class ResultIdNotExistsExeption extends CustomException {
 	 */
 	protected function getInternalMessage() {
 		
-		return Object::lang('Error: result not exists');
+		return _l('Error: result not exists');
 	}
 }
 
@@ -442,7 +442,7 @@ class UnknownTaskException extends CustomException {
 	 */
 	protected function getInternalMessage() {
 		
-		return Object::lang('Error: unknown task');
+		return _l('Error: unknown task');
 	}
 }
 
@@ -473,7 +473,7 @@ class UnknownActionException extends CustomException {
 	 */
 	protected function getInternalMessage() {
 		
-		return Object::lang('Error: unknown action');
+		return _l('Error: unknown action');
 	}
 }
 
@@ -503,7 +503,7 @@ class GetInvalidCharsException extends CustomException {
 	 */
 	protected function getInternalMessage() {
 		
-		return Object::lang('Error: get request contains invalid characters');
+		return _l('Error: get request contains invalid characters');
 	}
 }
 
@@ -534,7 +534,7 @@ class PostInvalidCharsException extends CustomException {
 	 */
 	protected function getInternalMessage() {
 		
-		return Object::lang('Error: post request contains invalid characters');
+		return _l('Error: post request contains invalid characters');
 	}
 }
 
@@ -565,7 +565,7 @@ class ResultForFutureCalendarException extends CustomException {
 	 */
 	protected function getInternalMessage() {
 		
-		return Object::lang('Error: result not possible for future calendar entries!');
+		return _l('Error: result not possible for future calendar entries!');
 	}
 }
 
@@ -596,7 +596,7 @@ class ProtocolIdNotExistsExeption extends CustomException {
 	 */
 	protected function getInternalMessage() {
 		
-		return Object::lang('Error: protocol entry not exists');
+		return _l('Error: protocol entry not exists');
 	}
 }
 
@@ -721,7 +721,7 @@ class TributeNotExistsException extends CustomException {
 	 */
 	protected function getInternalMessage() {
 		
-		return Object::lang('Error: tribute not exists');
+		return _l('Error: tribute not exists');
 	}
 }
 

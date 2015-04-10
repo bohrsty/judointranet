@@ -60,7 +60,7 @@ class AccountingViewTask extends AccountingView {
 	public function show() {
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption', parent::lang('dashboard', true));
+		$this->getTpl()->assign('pagecaption', _l('dashboard'));
 		
 		// switch task
 		switch($this->get('task')) {

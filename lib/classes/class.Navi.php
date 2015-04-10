@@ -332,7 +332,7 @@ class Navi extends PageView {
 		// return data as array
 		return array(
 				'id' => $this->getId(),
-				'name' => parent::lang($this->getName()),
+				'name' => _l($this->getName()),
 				'parent' => $this->getParent(),
 				'file' => $file,
 				'param' => $param,

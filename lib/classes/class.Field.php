@@ -287,13 +287,13 @@ class Field extends Object {
 			// define regexp rule for the textarea
 			$rules['date'] = array(
 					'error',
-					parent::lang('check date'),
+					_l('check date'),
 				);
 			// define custom required rule
 			if($this->get_required() == 1) {
 				$rules['required'] = array(
 						'error',
-						parent::lang('required date'),
+						_l('required date'),
 					);
 			}
 			
@@ -305,7 +305,7 @@ class Field extends Object {
 					'note',			// type
 					'note'.ucfirst($elementId),	// id/name
 					$elementId,		// for
-					parent::lang('help').'&nbsp;'.$this->getView()->helpButton(HELP_MSG_FIELDDATE)	// note text
+					_l('help').'&nbsp;'.$this->getView()->helpButton(HELP_MSG_FIELDDATE)	// note text
 				);
 		} elseif($this->get_type() == 'checkbox') {
 			
@@ -332,7 +332,7 @@ class Field extends Object {
 			if($this->get_required() == 1) {
 				$rules['required'] = array(
 						'error',
-						parent::lang('required checkbox'),
+						_l('required checkbox'),
 					);
 			
 				// add rules
@@ -344,7 +344,7 @@ class Field extends Object {
 					'note',			// type
 					'note'.ucfirst($elementId),	// id/name
 					$elementId,		// for
-					parent::lang('help').'&nbsp;'.$this->getView()->helpButton(HELP_MSG_FIELDCHECKBOX)	// note text
+					_l('help').'&nbsp;'.$this->getView()->helpButton(HELP_MSG_FIELDCHECKBOX)	// note text
 				);
 		} elseif($this->get_type() == 'dbselect') {
 			
@@ -389,7 +389,7 @@ class Field extends Object {
 			if($this->get_required() == 1) {
 				$rules['required'] = array(
 						'error',
-						parent::lang('required select'),
+						_l('required select'),
 					);
 				
 				// add rules
@@ -404,7 +404,7 @@ class Field extends Object {
 					'note',			// type
 					'note'.ucfirst($elementId),	// id/name
 					$elementId,		// for
-					parent::lang('help').'&nbsp;'.$this->getView()->helpButton(HELP_MSG_FIELDDBSELECT)	// note text
+					_l('help').'&nbsp;'.$this->getView()->helpButton(HELP_MSG_FIELDDBSELECT)	// note text
 				);
 		} elseif($this->get_type() == 'dbhierselect') {
 			
@@ -579,9 +579,9 @@ class Field extends Object {
 			
 			// check if not null
 			if(isset($value) && $value == 1) {
-				$checked_value = parent::lang('yes');
+				$checked_value = _l('yes');
 			} else {
-				$checked_value = parent::lang('no');
+				$checked_value = _l('no');
 			}
 			
 			// return
@@ -856,8 +856,8 @@ class Field extends Object {
 		
 		// return optgroups
 		return array(
-			parent::lang('preset') => $optionDefaults,
-			parent::lang('last used') => $optionLastUsed,
+			_l('preset') => $optionDefaults,
+			_l('last used') => $optionLastUsed,
 		);
 	}
 	
@@ -1151,14 +1151,14 @@ class Field extends Object {
 				'note',			// type
 				'note'.ucfirst($select2Id),	// id/name
 				$select2Id,		// for
-				parent::lang('help').'&nbsp;'.$this->getView()->helpButton(HELP_MSG_FIELDDBHIERSELECT)	// note text
+				_l('help').'&nbsp;'.$this->getView()->helpButton(HELP_MSG_FIELDDBHIERSELECT)	// note text
 			);
 		
 		// add required rule if field is required
 		if($this->get_required() == 1) {
 			$rules['required'] = array(
 					'error',
-					parent::lang('required select'),
+					_l('required select'),
 				);
 			
 			// add rules
@@ -1172,7 +1172,7 @@ class Field extends Object {
 								array($this, 'callbackCheckHierselect'),
 								$select1Id,
 								'error',
-								parent::lang('required fields'),
+								_l('required fields'),
 							),),
 					)
 			);
@@ -1255,7 +1255,7 @@ class Field extends Object {
 		$rules['regexp'] = array(
 				$this->getGc()->get_config('textarea.regexp.zebra'),
 				'error',
-				parent::lang('allowed chars').' ['.$this->getGc()->get_config('textarea.desc').']',
+				_l('allowed chars').' ['.$this->getGc()->get_config('textarea.desc').']',
 			);
 		// define custom required rule
 		if($this->get_required() == 1) {
@@ -1264,7 +1264,7 @@ class Field extends Object {
 							array($this, 'callbackCheckRequired'),
 							$elementId.'-defaults',
 							'error',
-							parent::lang('required text'),
+							_l('required text'),
 						),
 				);
 		}
@@ -1284,7 +1284,7 @@ class Field extends Object {
 				'note',			// type
 				'note'.ucfirst($elementId.'-defaults'),	// id/name
 				$elementId.'-defaults',		// for
-				parent::lang('help').'&nbsp;'.$this->getView()->helpButton(HELP_MSG_FIELDTEXT)	// note text
+				_l('help').'&nbsp;'.$this->getView()->helpButton(HELP_MSG_FIELDTEXT)	// note text
 			);
 		
 		// create smarty template and add variables

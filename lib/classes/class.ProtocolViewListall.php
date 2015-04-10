@@ -60,7 +60,7 @@ class ProtocolViewListall extends ProtocolView {
 	public function show() {
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang('listall').'&nbsp;'.$this->helpButton(HELP_MSG_PROTOCOLLISTALL));
+		$this->getTpl()->assign('pagecaption', _l('listall').'&nbsp;'.$this->helpButton(HELP_MSG_PROTOCOLLISTALL));
 		
 		// return		
 		return $this->getListallTable();

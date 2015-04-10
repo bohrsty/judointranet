@@ -206,7 +206,7 @@ class PageView extends Object {
 	public function title($title) {
 		
 		// return combined prefix and title
-		return parent::lang('JudoIntranet').' '.$title;
+		return _l('JudoIntranet').' '.$title;
 	}
 	
 	
@@ -430,7 +430,7 @@ class PageView extends Object {
 				'buttonClass' => $this->getGc()->get_config('help.buttonClass'),
 				'effect' => $this->getGc()->get_config('help.effect'),
 				'effectDuration' => $this->getGc()->get_config('help.effectDuration'),
-				'closeText' => parent::lang('close'),
+				'closeText' => _l('close'),
 			);
 		$this->getTpl()->assign('help', $help);
 		
@@ -485,7 +485,7 @@ class PageView extends Object {
 			$pagelinks['links'][] = array(
 					'params' => $params,
 					'href' => '&page='.$i,
-					'title' => parent::lang('page').' '.$i,
+					'title' => _l('page').' '.$i,
 					'content' => $i
 				);
 		}
@@ -507,11 +507,11 @@ class PageView extends Object {
 		
 		// assign "from - to - of"
 		$pagelinks['toof'] = " (".($page * $pagesize + 1)." ".
-				parent::lang('page to')." $last ".
-				parent::lang('of pages')." $rows)";
+				_l('page to')." $last ".
+				_l('of pages')." $rows)";
 		
 		// assign "pages"
-		$pagelinks['pages'] = parent::lang('pages');
+		$pagelinks['pages'] = _l('pages');
 		
 		// return
 		return array($page, $pagelinks);
@@ -610,7 +610,7 @@ class PageView extends Object {
 				
 				// prepare images
 				// read
-				$imgReadText = parent::lang('read/list');
+				$imgReadText = _l('read/list');
 				$imgRead = array(
 						'params' => 'class="iconRead clickable" title="'.$imgReadText.'" onclick="selectRadio(\''.$radioName.'_r\')"',
 						'src' => 'img/permissions_read.png',
@@ -622,7 +622,7 @@ class PageView extends Object {
 				$return['iconRead'][$radioName] = $sImgReadTemplate->fetch('smarty.img.tpl');
 				
 				// edit
-				$imgEditText = parent::lang('edit');
+				$imgEditText = _l('edit');
 				$imgEdit = array(
 						'params' => 'class="iconEdit clickable" title="'.$imgEditText.'" onclick="selectRadio(\''.$radioName.'_w\')"',
 						'src' => 'img/permissions_edit.png',
@@ -636,9 +636,9 @@ class PageView extends Object {
 				// prepare clear radio link
 				$sImgClearRadio = new JudoIntranetSmarty();
 				$img = array(
-						'params' => 'class="clickable" onclick="clearRadio(\''.$radioName.'\')" title="'.parent::lang('remove permissions').'"',
+						'params' => 'class="clickable" onclick="clearRadio(\''.$radioName.'\')" title="'._l('remove permissions').'"',
 						'src' => 'img/permissions_delete.png',
-						'alt' => parent::lang('remove permissions'),
+						'alt' => _l('remove permissions'),
 					);
 				$sImgClearRadio->assign('img', $img);
 				
@@ -662,7 +662,7 @@ class PageView extends Object {
 						'note',			// type
 						'note'.ucfirst($radioName),	// id/name
 						$radioName,		// for
-						parent::lang('completely remove permissions from group').':&nbsp;'.$sImgClearRadio->fetch('smarty.img.tpl')	// note text
+						_l('completely remove permissions from group').':&nbsp;'.$sImgClearRadio->fetch('smarty.img.tpl')	// note text
 					);
 			}
 		}
@@ -865,7 +865,7 @@ class PageView extends Object {
 		/*
 		 * config has to contain the following entries
 		 * 
-		 * 'pagecaption'	-> text for page caption (for Object::lang())
+		 * 'pagecaption'	-> text for page caption (for _l())
 		 * 'table'			-> table of object to be deleted (also used for object creation)
 		 * 'tid'			-> id of the object to be deleted
 		 * 'formaction'		-> common part of the action parameter for the form (w/o tid, see before)
@@ -873,7 +873,7 @@ class PageView extends Object {
 		 */
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang($config['pagecaption'], true));
+		$this->getTpl()->assign('pagecaption',_l($config['pagecaption']));
 		
 		// get object
 		$class = ucfirst(strtolower($config['table']));
@@ -909,20 +909,20 @@ class PageView extends Object {
 			$form->add(
 				'submit',		// type
 				'buttonSubmit',	// id/name
-				parent::lang('delete', true),	// value
-				array('title' => parent::lang('delete', true))
+				_l('delete'),	// value
+				array('title' => _l('delete'))
 			);
 			
 			// smarty-link
 			$link = array(
 							'params' => 'class="submit"',
 							'href' => $config['cancellink'],
-							'title' => parent::lang('cancel', true),
-							'content' => parent::lang('cancel', true)
+							'title' => _l('cancel'),
+							'content' => _l('cancel')
 						);
 			$sConfirmation->assign('link', $link);
 			$sConfirmation->assign('spanparams', 'id="cancel"');
-			$sConfirmation->assign('message', parent::lang('delete confirm', true).'&nbsp;'.$this->helpButton(HELP_MSG_DELETE));
+			$sConfirmation->assign('message', _l('delete confirm').'&nbsp;'.$this->helpButton(HELP_MSG_DELETE));
 			$sConfirmation->assign('form', $form->render('', true));
 			
 			// validate
@@ -932,7 +932,7 @@ class PageView extends Object {
 				$object->deleteEntry();
 				
 				// smarty
-				$sConfirmation->assign('message', parent::lang('delete done', true));
+				$sConfirmation->assign('message', _l('delete done'));
 				$sConfirmation->assign('form', '');
 			}
 			

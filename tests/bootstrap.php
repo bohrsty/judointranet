@@ -35,17 +35,6 @@ $_SERVER['DOCUMENT_ROOT'] = JIPATH;
 
 // global test classes
 
-class TestObject extends Object {
-	
-	function __construct() {
-		parent::__construct();
-	}
-	
-	public static function lang($string) {
-		return parent::lang($string);
-	}
-}
-
 class TestView extends PageView {
 	
 	function __construct() {

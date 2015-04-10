@@ -64,7 +64,7 @@ class CalendarView extends PageView {
 	public function init() {
 		
 		// set pagename
-		$this->getTpl()->assign('pagename',parent::lang('calendar'));
+		$this->getTpl()->assign('pagename',_l('calendar'));
 		
 		// init helpmessages
 		$this->initHelp();
@@ -81,7 +81,7 @@ class CalendarView extends PageView {
 					case 'listall':
 						
 						// pagecaption
-						$this->getTpl()->assign('pagecaption',parent::lang('listall').'&nbsp;'.$this->helpButton(HELP_MSG_CALENDARLISTALL));
+						$this->getTpl()->assign('pagecaption',_l('listall').'&nbsp;'.$this->helpButton(HELP_MSG_CALENDARLISTALL));
 						
 						// smarty
 						$this->getTpl()->assign('title', $this->title(_l('calendar: listall')));
@@ -126,7 +126,7 @@ class CalendarView extends PageView {
 					case 'new':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('calendar: new')));
+						$this->getTpl()->assign('title', $this->title(_l('calendar: new')));
 						$this->getTpl()->assign('main', $this->newEntry());
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', true);
@@ -135,7 +135,7 @@ class CalendarView extends PageView {
 					case 'edit':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('calendar: edit')));
+						$this->getTpl()->assign('title', $this->title(_l('calendar: edit')));
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', true);
 						
@@ -156,7 +156,7 @@ class CalendarView extends PageView {
 					case 'delete':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('calendar: delete')));
+						$this->getTpl()->assign('title', $this->title(_l('calendar: delete')));
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', true);
 						
@@ -221,7 +221,7 @@ class CalendarView extends PageView {
 			
 			// id not set
 			// smarty-title
-			$this->getTpl()->assign('title', $this->title(parent::lang('calendar')));
+			$this->getTpl()->assign('title', $this->title(_l('calendar')));
 			// smarty-pagecaption
 			$this->getTpl()->assign('pagecaption', $this->defaultContent()); 
 			// smarty-main
@@ -275,22 +275,22 @@ class CalendarView extends PageView {
 		$r = array(
 				array( // all
 						'href' => 'calendar.php?id='.$getid,
-						'title' => parent::lang('reset all filter'),
-						'content' => parent::lang('reset all filter')
+						'title' => _l('reset all filter'),
+						'content' => _l('reset all filter')
 					),
 				array( // dates
 						'href' => 'calendar.php?id='.$getid.$filter,
-						'title' => parent::lang('reset date filter'),
-						'content' => parent::lang('reset date filter')
+						'title' => _l('reset date filter'),
+						'content' => _l('reset date filter')
 					),
 				array( // groups
 						'href' => 'calendar.php?id='.$getid.$from.$to,
-						'title' => parent::lang('reset group filter'),
-						'content' => parent::lang('reset group filter')
+						'title' => _l('reset group filter'),
+						'content' => _l('reset group filter')
 					)
 			);
 		$sS->assign('r', $r);
-		$sS->assign('resetFilter', parent::lang('reset filter'));
+		$sS->assign('resetFilter', _l('reset filter'));
 		
 		// prepare content
 		$dates = array(
@@ -308,12 +308,12 @@ class CalendarView extends PageView {
 			// smarty
 			$dl[] = array(
 					'href' => 'calendar.php?id='.$getid.'&from='.date('Y-m-d',time()).'&to='.date('Y-m-d',strtotime($date)).$filter,
-					'title' => parent::lang($name),
-					'content' => parent::lang($name)
+					'title' => _l($name),
+					'content' => _l($name)
 				);
 		}
 		$sS->assign('dl', $dl);
-		$sS->assign('dateFilter', parent::lang('date filter'));
+		$sS->assign('dateFilter', _l('date filter'));
 		
 		// add group-links
 		$allFilter = Filter::allExistingFilter();
@@ -331,21 +331,21 @@ class CalendarView extends PageView {
 		}
 		usort($gl, array($this, 'callbackCompareFilter'));
 		$sS->assign('gl', $gl);
-		$sS->assign('groupFilter', parent::lang('group filter'));
-		$sS->assign('chooseDate', parent::lang('select date'));
-		$sS->assign('chooseGroup', parent::lang('select group'));
+		$sS->assign('groupFilter', _l('group filter'));
+		$sS->assign('chooseDate', _l('select date'));
+		$sS->assign('chooseGroup', _l('select group'));
 		
 		// add slider-link
 		$link = array(
 				'params' => 'id="toggleFilter" class="spanLink"',
-				'title' => parent::lang('show filter'),
-				'content' => parent::lang('show filter'),
+				'title' => _l('show filter'),
+				'content' => _l('show filter'),
 				'help' => $this->helpButton(HELP_MSG_CALENDARLISTSORTLINKS),
 			);
 		$sS->assign('link', $link);
 		
 		// assign dialog title
-		$sS->assign('dialogTitle', parent::lang('select filter'));
+		$sS->assign('dialogTitle', _l('select filter'));
 		
 		// add jquery-ui dialog
 		$dialog = array(
@@ -355,7 +355,7 @@ class CalendarView extends PageView {
 			'effect' => 'fade',
 			'duration' => 300,
 			'modal' => 'true',
-			'closeText' => parent::lang('close filter'),
+			'closeText' => _l('close filter'),
 			'height' => 500,
 			'maxHeight' => 500,
 			'width' => 500,
@@ -466,7 +466,7 @@ class CalendarView extends PageView {
 				'label',		// type
 				'labelDate',	// id/name
 				'date',			// for
-				parent::lang('start date')	// label text
+				_l('start date')	// label text
 			);
 		$date = $form->add(
 						$formIds['date']['type'],			// type
@@ -480,10 +480,10 @@ class CalendarView extends PageView {
 		$date->set_rule(
 			array(
 				'required' => array(
-						'error', parent::lang('required date'),
+						'error', _l('required date'),
 					),
 				'date' => array(
-						'error', parent::lang('check date')
+						'error', _l('check date')
 					),
 				)
 			);
@@ -491,7 +491,7 @@ class CalendarView extends PageView {
 				'note',			// type
 				'noteDate',		// id/name
 				'date',			// for
-				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDATE)	// note text
+				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDATE)	// note text
 			);
 
 		// enddate
@@ -500,7 +500,7 @@ class CalendarView extends PageView {
 				'label',		// type
 				'labelEndDate',	// id/name
 				'endDate',		// for
-				parent::lang('end date')	// label text
+				_l('end date')	// label text
 		);
 		$endDate = $form->add(
 				$formIds['endDate']['type'],	// type
@@ -513,7 +513,7 @@ class CalendarView extends PageView {
 		$endDate->set_rule(
 				array(
 						'date' => array(
-								'error', parent::lang('check date')
+								'error', _l('check date')
 						),
 				)
 		);
@@ -521,7 +521,7 @@ class CalendarView extends PageView {
 				'note',			// type
 				'noteEndDate',		// id/name
 				'endDate',			// for
-				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDATE)	// note text
+				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDATE)	// note text
 		);
 		
 		
@@ -563,7 +563,7 @@ class CalendarView extends PageView {
 				'label',		// type
 				'labelName',	// id/name
 				'name',			// for
-				parent::lang('name'),	// label text
+				_l('name'),	// label text
 				array('inside' => true,)	// label inside
 			);
 		$name = $form->add(
@@ -573,12 +573,12 @@ class CalendarView extends PageView {
 		$name->set_rule(
 				array(
 						'required' => array(
-								'error', parent::lang('required name'),
+								'error', _l('required name'),
 							),
 						'regexp' => array(
 								$this->getGc()->get_config('name.regexp.zebra'),	// regexp
 								'error',	// error variable
-								parent::lang('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+								_l('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
 							),
 					)
 			);
@@ -586,7 +586,7 @@ class CalendarView extends PageView {
 				'note',			// type
 				'noteName',		// id/name
 				'name',			// for
-				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDNAME)	// note text
+				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDNAME)	// note text
 			);
 		
 		
@@ -596,7 +596,7 @@ class CalendarView extends PageView {
 				'label',		// type
 				'labelShortname',	// id/name
 				'shortname',			// for
-				parent::lang('shortname'),	// label text
+				_l('shortname'),	// label text
 				array('inside' => true,)	// label inside
 			);
 		$shortname = $form->add(
@@ -608,7 +608,7 @@ class CalendarView extends PageView {
 						'regexp' => array(
 								$this->getGc()->get_config('name.regexp.zebra'),	// regexp
 								'error',	// error variable
-								parent::lang('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+								_l('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
 							),
 					)
 			);
@@ -616,7 +616,7 @@ class CalendarView extends PageView {
 				'note',				// type
 				'noteShortname',	// id/name
 				'shortname',		// for
-				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDSHORTNAME)	// note text
+				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDSHORTNAME)	// note text
 			);
 		
 		
@@ -627,7 +627,7 @@ class CalendarView extends PageView {
 				'label',		// type
 				'labelType',	// id/name
 				'type',			// for
-				parent::lang('type')	// label text
+				_l('type')	// label text
 			);
 		$type = $form->add(
 				$formIds['type']['type'],	// type
@@ -640,7 +640,7 @@ class CalendarView extends PageView {
 		$type->set_rule(
 				array(
 						'required' => array(
-								'error', parent::lang('required type')
+								'error', _l('required type')
 							),
 					)
 			);
@@ -648,7 +648,7 @@ class CalendarView extends PageView {
 				'note',		// type
 				'noteType',	// id/name
 				'type',		// for
-				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
+				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
 			);
 		
 		
@@ -658,7 +658,7 @@ class CalendarView extends PageView {
 				'label',		// type
 				'labelContent',	// id/name
 				'entryContent',	// for
-				parent::lang('content/description'),	// label text
+				_l('content/description'),	// label text
 				array('inside' => true)
 			);
 		$content = $form->add(
@@ -670,7 +670,7 @@ class CalendarView extends PageView {
 						'regexp' => array(
 								$this->getGc()->get_config('textarea.regexp.zebra'),
 								'error',
-								parent::lang('allowed chars').' ['.$this->getGc()->get_config('textarea.desc').']',
+								_l('allowed chars').' ['.$this->getGc()->get_config('textarea.desc').']',
 							),
 					)
 			);
@@ -678,7 +678,7 @@ class CalendarView extends PageView {
 				'note',			// type
 				'noteContent',	// id/name
 				'entryContent',		// for
-				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDCONTENT)	// note text
+				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDCONTENT)	// note text
 			);
 		
 		// city
@@ -687,7 +687,7 @@ class CalendarView extends PageView {
 				'label',		// type
 				'labelCity',	// id/name
 				'city',			// for
-				parent::lang('city'),	// label text
+				_l('city'),	// label text
 				array('inside' => true,)	// label inside
 			);
 		$name = $form->add(
@@ -699,7 +699,7 @@ class CalendarView extends PageView {
 						'regexp' => array(
 								$this->getGc()->get_config('name.regexp.zebra'),	// regexp
 								'error',	// error variable
-								parent::lang('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+								_l('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
 							),
 					)
 			);
@@ -707,7 +707,7 @@ class CalendarView extends PageView {
 				'note',			// type
 				'noteCity',		// id/name
 				'city',			// for
-				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDCITY)	// note text
+				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDCITY)	// note text
 			);
 		
 		
@@ -718,7 +718,7 @@ class CalendarView extends PageView {
 				'label',		// type
 				'labelFilter',	// id/name
 				'filter',		// for
-				parent::lang('filtering groups (multi select)')	// label text
+				_l('filtering groups (multi select)')	// label text
 			);
 		$filter = $form->add(
 				$formIds['filter']['type'],	// type
@@ -734,7 +734,7 @@ class CalendarView extends PageView {
 				'note',			// type
 				'noteFilter',	// id/name
 				'filter',		// for
-				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDSORT)	// note text
+				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDSORT)	// note text
 			);
 		
 		
@@ -744,7 +744,7 @@ class CalendarView extends PageView {
 				'label',		// type
 				'labelPublic',	// id/name
 				'public',		// for
-				parent::lang('public access')	// label text
+				_l('public access')	// label text
 			);
 		$public = $form->add(
 				$formIds['public']['type'],		// type
@@ -756,7 +756,7 @@ class CalendarView extends PageView {
 				'note',			// type
 				'notePublic',	// id/name
 				'public',		// for
-				parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDISPUBLIC)	// note text
+				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDISPUBLIC)	// note text
 			);
 		
 		// permissions
@@ -771,7 +771,7 @@ class CalendarView extends PageView {
 		$form->add(
 				'submit',		// type
 				'buttonSubmit',	// id/name
-				parent::lang('save')	// value
+				_l('save')	// value
 			);
 		
 		// validate
@@ -826,11 +826,11 @@ class CalendarView extends PageView {
 			$sCD = new JudoIntranetSmarty();
 			$sCD->assign('data', $calendar->detailsToHtml());
 			$sCD->assign('files', array());
-			$sCD->assign('attached', parent::lang('<b>attached files</b>'));
-			$sCD->assign('none', parent::lang('- none -'));
+			$sCD->assign('attached', _l('<b>attached files</b>'));
+			$sCD->assign('none', _l('- none -'));
 			
 			// pagecaption
-			$this->getTpl()->assign('pagecaption',parent::lang('create new entry'));
+			$this->getTpl()->assign('pagecaption',_l('create new entry'));
 			
 			// set js redirection
 			$this->jsRedirectTimeout('calendar.php?id=listall');
@@ -838,7 +838,7 @@ class CalendarView extends PageView {
 			return $sCD->fetch('smarty.calendar.details.tpl');
 		} else {
 			// pagecaption
-			$this->getTpl()->assign('pagecaption',parent::lang('create new entry').'&nbsp;'.$this->helpButton(HELP_MSG_CALENDARNEW));
+			$this->getTpl()->assign('pagecaption',_l('create new entry').'&nbsp;'.$this->helpButton(HELP_MSG_CALENDARNEW));
 			return $form->render('lib/zebraTemplate.php', true, array($formIds, 'smarty.zebra.permissions.tpl', $permissionConfig,));
 		}
 	}
@@ -894,7 +894,7 @@ class CalendarView extends PageView {
 			$calendar = new Calendar($cid);
 			
 			// pagecaption
-			$this->getTpl()->assign('pagecaption',parent::lang('edit entry').": \"$cid\" (".$calendar->get_name().")");
+			$this->getTpl()->assign('pagecaption',_l('edit entry').": \"$cid\" (".$calendar->get_name().")");
 			
 			// prepare return
 			$return = '';
@@ -994,7 +994,7 @@ class CalendarView extends PageView {
 					'label',		// type
 					'labelDate',	// id/name
 					'date',			// for
-					parent::lang('start date')	// label text
+					_l('start date')	// label text
 				);
 			$date = $form->add(
 							$formIds['date']['type'],			// type
@@ -1008,10 +1008,10 @@ class CalendarView extends PageView {
 			$date->set_rule(
 				array(
 					'required' => array(
-							'error', parent::lang('required date'),
+							'error', _l('required date'),
 						),
 					'date' => array(
-							'error', parent::lang('check date')
+							'error', _l('check date')
 						),
 					)
 				);
@@ -1019,7 +1019,7 @@ class CalendarView extends PageView {
 					'note',			// type
 					'noteDate',		// id/name
 					'date',			// for
-					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDATE)	// note text
+					_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDATE)	// note text
 				);
 			
 
@@ -1029,7 +1029,7 @@ class CalendarView extends PageView {
 					'label',		// type
 					'labelEndDate',	// id/name
 					'endDate',			// for
-					parent::lang('end date')	// label text
+					_l('end date')	// label text
 			);
 			$endDate = $form->add(
 					$formIds['endDate']['type'],			// type
@@ -1043,7 +1043,7 @@ class CalendarView extends PageView {
 			$endDate->set_rule(
 					array(
 							'date' => array(
-									'error', parent::lang('check date')
+									'error', _l('check date')
 							),
 					)
 			);
@@ -1051,7 +1051,7 @@ class CalendarView extends PageView {
 					'note',			// type
 					'noteEndDate',		// id/name
 					'endDate',			// for
-					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDATE)	// note text
+					_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDATE)	// note text
 			);
 			
 			
@@ -1093,7 +1093,7 @@ class CalendarView extends PageView {
 					'label',		// type
 					'labelName',	// id/name
 					'name',			// for
-					parent::lang('name')	// label text
+					_l('name')	// label text
 				);
 			$name = $form->add(
 							$formIds['name']['type'],		// type
@@ -1103,12 +1103,12 @@ class CalendarView extends PageView {
 			$name->set_rule(
 					array(
 							'required' => array(
-									'error', parent::lang('required name'),
+									'error', _l('required name'),
 								),
 							'regexp' => array(
 									$this->getGc()->get_config('name.regexp.zebra'),	// regexp
 									'error',	// error variable
-									parent::lang('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+									_l('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
 								),
 						)
 				);
@@ -1116,7 +1116,7 @@ class CalendarView extends PageView {
 					'note',			// type
 					'noteName',		// id/name
 					'name',			// for
-					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDNAME)	// note text
+					_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDNAME)	// note text
 				);
 			
 			
@@ -1126,7 +1126,7 @@ class CalendarView extends PageView {
 					'label',		// type
 					'labelShortname',	// id/name
 					'shortname',			// for
-					parent::lang('shortname')	// label text
+					_l('shortname')	// label text
 				);
 			$shortname = $form->add(
 							$formIds['shortname']['type'],		// type
@@ -1138,7 +1138,7 @@ class CalendarView extends PageView {
 							'regexp' => array(
 									$this->getGc()->get_config('name.regexp.zebra'),	// regexp
 									'error',	// error variable
-									parent::lang('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+									_l('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
 								),
 						)
 				);
@@ -1146,7 +1146,7 @@ class CalendarView extends PageView {
 					'note',				// type
 					'noteShortname',	// id/name
 					'shortname',		// for
-					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDSHORTNAME)	// note text
+					_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDSHORTNAME)	// note text
 				);
 			
 			
@@ -1157,7 +1157,7 @@ class CalendarView extends PageView {
 					'label',		// type
 					'labelType',	// id/name
 					'type',			// for
-					parent::lang('event type')	// label text
+					_l('event type')	// label text
 				);
 			$type = $form->add(
 					$formIds['type']['type'],	// type
@@ -1170,7 +1170,7 @@ class CalendarView extends PageView {
 			$type->set_rule(
 					array(
 							'required' => array(
-									'error', parent::lang('required type')
+									'error', _l('required type')
 								),
 						)
 				);
@@ -1178,7 +1178,7 @@ class CalendarView extends PageView {
 					'note',		// type
 					'noteType',	// id/name
 					'type',		// for
-					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
+					_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
 				);
 			
 			
@@ -1188,7 +1188,7 @@ class CalendarView extends PageView {
 					'label',		// type
 					'labelContent',	// id/name
 					'entryContent',	// for
-					parent::lang('content/description')	// label text
+					_l('content/description')	// label text
 				);
 			$content = $form->add(
 					$formIds['entryContent']['type'],		// type
@@ -1200,7 +1200,7 @@ class CalendarView extends PageView {
 							'regexp' => array(
 									$this->getGc()->get_config('textarea.regexp.zebra'),
 									'error',
-									parent::lang('allowed chars').' ['.$this->getGc()->get_config('textarea.desc').']',
+									_l('allowed chars').' ['.$this->getGc()->get_config('textarea.desc').']',
 								),
 						)
 				);
@@ -1208,7 +1208,7 @@ class CalendarView extends PageView {
 					'note',			// type
 					'noteContent',	// id/name
 					'content',		// for
-					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDCONTENT)	// note text
+					_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDCONTENT)	// note text
 				);
 			
 			// check if announcement exists, display field only if not
@@ -1219,7 +1219,7 @@ class CalendarView extends PageView {
 						'label',		// type
 						'labelCity',	// id/name
 						'city',			// for
-						parent::lang('city')	// label text
+						_l('city')	// label text
 					);
 				$name = $form->add(
 								$formIds['city']['type'],		// type
@@ -1231,7 +1231,7 @@ class CalendarView extends PageView {
 								'regexp' => array(
 										$this->getGc()->get_config('name.regexp.zebra'),	// regexp
 										'error',	// error variable
-										parent::lang('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+										_l('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
 									),
 							)
 					);
@@ -1239,7 +1239,7 @@ class CalendarView extends PageView {
 						'note',			// type
 						'noteCity',		// id/name
 						'city',			// for
-						parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDCITY)	// note text
+						_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDCITY)	// note text
 					);
 			}
 			
@@ -1251,7 +1251,7 @@ class CalendarView extends PageView {
 					'label',		// type
 					'labelFilter',	// id/name
 					'filter',		// for
-					parent::lang('filtering groups (multi select)')	// label text
+					_l('filtering groups (multi select)')	// label text
 				);
 			$filter = $form->add(
 					$formIds['filter']['type'],	// type
@@ -1267,7 +1267,7 @@ class CalendarView extends PageView {
 					'note',			// type
 					'noteFilter',	// id/name
 					'filter',		// for
-					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDSORT)	// note text
+					_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDSORT)	// note text
 				);
 			
 			
@@ -1277,7 +1277,7 @@ class CalendarView extends PageView {
 					'label',		// type
 					'labelPublic',	// id/name
 					'public',		// for
-					parent::lang('public access')	// label text
+					_l('public access')	// label text
 				);
 			$public = $form->add(
 					$formIds['public']['type'],		// type
@@ -1289,7 +1289,7 @@ class CalendarView extends PageView {
 					'note',			// type
 					'notePublic',	// id/name
 					'public',		// for
-					parent::lang('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDISPUBLIC)	// note text
+					_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDISPUBLIC)	// note text
 				);
 			
 			// permissions
@@ -1304,7 +1304,7 @@ class CalendarView extends PageView {
 			$form->add(
 					'submit',		// type
 					'buttonSubmit',	// id/name
-					parent::lang('save')	// value
+					_l('save')	// value
 			);
 			
 			// validate
@@ -1413,8 +1413,8 @@ class CalendarView extends PageView {
 					// smarty
 					$sCD->assign('data', $calendar->detailsToHtml());
 					$sCD->assign('files', $fileObjects);
-					$sCD->assign('attached', parent::lang('<b>files attached</b>'));
-					$sCD->assign('none', parent::lang('- none -'));
+					$sCD->assign('attached', _l('<b>files attached</b>'));
+					$sCD->assign('none', _l('- none -'));
 					$sCD->assign('fileHref', 'file.php?id=download&fid=');
 					return $sCD->fetch('smarty.calendar.details.tpl');
 				} catch(Exception $e) {
@@ -1448,7 +1448,7 @@ class CalendarView extends PageView {
 	protected function delete($cid) {
 	
 		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang('delete entry').": $cid");
+		$this->getTpl()->assign('pagecaption',_l('delete entry').": $cid");
 		
 		// check permissions
 		if($this->getUser()->hasPermission('calendar', $cid, 'w')) {
@@ -1474,20 +1474,20 @@ class CalendarView extends PageView {
 			$form->add(
 				'submit',		// type
 				'buttonSubmit',	// id/name
-				parent::lang('yes'),	// value
-				array('title' => parent::lang('deletes entry'))
+				_l('yes'),	// value
+				array('title' => _l('deletes entry'))
 			);
 			
 			// smarty-link
 			$link = array(
 							'params' => 'class="submit"',
 							'href' => 'calendar.php?id=listall',
-							'title' => parent::lang('cancels deletion'),
-							'content' => parent::lang('cancel')
+							'title' => _l('cancels deletion'),
+							'content' => _l('cancel')
 						);
 			$sConfirmation->assign('link', $link);
 			$sConfirmation->assign('spanparams', 'id="cancel"');
-			$sConfirmation->assign('message', parent::lang('you really want to delete').'&nbsp;'.$this->helpButton(HELP_MSG_DELETE));
+			$sConfirmation->assign('message', _l('you really want to delete').'&nbsp;'.$this->helpButton(HELP_MSG_DELETE));
 			$sConfirmation->assign('form', $form->render('', true));
 			
 			// validate
@@ -1500,7 +1500,7 @@ class CalendarView extends PageView {
 				$calendar->update(array('valid' => 0));
 				
 				// smarty
-				$sConfirmation->assign('message', parent::lang('entry successful deleted'));
+				$sConfirmation->assign('message', _l('entry successful deleted'));
 				$sConfirmation->assign('form', '');
 				
 				// write entry

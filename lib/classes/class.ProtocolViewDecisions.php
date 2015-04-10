@@ -60,7 +60,7 @@ class ProtocolViewDecisions extends ProtocolView {
 	public function show() {
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang('show decisions').'&nbsp;'.$this->helpButton(HELP_MSG_PROTOCOLDECISIONS));
+		$this->getTpl()->assign('pagecaption', _l('show decisions').'&nbsp;'.$this->helpButton(HELP_MSG_PROTOCOLDECISIONS));
 		
 		// return		
 		return $this->getDecisionsTable();

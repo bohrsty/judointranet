@@ -60,7 +60,7 @@ class ResultViewDetails extends ResultView {
 	public function show() {
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang('result details', true));
+		$this->getTpl()->assign('pagecaption', _l('result details'));
 		
 		// check if result exists
 		if(Page::exists('result', $this->get('rid'))) {

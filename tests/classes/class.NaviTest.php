@@ -125,7 +125,7 @@ class NaviTest extends PHPUnit_Framework_TestCase {
 		$navi = new Navi($id);
 		$output = $navi->output('index.php', '');
 		// check translation
-		$this->assertContains(TestObject::lang($navi->getName()), $output);
+		$this->assertContains(_l($navi->getName()), $output);
 		$this->assertNotContains('not translated', $output);
 		// check handling of mainpage
 		$this->assertNotContains('logout', $output);

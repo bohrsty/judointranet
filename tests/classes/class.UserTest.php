@@ -144,8 +144,8 @@ class UserTest extends PHPUnit_Framework_TestCase {
 		// config
 		$this->assertEquals(new Config(), $this->user->getGc());
 		// output
-		$this->assertContains(TestObject::lang('logout'), $logout);
-		$this->assertContains(TestObject::lang('logout successful'), $logout);
+		$this->assertContains(_l('logout'), $logout);
+		$this->assertContains(_l('logout successful'), $logout);
 		$this->assertNotContains('<form ', $logout);
 		
 		// check login (if default password, else skip)

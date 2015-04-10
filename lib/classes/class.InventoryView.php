@@ -64,7 +64,7 @@ class InventoryView extends PageView {
 	public function init() {
 		
 		// set pagename
-		$this->getTpl()->assign('pagename',parent::lang('inventory'));
+		$this->getTpl()->assign('pagename',_l('inventory'));
 		
 		// init helpmessages
 		$this->initHelp();
@@ -81,7 +81,7 @@ class InventoryView extends PageView {
 					case 'listall':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('inventory: listall')));
+						$this->getTpl()->assign('title', $this->title(_l('inventory: listall')));
 						$this->getTpl()->assign('main', $this->listall());
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('hierselect', false);
@@ -90,7 +90,7 @@ class InventoryView extends PageView {
 					case 'my':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('inventory: own objects')));
+						$this->getTpl()->assign('title', $this->title(_l('inventory: own objects')));
 						$this->getTpl()->assign('main', $this->my());
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebfaform', false);
@@ -99,7 +99,7 @@ class InventoryView extends PageView {
 					case 'give':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('inventory: give object')));
+						$this->getTpl()->assign('title', $this->title(_l('inventory: give object')));
 						$this->getTpl()->assign('main', $this->give($this->get('did')));
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', true);
@@ -109,7 +109,7 @@ class InventoryView extends PageView {
 					case 'take':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('inventory: take object')));
+						$this->getTpl()->assign('title', $this->title(_l('inventory: take object')));
 						$this->getTpl()->assign('main', $this->take($this->get('did')));
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', true);
@@ -118,7 +118,7 @@ class InventoryView extends PageView {
 					case 'cancel':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('inventory: cancel give')));
+						$this->getTpl()->assign('title', $this->title(_l('inventory: cancel give')));
 						$this->getTpl()->assign('main', $this->cancel($this->get('did')));
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', true);
@@ -127,7 +127,7 @@ class InventoryView extends PageView {
 					case 'details':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('inventory: details')));
+						$this->getTpl()->assign('title', $this->title(_l('inventory: details')));
 						$this->getTpl()->assign('main', $this->details($this->get('did')));
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', false);
@@ -136,7 +136,7 @@ class InventoryView extends PageView {
 					case 'movement':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('inventory: transactions')));
+						$this->getTpl()->assign('title', $this->title(_l('inventory: transactions')));
 						$this->getTpl()->assign('main', $this->movement($this->get('mid')));
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', true);
@@ -164,7 +164,7 @@ class InventoryView extends PageView {
 			
 			// id not set
 			// smarty-title
-			$this->getTpl()->assign('title', $this->title(parent::lang('inventory'))); 
+			$this->getTpl()->assign('title', $this->title(_l('inventory'))); 
 			// smarty-main
 			$this->getTpl()->assign('main', $this->defaultContent());
 			// smarty-jquery
@@ -192,7 +192,7 @@ class InventoryView extends PageView {
 	private function listall() {
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang('listall'));
+		$this->getTpl()->assign('pagecaption',_l('listall'));
 		
 		// get db-object
 		$db = Db::newDb();
@@ -210,19 +210,19 @@ class InventoryView extends PageView {
 		$th = array(
 				array(
 						'class' => 'name',
-						'content' => parent::lang('object')
+						'content' => _l('object')
 					),
 				array(
 						'class' => 'number',
-						'content' => parent::lang('inventory number')
+						'content' => _l('inventory number')
 					),
 				array(
 						'class' => 'owner',
-						'content' => parent::lang('owner')
+						'content' => _l('owner')
 					),
 				array(
 						'class' => 'status',
-						'content' => parent::lang('state')
+						'content' => _l('state')
 					)
 			);
 		$sL->assign('th', $th);
@@ -263,14 +263,14 @@ class InventoryView extends PageView {
 					$user->change_user($owned_user[1],false,'id');
 					$owner = $user->get_userinfo('name');
 					$user->change_user($owned_user[0],false,'id');
-					$status = parent::lang('to be given to').' '.$user->get_userinfo('name');;
+					$status = _l('to be given to').' '.$user->get_userinfo('name');;
 				}
 				
 				// prepare details
 				$data[$counter] = array( 
 						'name' => array(
 							'href' => 'inventory.php?id=details&did='.$entry->get_id(),
-							'title' => parent::lang('details'),
+							'title' => _l('details'),
 							'content' => $entry->get_name()
 						),
 						'number' => $entry->get_inventory_no(),
@@ -305,7 +305,7 @@ class InventoryView extends PageView {
 	private function my() {
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang('manage own objects'));
+		$this->getTpl()->assign('pagecaption',_l('manage own objects'));
 		
 		// prepare return
 		$output = $tr_out = $th_out = '';
@@ -320,11 +320,11 @@ class InventoryView extends PageView {
 		$th = array(
 				'name' => array(
 						'class' => 'name',
-						'content' => parent::lang('object')
+						'content' => _l('object')
 					),
 				'number' => array(
 						'class' => 'number',
-						'content' => parent::lang('inventory number')
+						'content' => _l('inventory number')
 					)
 			);
 			
@@ -333,7 +333,7 @@ class InventoryView extends PageView {
 		if($this->getUser()->get_loggedin() === true) {
 			$th['admin'] = array(
 					'class' => 'admin',
-					'content' => parent::lang('tasks')
+					'content' => _l('tasks')
 				);
 		}
 		$sM->assign('th', $th);
@@ -349,7 +349,7 @@ class InventoryView extends PageView {
 				// prepare details
 				$data[$counter]['name'] = array(
 						'href' => 'inventory.php?id=details&did='.$entry->get_id(),
-						'title' => parent::lang('details'),
+						'title' => _l('details'),
 						'content' => $entry->get_name()
 					);
 				$data[$counter]['number'] = $entry->get_inventory_no();
@@ -359,20 +359,20 @@ class InventoryView extends PageView {
 				if($entry->get_owned() == 'taken') {
 					$data[$counter]['admin'] = array(
 							'href' => 'inventory.php?id=give&did='.$entry->get_id(),
-							'title' => parent::lang('give object'),
-							'content' => parent::lang('give away')
+							'title' => _l('give object'),
+							'content' => _l('give away')
 						);
 				} elseif($entry->get_owned() == 'givento') {
 					$data[$counter]['admin'] = array(
 							'href' => 'inventory.php?id=cancel&did='.$entry->get_id(),
-							'title' => parent::lang('cancel give object'),
-							'content' => parent::lang('cancel give')
+							'title' => _l('cancel give object'),
+							'content' => _l('cancel give')
 						);
 				} else {
 					$data[$counter]['admin'] = array(
 						'href' => 'inventory.php?id=take&did='.$entry->get_id(),
-						'title' => parent::lang('take object'),
-						'content' => parent::lang('take')
+						'title' => _l('take object'),
+						'content' => _l('take')
 					);
 				}
 				
@@ -407,7 +407,7 @@ class InventoryView extends PageView {
 		if($this->getUser()->hasPermission('inventory', $did)) {
 			
 			// pagecaption
-			$this->getTpl()->assign('pagecaption',parent::lang('give object'));
+			$this->getTpl()->assign('pagecaption',_l('give object'));
 				
 			// get inventory-object
 			$inventory = new Inventory($did);
@@ -430,9 +430,9 @@ class InventoryView extends PageView {
 				$fields = $preset->get_fields();
 				
 				// add headline
-				$sG->assign('caption', parent::lang('give object').': '.$inventory->get_name().' ('.$inventory->get_inventory_no().')');
+				$sG->assign('caption', _l('give object').': '.$inventory->get_name().' ('.$inventory->get_inventory_no().')');
 				// add accessory info
-				$sG->assign('inventoryinfo', parent::lang('require to check given accessories'));
+				$sG->assign('inventoryinfo', _l('require to check given accessories'));
 				
 				// formular
 				$form = new Zebra_Form(
@@ -465,7 +465,7 @@ class InventoryView extends PageView {
 						'label',		// type
 						'labelGiveTo',	// id/name
 						'give_to',			// for
-						parent::lang('<empty>').$inventory->get_name().' ('.$inventory->get_inventory_no().')'.parent::lang('give to').':'	// label text
+						_l('<empty>').$inventory->get_name().' ('.$inventory->get_inventory_no().')'._l('give to').':'	// label text
 					);
 				$giveTo = $form->add(
 						$formIds['give_to']['type'],	// type
@@ -478,7 +478,7 @@ class InventoryView extends PageView {
 				$giveTo->set_rule(
 						array(
 								'required' => array(
-										'error', parent::lang('required taking user')
+										'error', _l('required taking user')
 									),
 							)
 					);
@@ -497,7 +497,7 @@ class InventoryView extends PageView {
 				$form->add(
 						'submit',		// type
 						'buttonSubmit',	// id/name
-						parent::lang('save')	// value
+						_l('save')	// value
 					);
 				
 				// validate
@@ -516,10 +516,10 @@ class InventoryView extends PageView {
 					$this->values_to_db($insert_id,$fields,$values);
 					
 					// headline
-					$sG->assign('action', $inventory->get_name().' ('.$inventory->get_inventory_no().')'.parent::lang('given to').$givento_user->get_userinfo('name'));
+					$sG->assign('action', $inventory->get_name().' ('.$inventory->get_inventory_no().')'._l('given to').$givento_user->get_userinfo('name'));
 					
 					// accessory
-					$sG->assign('accessoryaction', parent::lang('accessories to be given'));
+					$sG->assign('accessoryaction', _l('accessories to be given'));
 					
 					// walk through fields
 					$data = array();
@@ -577,7 +577,7 @@ class InventoryView extends PageView {
 		if($this->getUser()->hasPermission('inventory', $did)) {
 			
 			// pagecaption
-			$this->getTpl()->assign('pagecaption',parent::lang('take object'));
+			$this->getTpl()->assign('pagecaption',_l('take object'));
 			
 			// get db-object
 			$db = Db::newDb();
@@ -603,15 +603,15 @@ class InventoryView extends PageView {
 				$fields = $preset->get_fields();
 				
 				// add headline
-				$sT->assign('caption', parent::lang('take object').': '.$inventory->get_name().' ('.$inventory->get_inventory_no().')');
+				$sT->assign('caption', _l('take object').': '.$inventory->get_name().' ('.$inventory->get_inventory_no().')');
 				
 				// add take from
 				$movements = Inventory::movement_last_row($db,$inventory->get_id(),'user_id',2);
 				$user = new User(false);
 				$user->change_user($movements[1],false,'id');
-				$sT->assign('takefrom', parent::lang('taken from').': '.$user->get_userinfo('name'));
+				$sT->assign('takefrom', _l('taken from').': '.$user->get_userinfo('name'));
 				// add accessory info
-				$sT->assign('accessoryinfo', parent::lang('require to check taken accessories'));
+				$sT->assign('accessoryinfo', _l('require to check taken accessories'));
 				
 				// formular
 				$form = new Zebra_Form(
@@ -649,7 +649,7 @@ class InventoryView extends PageView {
 				$form->add(
 						'submit',		// type
 						'buttonSubmit',	// id/name
-						parent::lang('save')	// value
+						_l('save')	// value
 					);
 				
 				// validate
@@ -664,10 +664,10 @@ class InventoryView extends PageView {
 					$this->values_to_db($insert_id,$fields,$values);
 					
 					// headline
-					$sT->assign('action', $inventory->get_name().' ('.$inventory->get_inventory_no().') '.parent::lang('taken'));
+					$sT->assign('action', $inventory->get_name().' ('.$inventory->get_inventory_no().') '._l('taken'));
 					
 					// accessory
-					$sT->assign('accessoryaction', parent::lang('taken accessories'));
+					$sT->assign('accessoryaction', _l('taken accessories'));
 					
 					// walk through fields
 					$data = array();
@@ -725,7 +725,7 @@ class InventoryView extends PageView {
 		if($this->getUser()->hasPermission('inventory', $did)) {
 			
 			// pagecaption
-			$this->getTpl()->assign('pagecaption',parent::lang('cancel action'));
+			$this->getTpl()->assign('pagecaption',_l('cancel action'));
 				
 			// get inventory-object
 			$inventory = new Inventory($did);
@@ -760,27 +760,27 @@ class InventoryView extends PageView {
 				$form->add(
 						'submit',		// type
 						'buttonSubmit',	// id/name
-						parent::lang('yes'),	// value
-						array('title' => parent::lang('cancels give'))
+						_l('yes'),	// value
+						array('title' => _l('cancels give'))
 					);
 				
 				// smarty-link
 				$link = array(
 						'params' => 'class="submit"',
 						'href' => 'inventory.php?id=my',
-						'title' => parent::lang('cancels the transaction'),
-						'content' => parent::lang('cancel')
+						'title' => _l('cancels the transaction'),
+						'content' => _l('cancel')
 					);
 				$sC->assign('link', $link);
 				$sC->assign('spanparams', 'id="cancel"');
-				$sC->assign('message', parent::lang('you really want to cancel give'));
+				$sC->assign('message', _l('you really want to cancel give'));
 				$sC->assign('form', $form->render('', true));
 				
 				// validate
 				if($form->validate()) {
 				
 					// smarty
-					$sC->assign('message', parent::lang('successful cancel give'));
+					$sC->assign('message', _l('successful cancel give'));
 					$sC->assign('form', '');
 					
 					// movement to db
@@ -827,7 +827,7 @@ class InventoryView extends PageView {
 		if($this->getUser()->hasPermission('inventory', $did)) {
 			
 			// pagecaption
-			$this->getTpl()->assign('pagecaption',parent::lang('details'));
+			$this->getTpl()->assign('pagecaption',_l('details'));
 				
 			// get invetory-object
 			$inventory = new Inventory($did);
@@ -842,7 +842,7 @@ class InventoryView extends PageView {
 			$sD = new JudoIntranetSmarty();
 			// smarty
 			$sD->assign('caption', $inventory->get_name().' ('.$inventory->get_inventory_no().')');
-			$sD->assign('accessorylist', parent::lang('accessories'));
+			$sD->assign('accessorylist', _l('accessories'));
 			$accessories = '';
 			foreach($fields as $field) {
 				
@@ -953,12 +953,12 @@ class InventoryView extends PageView {
 				}
 			}
 			
-			$sM->assign('inventory', parent::lang('transaction for').$inventory->get_name().' ('.$inventory->get_inventory_no().')');
-			$sM->assign('date', parent::lang('on').date('d.m.Y',strtotime($data[0]['date_time'])));
+			$sM->assign('inventory', _l('transaction for').$inventory->get_name().' ('.$inventory->get_inventory_no().')');
+			$sM->assign('date', _l('on').date('d.m.Y',strtotime($data[0]['date_time'])));
 			$back = array(
 					'href' => 'javascript:history.back(1)',
-					'title' => parent::lang('back'),
-					'content' => parent::lang('back to list')
+					'title' => _l('back'),
+					'content' => _l('back to list')
 				);
 			$sM->assign('back', $back);
 			
@@ -981,7 +981,7 @@ class InventoryView extends PageView {
 					$fields_out[] = $field->valueToHtml();
 				}
 				$sM->assign('data', $fields_out);
-				$sM->assign('user', parent::lang($movement['action'].' from').' '.$user->get_userinfo('name'));
+				$sM->assign('user', _l($movement['action'].' from').' '.$user->get_userinfo('name'));
 			}
 			
 			// return
@@ -1131,7 +1131,7 @@ class InventoryView extends PageView {
 			// smarty
 			$movements[] = array(
 					'href' => 'inventory.php?id=movement&mid='.$movement_id,
-					'title' => parent::lang('show transactions'),
+					'title' => _l('show transactions'),
 					'content' => date('d.m.Y',strtotime($date_time)),
 					'name' => $name
 				);

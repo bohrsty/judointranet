@@ -86,8 +86,8 @@ $sForm->assign('buttonSubmit',$buttonSubmit);
 // assign errors
 $sForm->assign('error',(isset($zf_error) ? $zf_error : (isset($error) ? $error : '')));
 // assign tab names
-$sForm->assign('tabElements', Object::lang('data'));
-$sForm->assign('tabPermissions', Object::lang('permissions'));
+$sForm->assign('tabElements', _l('data'));
+$sForm->assign('tabPermissions', _l('permissions'));
 // assign permission heads
 $sForm->assign('iconRead', (count($permissionConfig) > 0) ? $permissionConfig['iconRead'] : '');
 $sForm->assign('iconEdit', (count($permissionConfig) > 0) ? $permissionConfig['iconEdit'] : '');

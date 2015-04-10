@@ -95,10 +95,10 @@ class AccountingSettingsCostsListing extends Listing implements ListingInterface
 		
 		// assign table header
 		$th = array(
-				parent::lang('identifier'),
-				parent::lang('name'),
-				parent::lang('type'),
-				parent::lang('value'),
+				_l('identifier'),
+				_l('name'),
+				_l('type'),
+				_l('value'),
 			);
 		$tpl->assign('ths', $th);
 		
@@ -152,7 +152,7 @@ class AccountingSettingsCostsListing extends Listing implements ListingInterface
 		foreach($result as $data) {
 			
 			// get translated name
-			$data['name'] = parent::lang('costs '.$data['name']);
+			$data['name'] = _l('costs '.$data['name']);
 			
 			// put in return array
 			$return[] = $data;

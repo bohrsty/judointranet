@@ -64,7 +64,7 @@ class MainView extends PageView {
 	public function init() {
 		
 		// set pagename
-		$this->getTpl()->assign('pagename',parent::lang('JudoIntranet'));
+		$this->getTpl()->assign('pagename',_l('JudoIntranet'));
 		
 		// init helpmessages
 		$this->initHelp();
@@ -77,7 +77,7 @@ class MainView extends PageView {
 				case 'login':
 					
 					// smarty
-					$this->getTpl()->assign('title', $this->title(parent::lang('log on')));
+					$this->getTpl()->assign('title', $this->title(_l('log on')));
 					$this->getTpl()->assign('main', $this->login());
 					$this->getTpl()->assign('zebraform', true);
 					
@@ -86,7 +86,7 @@ class MainView extends PageView {
 				case 'logout':
 					
 					// smarty
-					$this->getTpl()->assign('title', $this->title(parent::lang('logout')));
+					$this->getTpl()->assign('title', $this->title(_l('logout')));
 					$this->getTpl()->assign('main', $this->getUser()->logout($this));
 					
 				break;
@@ -94,7 +94,7 @@ class MainView extends PageView {
 				case 'user':
 					
 					// smarty
-					$this->getTpl()->assign('title', $this->title(parent::lang('usersettings')));
+					$this->getTpl()->assign('title', $this->title(_l('usersettings')));
 					$this->getTpl()->assign('main', $this->user());
 					$this->getTpl()->assign('zebraform', true);
 					
@@ -116,7 +116,7 @@ class MainView extends PageView {
 			
 			// id not set
 			// smarty-title
-			$this->getTpl()->assign('title', $this->title(parent::lang('homepage'))); 
+			$this->getTpl()->assign('title', $this->title(_l('homepage'))); 
 			// smarty-main
 			$this->getTpl()->assign('main', $this->defaultContent());
 		}
@@ -167,7 +167,7 @@ class MainView extends PageView {
 				'label',			// type
 				'labelUsername',	// id/name
 				'username',			// for
-				parent::lang('username'),	// label text
+				_l('username'),	// label text
 				array('inside' => true,)	// label inside
 			);
 		$username = $form->add(
@@ -179,7 +179,7 @@ class MainView extends PageView {
 		$username->set_rule(
 				array(
 					'required' => array(
-						'error', parent::lang('required username'),
+						'error', _l('required username'),
 					),
 				)
 			);
@@ -189,7 +189,7 @@ class MainView extends PageView {
 				'label',			// type
 				'labelPassword',	// id/name
 				'password',			// for
-				parent::lang('password'),	// label text
+				_l('password'),	// label text
 				array('inside' => true,)	// label inside
 			);
 		$password = $form->add(
@@ -201,7 +201,7 @@ class MainView extends PageView {
 		$password->set_rule(
 				array(
 					'required' => array(
-						'error', parent::lang('required password'),
+						'error', _l('required password'),
 					),
 				)
 			);
@@ -210,11 +210,11 @@ class MainView extends PageView {
 		$form->add(
 				'submit',		// type
 				'buttonSubmit',	// id/name
-				parent::lang('log on')	// value
+				_l('log on')	// value
 			);
 		
 		// smarty-mesage
-		$sLogin->assign('caption', parent::lang('log on'));
+		$sLogin->assign('caption', _l('log on'));
 		
 		// validate
 		if($form->validate()) {
@@ -233,7 +233,7 @@ class MainView extends PageView {
 		} else {
 			
 			// smarty message and form
-			$sLogin->assign('message', parent::lang($this->getUser()->get_login_message()).'&nbsp;'.$this->helpButton(HELP_MSG_LOGIN, array($this->getUser()->get_login_message() => '')));
+			$sLogin->assign('message', _l($this->getUser()->get_login_message()).'&nbsp;'.$this->helpButton(HELP_MSG_LOGIN, array($this->getUser()->get_login_message() => '')));
 			$sLogin->assign('form', $form->render('', true));
 		}		
 		
@@ -263,7 +263,7 @@ class MainView extends PageView {
 		if($this->getUser()->get_loggedin() && !$this->isDemoMode()) {
 		
 			// smarty
-			$sUserPasswd->assign('pagecaption', parent::lang('usersettings for').' '.$this->getUser()->get_userinfo('name'));
+			$sUserPasswd->assign('pagecaption', _l('usersettings for').' '.$this->getUser()->get_userinfo('name'));
 				
 			// check action
 			if($this->get('action') == 'passwd') {
@@ -300,7 +300,7 @@ class MainView extends PageView {
 	private function userPasswd($sUserPasswd) {
 		
 		// smarty
-		$sUserPasswd->assign('section', parent::lang('change password'));
+		$sUserPasswd->assign('section', _l('change password'));
 		
 		// prepare form
 		$form = new Zebra_Form(
@@ -319,7 +319,7 @@ class MainView extends PageView {
 				'label',			// type
 				'labelPassword',	// id/name
 				'password',			// for
-				parent::lang('new password'),	// label text
+				_l('new password'),	// label text
 				array('inside' => true,)	// label inside
 			);
 		$password = $form->add(
@@ -331,7 +331,7 @@ class MainView extends PageView {
 		$password->set_rule(
 				array(
 					'required' => array(
-						'error', parent::lang('required password'),
+						'error', _l('required password'),
 					),
 				)
 			);
@@ -340,7 +340,7 @@ class MainView extends PageView {
 				'label',				// type
 				'labelPasswordConfirm',	// id/name
 				'passwordConfirm',				// for
-				parent::lang('repeat password'),	// label text
+				_l('repeat password'),	// label text
 				array('inside' => true,)	// label inside
 			);
 		$passwordConfirm = $form->add(
@@ -352,10 +352,10 @@ class MainView extends PageView {
 		$passwordConfirm->set_rule(
 				array(
 					'required' => array(
-						'error', parent::lang('required password'),
+						'error', _l('required password'),
 					),
 					'compare' => array(
-						'password', 'error', parent::lang('has to be the same'),
+						'password', 'error', _l('has to be the same'),
 						
 					),
 				)
@@ -365,7 +365,7 @@ class MainView extends PageView {
 		$form->add(
 				'submit',		// type
 				'buttonSubmit',	// id/name
-				parent::lang('change password')	// value
+				_l('change password')	// value
 			);
 		
 		
@@ -390,7 +390,7 @@ class MainView extends PageView {
 			}
 			
 			// smarty message
-			$sUserPasswd->assign('message', parent::lang('password changed successful'));
+			$sUserPasswd->assign('message', _l('password changed successful'));
 		} else {
 			
 			// smarty form and return
@@ -411,7 +411,7 @@ class MainView extends PageView {
 	private function userData($sUserPasswd) {
 		
 		// smarty
-		$sUserPasswd->assign('section', parent::lang('change usersettings'));
+		$sUserPasswd->assign('section', _l('change usersettings'));
 		
 		// prepare form
 		$form = new Zebra_Form(
@@ -429,7 +429,7 @@ class MainView extends PageView {
 				'label',		// type
 				'labelName',	// id/name
 				'name',			// for
-				parent::lang('name').':'	// label text
+				_l('name').':'	// label text
 			);
 		$name = $form->add(
 				'text',	// type
@@ -439,12 +439,12 @@ class MainView extends PageView {
 		$name->set_rule(
 				array(
 					'required' => array(
-						'error', parent::lang('name required'),
+						'error', _l('name required'),
 					),
 					'regexp' => array(
 							$this->getGc()->get_config('name.regexp.zebra'),	// regexp
 							'error',	// error variable
-							parent::lang('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+							_l('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
 						),
 				)
 			);
@@ -454,7 +454,7 @@ class MainView extends PageView {
 				'label',		// type
 				'labelEmail',	// id/name
 				'email',			// for
-				parent::lang('email address').':'	// label text
+				_l('email address').':'	// label text
 			);
 		$name = $form->add(
 				'text',	// type
@@ -464,11 +464,11 @@ class MainView extends PageView {
 		$name->set_rule(
 				array(
 					'required' => array(
-						'error', parent::lang('email required'),
+						'error', _l('email required'),
 					),
 					'email' => array(
 							'error',	// error variable
-							parent::lang('valid email'),	// message
+							_l('valid email'),	// message
 						),
 				)
 			);
@@ -477,7 +477,7 @@ class MainView extends PageView {
 		$form->add(
 				'submit',		// type
 				'buttonSubmit',	// id/name
-				parent::lang('save')	// value
+				_l('save')	// value
 			);
 		
 		// validate
@@ -490,7 +490,7 @@ class MainView extends PageView {
 			$this->getUser()->writeDb();
 			
 			// smarty message
-			$sUserPasswd->assign('message', parent::lang('usersettings changed successful'));
+			$sUserPasswd->assign('message', _l('usersettings changed successful'));
 		} else {
 			
 			// smarty form and return

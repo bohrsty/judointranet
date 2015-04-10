@@ -60,7 +60,7 @@ class ResultViewList extends ResultView {
 	public function show() {
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption',parent::lang('result list', true).'&nbsp;'.$this->helpButton(HELP_MSG_RESULTLIST));
+		$this->getTpl()->assign('pagecaption', _l('result list').'&nbsp;'.$this->helpButton(HELP_MSG_RESULTLIST));
 		
 		// return
 		return $this->getResultList();
@@ -91,15 +91,15 @@ class ResultViewList extends ResultView {
 		$jtfName->setTitle(_l('event name'));
 		$jtfName->setEdit(false);
 		$jtfDate = new JtableField('date');
-		$jtfDate->setTitle(parent::lang('event date'));
+		$jtfDate->setTitle(_l('event date'));
 		$jtfDate->setEdit(false);
 		$jtfDate->setWidth('1%');
 		$jtfCity = new JtableField('city');
-		$jtfCity->setTitle(parent::lang('event city'));
+		$jtfCity->setTitle(_l('event city'));
 		$jtfCity->setEdit(false);
 		$jtfCity->setWidth('1%');
 		$jtfShow = new JtableField('show');
-		$jtfShow->setTitle(parent::lang('show'));
+		$jtfShow->setTitle(_l('show'));
 		$jtfShow->setEdit(false);
 		$jtfShow->setSorting(false);
 		$jtfShow->setWidth('1%');

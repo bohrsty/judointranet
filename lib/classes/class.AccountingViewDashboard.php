@@ -60,7 +60,7 @@ class AccountingViewDashboard extends AccountingView {
 	public function show() {
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption', parent::lang('dashboard', true));
+		$this->getTpl()->assign('pagecaption', _l('dashboard'));
 		
 		// add dashs
 		$dashs[] = $this->getResultDash();

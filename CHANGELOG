@@ -47,6 +47,8 @@ Thirdparty licenses see LICENSE
 [++] edit tribute incl. adding tribute history entries
 [cc] moved deletion from PageView into deletion wrapper of child object
 [++] deletion of tribute incl. according history entries 
+--
+[cc] removed usage of old Object::lang() translation method, replaced with _l()
 
 
 

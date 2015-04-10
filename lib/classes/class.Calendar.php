@@ -383,7 +383,7 @@ class Calendar extends Page {
 					'color' => _l('color<br />').'<div class="color" style="background-color: '.$this->getColor().';">&nbsp;</div>',
 					'isExternal' => _l('is external<br />').($this->getIsExternal() === true ? _l('yes') : _l('no')),
 					'filter' => _l('filter<br />').$filterNames,
-					'public' => _l('public access<br />').($this->isPermittedFor(0) ? parent::lang('yes') : parent::lang('no')),
+					'public' => _l('public access<br />').($this->isPermittedFor(0) ? _l('yes') : _l('no')),
 		);
 		
 		// return

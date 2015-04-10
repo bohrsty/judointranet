@@ -159,25 +159,6 @@ class Object {
 	
 	
 	/**
-	 * lang($string, $plaintext) reads the translated string for the given marker and returns it
-	 * expects $_SESSION['lang'] to be set to lang-code (i.e. "de_DE")
-	 * 
-	 * @param string $string string to be parsed and "translated", splitmarker "#"
-	 * @param bool $plaintext if true, human readable plaintext is used for translation
-	 * @return string translated value of the string
-	 */
-	public static function lang($string, $plaintext=true) {
-		
-		return _l($string);
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
 	 * callback_check_date checks if a correct date is selected
 	 * 
 	 * @param array $args arguments to check

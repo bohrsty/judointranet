@@ -64,7 +64,7 @@ class ResultViewAccounting extends ResultView {
 	public function show() {
 		
 		// pagecaption
-		$this->getTpl()->assign('pagecaption', parent::lang('result accounting', true).'&nbsp;'.$this->helpButton(HELP_MSG_FILELISTALL));
+		$this->getTpl()->assign('pagecaption', _l('result accounting').'&nbsp;'.$this->helpButton(HELP_MSG_FILELISTALL));
 		
 		// check action
 		switch($this->get('action')) {
@@ -199,7 +199,7 @@ class ResultViewAccounting extends ResultView {
 				$pdf->writeHTML($pdfOut, false);
 				
 				// output
-				$pdfFilename = $this->replace_umlaute(parent::lang('bill', true).'_'.html_entity_decode($this->smarty->fetch('string:'.utf8_encode($preset->get_filename())), ENT_XHTML, 'UTF-8'));
+				$pdfFilename = $this->replace_umlaute(_l('bill').'_'.html_entity_decode($this->smarty->fetch('string:'.utf8_encode($preset->get_filename())), ENT_XHTML, 'UTF-8'));
 				
 				// output pdf and exit
 				$pdf->Output($pdfFilename, 'D');

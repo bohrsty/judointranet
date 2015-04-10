@@ -59,7 +59,7 @@ class FileTest extends PHPUnit_Framework_TestCase {
 		
 		$file->setFileType($data);
 		$this->assertEquals($data, $file->getFileType());
-		$fileTypeName = TestObject::lang($file->getFileTypeAs('mimetype'));
+		$fileTypeName = _l($file->getFileTypeAs('mimetype'));
 		
 		$this->assertEquals('Textdokument', $file->getFileTypeAs('name'));
 		$this->assertEquals('text/plain', $file->getFileTypeAs('mimetype'));
@@ -189,7 +189,7 @@ class FileTest extends PHPUnit_Framework_TestCase {
 		// get object
 		$file = new File(1);
 		$details = $file->details();
-		$fileType = TestObject::lang(str_replace('/', '_', $file->getFileTypeAs('mimetype')));
+		$fileType = _l(str_replace('/', '_', $file->getFileTypeAs('mimetype')));
 		
 		// assert
 		$this->assertEquals('MIT License', $details['value'][0]);

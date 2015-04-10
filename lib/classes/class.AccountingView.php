@@ -55,7 +55,7 @@ class AccountingView extends PageView implements ViewInterface {
 	public function init() {
 		
 		// set pagename
-		$this->getTpl()->assign('pagename',parent::lang('Accounting', true));
+		$this->getTpl()->assign('pagename', _l('Accounting'));
 		
 		// init helpmessages
 		$this->initHelp();
@@ -72,7 +72,7 @@ class AccountingView extends PageView implements ViewInterface {
 					case 'dashboard':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('Accounting: dashboard', true)));
+						$this->getTpl()->assign('title', $this->title(_l('Accounting: dashboard')));
 						$dashboard = new AccountingViewDashboard();
 						$this->getTpl()->assign('main', $dashboard->show());
 						$this->getTpl()->assign('jquery', true);
@@ -83,7 +83,7 @@ class AccountingView extends PageView implements ViewInterface {
 					case 'task':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('Accounting: task', true)));
+						$this->getTpl()->assign('title', $this->title(_l('Accounting: task')));
 						$task = new AccountingViewTask();
 						$this->getTpl()->assign('main', $task->show());
 						$this->getTpl()->assign('jquery', true);
@@ -94,7 +94,7 @@ class AccountingView extends PageView implements ViewInterface {
 					case 'settings':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('Accounting: settings', true)));
+						$this->getTpl()->assign('title', $this->title(_l('Accounting: settings')));
 						$settings = new AccountingViewSettings();
 						$this->getTpl()->assign('main', $settings->show());
 						$this->getTpl()->assign('jquery', true);
@@ -132,7 +132,7 @@ class AccountingView extends PageView implements ViewInterface {
 			
 			// id not set
 			// smarty-title
-			$this->getTpl()->assign('title', $this->title(parent::lang('Accounting', true))); 
+			$this->getTpl()->assign('title', $this->title(_l('Accounting'))); 
 			// smarty-main
 			$this->getTpl()->assign('main', $this->defaultContent());
 			// smarty-jquery

@@ -109,7 +109,7 @@ class ResultViewNew extends ResultView {
 				'label',		// type
 				'labelImporter',	// id/name
 				'importer',			// for
-				parent::lang('import format', true)	// label text
+				_l('import format')	// label text
 			);
 		$type = $form->add(
 				$formIds['importer']['type'],	// type
@@ -123,7 +123,7 @@ class ResultViewNew extends ResultView {
 				array(
 						'required' => array(
 								'error',
-								parent::lang('error select', true)
+								_l('error select')
 							),
 					)
 			);
@@ -131,7 +131,7 @@ class ResultViewNew extends ResultView {
 				'note',		// type
 				'noteImporter',	// id/name
 				'importer',		// for
-				parent::lang('help', true).'&nbsp;'.$this->helpButton(HELP_MSG_RESULTIMPORTER)	// note text
+				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_RESULTIMPORTER)	// note text
 			);
 		
 		// description
@@ -140,7 +140,7 @@ class ResultViewNew extends ResultView {
 				'label',		// type
 				'labelDesc',	// id/name
 				'desc',			// for
-				parent::lang('result description', true)	// label text
+				_l('result description')	// label text
 			);
 		$desc = $form->add(
 						$formIds['desc']['type'],		// type
@@ -150,7 +150,7 @@ class ResultViewNew extends ResultView {
 				'note',			// type
 				'noteDesc',	// id/name
 				'desc',		// for
-				parent::lang('help', true).'&nbsp;'.$this->helpButton(HELP_MSG_RESULTDESC)	// note text
+				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_RESULTDESC)	// note text
 			);
 		
 		// add rules
@@ -159,11 +159,11 @@ class ResultViewNew extends ResultView {
 						'regexp' => array(
 								$this->getGc()->get_config('textarea.regexp.zebra'),
 								'error',
-								parent::lang('error allowedChars', true).' ['.$this->getGc()->get_config('textarea.desc').']',
+								_l('error allowedChars').' ['.$this->getGc()->get_config('textarea.desc').']',
 							),
 						'required' => array(
 								'error',
-								parent::lang('error text required', true),
+								_l('error text required'),
 							),
 					)
 			);
@@ -175,7 +175,7 @@ class ResultViewNew extends ResultView {
 				'label',		// type
 				'labelContent',	// id/name
 				'formContent',			// for
-				parent::lang('resultfile', true).':'	// label text
+				_l('resultfile').':'	// label text
 			);
 		$formContent = $form->add(
 						$formIds['formContent']['type'],		// type
@@ -185,7 +185,7 @@ class ResultViewNew extends ResultView {
 				'note',			// type
 				'noteFormContent',	// id/name
 				'formContent',		// for
-				parent::lang('help', true).'&nbsp;'.$this->helpButton(HELP_MSG_FIELDFILE)	// note text
+				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDFILE)	// note text
 			);
 		
 		// add rules
@@ -196,16 +196,16 @@ class ResultViewNew extends ResultView {
 								$this->getGc()->get_config('global.temp'),
 								ZEBRA_FORM_UPLOAD_RANDOM_NAMES,
 								'error',
-								parent::lang('error upload', true),
+								_l('error upload'),
 							),
 						'filetype' => array(
 								$allowedFileTypes,
 								'error',
-								parent::lang('only the following file extensions are allowed!').' ['.$allowedFileTypes.']',
+								_l('only the following file extensions are allowed!').' ['.$allowedFileTypes.']',
 						),
 						'required' => array(
 								'error',
-								parent::lang('error required', true),
+								_l('error required'),
 							),
 					)
 			);
@@ -214,7 +214,7 @@ class ResultViewNew extends ResultView {
 		$form->add(
 				'submit',		// type
 				'buttonSubmit',	// id/name
-				parent::lang('next', true)	// value
+				_l('next')	// value
 			);
 		
 		// validate
@@ -247,7 +247,7 @@ class ResultViewNew extends ResultView {
 		} else {
 		
 			// pagecaption
-			$this->getTpl()->assign('pagecaption', parent::lang('result import', true));
+			$this->getTpl()->assign('pagecaption', _l('result import'));
 			
 			return $form->render('', true);
 		}
@@ -283,7 +283,7 @@ class ResultViewNew extends ResultView {
 				'label',		// type
 				'labelPreset',	// id/name
 				'preset',			// for
-				parent::lang('preset', true)	// label text
+				_l('preset')	// label text
 			);
 		$preset = $form->add(
 				$formIds['preset']['type'],	// type
@@ -297,7 +297,7 @@ class ResultViewNew extends ResultView {
 				array(
 						'required' => array(
 								'error',
-								parent::lang('error select', true)
+								_l('error select')
 							),
 					)
 			);
@@ -305,7 +305,7 @@ class ResultViewNew extends ResultView {
 				'note',		// type
 				'notePreset',	// id/name
 				'preset',		// for
-				parent::lang('help', true).'&nbsp;'.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
+				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
 			);
 		
 		// isTeam
@@ -353,7 +353,7 @@ class ResultViewNew extends ResultView {
 		$form->add(
 				'submit',		// type
 				'buttonSubmit',	// id/name
-				parent::lang('save', true)	// value
+				_l('save')	// value
 			);
 		
 		// get data from session
@@ -407,7 +407,7 @@ class ResultViewNew extends ResultView {
 		} else {
 			
 			// pagecaption
-			$this->getTpl()->assign('pagecaption', parent::lang('result import check club', true));
+			$this->getTpl()->assign('pagecaption', _l('result import check club'));
 			
 			return $form->render('lib/zebraTemplate.php', true, array($formIds, 'smarty.resultimporter.tpl', null, $sCorrectClubs));
 		}
@@ -466,7 +466,7 @@ class ResultViewNew extends ResultView {
 					array(
 							'required' => array(
 									'error',
-									parent::lang('error select', true)
+									_l('error select')
 								),
 						)
 				);

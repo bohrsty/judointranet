@@ -55,7 +55,7 @@ class ResultView extends PageView implements ViewInterface {
 	public function init() {
 		
 		// set pagename
-		$this->getTpl()->assign('pagename',parent::lang('Results', true));
+		$this->getTpl()->assign('pagename', _l('Results'));
 		
 		// init helpmessages
 		$this->initHelp();
@@ -72,7 +72,7 @@ class ResultView extends PageView implements ViewInterface {
 					case 'listall':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('Results: listall', true)));
+						$this->getTpl()->assign('title', $this->title(_l('Results: listall')));
 						$listall = new ResultViewListall();
 						$this->getTpl()->assign('main', $listall->show());
 						$this->getTpl()->assign('jquery', true);
@@ -83,7 +83,7 @@ class ResultView extends PageView implements ViewInterface {
 					case 'details':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('Results: details', true)));
+						$this->getTpl()->assign('title', $this->title(_l('Results: details')));
 						$details = new ResultViewDetails();
 						$this->getTpl()->assign('main', $details->show());
 						$this->getTpl()->assign('jquery', true);
@@ -94,7 +94,7 @@ class ResultView extends PageView implements ViewInterface {
 					case 'delete':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('Results: delete', true)));
+						$this->getTpl()->assign('title', $this->title(_l('Results: delete')));
 						$delete = new ResultViewDelete();
 						$this->getTpl()->assign('main', $delete->show());
 						$this->getTpl()->assign('jquery', true);
@@ -105,7 +105,7 @@ class ResultView extends PageView implements ViewInterface {
 					case 'new':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('Results: import', true)));
+						$this->getTpl()->assign('title', $this->title(_l('Results: import')));
 						$new = new ResultViewNew();
 						$this->getTpl()->assign('main', $new->show());
 						$this->getTpl()->assign('jquery', true);
@@ -116,7 +116,7 @@ class ResultView extends PageView implements ViewInterface {
 					case 'list':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('Results: list', true)));
+						$this->getTpl()->assign('title', $this->title(_l('Results: list')));
 						$list = new ResultViewList();
 						$this->getTpl()->assign('main', $list->show());
 						$this->getTpl()->assign('jquery', true);
@@ -127,7 +127,7 @@ class ResultView extends PageView implements ViewInterface {
 					case 'accounting':
 						
 						// smarty
-						$this->getTpl()->assign('title', $this->title(parent::lang('Results: accounting', true)));
+						$this->getTpl()->assign('title', $this->title(_l('Results: accounting')));
 						$accounting = new ResultViewAccounting();
 						$this->getTpl()->assign('main', $accounting->show());
 						$this->getTpl()->assign('jquery', true);
@@ -165,7 +165,7 @@ class ResultView extends PageView implements ViewInterface {
 			
 			// id not set
 			// smarty-title
-			$this->getTpl()->assign('title', $this->title(parent::lang('Results', true))); 
+			$this->getTpl()->assign('title', $this->title(_l('Results'))); 
 			// smarty-main
 			$this->getTpl()->assign('main', $this->defaultContent());
 			// smarty-jquery

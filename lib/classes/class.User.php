@@ -267,8 +267,8 @@ class User extends Object {
 		
 		// logout-message
 		// smarty
-		$sLogout->assign('caption', parent::lang('logout'));
-		$sLogout->assign('message', parent::lang('successfully logged off'));
+		$sLogout->assign('caption', _l('logout'));
+		$sLogout->assign('message', _l('successfully logged off'));
 		$sLogout->assign('form', '');
 		
 		// set redirect
@@ -410,7 +410,7 @@ class User extends Object {
 		
 		// prepare return
 		if($param != 'sort') {
-			$groups = array(0 => parent::lang('any (public access)'));
+			$groups = array(0 => _l('any (public access)'));
 		} else {
 			$groups = array();
 		}

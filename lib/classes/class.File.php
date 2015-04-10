@@ -362,7 +362,7 @@ class File extends Page {
 		
 		// check translation
 		if($field == 'name') {
-			$value = parent::lang(str_replace('/', '_', $mimetype));
+			$value = _l(str_replace('/', '_', $mimetype));
 		}
 		
 		// return
@@ -380,9 +380,9 @@ class File extends Page {
 		// prepare data
 		$data = array(
 					'caption' => array(
-							0 => parent::lang('name'),
-							1 => parent::lang('filetype'),
-							2 => parent::lang('filename'),
+							0 => _l('name'),
+							1 => _l('filetype'),
+							2 => _l('filename'),
 						),
 					'value' => array(
 							0 => $this->getName(),

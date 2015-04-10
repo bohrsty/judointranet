@@ -201,7 +201,7 @@ class AdministrationView extends PageView {
 	private function useradmin() {
 		
 		// smarty caption
-		$this->getTpl()->assign('caption', parent::lang('manage user, groups and permissions'));
+		$this->getTpl()->assign('caption', _l('manage user, groups and permissions'));
 		
 		// prepare variables
 		$content = '';
@@ -244,27 +244,27 @@ class AdministrationView extends PageView {
 		// data array
 		$data = array(
 				0 => array(
-						'tab' => parent::lang('user management'),
-						'caption' => parent::lang('user management'),
+						'tab' => _l('user management'),
+						'caption' => _l('user management'),
 						'content' => $this->userContent($sUserAdmin),
 						'action' => 'user',
 					),
 				1 => array(
-						'tab' => parent::lang('group management'),
-						'caption' => parent::lang('group management'),
+						'tab' => _l('group management'),
+						'caption' => _l('group management'),
 						'content' => $this->groupContent($sUserAdmin),
 						'action' => 'group',
 					),
 				2 => array(
-						'tab' => parent::lang('permission management'),
-						'caption' => parent::lang('permission management'),
+						'tab' => _l('permission management'),
+						'caption' => _l('permission management'),
 						'content' => $this->permissionContent($sUserAdmin),
 						'action' => 'permission',
 					),
 			);
 		
 		$sUserAdmin->assign('data', $data);
-		$sUserAdmin->assign('backName', parent::lang('&lArr; back'));
+		$sUserAdmin->assign('backName', _l('&lArr; back'));
 		
 		// fetch content
 		return $sUserAdmin->fetch('smarty.admin.useradmin.tpl');
@@ -305,7 +305,7 @@ class AdministrationView extends PageView {
 				
 				$ps[] = array(
 						'params' => 'class="bold"',
-						'content' => parent::lang('edit user:').' '.$user->get_userinfo('name'),
+						'content' => _l('edit user:').' '.$user->get_userinfo('name'),
 					);
 				$sOutput->assign('ps', $ps);
 				
@@ -327,7 +327,7 @@ class AdministrationView extends PageView {
 						'label',		// type
 						'labelUsername',	// id/name
 						'username',			// for
-						parent::lang('username')	// label text
+						_l('username')	// label text
 					);
 				$name = $form->add(
 								$formIds['username']['type'],		// type
@@ -337,12 +337,12 @@ class AdministrationView extends PageView {
 				$name->set_rule(
 						array(
 								'required' => array(
-										'error', parent::lang('required username!'),
+										'error', _l('required username!'),
 									),
 								'regexp' => array(
 										$this->getGc()->get_config('name.regexp.zebra'),	// regexp
 										'error',	// error variable
-										parent::lang('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+										_l('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
 									),
 							)
 					);
@@ -350,7 +350,7 @@ class AdministrationView extends PageView {
 						'note',			// type
 						'noteUsername',		// id/name
 						'username',			// for
-						parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
+						_l('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
 					);
 				
 				// password
@@ -359,7 +359,7 @@ class AdministrationView extends PageView {
 						'label',			// type
 						'labelPassword',	// id/name
 						'password',			// for
-						parent::lang('password')	// label text
+						_l('password')	// label text
 					);
 				$password = $form->add(
 						$formIds['password']['type'],		// type
@@ -373,7 +373,7 @@ class AdministrationView extends PageView {
 						'label',				// type
 						'labelPasswordConfirm',	// id/name
 						'passwordConfirm',				// for
-						parent::lang('repeat password')	// label text
+						_l('repeat password')	// label text
 					);
 				$passwordConfirm = $form->add(
 						$formIds['passwordConfirm']['type'],			// type
@@ -384,7 +384,7 @@ class AdministrationView extends PageView {
 				$passwordConfirm->set_rule(
 						array(
 							'compare' => array(
-								'password', 'error', parent::lang('has to be the same'),
+								'password', 'error', _l('has to be the same'),
 								
 							),
 						)
@@ -396,7 +396,7 @@ class AdministrationView extends PageView {
 						'label',		// type
 						'labelName',	// id/name
 						'name',			// for
-						parent::lang('username')	// label text
+						_l('username')	// label text
 					);
 				$name = $form->add(
 								$formIds['name']['type'],		// type
@@ -406,12 +406,12 @@ class AdministrationView extends PageView {
 				$name->set_rule(
 						array(
 								'required' => array(
-										'error', parent::lang('required name!'),
+										'error', _l('required name!'),
 									),
 								'regexp' => array(
 										$this->getGc()->get_config('name.regexp.zebra'),	// regexp
 										'error',	// error variable
-										parent::lang('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+										_l('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
 									),
 							)
 					);
@@ -419,7 +419,7 @@ class AdministrationView extends PageView {
 						'note',			// type
 						'noteName',		// id/name
 						'name',			// for
-						parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
+						_l('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
 					);
 				
 				// email
@@ -428,7 +428,7 @@ class AdministrationView extends PageView {
 						'label',		// type
 						'labelEmail',	// id/name
 						'email',			// for
-						parent::lang('emailaddress')	// label text
+						_l('emailaddress')	// label text
 					);
 				$name = $form->add(
 								$formIds['email']['type'],		// type
@@ -438,11 +438,11 @@ class AdministrationView extends PageView {
 				$name->set_rule(
 						array(
 								'required' => array(
-										'error', parent::lang('required email address!'),
+										'error', _l('required email address!'),
 									),
 								'email' => array(
 										'error',	// error variable
-										parent::lang('valid email'),	// message
+										_l('valid email'),	// message
 									),
 							)
 					);
@@ -450,7 +450,7 @@ class AdministrationView extends PageView {
 						'note',			// type
 						'noteEmail',		// id/name
 						'email',			// for
-						parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
+						_l('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
 					);
 				
 				// groups
@@ -475,7 +475,7 @@ class AdministrationView extends PageView {
 						'label',		// type
 						'labelGroups',	// id/name
 						'groups',			// for
-						parent::lang('groups')	// label text
+						_l('groups')	// label text
 					);
 				$groups = $form->add(
 						$formIds['groups']['type'],	// type
@@ -491,14 +491,14 @@ class AdministrationView extends PageView {
 						'note',		// type
 						'noteGroups',	// id/name
 						'groups',		// for
-						parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
+						_l('help').'&nbsp;'//.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
 					);
 				
 				// submit button
 				$form->add(
 						'submit',		// type
 						'buttonSubmitUp',	// id/name
-						parent::lang('save user')	// value
+						_l('save user')	// value
 					);
 				
 				// validate
@@ -528,7 +528,7 @@ class AdministrationView extends PageView {
 					// output success message
 					$ps[] = array(
 							'params' => '',
-							'content' => parent::lang('successful saved user:').' '.$data['name'].' ('.$user->get_id().')',
+							'content' => _l('successful saved user:').' '.$data['name'].' ('.$user->get_id().')',
 						);
 					$sOutput->assign('ps', $ps);
 					$content .= $sOutput->fetch('smarty.p.tpl');
@@ -570,26 +570,26 @@ class AdministrationView extends PageView {
 					$form->add(
 						'submit',		// type
 						'buttonSubmit',	// id/name
-						parent::lang('delete'),	// value
-						array('title' => parent::lang('delete'))
+						_l('delete'),	// value
+						array('title' => _l('delete'))
 					);
 					
 					// smarty-link
 					$link = array(
 									'params' => 'class="submit"',
 									'href' => 'administration.php?id=user&action=user',
-									'title' => parent::lang('cancel'),
-									'content' => parent::lang('cancel')
+									'title' => _l('cancel'),
+									'content' => _l('cancel')
 								);
 					$sConfirmation->assign('link', $link);
 					$sConfirmation->assign('spanparams', 'id="cancel"');
-					$sConfirmation->assign('message', parent::lang('do you want to completely remove this user?').'&nbsp;');//.$this->helpButton(HELP_MSG_DELETE));
+					$sConfirmation->assign('message', _l('do you want to completely remove this user?').'&nbsp;');//.$this->helpButton(HELP_MSG_DELETE));
 					$sConfirmation->assign('form', $form->render('', true));
 					
 					// validate
 					if($form->validate()) {
 						
-						$sConfirmation->assign('message', parent::lang('successful removed user!'));
+						$sConfirmation->assign('message', _l('successful removed user!'));
 						$sConfirmation->assign('form', '');
 						
 						$user = new User(false);
@@ -633,7 +633,7 @@ class AdministrationView extends PageView {
 					'label',		// type
 					'labelUsername',	// id/name
 					'username',			// for
-					parent::lang('username')	// label text
+					_l('username')	// label text
 				);
 			$name = $form->add(
 							$formIds['username']['type'],		// type
@@ -643,12 +643,12 @@ class AdministrationView extends PageView {
 			$name->set_rule(
 					array(
 							'required' => array(
-									'error', parent::lang('required username!'),
+									'error', _l('required username!'),
 								),
 							'regexp' => array(
 									$this->getGc()->get_config('name.regexp.zebra'),	// regexp
 									'error',	// error variable
-									parent::lang('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+									_l('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
 								),
 						)
 				);
@@ -656,7 +656,7 @@ class AdministrationView extends PageView {
 					'note',			// type
 					'noteUsername',		// id/name
 					'username',			// for
-					parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
+					_l('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
 				);
 			
 			// password
@@ -665,7 +665,7 @@ class AdministrationView extends PageView {
 					'label',			// type
 					'labelPassword',	// id/name
 					'password',			// for
-					parent::lang('password')	// label text
+					_l('password')	// label text
 				);
 			$password = $form->add(
 					$formIds['password']['type'],		// type
@@ -676,7 +676,7 @@ class AdministrationView extends PageView {
 			$password->set_rule(
 					array(
 							'required' => array(
-									'error', parent::lang('required password!'),
+									'error', _l('required password!'),
 								),
 						)
 				);
@@ -686,7 +686,7 @@ class AdministrationView extends PageView {
 					'label',				// type
 					'labelPasswordConfirm',	// id/name
 					'passwordConfirm',				// for
-					parent::lang('repeat password')	// label text
+					_l('repeat password')	// label text
 				);
 			$passwordConfirm = $form->add(
 					$formIds['passwordConfirm']['type'],			// type
@@ -697,7 +697,7 @@ class AdministrationView extends PageView {
 			$passwordConfirm->set_rule(
 					array(
 						'compare' => array(
-							'password', 'error', parent::lang('has to be the same'),
+							'password', 'error', _l('has to be the same'),
 							
 						),
 					)
@@ -709,7 +709,7 @@ class AdministrationView extends PageView {
 					'label',		// type
 					'labelName',	// id/name
 					'name',			// for
-					parent::lang('name')	// label text
+					_l('name')	// label text
 				);
 			$name = $form->add(
 							$formIds['name']['type'],		// type
@@ -719,12 +719,12 @@ class AdministrationView extends PageView {
 			$name->set_rule(
 					array(
 							'required' => array(
-									'error', parent::lang('required name!'),
+									'error', _l('required name!'),
 								),
 							'regexp' => array(
 									$this->getGc()->get_config('name.regexp.zebra'),	// regexp
 									'error',	// error variable
-									parent::lang('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+									_l('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
 								),
 						)
 				);
@@ -732,7 +732,7 @@ class AdministrationView extends PageView {
 					'note',			// type
 					'noteName',		// id/name
 					'name',			// for
-					parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
+					_l('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
 				);
 			
 			// email
@@ -741,7 +741,7 @@ class AdministrationView extends PageView {
 					'label',		// type
 					'labelEmail',	// id/name
 					'email',			// for
-					parent::lang('emailaddress')	// label text
+					_l('emailaddress')	// label text
 				);
 			$name = $form->add(
 							$formIds['email']['type'],		// type
@@ -751,11 +751,11 @@ class AdministrationView extends PageView {
 			$name->set_rule(
 					array(
 							'required' => array(
-									'error', parent::lang('required name!'),
+									'error', _l('required name!'),
 								),
 							'email' => array(
 									'error',	// error variable
-									parent::lang('valid email'),	// message
+									_l('valid email'),	// message
 								),
 						)
 				);
@@ -763,7 +763,7 @@ class AdministrationView extends PageView {
 					'note',			// type
 					'noteEmail',		// id/name
 					'email',			// for
-					parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
+					_l('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
 				);
 			
 			// groups
@@ -783,7 +783,7 @@ class AdministrationView extends PageView {
 					'label',		// type
 					'labelGroups',	// id/name
 					'groups',			// for
-					parent::lang('groups')	// label text
+					_l('groups')	// label text
 				);
 			$groups = $form->add(
 					$formIds['groups']['type'],	// type
@@ -799,14 +799,14 @@ class AdministrationView extends PageView {
 					'note',		// type
 					'noteGroups',	// id/name
 					'groups',		// for
-					parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
+					_l('help').'&nbsp;'//.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
 				);
 			
 			// submit button
 			$form->add(
 					'submit',		// type
 					'buttonSubmitUp',	// id/name
-					parent::lang('add user')	// value
+					_l('add user')	// value
 				);
 			
 			// validate
@@ -840,7 +840,7 @@ class AdministrationView extends PageView {
 				$sOutput = new JudoIntranetSmarty();
 				$ps[] = array(
 						'params' => '',
-						'content' => parent::lang('successful added user:').' '.$data['name'].' ('.$user->get_id().')',
+						'content' => _l('successful added user:').' '.$data['name'].' ('.$user->get_id().')',
 					);
 				$sOutput->assign('ps', $ps);
 				$content .= $sOutput->fetch('smarty.p.tpl');
@@ -890,7 +890,7 @@ class AdministrationView extends PageView {
 				
 				$ps[] = array(
 						'params' => 'class="bold"',
-						'content' => parent::lang('edit group:').' '.$group->getName(),
+						'content' => _l('edit group:').' '.$group->getName(),
 					);
 				$sOutput->assign('ps', $ps);
 				// edit form
@@ -911,7 +911,7 @@ class AdministrationView extends PageView {
 						'label',		// type
 						'labelName',	// id/name
 						'name',			// for
-						parent::lang('group name')	// label text
+						_l('group name')	// label text
 					);
 				$name = $form->add(
 								$formIds['name']['type'],		// type
@@ -921,12 +921,12 @@ class AdministrationView extends PageView {
 				$name->set_rule(
 						array(
 								'required' => array(
-										'error', parent::lang('required name!'),
+										'error', _l('required name!'),
 									),
 								'regexp' => array(
 										$this->getGc()->get_config('name.regexp.zebra'),	// regexp
 										'error',	// error variable
-										parent::lang('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+										_l('allowed chars').' ['.$this->getGc()->get_config('name.desc').']',	// message
 									),
 							)
 					);
@@ -934,7 +934,7 @@ class AdministrationView extends PageView {
 						'note',			// type
 						'noteName',		// id/name
 						'name',			// for
-						parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
+						_l('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
 					);
 				
 				// subgroup of
@@ -956,7 +956,7 @@ class AdministrationView extends PageView {
 						'label',		// type
 						'labelSubgroupOf',	// id/name
 						'subgroupOf',			// for
-						parent::lang('parent group')	// label text
+						_l('parent group')	// label text
 					);
 				$subgroupOf = $form->add(
 						$formIds['subgroupOf']['type'],	// type
@@ -970,7 +970,7 @@ class AdministrationView extends PageView {
 				$subgroupOf->set_rule(
 						array(
 								'required' => array(
-										'error', parent::lang('required paren group!')
+										'error', _l('required paren group!')
 									),
 							)
 					);
@@ -978,14 +978,14 @@ class AdministrationView extends PageView {
 						'note',		// type
 						'noteSubgroupOf',	// id/name
 						'subgroupOf',		// for
-						parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
+						_l('help').'&nbsp;'//.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
 					);
 				
 				// submit button
 				$form->add(
 						'submit',		// type
 						'buttonSubmitUp',	// id/name
-						parent::lang('save group')	// value
+						_l('save group')	// value
 					);
 				
 				// validate
@@ -1007,7 +1007,7 @@ class AdministrationView extends PageView {
 					// output success message
 					$ps[] = array(
 							'params' => '',
-							'content' => parent::lang('successful saved group:').' '.$data['name'].' ('.$group->getId().')',
+							'content' => _l('successful saved group:').' '.$data['name'].' ('.$group->getId().')',
 						);
 					$sOutput->assign('ps', $ps);
 					$content .= $sOutput->fetch('smarty.p.tpl');
@@ -1049,26 +1049,26 @@ class AdministrationView extends PageView {
 					$form->add(
 						'submit',		// type
 						'buttonSubmit',	// id/name
-						parent::lang('delete'),	// value
-						array('title' => parent::lang('delete'))
+						_l('delete'),	// value
+						array('title' => _l('delete'))
 					);
 					
 					// smarty-link
 					$link = array(
 									'params' => 'class="submit"',
 									'href' => 'administration.php?id=user&action=group',
-									'title' => parent::lang('cancel'),
-									'content' => parent::lang('cancel')
+									'title' => _l('cancel'),
+									'content' => _l('cancel')
 								);
 					$sConfirmation->assign('link', $link);
 					$sConfirmation->assign('spanparams', 'id="cancel"');
-					$sConfirmation->assign('message', parent::lang('do you want to completely remove this group?').'&nbsp;');//.$this->helpButton(HELP_MSG_DELETE));
+					$sConfirmation->assign('message', _l('do you want to completely remove this group?').'&nbsp;');//.$this->helpButton(HELP_MSG_DELETE));
 					$sConfirmation->assign('form', $form->render('', true));
 					
 					// validate
 					if($form->validate()) {
 						
-						$sConfirmation->assign('message', parent::lang('successful deleted group!'));
+						$sConfirmation->assign('message', _l('successful deleted group!'));
 						$sConfirmation->assign('form', '');
 						
 						$group = new Group($gid);
@@ -1111,7 +1111,7 @@ class AdministrationView extends PageView {
 					'label',		// type
 					'labelName',	// id/name
 					'name',			// for
-					parent::lang('group name')	// label text
+					_l('group name')	// label text
 				);
 			$name = $form->add(
 							$formIds['name']['type'],		// type
@@ -1120,12 +1120,12 @@ class AdministrationView extends PageView {
 			$name->set_rule(
 					array(
 							'required' => array(
-									'error', parent::lang('required group name!'),
+									'error', _l('required group name!'),
 								),
 							'regexp' => array(
 									$this->getGc()->get_config('name.regexp.zebra'),	// regexp
 									'error',	// error variable
-									parent::lang('class.AdministrationView#groupContent#form#rule.regexp.allowedChars').' ['.$this->getGc()->get_config('name.desc').']',	// message
+									_l('class.AdministrationView#groupContent#form#rule.regexp.allowedChars').' ['.$this->getGc()->get_config('name.desc').']',	// message
 								),
 						)
 				);
@@ -1133,7 +1133,7 @@ class AdministrationView extends PageView {
 					'note',			// type
 					'noteName',		// id/name
 					'name',			// for
-					parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
+					_l('help').'&nbsp;'//.$this->helpButton(HELP_MSG_GROUPNAME)	// note text
 				);
 			
 			// subgroup of
@@ -1153,7 +1153,7 @@ class AdministrationView extends PageView {
 					'label',		// type
 					'labelSubgroupOf',	// id/name
 					'subgroupOf',			// for
-					parent::lang('parent group')	// label text
+					_l('parent group')	// label text
 				);
 			$subgroupOf = $form->add(
 					$formIds['subgroupOf']['type'],	// type
@@ -1167,7 +1167,7 @@ class AdministrationView extends PageView {
 			$subgroupOf->set_rule(
 					array(
 							'required' => array(
-									'error', parent::lang('required parent group!')
+									'error', _l('required parent group!')
 								),
 						)
 				);
@@ -1175,14 +1175,14 @@ class AdministrationView extends PageView {
 					'note',		// type
 					'noteSubgroupOf',	// id/name
 					'subgroupOf',		// for
-					parent::lang('help').'&nbsp;'//.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
+					_l('help').'&nbsp;'//.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
 				);
 			
 			// submit button
 			$form->add(
 					'submit',		// type
 					'buttonSubmitUp',	// id/name
-					parent::lang('add group')	// value
+					_l('add group')	// value
 				);
 			
 			// validate
@@ -1205,7 +1205,7 @@ class AdministrationView extends PageView {
 				// output success message
 				$sOutput = new JudoIntranetSmarty();
 				$sOutput->assign('params', '');
-				$sOutput->assign('content', parent::lang('successful added group:').' '.$data['name'].' ('.$newId.')');
+				$sOutput->assign('content', _l('successful added group:').' '.$data['name'].' ('.$newId.')');
 				$content .= $sOutput->fetch('smarty.p.tpl');
 			} else {
 				$content .= $form->render('', true);
@@ -1293,7 +1293,7 @@ class AdministrationView extends PageView {
 				$form->add(
 						'submit',		// type
 						'buttonSubmitUp',	// id/name
-						parent::lang('save')	// value
+						_l('save')	// value
 					);
 				
 				// walk through navi and add to form
@@ -1308,7 +1308,7 @@ class AdministrationView extends PageView {
 				$form->add(
 						'submit',		// type
 						'buttonSubmitLow',	// id/name
-						parent::lang('save')	// value
+						_l('save')	// value
 					);
 				
 				// validate
@@ -1324,8 +1324,8 @@ class AdministrationView extends PageView {
 					// output success message
 					$sOutput = new JudoIntranetSmarty();
 					$data = array(
-							array('params' => 'class="bold"', 'content' => (!is_null($parentNavi) ? parent::lang($parentNavi->getName()).' &rarr; ' : '').parent::lang($navi->getName()).' ('.$navi->getRequiredPermission().') '),
-							array('params' => '', 'content' => parent::lang('successful saved permissions')),
+							array('params' => 'class="bold"', 'content' => (!is_null($parentNavi) ? _l($parentNavi->getName()).' &rarr; ' : '')._l($navi->getName()).' ('.$navi->getRequiredPermission().') '),
+							array('params' => '', 'content' => _l('successful saved permissions')),
 						);
 					$sOutput->assign('ps', $data);
 					return $sOutput->fetch('smarty.p.tpl');
@@ -1334,7 +1334,7 @@ class AdministrationView extends PageView {
 					// output form
 					$sOutput = new JudoIntranetSmarty();
 					$data = array(
-							array('params' => 'class="bold"', 'content' => (!is_null($parentNavi) ? parent::lang($parentNavi->getName()).' &rarr; ' : '').parent::lang($navi->getName()).' ('.$navi->getRequiredPermission().') '),
+							array('params' => 'class="bold"', 'content' => (!is_null($parentNavi) ? _l($parentNavi->getName()).' &rarr; ' : '')._l($navi->getName()).' ('.$navi->getRequiredPermission().') '),
 							array('params' => '', 'content' => $form->render('', true)),
 						);
 					$sOutput->assign('ps', $data);
@@ -1365,7 +1365,7 @@ class AdministrationView extends PageView {
 		
 		// prepare images
 		// read
-		$imgReadText = parent::lang('permission: read/list');
+		$imgReadText = _l('permission: read/list');
 		$imgRead = array(
 				'params' => 'class="iconRead clickable" title="'.$imgReadText.'" onclick="selectRadio(\''.$radioName.'_r\')"',
 				'src' => 'img/permissions_read.png',
@@ -1375,7 +1375,7 @@ class AdministrationView extends PageView {
 		$sImgReadTemplate->assign('img', $imgRead);
 		
 		// edit
-		$imgEditText = parent::lang('permission: edit');
+		$imgEditText = _l('permission: edit');
 		$imgEdit = array(
 				'params' => 'class="iconEdit clickable" title="'.$imgEditText.'" onclick="selectRadio(\''.$radioName.'_w\')"',
 				'src' => 'img/permissions_edit.png',
@@ -1387,9 +1387,9 @@ class AdministrationView extends PageView {
 		// prepare clear radio link
 		$sImgClearTemplate = new JudoIntranetSmarty();
 		$img = array(
-				'params' => 'class="clickable" onclick="clearRadio(\''.$radioName.'\')" title="'.parent::lang('remove permissions').'"',
+				'params' => 'class="clickable" onclick="clearRadio(\''.$radioName.'\')" title="'._l('remove permissions').'"',
 				'src' => 'img/permissions_delete.png',
-				'alt' => parent::lang('remove permissions'),
+				'alt' => _l('remove permissions'),
 			);
 		$sImgClearTemplate->assign('img', $img);
 		
@@ -1414,7 +1414,7 @@ class AdministrationView extends PageView {
 				'note',			// type
 				'note_'.$radioName,	// id/name
 				$radioName,		// for
-				parent::lang('completely remove permission on this navi entry').':&nbsp;'.$sImgClearTemplate->fetch('smarty.img.tpl')	// note text
+				_l('completely remove permission on this navi entry').':&nbsp;'.$sImgClearTemplate->fetch('smarty.img.tpl')	// note text
 			);
 	}
 	
@@ -1427,7 +1427,7 @@ class AdministrationView extends PageView {
 	private function createNewYear() {
 		
 		// smarty caption
-		$this->getTpl()->assign('caption', parent::lang('Create new year'));
+		$this->getTpl()->assign('caption', _l('Create new year'));
 		
 		// prepare template
 		$sCreateNewYear = new JudoIntranetSmarty();

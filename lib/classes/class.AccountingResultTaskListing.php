@@ -96,11 +96,11 @@ class AccountingResultTaskListing extends Listing implements ListingInterface {
 		// assign table header
 		$th = array(
 				'',
-				parent::lang('name', true),
-				parent::lang('date', true),
-				parent::lang('desc', true),
-				parent::lang('last modified', true),
-				parent::lang('actions', true),
+				_l('name'),
+				_l('date'),
+				_l('desc'),
+				_l('last modified'),
+				_l('actions'),
 			);
 		$tpl->assign('ths', $th);
 		

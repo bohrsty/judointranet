@@ -283,27 +283,27 @@ class Protocol extends Page {
 	public function details() {
 		
 		// prepare translation
-		$stateTranslation[0] = parent::lang('in progress');
-		$stateTranslation[1] = parent::lang('in progress');
-		$stateTranslation[2] = parent::lang('published');
+		$stateTranslation[0] = _l('in progress');
+		$stateTranslation[1] = _l('in progress');
+		$stateTranslation[2] = _l('published');
 		
 		// prepare data
 		$correctable = $this->get_correctable(false);
 		$data = array(
-					'status' => parent::lang('<span>state:</span><br />').$stateTranslation[$correctable['status']],
-					'date' => parent::lang('<span>date:</span><br />').$this->get_date('d.m.Y'),
-					'location' => parent::lang('<span>location:</span><br />').$this->get_location(),
-					'member0' => parent::lang('<span>participants (attendant):</span><br />').$this->get_member(false,0),
-					'member1' => parent::lang('<span>participants (excused):</span><br />').$this->get_member(false,1),
-					'member2' => parent::lang('<span>participants (without excuse):</span><br />').$this->get_member(false,2),
-					'recorder' => parent::lang('<span>recorder:</span><br />').$this->get_recorder()
+					'status' => _l('<span>state:</span><br />').$stateTranslation[$correctable['status']],
+					'date' => _l('<span>date:</span><br />').$this->get_date('d.m.Y'),
+					'location' => _l('<span>location:</span><br />').$this->get_location(),
+					'member0' => _l('<span>participants (attendant):</span><br />').$this->get_member(false,0),
+					'member1' => _l('<span>participants (excused):</span><br />').$this->get_member(false,1),
+					'member2' => _l('<span>participants (without excuse):</span><br />').$this->get_member(false,2),
+					'recorder' => _l('<span>recorder:</span><br />').$this->get_recorder()
 		);
 		if(is_numeric($this->get_type())) {
-			$data['type'] = parent::lang('<span>kind:</span><br />').DB::returnValueById($this->get_type(),'protocol_types','name');
+			$data['type'] = _l('<span>kind:</span><br />').DB::returnValueById($this->get_type(),'protocol_types','name');
 		} else {
-			$data['type'] = parent::lang('<span>kind:</span><br />').$this->get_type();
+			$data['type'] = _l('<span>kind:</span><br />').$this->get_type();
 		}
-		$data['owner'] = parent::lang('<span>owner:</span><br />').$this->get_owner('name');
+		$data['owner'] = _l('<span>owner:</span><br />').$this->get_owner('name');
 		
 		// return
 		return $data;
