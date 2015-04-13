@@ -53,7 +53,10 @@ Thirdparty licenses see LICENSE
 [cc] moved error handling from class Error to CustomExceptions and cleanup
 --
 [!!] fixed MySQL column type to TIMESTAMP in setupSql script
-[!!] unified usage of "=== false" in testing if a MySQL error occured using Db::arrayValue() 
+[!!] unified usage of "=== false" in testing if a MySQL error occured using Db::arrayValue()
+--
+[!!] added check against count == 0 in Object::getTableConfig()
+[!!] added columns to display in user table config (r006) and comments
 
 
 

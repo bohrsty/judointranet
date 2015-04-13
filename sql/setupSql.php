@@ -436,14 +436,14 @@ function mysql_6() {
 	if(!Db::executeQuery('
 		INSERT IGNORE INTO `config` (`name`, `value`, `comment`) 
 			VALUES
-				(\'usertableCols.club\', \'\', \'\'),
-				(\'usertableCols.contact\', \'\', \'\'),
-				(\'usertableCols.judo\', \'\', \'\'),
-				(\'usertableCols.judo_belt\', \'\', \'\'),
-				(\'usertableCols.location\', \'\', \'\'),
-				(\'usertableCols.protocol_types\', \'\', \'\'),
-				(\'usertableCols.staff\', \'\', \'\'),
-				(\'usertableCols.defaults\', \'\', \'\')
+				(\'usertableCols.club\', \'number,name,valid\', \'configuration for table club\'),
+				(\'usertableCols.contact\', \'number,name,valid\', \'configuration for table contact\'),
+				(\'usertableCols.judo\', \'class,type,weightclass,time,agegroups,year,valid\', \'configuration for table judo\'),
+				(\'usertableCols.judo_belt\', \'name,color,valid\', \'configuration for table judo_belt\'),
+				(\'usertableCols.location\', \'club_id,hall,street,zip,city,valid\', \'configuration for table location\'),
+				(\'usertableCols.protocol_types\', \'name,valid\', \'configuration for table protocol_types\'),
+				(\'usertableCols.staff\', \'name,email,street,zip,city,valid\', \'configuration for table staff\'),
+				(\'usertableCols.defaults\', \'name,category,value,valid\', \'configuration for table defaults\')
 	')) {
 		$return['returnValue'] = false;
 		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';

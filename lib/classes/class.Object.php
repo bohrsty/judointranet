@@ -521,11 +521,13 @@ class Object {
 				
 				// put in array for select option
 				$fkStart = array('' => _l('- choose -'));
-				foreach($fkArray as $values) {
-					
-					$foreignKeys[$fk][$values['id']] = $values['readable_name'];
+				if(count($fkArray) > 0) {
+					foreach($fkArray as $values) {
+						
+						$foreignKeys[$fk][$values['id']] = $values['readable_name'];
+					}
+					$foreignKeys[$fk] = $fkStart + $foreignKeys[$fk];
 				}
-				$foreignKeys[$fk] = $fkStart + $foreignKeys[$fk];
 			}
 		}
 		
