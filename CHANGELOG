@@ -51,6 +51,9 @@ Thirdparty licenses see LICENSE
 [cc] removed usage of old Object::lang() translation method, replaced with _l()
 --
 [cc] moved error handling from class Error to CustomExceptions and cleanup
+--
+[!!] fixed MySQL column type to TIMESTAMP in setupSql script
+[!!] unified usage of "=== false" in testing if a MySQL error occured using Db::arrayValue() 
 
 
 

@@ -681,7 +681,7 @@ class User extends Object {
 				}
 			} else {
 				$n = null;
-			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+				throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 			}
 		} else {
 			
@@ -710,6 +710,10 @@ class User extends Object {
 							$groupIds,
 						)
 				);
+				if($cachedCalendarResult === false) {
+					$n = null;
+					throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+				}
 				// protocol
 				$sql = '
 						SELECT DISTINCT `f`.`id`

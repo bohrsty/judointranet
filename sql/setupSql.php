@@ -604,7 +604,7 @@ function mysql_8() {
 				FROM `calendar`
 				WHERE `id`=1
 		');
-		if(!$firstRow) {
+		if($firstRow === false) {
 			$return['returnValue'] = false;
 			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
@@ -707,7 +707,7 @@ function mysql_8() {
 			MYSQL_ASSOC
 		);
 	
-		if(!is_array($sortableGroups)) {
+		if($sortableGroups === false) {
 			$return['returnValue'] = false;
 			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
@@ -755,7 +755,7 @@ function mysql_8() {
 				MYSQL_ASSOC,
 				array($oldGid)
 			);
-			if(!is_array($rights)) {
+			if($rights === false) {
 				$return['returnValue'] = false;
 				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 				return $return;
@@ -802,7 +802,7 @@ function mysql_8() {
 			',
 			MYSQL_ASSOC
 		);
-		if(!is_array($groups)) {
+		if($groups === false) {
 			$return['returnValue'] = false;
 			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
@@ -850,6 +850,11 @@ function mysql_8() {
 				',
 				MYSQL_ASSOC
 			);
+			if($group2group === false) {
+				$return['returnValue'] = false;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+				return $return;
+			}
 			// set parent accordingly
 			for($i=0; $i<count($group2group); $i++) {
 				
@@ -1038,6 +1043,11 @@ function mysql_9() {
 				MYSQL_ASSOC,
 				array(implode(',', $gids))
 			);
+			if($calendarRights === false) {
+				$return['returnValue'] = false;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+				return $return;
+			}
 			
 			// insert into permissions
 			if(count($calendarRights) > 0) {
@@ -1087,6 +1097,11 @@ function mysql_9() {
 				MYSQL_ASSOC,
 				array(implode(',', $gids))
 			);
+			if($protocolRights === false) {
+				$return['returnValue'] = false;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+				return $return;
+			}
 			
 			// insert into permissions
 			if(count($protocolRights) > 0) {
@@ -1133,6 +1148,11 @@ function mysql_9() {
 				',
 				MYSQL_ASSOC
 			);
+			if($navi === false) {
+				$return['returnValue'] = false;
+				$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+				return $return;
+			}
 			
 			// read permission for each navi entry
 			for($i=0; $i<count($navi); $i++) {
@@ -1152,6 +1172,11 @@ function mysql_9() {
 					MYSQL_ASSOC,
 					array($md5, implode(',', $gids))
 				);
+				if($naviRights === false) {
+					$return['returnValue'] = false;
+					$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+					return $return;
+				}
 				
 				// insert into permissions
 				if(count($naviRights) > 0) {
@@ -1681,7 +1706,7 @@ function mysql_16() {
 		',
 		MYSQL_ASSOC
 	);
-	if(!$existingValues) {
+	if($existingValues === false) {
 		$return['returnValue'] = false;
 		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
@@ -1858,7 +1883,7 @@ function mysql_18() {
 		SELECT * FROM `config` WHERE `name` LIKE \'usertableCols.%\'
 		',
 		MYSQL_ASSOC);
-	if(!is_array($usertableCols)) {
+	if($usertableCols === false) {
 		$return['returnValue'] = false;
 		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
@@ -1918,7 +1943,7 @@ function mysql_18() {
 				FROM `club`
 				WHERE `id`=1
 		');
-		if(!$firstRow) {
+		if($firstRow === false) {
 			$return['returnValue'] = false;
 			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
@@ -2161,7 +2186,7 @@ function mysql_18() {
 				FROM `groups`
 				WHERE `id`=2
 		');
-		if(!$secondRow) {
+		if($secondRow === false) {
 			$return['returnValue'] = false;
 			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
@@ -2276,7 +2301,7 @@ function mysql_18() {
 				FROM `result`
 		',
 		MYSQL_ASSOC);
-		if(!$resultIds) {
+		if($resultIds === false) {
 			$return['returnValue'] = false;
 			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
@@ -2434,7 +2459,7 @@ function mysql_18() {
 			WHERE `config`<>\'\'
 	',
 	MYSQL_ASSOC);
-	if(!$configs) {
+	if($configs === false) {
 		$return['returnValue'] = false;
 		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
@@ -2508,7 +2533,7 @@ function mysql_19() {
 			WHERE `name` LIKE \'usertableConfig.%\'
 		',
 		MYSQL_NUM);
-		if(!$configs) {
+		if($configs === false) {
 			$return['returnValue'] = false;
 			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 			return $return;
@@ -2666,7 +2691,7 @@ function mysql_19() {
 			ORDER BY `id` ASC
 	',
 	MYSQL_ASSOC);
-	if(!$numbers) {
+	if($numbers === false) {
 		$return['returnValue'] = false;
 		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
@@ -3076,7 +3101,7 @@ function mysql_22() {
 		  `id` INT(11) NOT NULL AUTO_INCREMENT , 
 		  `name` VARCHAR(100) NOT NULL , 
 		  `valid` BOOLEAN NOT NULL , 
-		  `last_modified` DATETIME on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+		  `last_modified` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
 		  `modified_by` INT(11) NOT NULL,
 		  PRIMARY KEY (`id`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
@@ -3108,7 +3133,7 @@ function mysql_22() {
 		  `testimonial_id` int(11) NOT NULL,
 		  `description` text NOT NULL,
 		  `valid` tinyint(1) NOT NULL,
-		  `last_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		  `last_modified` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		  `modified_by` int(11) NOT NULL,
 		  PRIMARY KEY (`id`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
@@ -3207,7 +3232,7 @@ function mysql_22() {
 		  `id` INT(11) NOT NULL AUTO_INCREMENT , 
 		  `name` VARCHAR(100) NOT NULL , 
 		  `valid` BOOLEAN NOT NULL , 
-		  `last_modified` DATETIME on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+		  `last_modified` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
 		  `modified_by` INT(11) NOT NULL,
 		  PRIMARY KEY (`id`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
@@ -3248,7 +3273,7 @@ function mysql_22() {
 		  `subject` varchar(100) NOT NULL,
 		  `content` text NOT NULL,
 		  `valid` tinyint(1) NOT NULL,
-		  `last_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		  `last_modified` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		  PRIMARY KEY (`id`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 	')) {

@@ -1218,7 +1218,7 @@ class AdministrationView extends PageView {
 					';
 			$naviEntries = Db::arrayValue($sql, MYSQL_ASSOC);
 			
-			if(!is_array($naviEntries)) {
+			if($naviEntries === false) {
 				throw new MysqlErrorException($this, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 			}
 			

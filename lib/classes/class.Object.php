@@ -514,7 +514,7 @@ class Object {
 				// get sql result for fk
 				$fkArray = Db::arrayValue($sql, MYSQL_ASSOC);
 				
-				if(!is_array($fkArray)) {
+				if($fkArray === false) {
 					$n = null;
 					throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 				}
