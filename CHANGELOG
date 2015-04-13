@@ -49,6 +49,8 @@ Thirdparty licenses see LICENSE
 [++] deletion of tribute incl. according history entries 
 --
 [cc] removed usage of old Object::lang() translation method, replaced with _l()
+--
+[cc] moved error handling from class Error to CustomExceptions and cleanup
 
 
 

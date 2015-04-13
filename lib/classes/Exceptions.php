@@ -726,4 +726,469 @@ class TributeNotExistsException extends CustomException {
 }
 
 
+
+/**
+ * UidNotExistsException is thrown, if the user id is not in database
+ */
+class UidNotExistsException extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(false);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return _l('Error: user not exists');
+	}
+}
+
+
+
+/**
+ * GidNotExistsException is thrown, if the group id is not in database
+ */
+class GidNotExistsException extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(false);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return _l('Error: group not exists');
+	}
+}
+
+
+
+/**
+ * ObjectInUseException is thrown, if the user/group is linked to another object
+ */
+class ObjectInUseException extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(false);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return _l('Error: object in use');
+	}
+}
+
+
+
+/**
+ * NidNotExistsException is thrown, if the navigation id is not in database
+ */
+class NidNotExistsException extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(false);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return _l('Error: navi entry not exists');
+	}
+}
+
+
+
+/**
+ * WrongParamsException is thrown, if the given parameters are wrong
+ */
+class WrongParamsException extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(false);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return _l('Error: wrong params');
+	}
+}
+
+
+
+/**
+ * MissingParamsException is thrown, if the required parameters are not given
+ */
+class MissingParamsException extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(false);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return _l('Error: missing params');
+	}
+}
+
+
+
+/**
+ * AnnNotExistsException is thrown, if the announcement is not found in database
+ */
+class AnnNotExistsException extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(false);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return _l('Error: no announcement for calendar entry');
+	}
+}
+
+
+
+/**
+ * CidNotExistsException is thrown, if the calendar id is not found in database
+ */
+class CidNotExistsException extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(false);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return _l('Error: calendar entry not exists');
+	}
+}
+
+
+
+/**
+ * HeaderSentException is thrown, if any HTML header is already sent
+ */
+class HeaderSentException extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(false);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return _l('Error: header already sent before download');
+	}
+}
+
+
+
+/**
+ * FileNotExistsException is thrown, if the file doesn't exists in database
+ */
+class FileNotExistsException extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(false);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return _l('Error: file not exists');
+	}
+}
+
+
+
+/**
+ * ObjectNotExistsException is thrown, if the object doesn't exists in database
+ */
+class ObjectNotExistsException extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(false);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return _l('Error: object not exists');
+	}
+}
+
+
+
+/**
+ * NotOwnedException is thrown, if the inventory object isn't owned by actual user
+ */
+class NotOwnedException extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(false);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return _l('Error: not owner of object');
+	}
+}
+
+
+
+/**
+ * NotGivenToException is thrown, if the inventory object isn't given to another user
+ */
+class NotGivenToException extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(false);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return _l('Error: object not given to');
+	}
+}
+
+
+
+/**
+ * NotGivenException is thrown, if the inventory object isn't prepared to be given
+ */
+class NotGivenException extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(false);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return _l('Error: object not given');
+	}
+}
+
+
+
+/**
+ * DbActionUnknownException is thrown, if the action to be executed on database is unknown
+ */
+class DbActionUnknownException extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(false);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return _l('Error: not saved in database');
+	}
+}
+
+
 ?>

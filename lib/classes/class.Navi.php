@@ -145,8 +145,8 @@ class Navi extends PageView {
 		if($result) {
 			list($name, $parent, $fileParam, $position, $show, $valid, $requiredPermission) = $result->fetch_array(MYSQL_NUM);
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// prepare sql statement to get subgroups
@@ -168,8 +168,8 @@ class Navi extends PageView {
 				$subItems[] = new Navi($subId);
 			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// set values
@@ -372,8 +372,8 @@ class Navi extends PageView {
 		if($result) {
 			list($id) = $result->fetch_array(MYSQL_NUM);
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// execute statement
@@ -408,8 +408,8 @@ class Navi extends PageView {
 		if(!is_null($data)) {
 			return $data > 0;
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 	}
 	
@@ -433,8 +433,8 @@ class Navi extends PageView {
 		// get data
 		$items = array();
 		if(!$result) {
-			$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-			self::getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 	}
 	
@@ -487,8 +487,8 @@ class Navi extends PageView {
 			// get data
 			$items = array();
 			if(!$result) {
-				$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-				self::getError()->handle_error($errno);
+				$n = null;
+				throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 			}
 		}
 	}

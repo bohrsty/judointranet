@@ -133,8 +133,8 @@ class Group extends Object {
 		if($result) {
 			list($name, $parent, $valid) = $result->fetch_array(MYSQL_NUM);
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// prepare sql statement to get subgroups
@@ -156,8 +156,8 @@ class Group extends Object {
 				$subGroups[] = new Group($subId);
 			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// set values
@@ -229,8 +229,8 @@ class Group extends Object {
 		if($result) {
 			list($id) = $result->fetch_array(MYSQL_NUM);
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// create group
@@ -293,8 +293,8 @@ class Group extends Object {
 		if($result) {
 			list($mode) = $result->fetch_array(MYSQL_NUM);
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// return
@@ -327,8 +327,8 @@ class Group extends Object {
 		if(!is_null($data)) {
 			return $data > 0;
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 	}
 	
@@ -399,8 +399,8 @@ class Group extends Object {
 		}
 		
 		if(!$result) {
-			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// set new id and return it
@@ -431,8 +431,8 @@ class Group extends Object {
 		);
 		
 		if(!$result) {
-			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 	}
 	
@@ -482,8 +482,8 @@ class Group extends Object {
 		$used = Db::singleValue($sql, array($gid));
 		
 		if(is_null($used)) {
-			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// return

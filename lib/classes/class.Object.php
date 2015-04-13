@@ -68,12 +68,6 @@ class Object {
 			$_SESSION['user'] = $user;
 		}
 	}
-	public function getError() {
-		return $GLOBALS['error'];
-	}
-	public function setError($error) {
-		$GLOBALS['error'] = $error;
-	}
 	public function get_get(){
 		return $this->get;
 	}
@@ -109,9 +103,6 @@ class Object {
 		
 		// set user
 		$this->setUser();
-		
-		// set error
-		$this->setError(new Error());
 		
 		// read $_GET and $_POST
 		$this->readGlobals();
@@ -555,6 +546,23 @@ class Object {
 	}
 	public static function staticDebugAll() {
 		return file_exists(JIPATH.'/DEBUG_ALL') === true;
+	}
+	
+	
+	/**
+	 * afterLogin() returns the "r" url parameter used for login.php to redirect after login
+	 * 
+	 * @param string $prefix prefix to separate from the rest of the url
+	 * @return string the url parameter to redirect after login
+	 */
+	public static function afterLogin($prefix) {
+		
+		if(self::staticGet('id') != 'logout') {
+			return $prefix.'r='.base64_encode($_SERVER['REQUEST_URI']);
+		}
+		
+		// return
+		return '';
 	}
 }
 

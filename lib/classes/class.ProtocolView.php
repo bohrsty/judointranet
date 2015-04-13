@@ -45,13 +45,7 @@ class ProtocolView extends PageView {
 	public function __construct() {
 		
 		// setup parent
-		try {
-			parent::__construct();
-		} catch(Exception $e) {
-			
-			// handle error
-			$this->getError()->handle_error($e);
-		}
+		parent::__construct();
 	}
 	
 	/**
@@ -169,17 +163,8 @@ class ProtocolView extends PageView {
 					break;
 					
 					default:
-						
 						// id set, but no functionality
-						$errno = $this->getError()->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
-						$this->getError()->handle_error($errno);
-						
-						// smarty
-						$this->getTpl()->assign('title', '');
-						$this->getTpl()->assign('main', $this->getError()->to_html($errno));
-						$this->getTpl()->assign('jquery', true);
-						$this->getTpl()->assign('zebraform', false);
-						$this->getTpl()->assign('tinymce', false);
+						throw new GetUnknownIdException($this, $this->get('id'));
 					break;
 				}
 			} else {
@@ -1303,11 +1288,7 @@ class ProtocolView extends PageView {
 				return $form->render('lib/zebraTemplate.php', true, array($formIds, 'smarty.zebra.permissions.tpl', $permissionConfig,));
 			}
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new NotAuthorizedException($this);
 		}
 	}
 	
@@ -1382,11 +1363,7 @@ class ProtocolView extends PageView {
 			$sPd->assign('page', $div_out);
 			return $sPd->fetch('smarty.protocol.show.tpl');
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new NotAuthorizedException($this);
 		}
 	}
 	
@@ -1491,31 +1468,22 @@ class ProtocolView extends PageView {
 				$sConfirmation->assign('form', '');
 				
 				// write entry
-				try {
-					$protocol->writeDb('update');
-						
-					// delete cached file
-					$fid = File::idFromCache('protocol|'.$protocol->get_id());
-					File::delete($fid);
-					// delete attachements
-					File::deleteAttachedFiles('protocol',$protocol->get_id());
+				$protocol->writeDb('update');
 					
-					// set js redirection
-					$this->jsRedirectTimeout('protocol.php?id=listall');
-				} catch(Exception $e) {
-					$this->getError()->handle_error($e);
-					return $this->getError()->to_html($e);
-				}
+				// delete cached file
+				$fid = File::idFromCache('protocol|'.$protocol->get_id());
+				File::delete($fid);
+				// delete attachements
+				File::deleteAttachedFiles('protocol',$protocol->get_id());
+				
+				// set js redirection
+				$this->jsRedirectTimeout('protocol.php?id=listall');
 			}
 			
 			// smarty return
 			return $sConfirmation->fetch('smarty.confirmation.tpl');
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new NotAuthorizedException($this);
 		}
 	}
 
@@ -1833,11 +1801,7 @@ class ProtocolView extends PageView {
 				}
 			}
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new NotAuthorizedException($this);
 		}
 	}
 }

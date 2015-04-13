@@ -158,8 +158,8 @@ class Tribute extends Page {
 		MYSQL_ASSOC,
 		array($id,));
 		if($result === false) {
-			$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-			self::getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// set variables

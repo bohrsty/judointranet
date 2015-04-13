@@ -44,13 +44,7 @@ class CalendarView extends PageView {
 	public function __construct() {
 		
 		// setup parent
-		try {
-			parent::__construct();
-		} catch(Exception $e) {
-			
-			// handle error
-			$this->getError()->handle_error($e);
-		}
+		parent::__construct();
 	}
 	
 	/*
@@ -144,12 +138,7 @@ class CalendarView extends PageView {
 							// smarty
 							$this->getTpl()->assign('main', $this->edit($this->get('cid')));
 						} else {
-							
-							// error
-							$errno = $this->getError()->error_raised('CidNotExists','edit',$this->get('cid'));
-							$this->getError()->handle_error($errno);
-							// smarty
-							$this->getTpl()->assign('main', $this->getError()->to_html($errno));
+							throw new CidNotExistsException($this, $this->get('cid'));
 						}
 					break;
 					
@@ -165,12 +154,7 @@ class CalendarView extends PageView {
 							// smarty
 							$this->getTpl()->assign('main', $this->delete($this->get('cid')));
 						} else {
-							
-							// error
-							$errno = $this->getError()->error_raised('CidNotExists','delete',$this->get('cid'));
-							$this->getError()->handle_error($errno);
-							// smarty
-							$this->getTpl()->assign('main', $this->getError()->to_html($errno));
+							throw new CidNotExistsException($this, $this->get('cid'));
 						}
 					break;
 					
@@ -202,14 +186,7 @@ class CalendarView extends PageView {
 					default:
 						
 						// id set, but no functionality
-						$errno = $this->getError()->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
-						$this->getError()->handle_error($errno);
-						
-						// smarty
-						$this->getTpl()->assign('title', '');
-						$this->getTpl()->assign('main', $this->getError()->to_html($errno));
-						$this->getTpl()->assign('jquery', true);
-						$this->getTpl()->assign('zebraform', false);
+						throw new GetUnknownIdException($this, $this->get('id'));
 					break;
 				}
 			} else {
@@ -1387,49 +1364,40 @@ class CalendarView extends PageView {
 				$sCD = new JudoIntranetSmarty();
 				
 				// write entry
-				try {
-					$calendar->write_db('update');
-						
-					// create cached file
-					$fid = File::idFromCache('calendar|'.$calendar->get_id());
-					if($fid !== false) {
-						$calendar->createCachedFile($fid);
-					}
-				
-					// write permissions
-					$calendar->dbDeletePermission();
-					$calendar->dbWritePermission($permissions);
+				$calendar->write_db('update');
 					
-					// create file objects
-					$fileIds = File::attachedTo('calendar', $cid);
-					$fileObjects = array();
-					foreach($fileIds as $id) {
-						$fileObjects[] = new File($id);
-					}
-					
-					// set js redirection
-					$this->jsRedirectTimeout('calendar.php?id=listall');
-					
-					// smarty
-					$sCD->assign('data', $calendar->detailsToHtml());
-					$sCD->assign('files', $fileObjects);
-					$sCD->assign('attached', _l('<b>files attached</b>'));
-					$sCD->assign('none', _l('- none -'));
-					$sCD->assign('fileHref', 'file.php?id=download&fid=');
-					return $sCD->fetch('smarty.calendar.details.tpl');
-				} catch(Exception $e) {
-					$this->getError()->handle_error($e);
-					return $this->getError()->to_html($e);
+				// create cached file
+				$fid = File::idFromCache('calendar|'.$calendar->get_id());
+				if($fid !== false) {
+					$calendar->createCachedFile($fid);
 				}
+			
+				// write permissions
+				$calendar->dbDeletePermission();
+				$calendar->dbWritePermission($permissions);
+				
+				// create file objects
+				$fileIds = File::attachedTo('calendar', $cid);
+				$fileObjects = array();
+				foreach($fileIds as $id) {
+					$fileObjects[] = new File($id);
+				}
+				
+				// set js redirection
+				$this->jsRedirectTimeout('calendar.php?id=listall');
+				
+				// smarty
+				$sCD->assign('data', $calendar->detailsToHtml());
+				$sCD->assign('files', $fileObjects);
+				$sCD->assign('attached', _l('<b>files attached</b>'));
+				$sCD->assign('none', _l('- none -'));
+				$sCD->assign('fileHref', 'file.php?id=download&fid=');
+				return $sCD->fetch('smarty.calendar.details.tpl');
 			} else {
 				return $form->render('lib/zebraTemplate.php', true, array($formIds, 'smarty.zebra.permissions.tpl', $permissionConfig,));
 			}
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new NotAuthorizedException($this);
 		}
 	}
 	
@@ -1504,37 +1472,28 @@ class CalendarView extends PageView {
 				$sConfirmation->assign('form', '');
 				
 				// write entry
-				try {
-					$calendar->write_db('update');
-						
-					// delete cached file
-					$fid = File::idFromCache('calendar|'.$calendar->get_id());
-					if($fid !== false) {
-						File::delete($fid);
-					}
-					// delete attachments
-					File::deleteAttachedFiles('calendar',$calendar->get_id());
-					// delete results
-					foreach(Result::getIdsForCalendar($cid) as $resultId) {
-						Result::delete($resultId);
-					}
+				$calendar->write_db('update');
 					
-					// set js redirection
-					$this->jsRedirectTimeout('calendar.php?id=listall');
-				} catch(Exception $e) {
-					$this->getError()->handle_error($e);
-					return $this->getError()->to_html($e);
+				// delete cached file
+				$fid = File::idFromCache('calendar|'.$calendar->get_id());
+				if($fid !== false) {
+					File::delete($fid);
 				}
+				// delete attachments
+				File::deleteAttachedFiles('calendar',$calendar->get_id());
+				// delete results
+				foreach(Result::getIdsForCalendar($cid) as $resultId) {
+					Result::delete($resultId);
+				}
+				
+				// set js redirection
+				$this->jsRedirectTimeout('calendar.php?id=listall');
 			}
 			
 			// smarty return
 			return $sConfirmation->fetch('smarty.confirmation.tpl');
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new NotAuthorizedException($this);
 		}
 	}
 	

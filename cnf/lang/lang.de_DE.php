@@ -54,7 +54,7 @@ $lang = array(
 	'Error: cannot load navi' => 'Ein ben&ouml;tigtes Navigationselement kann nicht geladen werden, bitte wenden Sie sich an den Systembetreuer.',
 	'Error: not authorized' => 'Sie sind nicht berechtigt diese Seite an zu zeigen, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
 										Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>
-										{if !$object->getUser()->get_loggedin()} oder <a href="index.php?id=login{Error::afterLogin(\'&amp;\')}" title="anmelden">melden Sie sich an</a>{/if}.<br />
+										{if !$object->getUser()->get_loggedin()} oder <a href="index.php?id=login{Object::afterLogin(\'&amp;\')}" title="anmelden">melden Sie sich an</a>{/if}.<br />
 										Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />',
 	'DEMO-MODE' => 'DEMO-MODUS',
 	'Error: demo mode not authorized' => 'Diese Seite l&auml;uft im Demo-Modus, einige Funktionen sind deaktiviert:<br />

@@ -286,8 +286,8 @@ class Result extends Page {
 		MYSQL_ASSOC,
 		array($id,));
 		if($result === false) {
-			$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-			self::getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		// set variables
 		$this->setCalendar(new Calendar($result[0]['calendar_id']));
@@ -307,8 +307,8 @@ class Result extends Page {
 		MYSQL_ASSOC,
 		array($id,));
 		if($standings === false) {
-			$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-			self::getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 
 		// add standings
@@ -464,8 +464,8 @@ class Result extends Page {
 			DELETE FROM `result` WHERE `id`=#?
 				',
 		array($rid,))) {
-			$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-			self::getError()->handle_error($errno);;
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// delete standings
@@ -473,8 +473,8 @@ class Result extends Page {
 			DELETE FROM `standings` WHERE `result_id`=#?
 				',
 		array($rid,))) {
-			$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-			self::getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 	}

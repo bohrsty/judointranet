@@ -417,10 +417,7 @@ class Protocol extends Page {
 			// execute
 			$db->query($sql);
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('DbActionUnknown','write_protocol',$action);
-			throw new Exception('DbActionUnknown',$errno);
+			throw new DbActionUnknownException($this, 'write_protocol: '.$action);
 		}
 		
 		// close db

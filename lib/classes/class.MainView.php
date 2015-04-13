@@ -44,13 +44,7 @@ class MainView extends PageView {
 	public function __construct() {
 		
 		// setup parent
-		try {
-			parent::__construct();
-		} catch(Exception $e) {
-			
-			// handle error
-			$this->getError()->handle_error($e);
-		}
+		parent::__construct();
 	}
 	
 	/*
@@ -101,15 +95,8 @@ class MainView extends PageView {
 				break;
 				
 				default:
-					
 					// id set, but no functionality
-					$errno = $this->getError()->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
-					$this->getError()->handle_error($errno);
-					$this->add_output(array('main' => $this->getError()->to_html($errno)),true);
-					
-					// smarty
-					$this->getTpl()->assign('title', '');
-					$this->getTpl()->assign('main', $this->getError()->to_html($errno));
+					throw new GetUnknownIdException($this, $this->get('id'));
 				break;
 			}
 		} else {
@@ -282,11 +269,7 @@ class MainView extends PageView {
 				return 'default content';
 			}
 		} else {
-			
-			// not authorized
-			$errno = $this->getError()->error_raised('NotAuthorized'.($this->isDemoMode() === true ? 'Demo' : ''),'entry:'.$this->get('id'),$this->get('id'));
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new NotAuthorizedException($this);
 		}
 	}
 	
@@ -385,8 +368,7 @@ class MainView extends PageView {
 			
 			// get data
 			if(!$result) {
-				$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-				self::getError()->handle_error($errno);
+				throw new MysqlErrorException($this, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 			}
 			
 			// smarty message

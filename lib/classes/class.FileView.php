@@ -44,13 +44,7 @@ class FileView extends PageView {
 	public function __construct() {
 		
 		// setup parent
-		try {
-			parent::__construct();
-		} catch(Exception $e) {
-			
-			// handle error
-			$this->getError()->handle_error($e);
-		}
+		parent::__construct();
 	}
 	
 	/**
@@ -157,17 +151,7 @@ class FileView extends PageView {
 					break;
 					
 					default:
-						
-						// id set, but no functionality
-						$errno = $this->getError()->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
-						$this->getError()->handle_error($errno);
-						
-						// smarty
-						$this->getTpl()->assign('title', '');
-						$this->getTpl()->assign('main', $this->getError()->to_html($errno));
-						$this->getTpl()->assign('jquery', true);
-						$this->getTpl()->assign('zebraform', false);
-						$this->getTpl()->assign('tinymce', false);
+						throw new GetUnknownIdException($this, $this->get('id'));
 					break;
 				}
 			} else {
@@ -327,11 +311,7 @@ class FileView extends PageView {
 			
 			return $sFD->fetch('smarty.file.details.tpl');
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new NotAuthorizedException($this);
 		}
 	}
 	
@@ -379,18 +359,10 @@ class FileView extends PageView {
 				// exit script
 				exit;
 			} else {
-				
-				// error
-				$errno = $this->getError()->error_raised('HeaderSent','entry:'.$this->get('id'),$this->get('id'));
-				$this->getError()->handle_error($errno);
-				return $this->getError()->to_html($errno);
+				throw new HeaderSentException($this);
 			}
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new NotAuthorizedException($this);
 		}
 	}
 	
@@ -468,11 +440,7 @@ class FileView extends PageView {
 			// smarty return
 			return $sConfirmation->fetch('smarty.confirmation.tpl');
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new NotAuthorizedException($this);
 		}
 	}
 	
@@ -841,11 +809,7 @@ class FileView extends PageView {
 				return $form->render('lib/zebraTemplate.php', true, array($formIds, 'smarty.zebra.permissions.tpl', $permissionConfig,));
 			}
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new NotAuthorizedException($this);
 		}
 	}
 	
@@ -877,13 +841,12 @@ class FileView extends PageView {
 		for($i=0; $i<count($additionalChecks)-2; $i++) {
 			if($additionalChecks[$i]['result'] === false) {
 				// error
-				$errno = $this->getError()->error_raised(
-						$additionalChecks[$i]['error'],
-						$additionalChecks[$i]['errorMessage'],
-						$additionalChecks[$i]['errorEntry']
-					);
-				$this->getError()->handle_error($errno);
-				return $this->getError()->to_html($errno);
+				if(class_exists($additionalChecks[$i]['error'].'Exception', true)) {
+					$exception = $additionalChecks[$i]['error'].'Exception';
+					throw new $exception($this, $additionalChecks[$i]['errorEntry']);
+				} else {
+					throw new CustomException($this, $additionalChecks[$i]['error'].': '.$additionalChecks[$i]['errorEntry']);
+				}
 			}
 		}
 		
@@ -914,18 +877,10 @@ class FileView extends PageView {
 				// return download
 				return $this->download($fid);
 			} else {
-				
-				// error
-				$errno = $this->getError()->error_raised('FileNotExists','entry:'.$tid, $tid);
-				$this->getError()->handle_error($errno);
-				return $this->getError()->to_html($errno);
+				throw new FileNotExistsException($this, $tid);
 			}
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new NotAuthorizedException($this);
 		}
 	}
 	
@@ -1269,18 +1224,10 @@ class FileView extends PageView {
 				// return
 				return $sAttach->fetch('smarty.file.attach.tpl');
 			} else {
-				
-				// error
-				$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$table.' -> '.$tableId, 'entry:'.$table.' -> '.$tableId);
-				$this->getError()->handle_error($errno);
-				return $this->getError()->to_html($errno);
+				throw new NotAuthorizedException($this);
 			}
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('ObjectNotExists','entry:'.$table.' -> '.$tableId, 'entry:'.$table.' -> '.$tableId);
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new ObjectNotExistsException($this, $table.' -> '.$tableId);
 		}
 	}
 }

@@ -113,8 +113,8 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 		if($result) {
 			return $result->num_rows == 1;
 		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-			self::getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// close db
@@ -144,8 +144,8 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 		// get data
 		$items = array();
 		if(!$result) {
-			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-			self::getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// close db
@@ -204,8 +204,8 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 			// get data
 			$items = array();
 			if(!$result) {
-				$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-				self::getError()->handle_error($errno);
+				$n = null;
+				throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 			}
 		}
 		
@@ -271,8 +271,8 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 		if($result) {
 			return $result->num_rows == 1;
 		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-			self::getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 	}
 	

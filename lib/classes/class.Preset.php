@@ -299,8 +299,8 @@ class Preset extends Object {
 				$presets[$id] = 'templates/protocols/tmce_'.$path.'.css';
 			}
 		} else {
-			$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-			self::getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// return
@@ -435,8 +435,8 @@ class Preset extends Object {
 						// execute statement
 						$result = DB::arrayValue($sql, MYSQL_ASSOC);
 						if(!$result) {
-							$errno = $this->getError()->error_raised('MysqlError', Db::$error, $sql);
-							$this->getError()->handle_error($errno);
+							$n = null;
+							throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 						}
 						
 						// set empty "all"-values

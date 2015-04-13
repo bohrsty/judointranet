@@ -536,11 +536,7 @@ class AdministrationView extends PageView {
 					$content .= $sOutput->fetch('smarty.p.tpl').$form->render('', true);
 				}
 			} else {
-				
-				// error
-				$errno = $this->getError()->error_raised('UidNotExists','userContent',$uid);
-				$this->getError()->handle_error($errno);
-				return $this->getError()->to_html($errno);
+				throw new UidNotExistsException($this, $uid);
 			}
 		} elseif($subaction == 'userdelete') {
 			
@@ -600,18 +596,10 @@ class AdministrationView extends PageView {
 					// smarty return
 					$content = $sConfirmation->fetch('smarty.confirmation.tpl');
 				} else {
-					
-					// error
-					$errno = $this->getError()->error_raised('ObjectInUse', 'userContent', $uid);
-					$this->getError()->handle_error($errno);
-					return $this->getError()->to_html($errno);
+					throw new ObjectInUseException($this, $uid);
 				}
 			} else {
-				
-				// error
-				$errno = $this->getError()->error_raised('UidNotExists','groupContent',$uid);
-				$this->getError()->handle_error($errno);
-				return $this->getError()->to_html($errno);
+				throw new UidNotExistsException($this, $uid);
 			}
 		} else {
 			
@@ -1015,11 +1003,7 @@ class AdministrationView extends PageView {
 					$content .= $sOutput->fetch('smarty.p.tpl').$form->render('', true);
 				}
 			} else {
-				
-				// error
-				$errno = $this->getError()->error_raised('GidNotExists','groupContent',$gid);
-				$this->getError()->handle_error($errno);
-				return $this->getError()->to_html($errno);
+				throw new GidNotExistsException($this, $gid);
 			}
 		} elseif($subaction == 'groupdelete') {
 			
@@ -1078,18 +1062,10 @@ class AdministrationView extends PageView {
 					// smarty return
 					$content = $sConfirmation->fetch('smarty.confirmation.tpl');
 				} else {
-					
-					// error
-					$errno = $this->getError()->error_raised('ObjectInUse', 'groupContent', $gid);
-					$this->getError()->handle_error($errno);
-					return $this->getError()->to_html($errno);
+					throw new ObjectInUseException($this, $gid);
 				}
 			} else {
-				
-				// error
-				$errno = $this->getError()->error_raised('GidNotExists','groupContent',$gid);
-				$this->getError()->handle_error($errno);
-				return $this->getError()->to_html($errno);
+				throw new GidNotExistsException($this, $gid);
 			}
 		} else {
 			
@@ -1243,8 +1219,7 @@ class AdministrationView extends PageView {
 			$naviEntries = Db::arrayValue($sql, MYSQL_ASSOC);
 			
 			if(!is_array($naviEntries)) {
-				$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-				$this->getError()->handle_error($errno);
+				throw new MysqlErrorException($this, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 			}
 			
 			// prepare navi tree and sort by position
@@ -1341,11 +1316,7 @@ class AdministrationView extends PageView {
 					return $sOutput->fetch('smarty.p.tpl');
 				}
 			} else {
-				
-				// error
-				$errno = $this->getError()->error_raised('NidNotExists','permissionContent',$nid);
-				$this->getError()->handle_error($errno);
-				return $this->getError()->to_html($errno);
+				throw new NidNotExistsException($this, $nid);
 			}
 		}
 	}

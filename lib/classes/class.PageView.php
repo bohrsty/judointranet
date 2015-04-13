@@ -67,9 +67,6 @@ class PageView extends Object {
 		// parent constructor
 		parent::__construct();
 		
-		// initialize error-handling
-		$GLOBALS['error'] = new Error();
-		
 		// init smarty
 		if(!isset($GLOBALS['tpl'])) {
 			$GLOBALS['tpl'] = new JudoIntranetSmarty();
@@ -555,8 +552,8 @@ class PageView extends Object {
 				}
 			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// sort by position and return

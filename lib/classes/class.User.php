@@ -141,9 +141,6 @@ class User extends Object {
 		// check if to create local user
 		if($globalUser === true) {
 			
-			// set error
-			$GLOBALS['error'] = new Error();
-			
 			// initalize $_SESSION
 			$_SESSION['user'] = null;
 		}
@@ -311,8 +308,8 @@ class User extends Object {
 				$user = $result->fetch_array(MYSQL_ASSOC);
 			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// check if user exists
@@ -373,8 +370,8 @@ class User extends Object {
 		if($result) {
 			$db_result = $result->fetch_array(MYSQL_ASSOC);
 		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-			self::getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// set id and infos
@@ -568,8 +565,8 @@ class User extends Object {
 				$groups[] = new Group($id);
 			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// return
@@ -628,8 +625,8 @@ class User extends Object {
 		if($result) {
 			return $result->num_rows > 0;
 		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-			self::getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// default return false
@@ -683,8 +680,8 @@ class User extends Object {
 					$itemIds[] = $id['id'];
 				}
 			} else {
-				$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-				self::getError()->handle_error($errno);
+				$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 			}
 		} else {
 			
@@ -742,16 +739,16 @@ class User extends Object {
 						$itemIds[] = $id['id'];
 					}
 				} else {
-					$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-					self::getError()->handle_error($errno);
+					$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 				}
 				if(is_array($cachedProtocolResult)) {
 					foreach($cachedProtocolResult as $id) {
 						$itemIds[] = $id['id'];
 					}
 				} else {
-					$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-					self::getError()->handle_error($errno);
+					$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 				}
 			} elseif($itemTable == 'result') {
 				
@@ -783,8 +780,8 @@ class User extends Object {
 						$itemIds[] = $id['id'];
 					}
 				} else {
-					$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-					self::getError()->handle_error($errno);
+					$n = null;
+					throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 				}
 			}
 			
@@ -816,8 +813,8 @@ class User extends Object {
 					}
 				}
 			} else {
-				$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-				self::getError()->handle_error($errno);
+				$n = null;
+				throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 			}
 		}
 		
@@ -927,8 +924,8 @@ class User extends Object {
 		
 		// get data
 		if(!$result) {
-			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// remove group membership from db and write new
@@ -943,8 +940,8 @@ class User extends Object {
 				)
 		);
 		if(!$result) {
-			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 
 		$groupValues = '';
@@ -963,8 +960,8 @@ class User extends Object {
 				$sql
 			);
 			if(!$result) {
-				$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-				$this->getError()->handle_error($errno);
+				$n = null;
+				throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 			}
 		}
 		
@@ -994,8 +991,8 @@ class User extends Object {
 		if(!is_null($data)) {
 			return $data > 0;
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 	}
 	
@@ -1018,8 +1015,8 @@ class User extends Object {
 		);
 		
 		if(!$result) {
-			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// remove group membership from db
@@ -1033,8 +1030,8 @@ class User extends Object {
 		);
 		
 		if(!$result) {
-			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 	}
 	
@@ -1057,8 +1054,8 @@ class User extends Object {
 		$usedPerm = Db::singleValue($sql, array($uid));
 		
 		if(is_null($usedPerm)) {
-			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		$sql = '
@@ -1070,8 +1067,8 @@ class User extends Object {
 		$usedGroups = Db::singleValue($sql, array($uid));
 		
 		if(is_null($usedGroups)) {
-			$errno = $this->getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// return

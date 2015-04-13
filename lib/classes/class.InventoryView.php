@@ -44,13 +44,7 @@ class InventoryView extends PageView {
 	public function __construct() {
 		
 		// setup parent
-		try {
-			parent::__construct();
-		} catch(Exception $e) {
-			
-			// handle error
-			$this->getError()->handle_error($e);
-		}
+		parent::__construct();
 	}
 	
 	/*
@@ -143,16 +137,8 @@ class InventoryView extends PageView {
 					break;
 					
 					default:
-						
 						// id set, but no functionality
-						$errno = $this->getError()->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
-						$this->getError()->handle_error($errno);
-						
-						// smarty
-						$this->getTpl()->assign('title', '');
-						$this->getTpl()->assign('main', $this->getError()->to_html($errno));
-						$this->getTpl()->assign('jquery', true);
-						$this->getTpl()->assign('zebraform', false);
+						throw new GetUnknownIdException($this, $this->get('id'));
 					break;
 				}
 			} else {
@@ -544,18 +530,10 @@ class InventoryView extends PageView {
 				// return
 				return $sG->fetch('smarty.inventory.takegive.tpl');
 			} else {
-				
-				// error
-				$errno = $this->getError()->error_raised('NotOwned',$this->get('id'),$did);
-				$this->getError()->handle_error($errno);
-				return $this->getError()->to_html($errno);
+				throw new NotOwnedException($this, $did);
 			}
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized',$this->get('id'),$did);
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new NotAuthorizedException($this);
 		}
 	}
 	
@@ -692,18 +670,10 @@ class InventoryView extends PageView {
 				// return
 				return $sT->fetch('smarty.inventory.takegive.tpl');
 			} else {
-				
-				// error
-				$errno = $this->getError()->error_raised('NotGivenTo',$this->get('id'),$did);
-				$this->getError()->handle_error($errno);
-				return $this->getError()->to_html($errno);
+				throw new NotGivenToException($this, $did);
 			}
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized',$this->get('id'),$did);
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new NotAuthorizedException($this);
 		}
 	}
 	
@@ -794,18 +764,10 @@ class InventoryView extends PageView {
 				// return
 				return $sC->fetch('smarty.confirmation.tpl');
 			} else {
-				
-				// error
-				$errno = $this->getError()->error_raised('NotGiven',$this->get('id'),$did);
-				$this->getError()->handle_error($errno);
-				return $this->getError()->to_html($errno);
+				throw new NotGivenException($this, $did);
 			}
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized',$this->get('id'),$did);
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new NotAuthorizedException($this);
 		}
 	}
 	
@@ -861,11 +823,7 @@ class InventoryView extends PageView {
 			// return
 			return $sD->fetch('smarty.inventory.details.tpl');
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized',$this->get('id'),$did);
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new NotAuthorizedException($this);
 		}
 	}
 	
@@ -987,11 +945,7 @@ class InventoryView extends PageView {
 			// return
 			return $sM->fetch('smarty.inventory.movement.tpl');
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized',$this->get('id'),$mid);
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new NotAuthorizedException($this);
 		}
 	}
 	
@@ -1082,8 +1036,7 @@ class InventoryView extends PageView {
 			
 			// get data
 			if(!$result) {
-				$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
-				$this->getError()->handle_error($errno);
+			throw new MysqlErrorException($this, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 			}
 		}		
 	}

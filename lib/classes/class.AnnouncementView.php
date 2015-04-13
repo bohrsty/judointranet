@@ -44,13 +44,7 @@ class AnnouncementView extends PageView {
 	public function __construct() {
 		
 		// setup parent
-		try {
-			parent::__construct();
-		} catch(Exception $e) {
-			
-			// handle error
-			$this->getError()->handle_error($e);
-		}
+		parent::__construct();
 	}
 	
 	/*
@@ -136,14 +130,7 @@ class AnnouncementView extends PageView {
 					default:
 						
 						// id set, but no functionality
-						$errno = $this->getError()->error_raised('GETUnkownId','entry:'.$this->get('id'),$this->get('id'));
-						$this->getError()->handle_error($errno);
-						
-						// smarty
-						$this->getTpl()->assign('title', '');
-						$this->getTpl()->assign('main', $this->getError()->to_html($errno));
-						$this->getTpl()->assign('jquery', true);
-						$this->getTpl()->assign('zebraform', false);
+						throw new GetUnknownIdException($this, $this->get('id'));
 					break;
 				}
 			} else {
@@ -291,25 +278,13 @@ class AnnouncementView extends PageView {
 						return $form->render('', true);
 					}
 				} else {
-					
-					// error
-					$errno = $this->getError()->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
-					$this->getError()->handle_error($errno);
-					return $this->getError()->to_html($errno);
+					throw new WrongParamsException($this, 'cid_or_pid');
 				}
 			} else {
-				
-				// error
-				$errno = $this->getError()->error_raised('MissingParams','entry:cid_or_pid','cid_or_pid');
-				$this->getError()->handle_error($errno);
-				return $this->getError()->to_html($errno);
+				throw new MissingParamsException($this, 'cid_or_pid');
 			}
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new NotAuthorizedException($this);
 		}
 	}
 	
@@ -436,25 +411,13 @@ class AnnouncementView extends PageView {
 						return $form->render('', true);
 					}
 				} else {
-					
-					// error
-					$errno = $this->getError()->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
-					$this->getError()->handle_error($errno);
-					return $this->getError()->to_html($errno);
+					throw new WrongParamsException($this, 'cid_or_pid');
 				}
 			} else {
-				
-				// error
-				$errno = $this->getError()->error_raised('MissingParams','entry:cid_or_pid','cid_or_pid');
-				$this->getError()->handle_error($errno);
-				return $this->getError()->to_html($errno);
+				throw new MissingParamsException($this, 'cid_or_pid');
 			}
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new NotAuthorizedException($this);
 		}
 	}
 	
@@ -563,36 +526,19 @@ class AnnouncementView extends PageView {
 						$this->jsRedirectTimeout('calendar.php?id=listall');
 						
 						// write entry
-						try {
-							$calendar->write_db('update');
-						} catch(Exception $e) {
-							$this->getError()->handle_error($e);
-							$output = $this->getError()->to_html($e);
-						}
+						$calendar->write_db('update');
 					}
 					
 					// smarty return
 					return $sConfirmation->fetch('smarty.confirmation.tpl');
 				} else {
-					
-					// error
-					$errno = $this->getError()->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
-					$this->getError()->handle_error($errno);
-					return $this->getError()->to_html($errno);
+					throw new WrongParamsException($this, 'cid_or_pid');
 				}
 			} else {
-				
-				// error
-				$errno = $this->getError()->error_raised('MissingParams','entry:cid_or_pid','cid_or_pid');
-				$this->getError()->handle_error($errno);
-				return $this->getError()->to_html($errno);
+				throw new MissingParamsException($this, 'cid_or_pid');
 			}
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('NotAuthorized','entry:'.$this->get('id'),$this->get('id'));
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new NotAuthorizedException($this);
 		}
 	}
 	
@@ -666,25 +612,13 @@ class AnnouncementView extends PageView {
 					$sAd->assign('page', $div_out);
 					return $sAd->fetch('smarty.announcement.details.tpl');
 				} else {
-					
-					// error
-					$errno = $this->getError()->error_raised('AnnNotExists','entry:'.$this->get('cid').'|'.$this->get('pid'),$this->get('cid').'|'.$this->get('pid'));
-					$this->getError()->handle_error($errno);
-					return $this->getError()->to_html($errno);
+					throw new AnnNotExistsException($this, $this->get('cid').'|'.$this->get('pid'));
 				}
 			} else {
-				
-				// error
-				$errno = $this->getError()->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
-				$this->getError()->handle_error($errno);
-				return $this->getError()->to_html($errno);
+				throw new WrongParamsException($this, 'cid_or_pid');
 			}
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('MissingParams','entry:cid_or_pid','cid_or_pid');
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new MissingParamsException($this, 'cid_or_pid');
 		}
 	}
 	
@@ -728,25 +662,13 @@ class AnnouncementView extends PageView {
 					// return
 					return $return;
 				} else {
-					
-					// error
-					$errno = $this->getError()->error_raised('AnnNotExists','entry:'.$this->get('cid').'|'.$this->get('pid'),$this->get('cid').'|'.$this->get('pid'));
-					$this->getError()->handle_error($errno);
-					return $this->getError()->to_html($errno);
+					throw new AnnNotExistsException($this, $this->get('cid').'|'.$this->get('pid'));
 				}
 			} else {
-				
-				// error
-				$errno = $this->getError()->error_raised('WrongParams','entry:cid_or_pid','cid_or_pid');
-				$this->getError()->handle_error($errno);
-				return $this->getError()->to_html($errno);
+				throw new WrongParamsException($this, 'cid_or_pid');
 			}
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('MissingParams','entry:cid_or_pid','cid_or_pid');
-			$this->getError()->handle_error($errno);
-			return $this->getError()->to_html($errno);
+			throw new MissingParamsException($this, 'cid_or_pid');
 		}
 	}
 }

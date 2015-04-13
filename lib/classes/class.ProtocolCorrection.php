@@ -169,8 +169,8 @@ class ProtocolCorrection extends Object {
 			$sql,
 			array($id, $uid,)
 		)) {
-			$errno = self::getError()->error_raised('MysqlError', Db::$error, Db::$statement);
-			self::getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		} else {
 			return Db::$num_rows == 1;
 		}
@@ -262,10 +262,7 @@ class ProtocolCorrection extends Object {
 			// execute
 			$db->query($sql);
 		} else {
-			
-			// error
-			$errno = $this->getError()->error_raised('DbActionUnknown','write_protocol_correction',$action);
-			throw new Exception('DbActionUnknown',$errno);
+			throw new DbActionUnknownException($this, 'write_protocol: '.$action);
 		}
 		
 		// close db

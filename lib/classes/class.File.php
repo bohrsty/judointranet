@@ -197,8 +197,8 @@ class File extends Page {
 		if($result) {
 			list($id) = $result->fetch_array(MYSQL_NUM);
 		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-			self::getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		return $id;
@@ -229,8 +229,8 @@ class File extends Page {
 		if($result) {
 			list($name, $fileType, $filename, $content, $cached, $valid) = $result->fetch_array(MYSQL_NUM);
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// set data
@@ -283,8 +283,8 @@ class File extends Page {
 		
 		// get data
 		if(!$result) {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		} else {
 		
 			// get insert_id
@@ -356,8 +356,8 @@ class File extends Page {
 				list($value) = $result->fetch_array(MYSQL_NUM);
 			}
 		} else {
-			$errno = $this->getError()->error_raised('MysqlError', $db->error, $sql);
-			$this->getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// check translation
@@ -424,8 +424,8 @@ class File extends Page {
 				$extensions .= $ext.',';
 			}
 		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-			self::getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		// remove last comma
 		$extensions = substr($extensions, 0, -1);
@@ -461,8 +461,8 @@ class File extends Page {
 				list($id) = $result->fetch_array(MYSQL_NUM);
 			}
 		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-			self::getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// return
@@ -497,8 +497,8 @@ class File extends Page {
 				list($lastModified) = $result->fetch_array(MYSQL_NUM);
 			}
 		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-			self::getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		$now = time();
@@ -534,8 +534,8 @@ class File extends Page {
 			
 			// get data
 			if(!$result) {
-				$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-				self::getError()->handle_error($errno);
+				$n = null;
+				throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 			}
 			
 			// remove all attachments
@@ -572,8 +572,8 @@ class File extends Page {
 				$fileIds[] = $fileId;
 			}
 		} else {
-			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-			self::getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// return
@@ -613,8 +613,8 @@ class File extends Page {
 			
 			// get data
 			if(!$result) {
-				$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-				self::getError()->handle_error($errno);
+				$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 			}
 		}
 	}
@@ -642,8 +642,8 @@ class File extends Page {
 		
 		// get data
 		if(!$result) {
-			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-			self::getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 	}
 	
@@ -668,8 +668,8 @@ class File extends Page {
 		
 		// get data
 		if(!$result) {
-			$errno = self::getError()->error_raised('MysqlError', $db->error, $sql);
-			self::getError()->handle_error($errno);
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 	}
 }
