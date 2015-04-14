@@ -57,6 +57,9 @@ Thirdparty licenses see LICENSE
 --
 [!!] added check against count == 0 in Object::getTableConfig()
 [!!] added columns to display in user table config (r006) and comments
+--
+[!!] copy and paste error in user table config
+[!!] added missing column year in table judo (r019)
 
 
 

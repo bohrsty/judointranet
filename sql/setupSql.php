@@ -64,7 +64,7 @@ function initMysql() {
 
 
 /**
- * versionMysql() calls any existing mysql_XXX function to update the database and migrate the data
+ * versionMysql() calls any existing mysql_XX function to update the database and migrate the data
  * 
  * @return array array containing the 'returnValue' (true if successful, false otherwise) and 'returnMessage'
  */
@@ -437,7 +437,7 @@ function mysql_6() {
 		INSERT IGNORE INTO `config` (`name`, `value`, `comment`) 
 			VALUES
 				(\'usertableCols.club\', \'number,name,valid\', \'configuration for table club\'),
-				(\'usertableCols.contact\', \'number,name,valid\', \'configuration for table contact\'),
+				(\'usertableCols.contact\', \'name,club_id,valid\', \'configuration for table contact\'),
 				(\'usertableCols.judo\', \'class,type,weightclass,time,agegroups,year,valid\', \'configuration for table judo\'),
 				(\'usertableCols.judo_belt\', \'name,color,valid\', \'configuration for table judo_belt\'),
 				(\'usertableCols.location\', \'club_id,hall,street,zip,city,valid\', \'configuration for table location\'),
@@ -2864,6 +2864,21 @@ function mysql_19() {
 		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
 	}
+	
+	/*
+	 * add column year to judo table
+	 */
+	if(!Db::columnExists('judo', 'year')) {
+		if(!Db::executeQuery('
+			ALTER TABLE `judo`
+				ADD `year` int(4) NOT NULL AFTER `agegroups`
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+	}
+	
 	
 	
 	
