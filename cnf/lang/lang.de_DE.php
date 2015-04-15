@@ -975,7 +975,10 @@ $lang = array(
 	'HELP_MESSAGE_53' => '<p>Seite zur Bearbeitung einer Ehrungsplanung, das Formular entspricht dem einer neuen Planung, es sind die bereits gespeicherten
 						Daten vorausgef&uuml;llt.<br />Im unteren Bereich findet sich die Historie der Bearbeitungen, es k&ouml;nnen hier die bestehenden
 						Verlaufseintr&auml;ge eingesehen werden (ein Klick auf einen Eintrag &ouml;ffnet die weiteren Daten) oder ein neuer Eintrag angelegt
-						werden.</p>',
+						werden. Ein Verlaufseintrag ben&ouml;tigt einen Betreff, einen Typ und einen Inhaltstext, falls Eintr&auml;ge nachtr&auml;glich erstellt werden,
+						kann das Datumsfeld &uuml;ber den Button <img src="css/zebra_form/calendar.png" alt="Bild im Hilfetext" /> eingeblendet werden.
+						Nachtr&auml;glich erstellte Verlaufseintr&auml;ge sind an der Uhrzeit "00:00" erkennbar, ihre Sortierung nach Datum wird erst mit
+						dem Neuladen der Seite korrigiert.</p>',
 	/*
 	 * ************************
 	 */
@@ -1260,6 +1263,7 @@ $lang = array(
 	'tribute_history_type' => 'Ehrungsverlaufseintr&auml;ge',
 	'System entry' => 'Systemeintrag',
 	'Started planning tribute' => 'Planung begonnen',
+	'Started planning tribute on' => 'Planung begonnen am',
 	'Saved successfully.' => 'Erfolgreich gespeichert.',
 	'Tributes: edit' => 'Ehrung bearbeiten',
 	'edit tribute' => 'Ehrung bearbeiten',
@@ -1271,6 +1275,29 @@ $lang = array(
 	'Type' => 'Typ',
 	'Content' => 'Eintrag',
 	'delete tribute' => 'Ehrung l&ouml;schen',
+	'Date' => 'Datum',
+	'Click to change date' => 'Klicken um Datum zu &auml;ndern',
+	'Monday' => 'Montag',
+	'Tuesday' => 'Dienstag',
+	'Wednesday' => 'Mittwoch',
+	'Thursday' => 'Donnerstag',
+	'Friday' => 'Freitag',
+	'Saturday' => 'Samstag',
+	'Sunday' => 'Sonntag',
+	'January' => 'Januar',
+	'February' => 'Februar',
+	'March' => 'M&auml;rz',
+	'April' => 'April',
+	'May' => 'Mai',
+	'June' => 'Juni',
+	'July' => 'Juli',
+	'August' => 'August',
+	'September' => 'September',
+	'October' => 'Oktober',
+	'November' => 'November',
+	'December' => 'Dezember',
+	'Today' => 'Heute',
+	'Delete' => 'L&ouml;schen',
 //	'' => '',
 );
 

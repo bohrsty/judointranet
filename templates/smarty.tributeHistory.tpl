@@ -32,6 +32,7 @@
 			<option value="{$option.id}">{$option.name}</option>
 {/foreach}
 		</select>
+		&nbsp;<img id="changeDate" src="css/zebra_form/calendar.png" alt="{lang}Click to change date{/lang}" title="{lang}Click to change date{/lang}" />&nbsp;<input type="text" class="control text" name="historyDate" id="historyDate" />
 	</div>
 	<div class="row">
 		{lang}Content{/lang}: <textarea name="historyContent" class="control" id="historyContent"></textarea>

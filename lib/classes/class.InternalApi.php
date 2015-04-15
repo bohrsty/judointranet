@@ -188,6 +188,16 @@ class InternalApi extends Object {
 							'content' => $this->post('historyContent'),
 							'valid' => '1',
 						);
+					if($this->post('historyDate') !== false && $this->post('historyDate') != '') {
+						if(date('U', strtotime($this->post('historyDate'))) < strtotime('today 00:00')) {
+							$firstTimestamp = TributeHistory::getFirstEntryFor($this->post('tributeId'));
+							if(date('U', strtotime($this->post('historyDate'))) > strtotime($firstTimestamp)) {
+								$historyData['lastModified'] = date('Y-m-d', strtotime($this->post('historyDate')));
+							} else {
+								$historyData['lastModified'] = $firstTimestamp;
+							}
+						}
+					}
 					$historyFactory = TributeHistory::factoryInsert($historyData);
 					if($historyFactory['result'] == 'OK') {
 						

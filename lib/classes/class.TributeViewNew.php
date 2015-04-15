@@ -102,6 +102,41 @@ class TributeViewNew extends TributeView {
 		);
 		
 		
+		// startDate
+		$formIds['startDate'] = array('valueType' => 'string', 'type' => 'date',);
+		$form->add(
+				'label',		// type
+				'labelStartDate',	// id/name
+				'startDate',			// for
+				_l('Started planning tribute on')	// label text
+		);
+		$startDate = $form->add(
+				$formIds['startDate']['type'],			// type
+				'startDate',			// id/name
+				date('d.m.Y')	// default
+		);
+		// format/position
+		$startDate->format('d.m.Y');
+		$startDate->inside(false);
+		// rules
+		$startDate->set_rule(
+				array(
+						'required' => array(
+								'error', _l('required date'),
+						),
+						'date' => array(
+								'error', _l('check date')
+						),
+				)
+		);
+		$form->add(
+				'note',				// type
+				'noteStartDate',	// id/name
+				'startDate',		// for
+				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDATE)	// note text
+		);
+		
+		
 		// plannedDate
 		$formIds['plannedDate'] = array('valueType' => 'string', 'type' => 'date',);
 		$form->add(
@@ -258,11 +293,16 @@ class TributeViewNew extends TributeView {
 			// get form permissions
 			$permissions = $this->getFormPermissions($permissionConfig['ids']);
 			
+			// check startDate not to be in future
+			if(date('U', strtotime($data['startDate'])) > strtotime('today 00:00')) {
+				$data['startDate'] = date('Y-m-d');
+			}
+			
 			// new tribute
 			$tribute = new Tribute(
 					array(
 							'name' => $data['name'],
-							'startDate' => date('Y-m-d'),
+							'startDate' => date('Y-m-d', strtotime($data['startDate'])),
 							'plannedDate' => ($data['plannedDate'] != '' ? $data['plannedDate'] : null),
 							'date' => ($data['date'] != '' ? $data['date'] : null),
 							'testimonialId' => $data['testimonial'],
@@ -275,15 +315,18 @@ class TributeViewNew extends TributeView {
 			$newId = $tribute->writeDb();
 			
 			// add initial history entry
-			$tributeHistory = new TributeHistory(
-					array(
-							'tributeId' => $newId,
-							'type' => -1,
-							'subject' => _l('Started planning tribute'),
-							'content' => _l('Started planning tribute'),
-							'valid' => '1',
-						)	
+			$tributeHistoryArray = array(
+					'tributeId' => $newId,
+					'type' => -1,
+					'subject' => _l('Started planning tribute'),
+					'content' => _l('Started planning tribute'),
+					'valid' => '1',
 				);
+			// check startdate for history entry (and only in past)
+			if(date('U', strtotime($data['startDate'])) < strtotime('today 00:00')) {
+				$tributeHistoryArray['lastModified'] = date('Y-m-d', strtotime($data['startDate'])); 
+			}
+			$tributeHistory = new TributeHistory($tributeHistoryArray);
 			$tributeHistory->writeDb();
 			
 			// write permissions

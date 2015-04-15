@@ -287,22 +287,35 @@ class TributeViewEdit extends TributeView {
 					$("#newHistoryEntryForm").slideToggle();
 				});
 				var submit = $("#historySubmit");
-			
+				
+				$("#historyDate").Zebra_DatePicker({
+					show_icon:false,
+					format:"d.m.Y",
+					days: ["'._l('Sunday').'", "'._l('Monday').'", "'._l('Tuesday').'", "'._l('Wednesday').'", "'._l('Thursday').'", "'._l('Friday').'", "'._l('Saturday').'"],
+					months: ["'._l('January').'", "'._l('February').'", "'._l('March').'", "'._l('April').'", "'._l('May').'", "'._l('June').'", "'._l('July').'", "'._l('August').'", "'._l('September').'", "'._l('October').'", "'._l('November').'", "'._l('December').'"],
+					show_select_today: "'._l('Today').'",
+					lang_clear_date: "'._l('Delete').'"
+				});
+				$("#historyDate").hide();
+				$("#changeDate").click(function() {
+					$("#historyDate").toggle();
+				});
 				$("#historySubmit").click(function() {
 					$.ajax({
 						url: "api/internal.php?id='.$randomId.'&signedApi='.$signedApi.'",
 						type: "POST",
 						cache: false,
-						data: {"tributeId":'.$tid.',"historySubject":$("#historySubject").val(),"historyType":$("#historyType").val(),"historyContent":$("#historyContent").val()},
+						data: {"tributeId":'.$tid.',"historySubject":$("#historySubject").val(),"historyType":$("#historyType").val(),"historyContent":$("#historyContent").val(),"historyDate":$("#historyDate").val()},
 						beforeSend: function(){
 							submit.val("'._l('saving').'...").attr("disabled", "disabled");
 						},
 						success: function(data){
-							var item = $(data).hide().show("slide", 800);
+							var item = $(data).hide().show("fade", 800);
 							$("#tributeHistoryEntries").append(item);
 							$("#historySubject").val("");
 							$("#historyType").val("");
 							$("#historyContent").val("");
+							$("#historyDate").val("");
 							submit.val("'._l('save').'").removeAttr("disabled");
 						},
 						error: function(e){

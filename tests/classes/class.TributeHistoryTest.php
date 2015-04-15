@@ -100,6 +100,7 @@ class TributeHistoryTest extends PHPUnit_Framework_TestCase {
 				'subject' => 'Test entry',
 				'content' => 'Test content',
 				'valid' => '0',
+				'lastModified' => date('Y-m-d H:i:s'),
 			);
 		
 		// from array

@@ -953,6 +953,15 @@ div.divHistoryContent {
 	padding: 2px;
 }
 
+#historyDate {
+	display: inline-block;
+	width: 105px;
+}
+
+#changeDate {
+	display: inline-block;
+}
+
 
 
 

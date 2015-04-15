@@ -121,7 +121,11 @@ class TributeHistory extends Object {
 			$this->setSubject($id['subject']);
 			$this->setContent($id['content']);
 			$this->setValid($id['valid']);
-			$this->setLastModified(date('Y-m-d H:i:s'));
+			if(isset($id['lastModified'])) {
+				$this->setLastModified(date('Y-m-d H:i:s', strtotime($id['lastModified'])));
+			} else {
+				$this->setLastModified(date('Y-m-d H:i:s'));
+			}
 		} else {
 			
 			// check if $id is 0
@@ -217,7 +221,7 @@ class TributeHistory extends Object {
 		// insert into database
 		if(!Db::executeQuery('
 			INSERT INTO `tribute_history` (`id`,`tribute_id`,`history_type_id`,`user_id`,`subject`,`content`,`valid`,`last_modified`)
-			VALUES (#?, #?, #?, #?, \'#?\', \'#?\', #?, CURRENT_TIMESTAMP)
+			VALUES (#?, #?, #?, #?, \'#?\', \'#?\', #?, \'#?\')
 			ON DUPLICATE KEY UPDATE
 				`tribute_id`=#?,
 				`history_type_id`=#?,
@@ -235,6 +239,7 @@ class TributeHistory extends Object {
 				$this->getSubject(),
 				$this->getContent(),
 				$this->getValid(),
+				$this->getLastModified(),
 				// update
 				$this->getTributeId(),
 				$this->getType()['id'],
@@ -422,6 +427,32 @@ class TributeHistory extends Object {
 		array($tributeId,))) {
 			$n = null;
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		}
+	}
+	
+	
+	/**
+	 * getFirstEntryFor($tributeId) returns the lastModified timestamp for the first entry
+	 * of $tributeId
+	 * 
+	 * @param int $tributeId the id of the tribute to get first entry for
+	 * @return string the timestamp of the first entry
+	 */
+	public static function getFirstEntryFor($tributeId) {
+		
+		$first = Db::singleValue('
+				SELECT MIN(`last_modified`)
+				FROM `tribute_history`
+				WHERE `tribute_id`=#?
+					AND `valid`=TRUE
+			',
+				array($tributeId,)
+		);
+		if($first === false) {
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		} else {
+			return $first;
 		}
 	}
 }

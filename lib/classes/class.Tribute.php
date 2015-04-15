@@ -404,7 +404,7 @@ class Tribute extends Page {
 			FROM `tribute_history`
 			WHERE `tribute_id`=#?
 				'.$sqlAnd.'
-			ORDER BY `last_modified`
+			ORDER BY `last_modified`, `history_type_id`
 		',
 				MYSQL_ASSOC,
 				array($id,));

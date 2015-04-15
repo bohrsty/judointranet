@@ -60,6 +60,8 @@ Thirdparty licenses see LICENSE
 --
 [!!] copy and paste error in user table config
 [!!] added missing column year in table judo (r019)
+--
+[cc] start date of tribute entry and date of tribute history entry editable if in past 
 
 
 
