@@ -1298,6 +1298,7 @@ $lang = array(
 	'December' => 'Dezember',
 	'Today' => 'Heute',
 	'Delete' => 'L&ouml;schen',
+	'show link selection' => 'Verkn&uuml;pfungsauswahl anzeigen',
 //	'' => '',
 );
 

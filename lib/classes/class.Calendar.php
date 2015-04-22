@@ -798,6 +798,80 @@ class Calendar extends Page {
 		// is same month
 		return $day.' - '.$endDay.$endMonth.$endYear;
 	}
+	
+	
+	/**
+	 * linkTo($linkingId, $linkedId) links the $linkedId object to the $linkingId object
+	 * 
+	 * @param int $linkedId id of the object that will be linked
+	 * @param int $linkingId id of the object that is linked to
+	 * @return array array containing the result of the linkage
+	 */
+	public static function linkTo($linkedId, $linkingId) {
+		
+		// check $linkingId
+		if($linkingId == '') {
+		
+			// delete existing links
+			if(!Db::executeQuery('
+				DELETE FROM `accounting_settings`
+				WHERE `table` = \'calendar\'
+					AND `type`=\'subitemof\'
+					AND `id1`=#?
+			',
+			array($linkedId,)
+			)) {
+				$n = null;
+				throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+			}
+		} else {
+		
+			// insert link
+			if(!Db::executeQuery('
+				INSERT IGNORE INTO `accounting_settings`
+					(`id1`, `id2`, `type`, `table`)
+					VALUES (#?, #?, \'subitemof\', \'calendar\')
+			',
+			array(
+				$linkedId,
+				$linkingId,
+			))) {
+					$n = null;
+					throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+			}
+		}
+		
+		// return
+		return array(
+				'result' => 'OK',
+				'message' => 'linked',
+			);
+	}
+	
+	
+	/**
+	 * isLinked() returns true, if is subitem of another calendar entry, false otherwise
+	 * 
+	 * @return bool true, if is subitem of another calendar entry, false otherwise
+	 */
+	public function isLinked() {
+		
+		// get value from database
+		$linkedValue = Db::singleValue('
+				SELECT COUNT(*)
+				FROM `accounting_settings`
+				WHERE `id1`=#?
+					AND `table`=\'calendar\'
+					AND `type`=\'subitemof\'
+			',
+			array($this->getId(),));
+		if($linkedValue === false) {
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		} else {
+			return $linkedValue > 0;
+		}
+	}
 }
 
 

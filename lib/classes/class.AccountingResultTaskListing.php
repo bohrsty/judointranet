@@ -137,7 +137,7 @@ class AccountingResultTaskListing extends Listing implements ListingInterface {
 		if(count($getData) > 0) {
 			
 			$sql = '
-				SELECT `at`.`state`, `c`.`name`, `c`.`date`, `r`.`desc`, `r`.`last_modified`, `r`.`modified_by`, `r`.`id`, `r`.`calendar_id`
+				SELECT `at`.`state`, `c`.`name`, `c`.`date`, `r`.`desc`, `r`.`last_modified`, `r`.`modified_by`, `r`.`id`, `r`.`calendar_id`, (SELECT `id2` FROM `accounting_settings` AS `as` WHERE `as`.`id1`=`r`.`calendar_id` AND `as`.`table`=\'calendar\' AND `as`.`type`=\'subitemof\') AS `linked_id`
 				FROM `accounting_tasks` AS `at`, `calendar` AS `c`, `result` AS `r`
 				WHERE `at`.`table_name`=\'result\'
 					AND `at`.`table_id`=`r`.`id`
@@ -150,7 +150,7 @@ class AccountingResultTaskListing extends Listing implements ListingInterface {
 		} else {
 			
 			$sql = '
-				SELECT `at`.`state`, `c`.`name`, `c`.`date`, `r`.`desc`, `r`.`last_modified`, `r`.`modified_by`, `r`.`id`, `r`.`calendar_id`
+				SELECT `at`.`state`, `c`.`name`, `c`.`date`, `r`.`desc`, `r`.`last_modified`, `r`.`modified_by`, `r`.`id`, `r`.`calendar_id`, (SELECT `id2` FROM `accounting_settings` AS `as` WHERE `as`.`id1`=`r`.`calendar_id` AND `as`.`table`=\'calendar\' AND `as`.`type`=\'subitemof\') AS `linked_id`
 				FROM `accounting_tasks` AS `at`, `calendar` AS `c`, `result` AS `r`
 				WHERE `at`.`table_name`=\'result\'
 					AND `at`.`table_id`=`r`.`id`
@@ -229,7 +229,7 @@ class AccountingResultTaskListing extends Listing implements ListingInterface {
 					)
 				);
 			$smarty->assign('data', $actionsLinkArray);
-			$data['actions'] = $smarty->fetch('smarty.a.img.tpl');
+			$data['actions'] = $smarty->fetch('smarty.a.img.tpl').$this->resultLinkForm($resultId, $data['calendar_id'], $data['linked_id']);
 			
 			// put in return array
 			$return[] = $data;
@@ -265,6 +265,50 @@ class AccountingResultTaskListing extends Listing implements ListingInterface {
 		} else {
 			return $countRows;
 		}
+	}
+	
+	
+	/**
+	 * resultLinkForm($calendarId, $linkedId) generates the form to link a result with another
+	 * 
+	 * @param int $resultId the id of the according result
+	 * @param int $calendarId the id of the linking calendar entry
+	 * @param int $linkedId the id of the linked calendar entry
+	 * @return string the form HTML code
+	 */
+	private function resultLinkForm($resultId, $calendarId, $linkedId) {
+		
+		// get random id
+		$randomId = Object::getRandomId();
+		
+		// collect data for signature
+		$data = array(
+				'apiClass' => 'ResultLinkForm',
+				'apiBase' => 'accounting.php',
+				'randomId' => $randomId,
+			);
+		$_SESSION['api'][$randomId] = $data;
+		$_SESSION['api'][$randomId]['time'] = time();
+		$signedApi = base64_encode(hash_hmac('sha256', json_encode($data), $this->getGc()->get_config('global.apikey')));
+		
+		// get template
+		$sForm = new JudoIntranetSmarty();
+		// set variables
+		$sForm->assign('id', $calendarId);
+		$sForm->assign('rid', $resultId);
+		$sForm->assign('lcid', $linkedId);
+		$sForm->assign('url', 'api/internal.php?id='.$randomId.'&signedApi='.$signedApi);
+		// prepare options
+		$options = array();
+		foreach(CalendarListing::getListing(array('name', 'date', 'end_date', 'city', 'type')) as $entry) {
+			if($entry['type'] == 'event') {
+				$endDate = (!is_null($entry['end_date']) ? ' - '.date('d.m.Y', strtotime($entry['end_date'])) : '');
+				$options[$entry['id']] = $entry['name'].' ('.date('d.m.Y', strtotime($entry['date'])).$endDate.') '.$entry['city'];
+			}
+		}
+		$sForm->assign('options', $options);
+		
+		return $sForm->fetch('smarty.resultLinkForm.tpl');
 	}
 	
 }

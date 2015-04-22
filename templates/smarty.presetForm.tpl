@@ -29,6 +29,12 @@
 	<script type="text/javascript">
 		$("#p{$id}").hide();
 		$("#pi{$id}").click(function() {ldelim}
+			var positions = $("#pi{$id}").position();
+			$("#p{$id}").css({ldelim}
+				top: positions.top,
+				left: positions.left-$("#p{$id}").width(),
+				position: "absolute"
+			{rdelim});
 			$("#p{$id}").fadeToggle();
 		{rdelim});
 		$(document).click(function(event) {ldelim}

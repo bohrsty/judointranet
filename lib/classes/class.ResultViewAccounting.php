@@ -161,7 +161,8 @@ class ResultViewAccounting extends ResultView {
 				
 				// prepare marker-array
 				$infos = array(
-						'version' => '01.01.1970 01:00'
+						'version' => '01.01.1970 01:00',
+						'accountingIsSubevent' => $results[0]->getCalendar()->isLinked(),
 					);
 				
 				// add calendar-fields to array

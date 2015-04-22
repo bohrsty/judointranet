@@ -218,6 +218,28 @@ class InternalApi extends Object {
 				echo $template->fetch('smarty.tributeHistoryEntry.tpl');
 			break;
 			
+			case 'ResultLinkForm':
+				
+				// check error
+				if($signedError === true) {
+					// signature error
+					echo json_encode(array(
+							'result' => 'ERROR',
+							'message' => _l('API call failed [not signed]'),
+					));
+				} elseif($timeoutError === true) {
+					// timeout error
+					echo json_encode(array(
+							'result' => 'ERROR',
+							'message' => _l('API call failed [timeout]'),
+					));
+				} else {
+					
+					// get object
+					echo json_encode(Calendar::linkTo($this->post('cid'), $this->post('lcid')));
+				}
+			break;
+			
 			default:
 				echo 'ERROR: '._l('API call failed [unknown apiClass]');
 			break;

@@ -3319,6 +3319,32 @@ function mysql_22() {
 		return $return;
 	}
 	
+	// create table accounting_settings
+	if(!Db::executeQuery('
+		CREATE TABLE IF NOT EXISTS `accounting_settings` (
+		  `id1` int(11) NOT NULL,
+		  `id2` int(11) NOT NULL,
+		  `table` varchar(50) NOT NULL,
+		  `type` varchar(50) NOT NULL,
+		  PRIMARY KEY (`id1`,`id2`,`table`,`type`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// update systemtables
+	if(!Db::executeQuery('
+		UPDATE `config`
+			SET `value` = \'calendar,category,config,defaults,field,fields2presets,group,group2group,inventory,inventory_movement,preset,rights,user,user2group,value,protocol,protocol_correction,helpmessages,user2groups,permissions,navi,item2filter,groups,filter,file,file_type,files_attached,club,result,standings,accounting_tasks,accounting_costs,holiday,tribute,tribute_history,accounting_settings\'
+		WHERE `name` = \'systemtables\'
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
 	
 	
 	

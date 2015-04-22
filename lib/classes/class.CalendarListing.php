@@ -344,9 +344,10 @@ class CalendarListing extends Listing implements ListingInterface {
 		$data = array(
 				'apiClass' => 'PresetForm',
 				'apiBase' => 'calendar.php',
-				'time' => time(),
+				'randomId' => $randomId,
 			);
 		$_SESSION['api'][$randomId] = $data;
+		$_SESSION['api'][$randomId]['time'] = time();
 		$signedApi = base64_encode(hash_hmac('sha256', json_encode($data), $this->getGc()->get_config('global.apikey')));
 		
 		// get template
@@ -360,6 +361,50 @@ class CalendarListing extends Listing implements ListingInterface {
 					'return' => true,
 					'form' => $sForm->fetch('smarty.presetForm.tpl'),
 				);
+	}
+	
+	
+	/**
+	 * getListing($fields) returns an array containing all fields secified in $fields
+	 * the user has permissions to
+	 * 
+	 * @param array $fields array with the required fields as values, id is allways added
+	 * @return array array containing the result of the database query
+	 */
+	public static function getListing($fields) {
+		
+		// get permitted ids
+		$ids = self::getUser()->permittedItems('calendar', 'w') ;
+		
+		// check if empty result
+		$mysqlData = implode(',', $ids);
+		if(count($ids) == 0) {
+			$mysqlData = 'SELECT FALSE';
+		}
+		
+		// prepare fields
+		$mysqlFields = '`id`';
+		for($i=0; $i<count($fields); $i++) {
+			$mysqlFields .= ',`#?`';
+		}
+		
+		// get data
+		$result = Db::ArrayValue('
+			SELECT '.$mysqlFields.'
+			FROM `calendar`
+			WHERE `id` IN (#?)
+				AND `valid`=TRUE
+			ORDER BY `date` DESC
+		',
+				MYSQL_ASSOC,
+				array_merge($fields,array($mysqlData)));
+		if($result === false) {
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		}
+		
+		// return
+		return $result;
 	}
 	
 }
