@@ -29,6 +29,7 @@
 		<script type="text/javascript" src="js/jquery-migrate-1.2.1.min.js"></script>
 		<script type="text/javascript" src="js/jquery-ui-1.11.4.min.js"></script>
 		<script type="text/javascript" src="{if is_file('js/jquery.ui.datepicker-{$sLang}.js')}js/jquery.ui.datepicker-{$sLang}.js{else}js/jquery.ui.datepicker-de.js{/if}"></script>
+		<script type="text/javascript" src="js/jquery.ui.autocomplete.html.js"></script>
 {if isset($zebraform) and $zebraform}
 		<link rel="stylesheet" type="text/css" href="css/zebra_form/zebra_form.css" />
 		<script type="text/javascript" src="js/zebra_form.js"></script>

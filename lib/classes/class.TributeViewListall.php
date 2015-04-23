@@ -172,6 +172,7 @@ class TributeViewListall extends TributeView {
 			$("#search").autocomplete({
 				delay: 100,
 				minLength: 3,
+				html: true,
 				source: "api/internal.php?id='.$randomId.'&signedApi='.$signedApi.'&action=list&provider=TributeSearch",
 				select: function(event, ui) {
 					window.location.href = ui.item.value;

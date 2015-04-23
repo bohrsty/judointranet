@@ -316,7 +316,7 @@ class TributeListallListing extends Listing implements ListingInterface {
 		if(count($result) > 0) {
 			foreach($result as $row) {
 				$return[] = array(
-						'label' => $row['name'].' ('.$row['year'].')',
+						'label' => self::highlightApiSearch($query, $row['name']) .' ('.$row['year'].')',
 						'value' => 'tribute.php?id=edit&tid='.$row['id'],
 					);
 			}
@@ -326,6 +326,40 @@ class TributeListallListing extends Listing implements ListingInterface {
 		
 		// return
 		return $return;
+	}
+	
+	
+	/**
+	 * highlightApiSearch($query, $result) replaces $query with hightlighted version in $result
+	 * 
+	 * @param string $query the seach string that should be highlighted
+	 * @param string $result the result string from database that contains $query
+	 * @return string the highlighted result string
+	 */
+	private static function highlightApiSearch($query, $result) {
+		
+		// check if there are strings to replace
+		if(stripos($result, $query) === false) {
+			return $result;
+		}
+		
+		// direct replacement
+		$replace = str_replace($query, '<b>'.$query.'</b>', $result);
+		if($result != $replace) {
+			return $replace;
+		}
+		
+		// ucfirst replacement
+		$replace = str_replace(ucfirst($query), '<b>'.ucfirst($query).'</b>', $result);
+		if($result != $replace) {
+			return $replace;
+		}
+		
+		// ucwords replacement
+		$replace = str_replace(ucwords($query), '<b>'.ucwords($query).'</b>', $result);
+		if($result != $replace) {
+			return $replace;
+		}
 	}
 }
 ?>
