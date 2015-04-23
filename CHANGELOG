@@ -67,6 +67,8 @@ Thirdparty licenses see LICENSE
 --
 [++] added status sub event for calendar entries for accounting
 [cc] changed positioning of preset form in calendar listing to be calculated on click
+--
+[cc] update to jquery 2.1.3 and installation of jquery-migrate-plugin 1.2.1
 
 
 
