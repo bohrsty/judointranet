@@ -71,6 +71,9 @@ Thirdparty licenses see LICENSE
 [cc] update to jquery 2.1.3 and installation of jquery-migrate-plugin 1.2.1
 --
 [++] added html to jquery-ui autocomplete, tribute search highlights the results
+--
+[cc] cleanup old jquery files
+[!!] fixed zebra_form file upload error, mimes.json was not correct formatted json
 
 
 
