@@ -74,6 +74,8 @@ Thirdparty licenses see LICENSE
 --
 [cc] cleanup old jquery files
 [!!] fixed zebra_form file upload error, mimes.json was not correct formatted json
+--
+[cc] updated thirdparty license information (jQuery UI Autocomplete HTML Extension)
 
 
 
