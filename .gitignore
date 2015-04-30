@@ -19,3 +19,7 @@
 /lib/classes/class.Test*.php
 /cnf/setup.ini
 /DEBUG_ALL
+/files/*.pdf
+/files/*/*.pdf
+!/files/tribute/faa72be0554401021cfa6dd60bdd5dac_1430198346.pdf
+/files/tribute/thumbs/*.png

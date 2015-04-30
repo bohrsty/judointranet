@@ -3345,6 +3345,86 @@ function mysql_22() {
 		return $return;
 	}
 	
+	/*
+	 * tribute file
+	 */
+	// create table tribute_history_type
+	if(!Db::executeQuery('
+		CREATE TABLE IF NOT EXISTS `tribute_file_type` ( 
+		  `id` INT(11) NOT NULL AUTO_INCREMENT , 
+		  `name` VARCHAR(100) NOT NULL , 
+		  `valid` BOOLEAN NOT NULL , 
+		  `last_modified` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+		  `modified_by` INT(11) NOT NULL,
+		  PRIMARY KEY (`id`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	// add table config
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+		VALUES
+			(\'tableConfig.tribute_file_type\', \'{"cols":"name,valid","fk":[],"fieldType":[],"orderBy":"ORDER BY `name` ASC"}\', \'configuration for table tribute_file_type\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// insert test tribute history type
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `tribute_file_type`
+			(`id`, `name`, `valid`, `last_modified`, `modified_by`) 
+			VALUES (1, \'Default Type\', 0, CURRENT_TIMESTAMP, 0)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// create table tribute_file
+	if(!Db::executeQuery('
+		CREATE TABLE IF NOT EXISTS `tribute_file` (
+		  `id` int(11) NOT NULL AUTO_INCREMENT,
+		  `tribute_id` int(11) NOT NULL,
+		  `filetype_id` int(11) NOT NULL,
+		  `filename` varchar(50) NOT NULL,
+		  `name` varchar(75) NOT NULL,
+		  `valid` tinyint(1) NOT NULL,
+		  `last_modified` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		  PRIMARY KEY (`id`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// update systemtables
+	if(!Db::executeQuery('
+		UPDATE `config`
+			SET `value` = \'calendar,category,config,defaults,field,fields2presets,group,group2group,inventory,inventory_movement,preset,rights,user,user2group,value,protocol,protocol_correction,helpmessages,user2groups,permissions,navi,item2filter,groups,filter,file,file_type,files_attached,club,result,standings,accounting_tasks,accounting_costs,holiday,tribute,tribute_history,accounting_settings,tribute_file\'
+		WHERE `name` = \'systemtables\'
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// insert test tribute_history
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `tribute_file`
+			(`id`, `tribute_id`, `filetype_id`, `filename`, `name`,`valid`, `last_modified`) 
+			VALUES (1, 1, 1, \'faa72be0554401021cfa6dd60bdd5dac_1430198346.pdf\', \'Test file\', 0, CURRENT_TIMESTAMP)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
 	
 	
 	

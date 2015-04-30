@@ -49,6 +49,9 @@ class CalendarViewListall extends CalendarView {
 		
 		// create smarty object
 		$this->smarty = new JudoIntranetSmarty();
+		
+		// activate validationEngine
+		$this->getTpl()->assign('validationEnging', true);
 	}
 	
 	

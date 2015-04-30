@@ -255,6 +255,107 @@ class TributeViewEdit extends TributeView {
 					_l('save')	// value
 			);
 			
+			// prepare tribute file upload
+			$sTributeFile = new JudoIntranetSmarty();
+			
+			// get types for form
+			$fileTypes = TributeFile::getAllFileTypes();
+			$sTributeFile->assign('fileTypes', $fileTypes);
+			
+			// activate validationEnginge
+			$this->getTpl()->assign('validationEngine', true);
+			
+			// prepare api signature
+			// get random id
+			$randomId = Object::getRandomId();
+				
+			// collect data for signature
+			$data = array(
+					'apiClass' => 'TributeFileupload',
+					'apiBase' => 'tribute.php',
+					'randomId' => $randomId,
+			);
+			$_SESSION['api'][$randomId] = $data;
+			$_SESSION['api'][$randomId]['time'] = time();
+			$signedApi = base64_encode(hash_hmac('sha256', json_encode($data), $this->getGc()->get_config('global.apikey')));
+				
+			// activate jquery upload file
+			$this->getTpl()->assign('jqueryUploadFile', true);
+			// add java script
+			$this->add_jquery('
+				$("#showUpload").click(function() {
+					$("#uploadForm").slideToggle();
+				});
+				var uploadMessage = $(\'<div id="uploadMessage"></div>\');
+				var uploadObject = $("#uploadFile").uploadFile({
+					url: "api/internal.php?id='.$randomId.'&signedApi='.$signedApi.'",
+					returnType: "json",
+					dynamicFormData: function() {
+						return {"tid": '.$tid.', "fileType": $("#fileType").val()};
+					},
+					allowedTypes: "pdf",
+					acceptFiles: "application/pdf",
+					uploadButtonClass: "button",
+					dragDrop: false,
+					autoSubmit: false,
+					multiple: false,
+					maxFileCount: 1,
+					onSuccess: function(files, response, xhr, pd) {
+						$("body").append(uploadMessage);
+						var windowWidth = $(window).width();
+						uploadMessage.css({
+								"background-color": (response.result == "ERROR" ? "#ff915f" : "#91ff5f"),
+								"border-color": (response.result == "ERROR" ? "red" : "green"),
+								"margin-left": windowWidth * 0.1 / 2,
+								"top": $(document).scrollTop() + 20
+							})
+							.text(response.message)
+							.fadeIn();
+						setTimeout(function() {
+							uploadMessage.fadeOut(3000);
+						}, 5000);
+						$("#fileType").val("");
+					},
+					onError: function(files, status, message, pd) {
+						$("body").append(uploadMessage);
+						var windowWidth = $(window).width();
+						uploadMessage.css({
+								"background-color":"#ff915f",
+								"border-color": "red",
+								"margin-left": windowWidth * 0.1 / 2,
+								"top": $(document).scrollTop() + 20
+							})
+							.text(message)
+							.fadeIn();
+						setTimeout(function() {
+							uploadMessage.fadeOut(3000);
+						}, 5000);
+					},
+					dragDropStr: "<span><b>Dateien hier hineinziehen (Drag &amp; Drop)</b></span>",
+					abortStr: "Abbrechen",
+					cancelStr: "Entfernen",
+					deletelStr: "L&ouml;schen",
+					doneStr: "Fertig",
+					multiDragErrorStr: "Mehrere Dateien per Drag &amp; Drop ist nicht erlaubt.",
+					extErrorStr: "nicht erlaubt. Erlaubte Dateitypen: ",
+					duplicateErrorStr: "nicht erlaubt. Datei existiert bereits.",
+					sizeErrorStr: "nicht erlaubt. Maximale Dateigr&ouml;&szlig;e: ",
+					uploadErrorStr: "Hochladen ist nicht erlaubt.",
+					maxFileCountErrorStr: " nicht erlaubt. Maximale Anzahl Dateien: ",
+					downloadStr: "Herunterladen",
+					uploadFolder: "tmp"
+				});
+				$("#upload").click(function(e) {
+					e.preventDefault();
+					var value = $("#fileType").val();
+					if(value == "") {
+						$("#fileType").validationEngine("showPrompt", "'._l('* Please select an option').'", "error", "topLeft", true);
+					} else {
+						uploadObject.startUpload();
+					}
+				});
+			');
+			
 			// prepare tribute history for "postForm"
 			$sPostForm = new JudoIntranetSmarty();
 			// get all history entries
@@ -334,7 +435,10 @@ class TributeViewEdit extends TributeView {
 			
 			// assign pre and post form HTML
 			$this->smarty->assign('preForm', '');
-			$this->smarty->assign('postForm', $sPostForm->fetch('smarty.tributeHistory.tpl'));
+			$this->smarty->assign('postForm',
+				$sTributeFile->fetch('smarty.tribute.fileUpload.tpl'). 
+				$sPostForm->fetch('smarty.tributeHistory.tpl')
+			);
 			
 			// validate form
 			if($form->validate()) {

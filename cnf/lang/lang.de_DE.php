@@ -1299,6 +1299,15 @@ $lang = array(
 	'Today' => 'Heute',
 	'Delete' => 'L&ouml;schen',
 	'show link selection' => 'Verkn&uuml;pfungsauswahl anzeigen',
+	'Attach files' => 'Dateien zuf&uuml;gen',
+	'Browse...' => 'Durchsuchen...',
+	'Upload' => 'Hochladen',
+	'File type' => 'Dateityp',
+	'File' => 'Datei',
+	'tribute_file_type' => 'Ehrungsdateitypen',
+	'File saved successfully' => 'Datei erfolgreich gespeichert',
+	'no uploaded file to process' => 'keine hochgeladene Datei zu verarbeiten',
+	'file processing failed' => 'Verarbeiten der Datei fehlgeschlagen',
 //	'' => '',
 );
 

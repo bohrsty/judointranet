@@ -49,6 +49,9 @@ class AdministrationViewField extends AdministrationView {
 		
 		// create smarty object
 		$this->smarty = new JudoIntranetSmarty();
+		
+		// activate validationEngine
+		$this->getTpl()->assign('validationEngine', true);
 	}
 	
 	

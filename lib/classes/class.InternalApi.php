@@ -240,6 +240,30 @@ class InternalApi extends Object {
 				}
 			break;
 			
+			case 'TributeFileupload':
+				
+				// check error
+				if($signedError === true) {
+					// signature error
+					echo json_encode(array(
+							'result' => 'ERROR',
+							'message' => _l('API call failed [not signed]'),
+					));
+				} elseif($timeoutError === true) {
+					// timeout error
+					echo json_encode(array(
+							'result' => 'ERROR',
+							'message' => _l('API call failed [timeout]'),
+					));
+				} else {
+					
+					// generate file
+					$tributeFile = TributeFile::factoryFile();
+					// echo result
+					echo json_encode($tributeFile->getError());
+				}
+			break;
+			
 			default:
 				echo 'ERROR: '._l('API call failed [unknown apiClass]');
 			break;

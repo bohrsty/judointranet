@@ -40,9 +40,11 @@
 {if isset($jtable) and $jtable}
 		<script type="text/javascript" src="js/jtable/jquery.jtable.min.js"></script>
 		<script type="text/javascript" src="{if is_file('js/jtable/localization/jquery.jtable.{$sLang}.js')}js/jtable/localization/jquery.jtable.{$sLang}.js{else}js/jtable/localization/jquery.jtable.de.js{/if}"></script>
+{/if}
+{if isset($validationEngine) and $validationEngine}
 		<script type="text/javascript" src="js/validationEngine.jquery/jquery.validationEngine.js"></script>
 		<script type="text/javascript" src="{if is_file('js/validationEngine.jquery/languages/jquery.validationEngine-{$sLang}.js')}js/validationEngine.jquery/languages/jquery.validationEngine-{$sLang}.js{else}js/validationEngine.jquery/languages/jquery.validationEngine-de.js{/if}"></script>
-		<link rel="stylesheet" type="text/css" href="css/validationEngine.jquery.css" />
+		
 {/if}
 {if isset($fullcalendar) and $fullcalendar}
 		<script type="text/javascript" src="js/moment-with-locales.min.js"></script>
@@ -57,12 +59,22 @@
 		<script type="text/javascript" src="js/difflib.js"></script>
 		<script type="text/javascript" src="js/diffview.js"></script>
 {/if}
+{if isset($jqueryUploadFile) and $jqueryUploadFile}
+		<script type="text/javascript" src="js/jquery-upload-file/jquery.uploadfile.min.js"></script>
+		<script type="text/javascript" src="js/jquery.form.js"></script>
+{/if}
 		<script type="text/javascript" src="js/page.js"></script>
-		<link rel="stylesheet" type="text/css" href="css/start/jquery-ui-1.11.4.min.css" />
-		<link rel="stylesheet" type="text/css" href="css/page.css" />
 {if isset($jtable) and $jtable}
 		<link rel="stylesheet" type="text/css" href="css/jtable/jtable_jqueryui.min.css" />
 {/if}
+{if isset($jqueryUploadFile) and $jqueryUploadFile}
+		<link rel="stylesheet" type="text/css" href="css/uploadfile.min.css" />
+{/if}
+{if isset($validationEngine) and $validationEngine}
+		<link rel="stylesheet" type="text/css" href="css/validationEngine.jquery.css" />
+{/if}
+		<link rel="stylesheet" type="text/css" href="css/start/jquery-ui-1.11.4.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/page.css" />
 		<script type="text/javascript">
 {if isset($usersettingsJsToToggle) && isset($usersettingsJsId) && isset($usersettingsJsTime)}
 			$(function() { $("{$usersettingsJsToToggle}").hide(); $("{$usersettingsJsId}").click(function() {ldelim} $("{$usersettingsJsToToggle}").slideToggle({$usersettingsJsTime}); {rdelim}); });
