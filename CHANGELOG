@@ -78,6 +78,9 @@ Thirdparty licenses see LICENSE
 [cc] updated thirdparty license information (jQuery UI Autocomplete HTML Extension)
 --
 [++] added tribute file upload using AJAX (jQuery Upload File)
+--
+[++] added api handler for files stored in filesystem
+[!!] renamed unit test file to fit in name schema
 
 
 

@@ -462,7 +462,7 @@ class TributeFile extends Object {
 		$thumb->setImageColorspace(255);
 		$thumb->setimageformat('png');
 		$thumb->thumbnailimage(200, 200, true);
-		$thumb->writeimage($tributeFile->getFilePath().'thumbs/'.$md5file.'_'.$timestamp.'.png');
+		$thumb->writeimage($tributeFile->getFilePath().'thumbs/'.$md5file.'_'.$timestamp.'.pdf.png');
 		$thumb->clear();
 		$thumb->destroy();
 		
