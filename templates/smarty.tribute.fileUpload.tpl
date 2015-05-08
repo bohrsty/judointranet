@@ -33,3 +33,20 @@
 		<input type="submit" id="upload" class="submit" value="{lang}Upload{/lang}" />
 	</div>
 </div>
+<div class="ui-corner-all ui-state-default" id="showFiles">{lang}Files{/lang} (<span id="countFiles">{count($tributeFiles)}</span>)</div>
+<div id="tributeFiles" class="round">
+{if count($tributeFiles) > 0}
+<div id="confirmDelete" title="{lang}Confirm{/lang}">{lang}You really want to delete?{/lang}</div>
+<script type="text/javascript">{literal}$('#confirmDelete').dialog({modal: true,autoOpen: false,width: 400,height: 250,show: {effect: 'fade',duration: 500},dialogClass: "noClose"});{/literal}</script>
+{foreach $tributeFiles as $file}
+	<div class="fileEntry" id="fileEntry{$file->getId()}">
+		<img src="img/common_delete.png" id="deleteFile{$file->getId()}" class="deleteFile" alt="{lang}delete{/lang}" title="{lang}delete file{/lang}" />
+		<img src="api/filesystem/tribute_file/{$file->getId()}?thumb=1" alt="{$file->getName(false)}" title="{$file->getType('name')}" /><br />
+		<a href="api/filesystem/tribute_file/{$file->getId()}" title="{lang file=$file->getName()}download #?file{/lang}">{$file->getName(false)}</a>
+		<script type="text/javascript">{literal}$('#deleteFile{/literal}{$file->getId()}{literal}').click(function() {$('#confirmDelete').dialog('option', 'buttons',[{"text": "{/literal}{html_entity_decode(_l('Delete'), 32)}{literal}", "click": function() {$.ajax({method: "POST",url: "api/filesystem/tribute_file/{/literal}{$file->getId()}{literal}/delete",data: {"confirmed":true},dataType: "json",success: function(data) {if(data.result == "OK") {$('#fileEntry{/literal}{$file->getId()}{literal}').fadeOut(1000, function(){$(this).remove()});var countFiles = + $('#countFiles').text();$('#countFiles').text(countFiles - 1);} else {var deleteMessage = $('<div id="deleteMessage"></div>');$("body").append(deleteMessage);var windowWidth = $(window).width();deleteMessage.css({"margin-left": windowWidth * 0.1 / 2,"top": $(document).scrollTop() + 20}).text(data.message).fadeIn();setTimeout(function() {deleteMessage.fadeOut(3000);}, 5000);}}});$(this).dialog('close');}},{"text": "{/literal}{html_entity_decode(_l('Cancel'), 32)}{literal}", "click": function() {$(this).dialog('close');}}]);$('#confirmDelete').dialog('open');});{/literal}</script>
+	</div>
+{/foreach}
+{else}
+	<p id="noFiles">{lang}no files{/lang}</p>
+{/if}
+</div>

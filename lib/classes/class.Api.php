@@ -123,6 +123,7 @@ class Api extends Object {
 				'table',
 				'id',
 				'tid',
+				'action',
 		);
 		
 		// prepare value array
@@ -140,6 +141,10 @@ class Api extends Object {
 			$apiData = explode('/', $apiArray[0]);
 			for($i=0; $i<count($apiData); $i++) {
 				$api['data'][(isset($apiNames[$i]) ? $apiNames[$i] : $i)] = $apiData[$i];
+			}
+			// check action
+			if(!isset($api['data']['action'])) {
+				$api['data']['action'] = null;
 			}
 			// check if options are set
 			if(isset($apiArray[1])) {

@@ -81,6 +81,9 @@ Thirdparty licenses see LICENSE
 --
 [++] added api handler for files stored in filesystem
 [!!] renamed unit test file to fit in name schema
+--
+[++] added tribute file deletion using AJAX
+[cc] added "action" as fourth argument to public api calls
 
 
 

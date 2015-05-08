@@ -1308,6 +1308,14 @@ $lang = array(
 	'File saved successfully' => 'Datei erfolgreich gespeichert',
 	'no uploaded file to process' => 'keine hochgeladene Datei zu verarbeiten',
 	'file processing failed' => 'Verarbeiten der Datei fehlgeschlagen',
+	'download #?file' => '#?file herunterladen',
+	'no files' => 'keine Dateien',
+	'Files' => 'Dateien',
+	'Cancel' => 'Abbrechen',
+	'You really want to delete?' => 'Wollen Sie wirklich l&ouml;schen?',
+	'Confirm' => 'Best&auml;tigung',
+	'Deletion failed give "TributeFile::#?id" to the #?systemadmin to check deletion.' => 'L&ouml;schen fehlgeschlagen, geben Sie "TributeFile::#?id" an den #?systemadmin zur Prüfung.',
+	'Deletion not confirmed!' => 'L&ouml;schung nicht best&auml;tigt!',
 //	'' => '',
 );
 

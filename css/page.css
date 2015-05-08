@@ -1039,6 +1039,57 @@ div.linkForm {
     color: #FFF;
 }
 
+.round {
+	border: 1px solid #b6d6e4;
+	border-radius: 3px;
+}
+
+#tributeFiles {
+	display: none;
+	padding: 5px;
+}
+
+#showFiles {
+	padding: 3px;
+	cursor: pointer;
+}
+
+.inlineBlock {
+	display: inline-block;
+}
+
+.fileEntry {
+	display: inline-block;
+	padding: 3px;
+	border: 1px solid #b6d6e4;
+	border-radius: 3px;
+	text-align: center;
+	margin: 3px;
+}
+
+.fileEntry img {
+	border: 1px solid grey;
+}
+
+img.deleteFile {
+	z-index: 99;
+	cursor: pointer;
+	border: none;
+}
+
+#confirmDelete {
+	display: none;
+}
+
+.noClose .ui-dialog-titlebar-close {
+	display: none;
+}
+
+#deleteMessage {
+	background-color: #ff915f;
+	border-color: red;
+}
+
 
 
 

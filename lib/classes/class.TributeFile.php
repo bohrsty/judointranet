@@ -65,8 +65,12 @@ class TributeFile extends Object {
 	public function setTributeId($tributeId) {
 		$this->tributeId = $tributeId;
 	}
-	public function getType(){
-		return $this->type;
+	public function getType($value = null){
+		if(is_null($value)) {
+			return $this->type;
+		} else {
+			return $this->type[$value];
+		}
 	}
 	public function setType($type) {
 		$this->type = $type;
@@ -77,8 +81,12 @@ class TributeFile extends Object {
 	public function setFilename($filename) {
 		$this->filename = $filename;
 	}
-	public function getName(){
-		return $this->name;
+	public function getName($full=true){
+		if($full === true) {
+			return $this->name;
+		} else {
+			return substr($this->name, 0, 9).'...'.substr($this->name, -9, 9);
+		}
 	}
 	public function setName($name) {
 		$this->name = $name;
@@ -249,13 +257,24 @@ class TributeFile extends Object {
 	
 	
 	/**
-	 * deleteEntry() sets $this->valid to 0
+	 * deleteEntry() deletes files from filesystem and database
+	 * 
+	 * @return bool true if deletion successful, false otherwise
 	 */
 	public function deleteEntry() {
 		
-		// set valid
-		$this->setValid(0);
-		$this->writeDb();
+		// delete files from filesystem
+		$fileResult = @unlink($this->getFilePath().$this->getFilename());
+		$thumbResult = @unlink($this->getFilePath().'thumbs/'.$this->getFilename().'.png');
+		// check deletion
+		if($fileResult === true && $thumbResult === true) {
+			TributeFile::delete($this->getId());
+			return true;
+		} else {
+			$this->setValid(0);
+			$this->writeDb();
+			return false;
+		}
 	}
 	
 	
@@ -267,7 +286,7 @@ class TributeFile extends Object {
 	 */
 	public static function delete($id) {
 		
-		// delete result
+		// delete in database
 		if(!Db::executeQuery('
 			DELETE FROM `tribute_file` WHERE `id`=#?
 				',
@@ -476,6 +495,9 @@ class TributeFile extends Object {
 					'message' => _l('File saved successfully'),
 					'data' => array(
 							'id' => $newId,
+							'name' => $tributeFile->getName(false),
+							'fullname' => $tributeFile->getName(),
+							'type' => $tributeFile->getType('name'),
 						),
 				)
 		);

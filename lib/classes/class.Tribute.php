@@ -423,4 +423,45 @@ class Tribute extends Page {
 		}
 		return $return;
 	}
+	
+	
+	/**
+	 * getAllFiles($id) gets all file entries that belong to $id
+	 * 
+	 * @param int $id the id of the tribute the file belongs to
+	 * @param bool $validOnly if is true, only valid file entries are returned
+	 * @return array array containing the file objects
+	 */
+	public static function getAllFiles($id, $validOnly=false) {
+		
+		// check $validOnly
+		$sqlAnd = '';
+		if($validOnly === true) {
+			$sqlAnd = 'AND `valid`=TRUE';
+		}
+		
+		$result = Db::ArrayValue('
+			SELECT `id`
+			FROM `tribute_file`
+			WHERE `tribute_id`=#?
+				'.$sqlAnd.'
+			ORDER BY `last_modified`
+		',
+				MYSQL_ASSOC,
+				array($id,));
+		if($result === false) {
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		}
+		
+		// return
+		$return = array();
+		if(count($result) > 0) {
+				
+			foreach($result as $entry) {
+				$return[] = new TributeFile($entry['id']);
+			}
+		}
+		return $return;
+	}
 }
