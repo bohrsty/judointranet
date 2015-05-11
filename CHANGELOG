@@ -84,6 +84,9 @@ Thirdparty licenses see LICENSE
 --
 [++] added tribute file deletion using AJAX
 [cc] added "action" as fourth argument to public api calls
+--
+[!!] non known exceptions and non CustomExceptions leads to method not found
+[cc] added check for json response on fribute file upload
 
 
 

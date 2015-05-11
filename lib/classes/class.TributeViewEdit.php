@@ -320,19 +320,22 @@ class TributeViewEdit extends TributeView {
 							uploadMessage.fadeOut(3000);
 						}, 5000);
 						$("#fileType").val("");
-						var countFiles = + $(\'#countFiles\').text();
-						$(\'#countFiles\').text(countFiles + 1);
-						$(\'#noFiles\').remove();
-						var deleteFile = $(\'<img src="img/common_delete.png" id="deleteFile\'+response.data.id+\'" class="deleteFile" alt="'._l('delete').'" title="'._l('delete file').'" />\');
-						var newFile = $(\'<div id="fileEntry\'+response.data.id+\'" class="fileEntry"></div>\');
-						var newImg = $(\'<img src="api/filesystem/tribute_file/\'+response.data.id+\'?thumb=1" alt="\'+response.data.name+\'" title="\'+response.data.type+\'" />\');
-						var br = $(\'<br />\');
-						var newLink = $(\'<a href="api/filesystem/tribute_file/\'+response.data.id+\'" title="\'+response.data.fullname+\'">\'+response.data.name+\'</a>\');
-						var script = $(\'<script>\').attr("type", "text/javascript").text(\'$("#deleteFile\'+response.data.id+\'").click(function() {$("#confirmDelete").dialog("option", "buttons",[{"text": "'.html_entity_decode(_l('Delete'), ENT_XHTML).'", "click": function() {$.ajax({method: "POST",url: "api/filesystem/tribute_file/\'+response.data.id+\'/delete",data: {"confirmed":true},dataType: "json",success: function(data) {if(data.result == "OK") {$("#fileEntry\'+response.data.id+\'").fadeOut(1000, function(){$(this).remove()});var countFiles = + $("#countFiles").text();$("#countFiles").text(countFiles - 1);} else {var deleteMessage = $("<div>").attr("id", "deleteMessage");$("body").append(deleteMessage);var windowWidth = $(window).width();deleteMessage.css({"margin-left": windowWidth * 0.1 / 2,"top": $(document).scrollTop() + 20}).text(data.message).fadeIn();setTimeout(function() {deleteMessage.fadeOut(3000);}, 5000);}}});$(this).dialog("close");}},{"text": "'.html_entity_decode(_l('Cancel'), ENT_XHTML).'", "click": function() {$(this).dialog("close");}}]);$("#confirmDelete").dialog("open");});\');
-						newFile.append(deleteFile).append(newImg).append(br).append(newLink).append(script);
-						$(\'#tributeFiles\').append(newFile);
+						if(response.result == "OK") {
+							var countFiles = + $(\'#countFiles\').text();
+							$(\'#countFiles\').text(countFiles + 1);
+							$(\'#noFiles\').remove();
+							var deleteFile = $(\'<img src="img/common_delete.png" id="deleteFile\'+response.data.id+\'" class="deleteFile" alt="'._l('delete').'" title="'._l('delete file').'" />\');
+							var newFile = $(\'<div id="fileEntry\'+response.data.id+\'" class="fileEntry"></div>\');
+							var newImg = $(\'<img src="api/filesystem/tribute_file/\'+response.data.id+\'?thumb=1" alt="\'+response.data.name+\'" title="\'+response.data.type+\'" />\');
+							var br = $(\'<br />\');
+							var newLink = $(\'<a href="api/filesystem/tribute_file/\'+response.data.id+\'" title="\'+response.data.fullname+\'">\'+response.data.name+\'</a>\');
+							var script = $(\'<script>\').attr("type", "text/javascript").text(\'$("#deleteFile\'+response.data.id+\'").click(function() {$("#confirmDelete").dialog("option", "buttons",[{"text": "'.html_entity_decode(_l('Delete'), ENT_XHTML).'", "click": function() {$.ajax({method: "POST",url: "api/filesystem/tribute_file/\'+response.data.id+\'/delete",data: {"confirmed":true},dataType: "json",success: function(data) {if(data.result == "OK") {$("#fileEntry\'+response.data.id+\'").fadeOut(1000, function(){$(this).remove()});var countFiles = + $("#countFiles").text();$("#countFiles").text(countFiles - 1);} else {var deleteMessage = $("<div>").attr("id", "deleteMessage");$("body").append(deleteMessage);var windowWidth = $(window).width();deleteMessage.css({"margin-left": windowWidth * 0.1 / 2,"top": $(document).scrollTop() + 20}).text(data.message).fadeIn();setTimeout(function() {deleteMessage.fadeOut(3000);}, 5000);}}});$(this).dialog("close");}},{"text": "'.html_entity_decode(_l('Cancel'), ENT_XHTML).'", "click": function() {$(this).dialog("close");}}]);$("#confirmDelete").dialog("open");});\');
+							newFile.append(deleteFile).append(newImg).append(br).append(newLink).append(script);
+							$(\'#tributeFiles\').append(newFile);
+						}
 					},
 					onError: function(files, status, message, pd) {
+						$("#fileType").val("");
 						$("body").append(uploadMessage);
 						var windowWidth = $(window).width();
 						uploadMessage.css({

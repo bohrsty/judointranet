@@ -300,6 +300,7 @@ function handleExceptions($e, $outputType) {
 		case 'SmartyCompilerException':
 		case 'HTML2PDF_exception':
 		case 'PHPExcel_Reader_Exception':
+		case 'GmagickException':
 			
 			// check $outputType
 			if($outputType == HANDLE_EXCEPTION_JSON) {
@@ -313,7 +314,11 @@ function handleExceptions($e, $outputType) {
 		break;
 		
 		default:
-			$e->errorMessage($outputType);
+			if($e instanceof CustomException) {
+				$e->errorMessage($outputType);
+			} else {
+				echo $e;
+			}
 		break;
 	}
 }
