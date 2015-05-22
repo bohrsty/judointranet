@@ -389,9 +389,10 @@ class Tribute extends Page {
 	 * 
 	 * @param int $id the id of the tribute the history belongs to
 	 * @param bool $validOnly if is true, only valid history entries are returned
+	 * @param bool $asArray if true history is returned as array of arrays, otherwise as array of objects
 	 * @return array array containing the history objects
 	 */
-	public static function getAllHistory($id, $validOnly=false) {
+	public static function getAllHistory($id, $validOnly=false, $asArray=false) {
 		
 		// check $validOnly
 		$sqlAnd = '';
@@ -414,14 +415,29 @@ class Tribute extends Page {
 		}
 		
 		// return
-		$return = array();
+		$objects = array();
+		$arrays = array();
 		if(count($result) > 0) {
 				
 			foreach($result as $entry) {
-				$return[] = new TributeHistory($entry['id']);
+				$tributeHistory = new TributeHistory($entry['id']);
+				$objects[] = $tributeHistory;
+				$user = new User(false);
+				$user->change_user($tributeHistory->getUser(), false, 'id');
+				$arrays[] = array(
+						'subject' => $tributeHistory->getSubject(),
+						'content' => $tributeHistory->getContent(),
+						'user' => $user->get_userinfo('name'),
+						'date' => date('d.m.Y', strtotime($tributeHistory->getLastModified())),
+					);
 			}
 		}
-		return $return;
+		
+		// check $asArray
+		if($asArray === true) {
+			return $arrays;
+		}
+		return $objects;
 	}
 	
 	
@@ -430,9 +446,10 @@ class Tribute extends Page {
 	 * 
 	 * @param int $id the id of the tribute the file belongs to
 	 * @param bool $validOnly if is true, only valid file entries are returned
+	 * @param bool $asArray if true files are returned as array of arrays, otherwise as array of objects
 	 * @return array array containing the file objects
 	 */
-	public static function getAllFiles($id, $validOnly=false) {
+	public static function getAllFiles($id, $validOnly=false, $asArray=false) {
 		
 		// check $validOnly
 		$sqlAnd = '';
@@ -455,13 +472,145 @@ class Tribute extends Page {
 		}
 		
 		// return
-		$return = array();
+		$objects = array();
+		$arrays = array();
 		if(count($result) > 0) {
 				
 			foreach($result as $entry) {
-				$return[] = new TributeFile($entry['id']);
+				$tributeFile = new TributeFile($entry['id']);
+				$objects[] = $tributeFile;
+				$arrays[] = array(
+						'name' => $tributeFile->getName(),
+						'date' => date('d.m.Y', strtotime($tributeFile->getLastModified())),
+					);
 			}
 		}
-		return $return;
+		
+		// check $asArray
+		if($asArray === true) {
+			return $arrays;
+		}
+		return $objects;
+	}
+	
+	
+	/**
+	 * downloadFile() generates the tribute as temporary pdf, merges it with the attached tribute
+	 * files and initiate the download
+	 * 
+	 * @return void
+	 */
+	public function downloadFile() {
+		
+		// get preset
+		$preset = new Preset($this->getGc()->get_config('tribute.presetId'), 'tribute');
+		
+		// assign data
+		$sTributeData = new JudoIntranetSmarty();
+		// prepare marker-array
+		$tribute = array(
+				'version' => date('d.m.Y'),
+		);
+		$this->addMarks($tribute);
+		$sTributeData->assign('t', $tribute);
+		
+		// fetch pdf
+		$pdfOut = $sTributeData->fetch('tributes/'.$preset->get_path().'.tpl');
+		
+		// get HTML2PDF-object
+		$tempPdf = new HTML2PDF('P', 'A4', 'de', true, 'UTF-8', array(0, 0, 0, 0));
+		$tempPdf->writeHTML($pdfOut, false);
+		
+		// output (D=download; F=save on filesystem; S=string)
+		// get filename
+		$tempTributeFile = JIPATH.'/tmp/'.md5($this->getName().$this->getTestimonialId().date('U')).'.pdf';
+		$tempPdf->Output($tempTributeFile, 'F');
+		
+		// prepare files
+		$files = array($tempTributeFile,);
+		
+		// get all files
+		$allFiles = Tribute::getAllFiles($this->getId(), true);
+		// get file paths
+		foreach($allFiles as $file) {
+			$files[] = $file->getFilePath().$file->getFilename();
+		}
+		
+		// merge files
+		$pdf = JudoIntranetFPDI::mergeFiles($files);
+		
+		// delete temporary pdf
+		unlink($tempTributeFile);
+		
+		// send header, pdf content and exit
+		$filename = $this->replace_umlaute(html_entity_decode($sTributeData->fetch('string:'.utf8_encode($preset->get_filename())), ENT_XHTML, 'UTF-8'));;
+		// send header
+		header('Cache-Control: public, must-revalidate, max-age=0');
+		header('Pragma: public');
+		header('Expires: Sat, 31 Dec 2011 05:00:00 GMT');
+		header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+		header('Content-Type: application/force-download');
+		header('Content-Type: application/octet-stream', false);
+		header('Content-Type: application/download', false);
+		header('Content-Type: application/pdf', false);
+		header('Content-Disposition: attachment; filename="'.$filename.'";');
+		header('Content-Transfer-Encoding: binary');
+		header('Content-Length: '.strlen($pdf));
+		// echo file content
+		echo $pdf;
+		exit;
+	}
+	
+	
+	/**
+	 * addMarks(&$tribute) adds the marks and values to the $tribute array
+	 * 
+	 * @param array $tribute array to add marks and values to
+	 */
+	private function addMarks(&$tribute) {
+		
+		$tribute['tribute_name'] = $this->getName();
+		$tribute['tribute_year'] = $this->getYear();
+		$tribute['tribute_startdate_dmY'] = date('d.m.Y', strtotime($this->getStartDate()));
+		$tribute['tribute_planneddate_dmY'] = date('d.m.Y', strtotime($this->getPlannedDate()));
+		$tribute['tribute_tributedate_dmY'] = date('d.m.Y', strtotime($this->getDate()));
+		$tribute['tribute_testimonial'] = self::getTestimonialNameById($this->getTestimonialId());
+		$tribute['tribute_description'] = $this->getDescription();
+		$tribute['tribute_history'] = self::getAllHistory($this->getId(), true, true);
+		$tribute['tribute_files'] = self::getAllFiles($this->getId(), true, true);
+	}
+	
+	
+	/**
+	 * getTestimonialNameById($id) gets the testimonial given by $id from database and returns
+	 * it as array id => ; name => if $id exists, else returns the default type
+	 * 
+	 * @param int $id id of the testimonial to get
+	 * @return array testimonial id and name as array
+	 */
+	public static function getTestimonialNameById($id) {
+		
+		// check if id exists
+		if(Page::exists('testimonials', $id)) {
+			$sqlId = $id;
+		} else {
+			$sqlId = 1;
+		}
+		
+		// execute query
+		$result = Db::ArrayValue('
+				SELECT `name`
+				FROM `testimonials`
+				WHERE `id`=#?
+			',
+				MYSQL_ASSOC,
+				array($sqlId,));
+		if($result === false) {
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		} else {
+			return $result[0]['name'];
+		}
+		
 	}
 }

@@ -159,6 +159,15 @@ spl_autoload_register(
 		// load Zebra_Form
 		} elseif($class == 'Zebra_Form') {
 			include_once(JIPATH.'/lib/zebra_form/Zebra_Form.php');
+		// load FPDI
+		} elseif($class == 'FPDI') {
+			include_once(JIPATH.'/lib/FPDI/fpdi.php');
+		} elseif(substr($class, 0, 4) == 'fpdi') {
+			include_once(JIPATH.'/lib/FPDI/'.$class.'.php');
+		} elseif($class == 'FPDF_TPL') {
+			include_once(JIPATH.'/lib/FPDI/fpdf_tpl.php');
+		} elseif(substr($class,0,4) == 'pdf_') {
+			include_once(JIPATH.'/lib/FPDI/'.$class.'.php');
 		// load PHPExcel
 		} elseif(substr($class,0,8) == 'PHPExcel') {
 			// get path parts

@@ -1316,6 +1316,7 @@ $lang = array(
 	'Confirm' => 'Best&auml;tigung',
 	'Deletion failed give "TributeFile::#?id" to the #?systemadmin to check deletion.' => 'L&ouml;schen fehlgeschlagen, geben Sie "TributeFile::#?id" an den #?systemadmin zur Prüfung.',
 	'Deletion not confirmed!' => 'L&ouml;schung nicht best&auml;tigt!',
+	'download tribute as PDF' => 'Ehrung als PDF herunterladen',
 //	'' => '',
 );
 

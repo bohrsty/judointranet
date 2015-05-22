@@ -23,3 +23,5 @@
 /files/*/*.pdf
 !/files/tribute/faa72be0554401021cfa6dd60bdd5dac_1430198346.pdf
 /files/tribute/thumbs/*.png
+/templates/tributes/*
+!/templates/tributes/index.php

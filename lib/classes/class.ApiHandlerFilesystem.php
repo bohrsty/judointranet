@@ -231,6 +231,46 @@ class ApiHandlerFilesystem extends ApiHandler {
 			}
 		}
 	}
+	
+	
+	/**
+	 * handleTribute() returns the data for the tribute entry "tid" in $request
+	 */
+	public function handleTribute() {
+		
+		// get request
+		$request = $this->getRequest();
+		
+		// check tid given 404
+		if(!isset($request['data']['tid']) || !is_numeric($request['data']['tid'])) {
+			header("HTTP/1.1 404 Not Found");
+			exit;
+		}
+		
+		// check existance 404
+		if(Page::exists('tribute', $request['data']['tid']) === false) {
+			header("HTTP/1.1 404 Not Found");
+			exit;
+		}
+		
+		// get object
+		$tribute = new Tribute($request['data']['tid']);
+		
+		// check permission 403
+		if($this->getUser()->hasPermission('tribute', $tribute->getId()) === false) {
+			header("HTTP/1.1 403 Forbidden");
+			exit;
+		}
+		
+		// check valid 404
+		if($tribute->getValid() == 0) {
+			header("HTTP/1.1 404 Not Found");
+			exit;
+		}
+		
+		// initiate download
+		$tribute->downloadFile();
+	}
 }
 
 ?>

@@ -87,6 +87,8 @@ Thirdparty licenses see LICENSE
 --
 [!!] non known exceptions and non CustomExceptions leads to method not found
 [cc] added check for json response on fribute file upload
+--
+[++] added merging tribute files and tribute data using FPDI, download complete tribute as PDF
 
 
 

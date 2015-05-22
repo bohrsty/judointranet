@@ -3425,6 +3425,18 @@ function mysql_22() {
 		return $return;
 	}
 	
+	/*
+	 * preset id for tribute file
+	 */
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+			VALUES (\'tribute.presetId\', \'0\', \'Preset id for tribute file\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
 	
 	
 	

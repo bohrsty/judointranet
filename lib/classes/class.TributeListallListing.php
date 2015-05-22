@@ -263,6 +263,15 @@ class TributeListallListing extends Listing implements ListingInterface {
 								'alt' => _l('delete tribute'),
 							),
 					);
+				// download
+				$adminArray[] = array(
+						'href' => 'api/filesystem/tribute/'.$row['id'],
+						'title' => _l('download tribute as PDF'),
+						'name' => array(
+								'src' => 'img/tribute_pdf.png',
+								'alt' => _l('download tribute as PDF'),
+							),
+					);
 			}
 			$smarty->assign('data', $adminArray);
 			$admin = $smarty->fetch('smarty.a.img.tpl');
