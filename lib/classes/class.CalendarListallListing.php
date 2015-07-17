@@ -120,12 +120,37 @@ class CalendarListallListing extends CalendarListing implements ListingInterface
 		
 		// prepare return
 		$return = array();
+		// prepare dates
+		// from
+		$from = $this->post('from');
+		if($from == '' || $from === false) {
+			$from = '1970-01-01';
+		} else {
+			$from = date('Y-m-d', strtotime($from));
+		}
+		// to
+		$to = $this->post('to');
+		if($to == '' || $to === false) {
+			$to = '2100-01-01';
+		} else {
+			$to = date('Y-m-d', strtotime($to));
+		}
 		
 		// get permitted and filtered ids
-		if($this->get('filter') == '') {
-			$filterId = false;
+		$filter = $this->post('filter');
+		$filterIds = false;
+		if($filter != '') {
+			$filter = json_decode($this->post('filter'), true);
+			if(!is_null($filter)) {
+				$filterIds = array();
+				foreach($filter as $id => $isSet) {
+					if($isSet === true) {
+						$filterIds[] = $id;
+					}
+				}
+			}
 		}
-		$ids = Filter::filterItemIdsAsArray($filterId, 'calendar', $this->get('from'), $this->get('to'));
+		$ids = Filter::filterItemIdsAsArray($filterIds, 'calendar', $from, $to);
 		
 		// check if empty result
 		$mysqlData = implode(',', $ids);
@@ -180,11 +205,37 @@ class CalendarListallListing extends CalendarListing implements ListingInterface
 	 */
 	public function totalRowCount() {
 		
-		// get permitted and filtered ids
-		if($this->get('filter') == '') {
-			$filterId = false;
+		// prepare dates
+		// from
+		$from = $this->post('from');
+		if($from == '' || $from === false) {
+			$from = '1970-01-01';
+		} else {
+			$from = date('Y-m-d', strtotime($from));
 		}
-		$ids = Filter::filterItemIdsAsArray($filterId, 'calendar', $this->get('from'), $this->get('to'));
+		// to
+		$to = $this->post('to');
+		if($to == '' || $to === false) {
+			$to = '2100-01-01';
+		} else {
+			$to = date('Y-m-d', strtotime($to));
+		}
+		
+		// get permitted and filtered ids
+		$filter = $this->post('filter');
+		$filterIds = false;
+		if($filter != '') {
+			$filter = json_decode($this->post('filter'), true);
+			if(!is_null($filter)) {
+				$filterIds = array();
+				foreach($filter as $id => $isSet) {
+					if($isSet === true) {
+						$filterIds[] = $id;
+					}
+				}
+			}
+		}
+		$ids = Filter::filterItemIdsAsArray($filterIds, 'calendar', $from, $to);
 		
 		// check if empty result
 		$mysqlData = implode(',', $ids);

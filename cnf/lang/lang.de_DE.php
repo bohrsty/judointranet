@@ -666,22 +666,28 @@ $lang = array(
 						Termin (inkl. evtl. Ausschreibung) sehen kann.</p>',
 	'HELP_MESSAGE_12' => '<p>Der Klick auf "Ja" l&ouml;scht den Datensatz endg&uuml;ltig,
 						"Abbrechen" f&uuml;hrt zur&uuml;ck zur Liste.</p>',
-	'HELP_MESSAGE_13' => '<p>Die eingeblendete Filterauswahl besteht aus drei
-						Bereichen:</p>
+	'HELP_MESSAGE_13' => '<p>Die eingeblendete Filterauswahl besteht aus zwei Bereichen:</p>
 						<ul>
-						<li>Der obere Bereich enth&auml;lt die Buttons zum Zur&uuml;cksetzen der
-						gew&auml;hlten Filter:<br />"<span class="underline">Alle Filter zur&uuml;cksetzen</span>" zeigt wieder die
-						komplette Liste an, ohne Filter.<br />"<span class="underline">Datumsfilter zur&uuml;cksetzen</span>"
-						beh&auml;lt die ausgew&auml;hlte Gruppe bei und entfernt nur den Zeitraum.<br />
-						"<span class="underline">Gruppenfilter zur&uuml;cksetzen</span>"beh&auml;lt den gew&auml;hlten Zeitraum und
-						entfernt nur die Gruppe</li>
-						<li>Der erste Reiter enth&auml;lt die Buttons zur Auswahl eines festgelegten
-						Zeitraums, der die Liste auf die Termine einschr&auml;nkt, die in diesem Zeitraum
-						stattfinden.</li>
-						<li>Der zweite Reiter enth&auml;lt die Buttons zur Auswahl nach festgelegten
-						Gruppierungen (z.B.: Altersklassen), die beim anlegen des Termins festgelegt
-						wurden.</li>
-						</ul>',
+						<li>Der linke Bereich enth&auml;lt die Buttons und Kalender zur Datumsauswahl. Ein Klick auf einen
+						der Buttons (z.B. "Morgen") f&uuml;llt die Kalenderfelder mit den passenden
+						Daten und aktualisiert die Tabelle entsprechend.<br />Ein Klick in die
+						Kalenderfelder &ouml;ffnet eine Datumsauswahl, wenn ein oder beide Daten
+						ausgew&auml;hlt wurden aktualisiert sich die Tabelle entsprechend.<br />
+						Der Button <img src="img/common_delete.png" alt="Bild im Hilfetext" /> in der
+						Bereichs&uuml;berschrift setzt alle Datumsfilter zur&uuml;ck.</li>
+						<li>Der rechte Bereich enth&auml;lt die Buttons zur Auswahl nach festgelegten
+						Gruppierungen (z.B.: Altersklassen), die beim Anlegen des Termins festgelegt
+						wurden.<br />Beim Laden der Seite sind alle Gruppenfilter ausgew&auml;hlt
+						(kenntlich durch die dunkle F&auml;rbung und die wei&szlig;e Schrift. Beim An- oder
+						Abw&auml;hlen einzelner Gruppen wird die Tabelle entsprechend aktualisiert,
+						die Schaltfl&auml;chen "alle / keine" in der Bereichs&uuml;berschrift
+						w&auml;hlen beim Anklicken alle Filter aus ("alle") oder ab ("keine").</li>
+						</ul>
+						Beide Filterbereiche werden bei der Anzeige addiert, wenn also ein Datumsbereich
+						ausgew&auml;hlt wurde und ein oder mehrere Gruppenfilter, werden nur die
+						Termine dieser Gruppe(n) im ausgew&auml;hlten Zeitraum angezeigt. Um also
+						alle verf&uuml;gbaren Termine an zu zeigen, darf kein Datum ausgew&auml;hlt sein
+						und m&uuml;ssen alle Gruppenfilter ausgew&auml;hlt sein.',
 	'HELP_MESSAGE_14' => '<p><b>Format</b>: <i>mehrzeiliger Text</i><br />
 						<b>Standardwert</b>: <i>keiner</i><br />
 						<b>Erlaubte Zeichen</b>: <i>"{$object->getGc()->get_config(\'textarea.desc\')|escape}"</i><br />
@@ -1317,6 +1323,9 @@ $lang = array(
 	'Deletion failed give "TributeFile::#?id" to the #?systemadmin to check deletion.' => 'L&ouml;schen fehlgeschlagen, geben Sie "TributeFile::#?id" an den #?systemadmin zur Prüfung.',
 	'Deletion not confirmed!' => 'L&ouml;schung nicht best&auml;tigt!',
 	'download tribute as PDF' => 'Ehrung als PDF herunterladen',
+	'all' => 'alle',
+	'none' => 'keine',
+		
 //	'' => '',
 );
 

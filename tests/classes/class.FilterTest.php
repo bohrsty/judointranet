@@ -60,27 +60,6 @@ class FilterTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	
-	public function testFilterGetOwnAndAllFilterInfos() {
-		
-		// all existing filter
-		$allFilter = Filter::allExistingFilter();
-		$this->assertArrayHasKey(1, $allFilter);
-		$this->assertEquals(1, $allFilter[1]->getId());
-		$this->assertEquals('Alle', $allFilter[1]->getName());
-		
-		// all existing filter as array with defined value
-		$definedFilter = Filter::allExistingFilter('name');
-		$this->assertEquals('Alle', $definedFilter[1]);
-		
-		// all filter of an item
-		$ownFilter = Filter::allFilterOf('calendar', 1);
-		$this->assertArrayHasKey(1, $ownFilter);
-		$this->assertEquals(1, $ownFilter[1]->getId());
-		$this->assertEquals('Alle', $ownFilter[1]->getName());
-		
-	}
-	
-	
 	public function testFilterGettingFilteredItems() {
 		
 		// create global user

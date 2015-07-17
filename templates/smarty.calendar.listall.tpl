@@ -20,37 +20,24 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-<p><span{if $link.params!=''} {$link.params}{/if} title="{$link.title}">{$link.content}</span>{if isset($link.help) and $link.help!=''}&nbsp;{$link.help}{/if}</p>
-<div id="filterDialog" title="{$dialogTitle}">
-	<div class="resetFilter">
-		<p class="filterEntry center">{$resetFilter}</p>
-{for $i=0 to (count($r)-1)}
-		<p class="filterEntry">
-			<a href="{$r.$i.href|escape}" title="{$r.$i.title}">{$r.$i.content}</a>
-		</p>
-{/for}
+<div id="showFilterButton" class="ui-corner-all ui-state-active">
+{lang}show filter{/lang}{if isset($helpButton) and $helpButton!=''}&nbsp;{$helpButton}{/if}
+</div>
+<div id="filterDialog" class="round">
+	<div class="filter">
+		<p class="filterEntry center nopointer">{lang}select date{/lang} (<img src="img/common_delete.png" alt="{lang}reset date filter{/lang}" title="{lang}reset date filter{/lang}" id="resetDate" class="pointer" />)</p>
+		<input type="text" id="dateFrom" class="dateInput" /> - <input type="text" id="dateTo" class="dateInput" />
+{foreach $datefilter as $filter}
+		<p class="filterEntry dateFilter" title="{$filter.from}-{$filter.to}">{$filter.name}</p>
+{/foreach}
 	</div>
-	<div id="filterTabs">
-		<ul>
-			<li><a href="#filterTabs-1" title="{$chooseDate}">{$dateFilter}</a></li>
-			<li><a href="#filterTabs-2" title="{$chooseGroup}">{$groupFilter}</a></li>
-		</ul>
-		<div id="filterTabs-1">
-			
-			<p class="filterEntry center">{$chooseDate}</p>
-{for $i=0 to (count($dl)-1)}
-			<p class="filterEntry">
-				<a href="{$dl.$i.href|escape}" title="{$dl.$i.title}">{$dl.$i.content}</a>
-			</p>
-{/for}
-		</div>
-		<div id="filterTabs-2">
-			<p class="filterEntry center">{$chooseGroup}</p>
-{for $i=0 to (count($gl)-1)}
-			<p class="filterEntry">
-				<a href="{$gl.$i.href|escape}" title="{$gl.$i.title}">{$gl.$i.content}</a>
-			</p>
-{/for}
-		</div>
+	<div class="filter">
+		<p class="filterEntry center nopointer">{lang}select group{/lang} (<span id="groupAll">{lang}all{/lang}</span> / <span id="groupNone">{lang}none{/lang}</span>)</p>
+{foreach $groupfilter as $filter}
+		<p class="filterEntry">
+			<input type="checkbox" class="groupFilterCheckbox" name="groupfilter[]" id="gcb{$filter.id}" /><span class="groupFilterText" title="{$filter.name}">{$filter.name}</span>
+		</p>
+{/foreach}
 	</div>
 </div>
+<div id="{$containerId}" class="jTable"></div>

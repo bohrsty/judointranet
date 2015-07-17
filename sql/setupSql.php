@@ -3437,6 +3437,19 @@ function mysql_22() {
 		return $return;
 	}
 	
+	// change all filter to no group
+	if(!Db::executeQuery('
+		UPDATE `filter`
+			SET `name`=\'- keine Gruppe -\',
+			`valid`=1
+		WHERE `id`=1
+	',
+	array($newId))) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
 	
 	
 	

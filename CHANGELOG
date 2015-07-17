@@ -89,7 +89,8 @@ Thirdparty licenses see LICENSE
 [cc] added check for json response on fribute file upload
 --
 [++] added merging tribute files and tribute data using FPDI, download complete tribute as PDF
-
+--
+[cc] changed filter behavior; displays filter results using AJAX
 
 
 

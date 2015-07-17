@@ -118,6 +118,7 @@ class Filter extends Object {
 		// prepare sql statement to get group details
 		$sql = 'SELECT id
 				FROM filter
+				WHERE valid=1
 				ORDER BY name';
 		
 		// execute statement
@@ -366,21 +367,33 @@ class Filter extends Object {
 		
 		// get permitted items
 		$permittedItems = self::getUser()->permittedItems($table, 'w', $dateFrom, $dateTo);
+		$itemIds = 'SELECT FALSE';
+		if(count($permittedItems) > 0) {
+			$itemIds = implode(',', $permittedItems);
+		}
 		
 		// filter items if filter given
 		if($filterId !== false) {
 			
+			// prepare filter ids
+			$filterIds = 'SELECT FALSE';
+			if(is_array($filterId) && count($filterId) > 0) {
+				$filterIds = implode(',', $filterId);
+			}
+			
 			// get filtered ids from database
 			$result = Db::ArrayValue('
-					SELECT item_id
-					FROM item2filter
-					WHERE item_table=\'#?\'
-						AND filter_id=#?
+					SELECT `item_id`
+					FROM `item2filter`
+					WHERE `item_table`=\'#?\'
+						AND `item_id` IN (#?)
+						AND `filter_id` IN (#?)
 				',
 				MYSQL_ASSOC,
 				array(
 						$table,
-						$filterId,
+						$itemIds,
+						$filterIds,
 					));
 			if($result === false) {
 				$n = null;
@@ -390,11 +403,11 @@ class Filter extends Object {
 			// get filtered items
 			$filteredItems = array();
 			foreach($result as $row) {
-				$filteredItems = $row['id'];
+				$filteredItems[] = $row['item_id'];
 			}
 			
 			// intersect permitted and filtered items
-			return array_intersect($permittedItems, $filteredItems);
+			return $filteredItems;
 		} else {
 			return $permittedItems;
 		}

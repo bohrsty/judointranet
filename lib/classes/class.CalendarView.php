@@ -82,39 +82,8 @@ class CalendarView extends PageView {
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', true);
 						
-						// prepare dates
-						$from = ($this->getUser()->get_loggedin() === true ? '1970-01-01' : date('Y-m-d', strtotime('yesterday')));
-						$to = '2100-01-01';
-
-						// check $_GET['from'] and $_GET['to']
-						if($this->get('from') !== false) {
-							$from = $this->get('from');
-						}
-						if($this->get('to') !== false) {
-							$to = $this->get('to');
-						}
-						
-						// show more older calendar entries if not logged in and no filter
-						$moreLink = '';
-						if($this->getUser()->get_loggedin() === false
-							&& $this->get('from') === false
-							&& $this->get('to') === false
-							&& $this->get('filter') === false) {
-							
-							// a
-							$sMoreLink = new JudoIntranetSmarty();
-							$sMoreLink->assign('params', '');
-							$sMoreLink->assign('href', 'calendar.php?id=listall&from='.date('d.m.Y', strtotime('first day of January this year')));
-							$sMoreLink->assign('title', _l('show older appointments'));
-							$sMoreLink->assign('content', _l('archived appointments'));
-							$aMoreLink = $sMoreLink->fetch('smarty.a.tpl');
-							// p
-							$sMoreLink->assign('content', $aMoreLink);
-							$moreLink = $sMoreLink->fetch('smarty.p.tpl');
-						}
-						
 						$calendarViewListall = new CalendarViewListall();
-						$this->getTpl()->assign('main', $this->getFilterLinks($this->get('id')).$calendarViewListall->show($from, $to).$moreLink);
+						$this->getTpl()->assign('main', $calendarViewListall->show());
 					break;
 					
 					case 'new':
@@ -211,140 +180,6 @@ class CalendarView extends PageView {
 		
 		// global smarty
 		$this->showPage('smarty.main.tpl');
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * getFilterLinks($getid) returns links to list "week" "month" "year" etc
-	 * and filter
-	 * 
-	 * @param string $getid $_GET['get'] to use in links
-	 * @return string html-string with the links
-	 */
-	private function getFilterLinks($getid) {
-		
-		// prepare output
-		$date_links = $group_links = $output = $reset_links = '';
-		
-		// smarty-template
-		$sS = new JudoIntranetSmarty();
-		
-		// if filter, attach filter
-		$filter = '';
-		if($this->get('filter') !== false) {
-			$filter = '&filter='.$this->get('filter');
-		}
-		// if from or to add from or to
-		$from = $to = '';
-		if($this->get('from') !== false) {
-			$from = '&from='.$this->get('from');
-		}
-		if($this->get('to') !== false) {
-			$to = '&to='.$this->get('to');
-		}
-		
-		// prepare resetlinks
-		$r = array(
-				array( // all
-						'href' => 'calendar.php?id='.$getid,
-						'title' => _l('reset all filter'),
-						'content' => _l('reset all filter')
-					),
-				array( // dates
-						'href' => 'calendar.php?id='.$getid.$filter,
-						'title' => _l('reset date filter'),
-						'content' => _l('reset date filter')
-					),
-				array( // groups
-						'href' => 'calendar.php?id='.$getid.$from.$to,
-						'title' => _l('reset group filter'),
-						'content' => _l('reset group filter')
-					)
-			);
-		$sS->assign('r', $r);
-		$sS->assign('resetFilter', _l('reset filter'));
-		
-		// prepare content
-		$dates = array(
-					'tomorrow' => '+1 day',
-					'next week' => '+1 week',
-					'next two weeks' => '+2 weeks',
-					'next month' => '+1 month',
-					'next halfyear' => '+6 months',
-					'next year' => '+1 year'
-					);
-		
-		// create links
-		foreach($dates as $name => $date) {
-			
-			// smarty
-			$dl[] = array(
-					'href' => 'calendar.php?id='.$getid.'&from='.date('Y-m-d',time()).'&to='.date('Y-m-d',strtotime($date)).$filter,
-					'title' => _l($name),
-					'content' => _l($name)
-				);
-		}
-		$sS->assign('dl', $dl);
-		$sS->assign('dateFilter', _l('date filter'));
-		
-		// add group-links
-		$allFilter = Filter::allExistingFilter();
-		
-		// create links
-		$gl = array();
-		foreach($allFilter as $filter) {
-			
-			// smarty
-			$gl[] = array(
-					'href' => 'calendar.php?id='.$getid.'&filter='.$filter->getId().$from.$to,
-					'title' => $filter->getName(),
-					'content' => $filter->getName(),
-				);
-		}
-		usort($gl, array($this, 'callbackCompareFilter'));
-		$sS->assign('gl', $gl);
-		$sS->assign('groupFilter', _l('group filter'));
-		$sS->assign('chooseDate', _l('select date'));
-		$sS->assign('chooseGroup', _l('select group'));
-		
-		// add slider-link
-		$link = array(
-				'params' => 'id="toggleFilter" class="spanLink"',
-				'title' => _l('show filter'),
-				'content' => _l('show filter'),
-				'help' => $this->helpButton(HELP_MSG_CALENDARLISTSORTLINKS),
-			);
-		$sS->assign('link', $link);
-		
-		// assign dialog title
-		$sS->assign('dialogTitle', _l('select filter'));
-		
-		// add jquery-ui dialog
-		$dialog = array(
-			'dialogClass' => 'filterDialog',
-			'openerClass' => 'toggleFilter',
-			'autoOpen' => 'false',
-			'effect' => 'fade',
-			'duration' => 300,
-			'modal' => 'true',
-			'closeText' => _l('close filter'),
-			'height' => 500,
-			'maxHeight' => 500,
-			'width' => 500,
-		);
-		// smarty jquery
-		$sJsToggleSlide = new JudoIntranetSmarty();
-		$sJsToggleSlide->assign('dialog', $dialog);
-		$this->add_jquery($sJsToggleSlide->fetch('smarty.js-dialog.tpl'));
-		$this->add_jquery('$( "#filterTabs" ).tabs();');
-		
-		// return
-		return $sS->fetch('smarty.calendar.filterlinks.tpl');
 	}
 	
 	
@@ -700,7 +535,7 @@ class CalendarView extends PageView {
 		$filter = $form->add(
 				$formIds['filter']['type'],	// type
 				'filter[]',					// id/name
-				'',							// default
+				1,							// default
 				array(						// attributes
 						'multiple' => 'multiple',
 						'size' => 5,
@@ -1494,33 +1329,6 @@ class CalendarView extends PageView {
 			return $sConfirmation->fetch('smarty.confirmation.tpl');
 		} else {
 			throw new NotAuthorizedException($this);
-		}
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * callbackCompareFilter compares two arrays of filter entries by string (for usort)
-	 * 
-	 * @param object $first first filter entry
-	 * @param object $second second filter entry
-	 * @return int -1 if $first<$second, 0 if equal, 1 if $first>$second
-	 */
-	private function callbackCompareFilter($first,$second) {
-	
-		// compare dates
-		if($first['content'] < $second['content']) {
-			return -1;
-		}
-		if($first['content'] == $second['content']) {
-			return 0;
-		}
-		if($first['content'] > $second['content']) {
-			return 1;
 		}
 	}
 }

@@ -172,15 +172,6 @@ div.filterPart {
 	margin-left: 2px;
 }
 
-.filterEntry {
-	width: 100%;
-	border-bottom: 1px solid #3a9ec8;
-	border-right: 1px solid #3a9ec8;
-	border-radius: 3px;
-	background-color: #b6d6e4;
-	margin: 0 0 2px 0;
-}
-
 td.admin div.row {
 	float: left;
 	padding: 0;
@@ -1088,6 +1079,68 @@ img.deleteFile {
 #deleteMessage {
 	background-color: #ff915f;
 	border-color: red;
+}
+
+#showFilterButton {
+	margin-top: 40px;
+	padding: 3px;
+	cursor: pointer;
+	font-weight: bold;
+}
+
+#filterDialog {
+	padding: 3px;
+	display: none;
+	max-height: 150px;
+	overflow: auto;
+	margin-bottom: 5px;
+}
+
+div.filter {
+	display: inline-block;
+	vertical-align: top;
+	width: 32.5%;
+}
+
+.groupFilterCheckbox {
+	display: none;
+}
+
+.filterEntry {
+	width: 100%;
+	border-bottom: 1px solid #3a9ec8;
+	border-right: 1px solid #3a9ec8;
+	border-radius: 3px;
+	background-color: #b6d6e4;
+	margin: 0 2px 2px 0;
+	padding: 2px;
+	cursor: pointer;
+	min-height: 20px;
+}
+
+.filterChecked {
+	border-top: 1px solid #b6d6e4;
+	border-left: 1px solid #b6d6e4;
+	background-color: #3a9ec8;
+	color: white;
+}
+
+#dateFrom,
+#dateTo {
+	width: 120px;
+}
+
+.pointer {
+	cursor: pointer;
+}
+
+.nopointer {
+	cursor: auto;
+}
+
+#groupAll,
+#groupNone {
+	cursor: pointer;
 }
 
 
