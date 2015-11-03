@@ -3450,6 +3450,107 @@ function mysql_22() {
 		return $return;
 	}
 	
+	/*
+	 * add filter to calendar entries without any filter
+	 */
+	if(!Db::executeQuery('
+		INSERT INTO `item2filter` (`item_table`,`item_id`,`filter_id`,`last_modified`)
+		SELECT DISTINCT \'calendar\',`c`.`id`, 1, CURRENT_TIMESTAMP
+		FROM `calendar` AS `c`
+		WHERE `c`.`id` NOT IN (
+			SELECT DISTINCT `sif`.`item_id` 
+			FROM `item2filter` AS `sif` 
+			WHERE `sif`.`item_table`=\'calendar\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	
+	/*
+	 * add general webservice config
+	 */
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+			VALUES (\'webservice.interval\', \'10000\', \'Interval to call webservice jobs api (ms)\'),
+				(\'webservice.timeout\', \'2000\', \'Timout starting call webservice jobs api (ms)\'),
+				(\'webservice.judoterminbox\', \'[]\', \'Configuration of Judoterminbox webservice\'),
+				(\'calendar.webservices\', \'[]\', \'Configuration of webservices used in calendar (fieldId => name)\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// create table webservice_jobs
+	if(!Db::executeQuery('
+		CREATE TABLE IF NOT EXISTS `webservice_jobs` (
+		  `id` int(11) NOT NULL AUTO_INCREMENT,
+		  `session` varchar(32) NOT NULL,
+		  `locked` tinyint(1) NOT NULL DEFAULT 0,
+		  `config` text NOT NULL,
+		  `log` text NULL DEFAULT NULL,
+		  `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		  `created_by` int(11) NOT NULL,
+		  PRIMARY KEY (`id`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// update systemtables
+	if(!Db::executeQuery('
+		UPDATE `config`
+			SET `value` = \'calendar,category,config,defaults,field,fields2presets,group,group2group,inventory,inventory_movement,preset,rights,user,user2group,value,protocol,protocol_correction,helpmessages,user2groups,permissions,navi,item2filter,groups,filter,file,file_type,files_attached,club,result,standings,accounting_tasks,accounting_costs,holiday,tribute,tribute_history,accounting_settings,tribute_file,webservice_jobs\'
+		WHERE `name` = \'systemtables\'
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// create table webservice_results
+	if(!Db::executeQuery('
+		CREATE TABLE IF NOT EXISTS `webservice_results` (
+		  `id` int(11) NOT NULL AUTO_INCREMENT,
+		  `webservice` varchar(50) NOT NULL,
+		  `table` varchar(50) NOT NULL,
+		  `table_id` int(11) NOT NULL,
+		  `value` text NOT NULL,
+		  `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		  `created_by` int(11) NOT NULL,
+		  PRIMARY KEY (`id`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// update systemtables
+	if(!Db::executeQuery('
+		UPDATE `config`
+			SET `value` = \'calendar,category,config,defaults,field,fields2presets,group,group2group,inventory,inventory_movement,preset,rights,user,user2group,value,protocol,protocol_correction,helpmessages,user2groups,permissions,navi,item2filter,groups,filter,file,file_type,files_attached,club,result,standings,accounting_tasks,accounting_costs,holiday,tribute,tribute_history,accounting_settings,tribute_file,webservice_jobs,webservice_results\'
+		WHERE `name` = \'systemtables\'
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	// add draft default config for announcement 
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+			VALUES (\'announcement.useDraftDefault\', \'0\', \'Use default draft value for announcement\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	
 	
 	
 	

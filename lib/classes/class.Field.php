@@ -309,6 +309,11 @@ class Field extends Object {
 				);
 		} elseif($this->get_type() == 'checkbox') {
 			
+			// check options and value
+			if($this->get_value() != '' && !array_key_exists('checked', $options)) {
+				$options = array_merge($options, array('checked' => 'checked'));
+			}
+			
 			// set form id
 			$formIds[$elementId] = array('valueType' => 'string', 'type' => 'checkbox',);
 			
@@ -325,7 +330,7 @@ class Field extends Object {
 				$formIds[$elementId]['type'],		// type
 				$elementId,						// id/name
 				'1',							// value
-				($this->get_value() != '' ? array('checked' => 'checked') : null)
+				(count($options) > 0 ? $options : null)
 			);
 			
 			// define custom required rule

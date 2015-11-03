@@ -167,7 +167,41 @@ class CalendarListallListing extends CalendarListing implements ListingInterface
 			}
 			
 			$sql = '
-				SELECT `c`.`id`,`c`.`preset_id`,`c`.`date`,`c`.`end_date`,`c`.`name` AS `event`,`c`.`city`,`c`.`color`,`c`.`is_external`,IFNULL(IF(`c`.`preset_id`<>0,(SELECT `value`.`value` FROM `value` WHERE `value`.`table_name`=\'calendar\' AND `value`.`table_id`=`c`.`id` AND `value`.`field_id`=-1 LIMIT 1),0),0) AS `draftvalue`, IF((SELECT COUNT(*) FROM `value` WHERE `value`.`table_name`=\'calendar\' AND `value`.`table_id`=`c`.`id`)>0,1,0) AS `has_ann_value`,(SELECT COUNT(*) FROM `result` AS `r` WHERE `r`.`calendar_id`=`c`.`id`) AS `results`,(SELECT COUNT(*) FROM `files_attached` AS `fa` WHERE `fa`.`table_name`=\'calendar\' AND `fa`.`table_id`=`c`.`id`) AS `files`
+				SELECT
+					`c`.`id`,
+					`c`.`preset_id`,
+					`c`.`date`,
+					`c`.`end_date`,
+					`c`.`name` AS `event`,
+					`c`.`city`,`c`.`color`,
+					`c`.`is_external`,
+					IFNULL(
+						IF(
+							`c`.`preset_id`<>0,
+							(SELECT `value`.`value` 
+								FROM `value` 
+								WHERE `value`.`table_name`=\'calendar\' 
+									AND `value`.`table_id`=`c`.`id` 
+									AND `value`.`field_id`=-1 LIMIT 1)
+						,0)
+					,0) AS `draftvalue`, 
+					IF(
+						(SELECT COUNT(*) 
+							FROM `value` 
+							WHERE `value`.`table_name`=\'calendar\' 
+								AND `value`.`table_id`=`c`.`id`)>0,
+					1,0) AS `has_ann_value`,
+					(SELECT COUNT(*) 
+						FROM `result` AS `r` 
+						WHERE `r`.`calendar_id`=`c`.`id`) AS `results`,
+					(SELECT COUNT(*) 
+						FROM `files_attached` AS `fa` 
+						WHERE `fa`.`table_name`=\'calendar\' 
+							AND `fa`.`table_id`=`c`.`id`) AS `files`,
+					(SELECT COUNT(*) 
+						FROM `webservice_results` AS `wr` 
+						WHERE `wr`.`table`=\'calendar\' 
+							AND `wr`.`table_id`=`c`.`id`) AS `webservice_results`
 				FROM `calendar` AS `c`
 				WHERE `c`.`id` IN (#?)
 					AND `c`.`valid`=TRUE
@@ -177,7 +211,41 @@ class CalendarListallListing extends CalendarListing implements ListingInterface
 		} else {
 			
 			$sql = '
-				SELECT `c`.`id`,`c`.`preset_id`,`c`.`date`,`c`.`end_date`,`c`.`name` AS `event`,`c`.`city`,`c`.`color`,`c`.`is_external`,IFNULL(IF(`c`.`preset_id`<>0,(SELECT `value`.`value` FROM `value` WHERE `value`.`table_name`=\'calendar\' AND `value`.`table_id`=`c`.`id` AND `value`.`field_id`=-1 LIMIT 1),0),0) AS `draftvalue`, IF((SELECT COUNT(*) FROM `value` WHERE `value`.`table_name`=\'calendar\' AND `value`.`table_id`=`c`.`id`)>0,1,0) AS `has_ann_value`,(SELECT COUNT(*) FROM `result` AS `r` WHERE `r`.`calendar_id`=`c`.`id`) AS `results`,(SELECT COUNT(*) FROM `files_attached` AS `fa` WHERE `fa`.`table_name`=\'calendar\' AND `fa`.`table_id`=`c`.`id`) AS `files`
+				SELECT
+					`c`.`id`,
+					`c`.`preset_id`,
+					`c`.`date`,
+					`c`.`end_date`,
+					`c`.`name` AS `event`,
+					`c`.`city`,`c`.`color`,
+					`c`.`is_external`,
+					IFNULL(
+						IF(
+							`c`.`preset_id`<>0,
+							(SELECT `value`.`value` 
+								FROM `value` 
+								WHERE `value`.`table_name`=\'calendar\' 
+									AND `value`.`table_id`=`c`.`id` 
+									AND `value`.`field_id`=-1 LIMIT 1)
+						,0)
+					,0) AS `draftvalue`, 
+					IF(
+						(SELECT COUNT(*) 
+							FROM `value` 
+							WHERE `value`.`table_name`=\'calendar\' 
+								AND `value`.`table_id`=`c`.`id`)>0,
+					1,0) AS `has_ann_value`,
+					(SELECT COUNT(*) 
+						FROM `result` AS `r` 
+						WHERE `r`.`calendar_id`=`c`.`id`) AS `results`,
+					(SELECT COUNT(*) 
+						FROM `files_attached` AS `fa` 
+						WHERE `fa`.`table_name`=\'calendar\' 
+							AND `fa`.`table_id`=`c`.`id`) AS `files`,
+					(SELECT COUNT(*) 
+						FROM `webservice_results` AS `wr` 
+						WHERE `wr`.`table`=\'calendar\' 
+							AND `wr`.`table_id`=`c`.`id`) AS `webservice_results`
 				FROM `calendar` AS `c`
 				WHERE `c`.`id` IN (#?)
 					AND `c`.`valid`=TRUE

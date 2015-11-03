@@ -212,7 +212,11 @@ class AnnouncementView extends PageView {
 						$field->setForm($form);
 						
 						// generate zebra_form
-						$field->addFormElement(array(), true, $formIds);
+						if($field->get_id() == -1 && $this->getGc()->get_config('announcement.useDraftDefault') == 1) {
+							$field->addFormElement(array('checked' => 'checked'), true, $formIds);
+						} else {
+							$field->addFormElement(array(), true, $formIds);
+						}
 						
 					}
 					
@@ -237,8 +241,23 @@ class AnnouncementView extends PageView {
 						// get data
 						$data = $this->getFormValues($formIds);
 						
+						// get used webservices
+						$webservices = json_decode($this->getGc()->get_config('calendar.webservices'), true);
+						
 						// insert values
 						foreach($fields as $field) {
+							
+							// check webservices
+							if(array_key_exists($field->get_id(), $webservices)) {
+								
+								// get webservice job object
+								$webservice = WebserviceJob::factory($webservices[$field->get_id()]);
+								
+								// check if specific object
+								if(get_class($webservice) !== 'WebserviceJob') {
+									$webservice->newJob(array('calendarId' => $calendar->get_id(), 'fieldChecked' => ($data[$field->get_table().'-'.$field->get_id()] == 1 && $data['calendar--1'] != 1), 'action' => 'update'));
+								}
+							}
 							
 							// values to db
 							$field->value($data[$field->get_table().'-'.$field->get_id()]);
@@ -370,8 +389,29 @@ class AnnouncementView extends PageView {
 						// get data
 						$data = $this->getFormValues($formIds);
 						
+						// get used webservices
+						$webservices = json_decode($this->getGc()->get_config('calendar.webservices'), true);
+						
 						// insert values
 						foreach($fields as $field) {
+							
+							// check webservices
+							if(array_key_exists($field->get_id(), $webservices)) {
+								
+								// get webservice job object
+								$webservice = WebserviceJob::factory($webservices[$field->get_id()]);
+								
+								// check if specific object
+								if(get_class($webservice) !== 'WebserviceJob') {
+									
+									// check required fields set, otherwise delete
+									if($data[$field->get_table().'-'.$field->get_id()] == 1 && $data['calendar--1'] != 1) {
+										$webservice->newJob(array('calendarId' => $calendar->get_id(), 'fieldChecked' => true, 'action' => 'update'));
+									} else {
+										$webservice->newJob(array('calendarId' => $calendar->get_id(), 'fieldChecket' => true, 'action' => 'delete'));
+									}
+								}
+							}
 							
 							// values to db
 							$field->value($data[$field->get_table().'-'.$field->get_id()]);
@@ -496,6 +536,21 @@ class AnnouncementView extends PageView {
 						
 						// get fields
 						$fields = $preset->get_fields();
+						
+						// get used webservices
+						$webservices = json_decode($this->getGc()->get_config('calendar.webservices'), true);
+						
+						// check webservices
+						foreach($webservices as $webserviceFieldId => $webserviceName) {
+
+							// get webservice job object
+							$webservice = WebserviceJob::factory($webserviceName);
+							
+							// check if specific object
+							if(get_class($webservice) !== 'WebserviceJob') {
+								$webservice->newJob(array('calendarId' => $calendar->get_id(), 'fieldChecked' => true, 'action' => 'delete'));
+							}
+						}
 						
 						// delete values of the fields
 						if(Calendar::check_ann_value($calendar->get_id()) === true) {

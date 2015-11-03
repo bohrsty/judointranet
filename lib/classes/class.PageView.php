@@ -58,6 +58,12 @@ class PageView extends Object {
 	public function getTpl() {
 		return $GLOBALS['tpl'];
 	}
+	public function getAddedWebserviceRunner() {
+		return $GLOBALS['addedWebserviceRunner'];
+	}
+	public function setAddedWebserviceRunner($addedWebserviceRunner) {
+		return $GLOBALS['addedWebserviceRunner'] = $addedWebserviceRunner;
+	}
 	
 	/*
 	 * constructor/destructor
@@ -82,6 +88,9 @@ class PageView extends Object {
 		if(!isset($GLOBALS['head'])) {
 			$this->set_head('');
 		}
+		if(!isset($GLOBALS['addedWebserviceRunner'])) {
+			$this->setAddedWebserviceRunner(false);
+		}
 		
 		// set logo
 		$this->getTpl()->assign('systemLogo', 'img/'.$this->getGc()->get_config('global.systemLogo'));
@@ -90,6 +99,11 @@ class PageView extends Object {
 		$shortLang = explode('_', $this->getUser()->get_lang());
 		$this->getTpl()->assign('lLang', $this->getUser()->get_lang());
 		$this->getTpl()->assign('sLang', $shortLang[0]);
+		
+		// check if webservice runner is added and add if not
+		if($this->getUser()->get_loggedin() === true) {
+			$this->addWebserviceRunner();
+		}
 	}
 	
 	/*
@@ -985,6 +999,92 @@ class PageView extends Object {
 		$this->getTpl()->assign('jsRedirect', !$this->debugAll());
 		$this->getTpl()->assign('jsRedirectUri', $uri);
 		$this->getTpl()->assign('jsRedirectTimeout', ($sTimeout * 1000));
+	}
+	
+	
+	/**
+	 * 
+	 */
+	private function addWebserviceRunner() {
+		
+		// check if already added
+		if($this->getAddedWebserviceRunner() !== true) {
+		
+			// add jquery for webservice jobs
+			$this->add_jquery('
+				var message = $("<div>")
+					.hide()
+					.dialog({
+						closeText: "'._l('close').'",
+						autoOpen: false,
+						modal: true,
+						resizable: false,
+						position: {
+							my: "center top+20", 
+							at: "center top", 
+							of: window
+						},
+						width: "75%",
+						buttons: [
+							{
+								text: "'._l('OK').'",
+								click: function() {
+									$(this).dialog("close");
+								}
+							}
+						]
+					});
+				var icon = $("<img>")
+					.css({
+						"float": "left",
+						"margin": "0 10px 10px 0"
+					})
+					.appendTo(message);
+				var div = $("<div>")
+					.appendTo(message);
+				var interval = '.$this->getGc()->get_config('webservice.timeout').';
+				var startWebserviceJobs = function() {
+					setTimeout(function() {
+						runWebserviceJobs();
+					}, interval);
+				};
+				var runWebserviceJobs = function() {
+					$.ajax({
+						url: "api/webservice/jobs/0/run",
+						cache: false,
+						dataType: "json",
+						success: function(response) {
+							interval = '.$this->getGc()->get_config('webservice.interval').';
+							if(response.result == "OK") {
+								message.dialog("option", "close", function() {
+									startWebserviceJobs();
+								});
+								icon.attr("src", "img/message_info.png")
+									.attr("alt", "info")
+									.attr("title", "info");
+								message.dialog("option", "title", response.data.title);
+								div.html(response.data.message);
+								message.dialog("open");
+							} else if(response.result == "ERROR") {
+								icon.attr("src", "img/message_error.png")
+									.attr("alt", "info")
+									.attr("title", "info");
+								message.dialog("option", "title", response.data.title);
+								div.html(response.data.message);
+								message.dialog("open");
+							} else if(response.result == "SKIPPED") {
+								startWebserviceJobs();
+							}
+							$("a[rel=\'external\']").attr("target", "_blank");
+						}
+					});
+				};
+				startWebserviceJobs();
+				');
+			
+			// set marker that runner was added
+			$this->setAddedWebserviceRunner(true);
+		}
 	}
 }
 

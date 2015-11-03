@@ -1143,6 +1143,27 @@ div.filter {
 	cursor: pointer;
 }
 
+#webserviceMessage {
+	display: none;
+	padding: 3px;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 3px;
+	width: 90%;
+	position: absolute;
+	z-index: 99;
+	background-color: #91ff5f;
+	border-color: green;
+}
+
+#wsJudoterminbox {
+	margin: 0;
+}
+
+#wsJudoterminbox li {
+	list-style-type: none;
+}
+
 
 
 

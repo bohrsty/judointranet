@@ -594,6 +594,11 @@ class CalendarView extends PageView {
 			// get form permissions
 			$permissions = $this->getFormPermissions($permissionConfig['ids']);
 			
+			// check filter
+			if(count($data['filter']) == 0) {
+				$data['filter'] = array(1);
+			}
+			
 			// add public access
 			if($data['public'] == 1) {
 				$permissions[0]['group'] = Group::fakePublic();
@@ -1128,10 +1133,10 @@ class CalendarView extends PageView {
 				$permissions = $this->getFormPermissions($permissionConfig['ids']);
 								
 				// check filter
-				if(!isset($data['filter'])) {
-					$data['filter'] = array();
+				if(count($data['filter']) == 0) {
+					$data['filter'] = array(1);
 				}
-				
+
 				// add public access
 				if($data['public'] == '1') {
 					$permissions[0]['group'] = Group::fakePublic();
@@ -1187,7 +1192,7 @@ class CalendarView extends PageView {
 				}
 				
 				// check if city was set
-				if(isset($data['city'])) {
+				if($calendar->get_preset_id() == 0 && isset($data['city'])) {
 					$calendar_new['city'] = $data['city'];
 				}
 					
@@ -1224,7 +1229,7 @@ class CalendarView extends PageView {
 				// smarty
 				$sCD->assign('data', $calendar->detailsToHtml());
 				$sCD->assign('files', $fileObjects);
-				$sCD->assign('attached', _l('<b>files attached</b>'));
+				$sCD->assign('attached', _l('files attached<br />'));
 				$sCD->assign('none', _l('- none -'));
 				$sCD->assign('fileHref', 'file.php?id=download&fid=');
 				return $sCD->fetch('smarty.calendar.details.tpl');

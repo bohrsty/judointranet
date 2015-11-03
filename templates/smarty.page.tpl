@@ -98,6 +98,7 @@
 		<script type="text/javascript">
 			$(document).ready(function() {ldelim}
 {literal}
+				$("a[rel='external']").attr("target", "_blank");
 				$(function() {
 					$(".{/literal}{$help.buttonClass}{literal}").click(function() {
 						var id = this.id.substr(1);

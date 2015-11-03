@@ -1325,7 +1325,16 @@ $lang = array(
 	'download tribute as PDF' => 'Ehrung als PDF herunterladen',
 	'all' => 'alle',
 	'none' => 'keine',
-		
+	'Successfully saved event to Judoterminbox.' => 'Termin erfolgreich in der Judoterminbox gespeichert.',
+	'Successfully deleted event from Judoterminbox.' => 'Termin erfolgreich aus der Judoterminbox gel&ouml;scht.',
+	'action successful' => 'Aktion erfolgreich',
+	'male' => 'm&auml;nnlich',
+	'female' => 'weiblich',
+	'Please check the following links, if the data has been transferred correctly:' => 'Bitte die folgenden Links &uuml;berpr&uuml;fen, ob alle Daten korrekt &uuml;bertragen wurden:',
+	'Link to Judoterminbox' => 'Link zur Judoterminbox',
+	'Successfully updated event in Judoterminbox.' => 'Termin erfolgreich in der Judoterminbox aktualisert.',
+	'existing webservice results' => 'Webservice-Anbindungen vorhanden',
+	'Webservice connections' => 'Webservice-Anbindungen',
 //	'' => '',
 );
 

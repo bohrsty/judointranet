@@ -42,7 +42,7 @@ class FilterTest extends PHPUnit_Framework_TestCase {
 		// get object
 		$filter = new Filter(1);
 		$this->assertEquals(1, $filter->getId());
-		$this->assertEquals('Alle', $filter->getName());
+		$this->assertEquals('- keine Gruppe -', $filter->getName());
 		
 		// id
 		$data = 2;
@@ -93,7 +93,7 @@ class FilterTest extends PHPUnit_Framework_TestCase {
 		$ownFilter = Filter::allFilterOf('calendar', 1);
 		$this->assertArrayHasKey(1, $ownFilter);
 		$this->assertEquals(1, $ownFilter[1]->getId());
-		$this->assertEquals('Alle', $ownFilter[1]->getName());
+		$this->assertEquals('- keine Gruppe -', $ownFilter[1]->getName());
 	}
 }
 ?>

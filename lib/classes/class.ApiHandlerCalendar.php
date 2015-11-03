@@ -157,6 +157,14 @@ class ApiHandlerCalendar extends ApiHandler {
 		if(count(Result::getIdsForCalendar($calendar->get_id())) > 0) {
 			$announcement['result'] = 'result.php?id=list&cid='.$calendar->get_id();
 		}
+		// webservice results
+		$webserviceResults = array();
+		if(isset($calendar->getAdditionalFields()['webservices'])) {
+			foreach($calendar->getAdditionalFields()['webservices'] as $wsName => $wsResult) {
+				$class = 'WebserviceJob'.ucfirst(strtolower($wsName));
+				$webserviceResults = $class::resultToHtml($wsResult);
+			}
+		}
 		$data = array(
 				'id' => $calendar->get_id(),
 				'start' => $calendar->get_date('U'),
@@ -173,6 +181,7 @@ class ApiHandlerCalendar extends ApiHandler {
 				'locale' => $this->getUser()->get_lang(),
 				'color' => $calendar->getColor(),
 				'isExternal' => $calendar->getIsExternal(),
+				'webserviceResults' => $webserviceResults,
 			);
 		
 		// check html

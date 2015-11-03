@@ -489,10 +489,12 @@ class Preset extends Object {
 						$announcement['field_'.$field->get_id().'_value'] = nl2br(htmlentities($field->get_value()));
 						$announcement['field_'.$field->get_id().'_value_d_m_Y'] = nl2br(htmlentities(date('d.m.Y',strtotime($field->get_value())),ENT_QUOTES,'UTF-8'));
 						$announcement['field_'.$field->get_id().'_value_j_F_Y'] = nl2br(htmlentities(strftime('%e. %B %Y',strtotime($field->get_value())),ENT_QUOTES,'UTF-8'));
+						$announcement['field_'.$field->get_id().'_value_Y-m-d'] = nl2br(htmlentities(date('Y-m-d',strtotime($field->get_value())),ENT_QUOTES,'UTF-8'));
 					} else {
 						$announcement['field_'.$field->get_id().'_value'] = $field->get_value();
 						$announcement['field_'.$field->get_id().'_value_d_m_Y'] = date('d.m.Y',strtotime($field->get_value()));
 						$announcement['field_'.$field->get_id().'_value_j_F_Y'] = strftime('%e. %B %Y',strtotime($field->get_value()));
+						$announcement['field_'.$field->get_id().'_value_Y-m-d'] = date('Y-m-d',strtotime($field->get_value()));
 					}
 				} else {
 					// check html

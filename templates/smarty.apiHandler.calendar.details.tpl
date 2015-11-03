@@ -56,6 +56,12 @@
  		{/foreach}
  		</td>
  	</tr>{/if}
+ 	{if count($data.webserviceResults) > 0}<tr>
+ 		<td colspan="4">{foreach $data.webserviceResults as $wsHtml}
+ 			{$wsHtml}
+ 		{/foreach}
+ 		</td>
+ 	</tr>{/if}
  	<tr>
  		<td colspan="4" class="font8 alignRight"><span class="bold">{lang}modified{/lang}:</span> {date('d.m.Y', $data.lastModified)} {lang}by{/lang} {$data.modifiedBy} [{$data.id}]</td>
  	</tr>

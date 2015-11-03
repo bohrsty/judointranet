@@ -206,6 +206,14 @@ class ApiHandlerCalendarTest extends PHPUnit_Framework_TestCase {
 		if(count(Result::getIdsForCalendar($calendar->get_id())) > 0) {
 			$announcement['result'] = 'result.php?id=list&cid='.$calendar->get_id();
 		}
+		// webservice results
+		$webserviceResults = array();
+		if(isset($calendar->getAdditionalFields()['webservices'])) {
+			foreach($calendar->getAdditionalFields()['webservices'] as $wsName => $wsResult) {
+				$class = 'WebserviceJob'.ucfirst(strtolower($wsName));
+				$webserviceResults = $class::resultToHtml($wsResult);
+			}
+		}
 		$json = json_encode(array(
 				'result' => 'OK',
 				'data' => array(
@@ -224,6 +232,7 @@ class ApiHandlerCalendarTest extends PHPUnit_Framework_TestCase {
 						'locale' => $calendar->getUser()->get_lang(),
 						'color' => $calendar->getColor(),
 						'isExternal' => $calendar->getIsExternal(),
+						'webserviceResults' => $webserviceResults,
 					),
 			));
 		

@@ -272,6 +272,7 @@ class Calendar extends Page {
 			array(
 					'files' => $result[0]['files'],
 					'results' => $result[0]['results'],
+					'webservices' => $this->getWebserviceResults(),
 				)
 		);
 	}
@@ -486,10 +487,8 @@ class Calendar extends Page {
 				
 				// get filter objects
 				$filter = array();
-				if($calendar['isExternal'] === true) {
-					foreach($value as $filterId) {
-						$filter[$filterId] = new Filter($filterId);
-					}
+				foreach($value as $filterId) {
+					$filter[$filterId] = new Filter($filterId);
 				}
 				$this->setFilter($filter);
 			} elseif($name == 'valid') {
@@ -558,22 +557,26 @@ class Calendar extends Page {
 			$announcement['calendar_date_d_m_Y'] = nl2br(htmlentities($this->get_date('d.m.Y'),ENT_QUOTES,'UTF-8'));
 			$announcement['calendar_date_dmY'] = nl2br(htmlentities($this->get_date('dmY'),ENT_QUOTES,'UTF-8'));
 			$announcement['calendar_date_j_F_Y'] = nl2br(htmlentities(strftime('%e. %B %Y',$this->get_date('U')),ENT_QUOTES,'UTF-8'));
+			$announcement['calendar_date_Y-m-d'] = nl2br(htmlentities($this->get_date('Y-m-d'),ENT_QUOTES,'UTF-8'));
 			if(!is_null($this->getEndDate())) {
 				$announcement['calendar_enddate'] = nl2br(htmlentities($this->getEndDate(),ENT_QUOTES,'UTF-8'));
 				$announcement['calendar_enddate_d_m_Y'] = nl2br(htmlentities($this->getEndDate('d.m.Y'),ENT_QUOTES,'UTF-8'));
 				$announcement['calendar_enddate_dmY'] = nl2br(htmlentities($this->getEndDate('dmY'),ENT_QUOTES,'UTF-8'));
 				$announcement['calendar_enddate_j_F_Y'] = nl2br(htmlentities(strftime('%e. %B %Y',$this->getEndDate('U')),ENT_QUOTES,'UTF-8'));
+				$announcement['calendar_enddate_Y-m-d'] = nl2br(htmlentities($this->getEndDate('Y-m-d'),ENT_QUOTES,'UTF-8'));
 			} else {
 				$announcement['calendar_enddate'] = '';
 				$announcement['calendar_enddate_d_m_Y'] = '';
 				$announcement['calendar_enddate_dmY'] = '';
 				$announcement['calendar_enddate_j_F_Y'] = '';
+				$announcement['calendar_enddate_Y-m-d'] = '';
 			}
 			$announcement['calendar_type'] = nl2br(htmlentities($this->get_type(),ENT_QUOTES,'UTF-8'));
 			$announcement['calendar_content'] = nl2br(htmlentities($this->get_content(),ENT_QUOTES,'UTF-8'));
 			$announcement['calendar_date_complete_d_m_y'] = nl2br(htmlentities($this->getCompleteDate('%d.', '%m.', '%Y'),ENT_QUOTES,'UTF-8'));
 			$announcement['calendar_date_complete_dmy'] = nl2br(htmlentities($this->getCompleteDate('%d', '%m', '%Y'),ENT_QUOTES,'UTF-8'));
 			$announcement['calendar_date_complete_j_F_Y'] = nl2br(htmlentities($this->getCompleteDate('%e.', ' %B', ' %Y'),ENT_QUOTES,'UTF-8'));
+			$announcement['calendar_date_complete_Y-m-d|Y-m-d'] = nl2br(htmlentities($this->get_date('Y-m-d').'|'.(!is_null($this->getEndDate()) ? $this->getEndDate('Y-m-d') : $this->get_date('Y-m-d')),ENT_QUOTES,'UTF-8'));
 		} else {
 			$announcement['calendar_name'] = $this->get_name();
 			$announcement['calendar_shortname'] = $this->get_shortname();
@@ -581,22 +584,33 @@ class Calendar extends Page {
 			$announcement['calendar_date_d_m_Y'] = $this->get_date('d.m.Y');
 			$announcement['calendar_date_dmY'] = $this->get_date('dmY');
 			$announcement['calendar_date_j_F_Y'] = strftime('%e. %B %Y',$this->get_date('U'));
+			$announcement['calendar_date_Y-m-d'] = $this->get_date('Y-m-d');
 			if(!is_null($this->getEndDate())) {
 				$announcement['calendar_enddate'] = $this->getEndDate();
 				$announcement['calendar_enddate_d_m_Y'] = $this->getEndDate('d.m.Y');
 				$announcement['calendar_enddate_dmY'] = $this->getEndDate('dmY');
 				$announcement['calendar_enddate_j_F_Y'] = strftime('%e. %B %Y',$this->getEndDate('U'));
+				$announcement['calendar_enddate_Y-m-d'] = $this->getEndDate('Y-m-d');
 			} else {
 				$announcement['calendar_enddate'] = '';
 				$announcement['calendar_enddate_d_m_Y'] = '';
 				$announcement['calendar_enddate_dmY'] = '';
 				$announcement['calendar_enddate_j_F_Y'] = '';
+				$announcement['calendar_enddate_Y-m-d'] = '';
 			}
 			$announcement['calendar_type'] = $this->get_type();
 			$announcement['calendar_content'] = $this->get_content();
 			$announcement['calendar_date_complete_d_m_y'] = $this->getCompleteDate('%d.', '%m.', '%Y');
 			$announcement['calendar_date_complete_dmy'] = $this->getCompleteDate('%d', '%m', '%Y');
 			$announcement['calendar_date_complete_j_F_Y'] = $this->getCompleteDate('%e.', ' %B', ' %Y');
+		}
+		
+		// add webservice results
+		if(count($this->getAdditionalFields()['webservices']) > 0) {
+			foreach($this->getAdditionalFields()['webservices'] as $wsName => $wsResult) {
+				$class = 'WebserviceJob'.ucfirst(strtolower($wsName));
+				$announcement['calendar_ws_'.strtolower($wsName)] = $class::addMarks($wsResult, $html);
+			}
 		}
 	}
 	
@@ -609,31 +623,13 @@ class Calendar extends Page {
 	public function cacheFile() {
 		
 		// get preset
-		$preset = new Preset($this->get_preset_id(),'calendar',$this->get_id());
+		$preset = new Preset($this->get_preset_id(), 'calendar', $this->get_id());
 		
 		// smarty
 		$sA = new JudoIntranetSmarty();
 		
-		// prepare marker-array
-		$announcement = array(
-				'version' => '01.01.70 01:00',
-			);
-		
-		// add calendar-fields to array
-		$this->add_marks($announcement);
-		
-		// add field-names and -values to array
-		$preset->add_marks($announcement);
-		
-		// smarty
-		$sA->assign('a', $announcement);
-		// check marks in values
-		foreach($announcement as $k => $v) {
-			
-			if(preg_match('/\{\$a\..*\}/U', $v)) {
-				$announcement[$k] = $sA->fetch('string:'.$v);
-			}
-		}
+		// generate marker-array
+		$announcement = $this->generateAllMarks($preset);
 		
 		// smarty
 		$sA->assign('a', $announcement);
@@ -871,6 +867,75 @@ class Calendar extends Page {
 		} else {
 			return $linkedValue > 0;
 		}
+	}
+	
+	
+	/**
+	 * generateAllMarks() adds calendar and field marks to an array and returns it
+	 * 
+	 * @param object $preset the preset for this calendar entry to get the fields from 
+	 * @return array array containing all marks
+	 */
+	public function generateAllMarks($preset) {
+		
+		// smarty
+		$sA = new JudoIntranetSmarty();
+		
+		// prepare marker-array
+		$announcement = array(
+				'version' => '01.01.70 01:00',
+		);
+		
+		// add calendar-fields to array
+		$this->add_marks($announcement);
+		
+		// add field-names and -values to array
+		$preset->add_marks($announcement);
+		
+		// smarty
+		$sA->assign('a', $announcement);
+		// check marks in values
+		foreach($announcement as $k => $v) {
+				
+			if(preg_match('/\{\$a\..*\}/U', $v)) {
+				$announcement[$k] = $sA->fetch('string:'.$v);
+			}
+		}
+		
+		// return
+		return $announcement;
+	}
+	
+	
+	/**
+	 * getWebserviceResults() gets the values of the webservice results for this object and
+	 * returns them as array
+	 * 
+	 * @return array array containing the results of the webservice calls for this object
+	 */
+	private function getWebserviceResults() {
+		
+		// get values from db
+		$result = Db::ArrayValue('
+			SELECT `webservice`, `value`
+			FROM `webservice_results`
+			WHERE `table`=\'calendar\'
+				AND `table_id`=#?
+		',
+				MYSQL_ASSOC,
+				array($this->get_id(),));
+		if($result === false) {
+			throw new MysqlErrorException($this, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		}
+		
+		// walk through result
+		$webservices = array();
+		foreach($result as $row) {
+			$webservices[strtolower($row['webservice'])][] = json_decode($row['value'], true);
+		}
+		
+		// return
+		return $webservices;
 	}
 }
 

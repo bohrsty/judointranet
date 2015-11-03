@@ -170,6 +170,22 @@ class CalendarListing extends Listing implements ListingInterface {
 				$showArray[] = '';
 			}
 			
+			// add webservice result info
+			if($row['webservice_results'] > 0) {
+				
+				$showArray[] = array(
+						'span' => true,
+						'params' => 'id="w'.$row['id'].'" class="calendarDetails spanLink"',
+						'title' => _l('existing webservice results'),
+						'name' => array(
+								'src' => 'img/webservice_results.png',
+								'alt' => _l('existing webservice results'),
+							),
+					);
+			} else {
+				$showArray[] = '';
+			}
+			
 			$smarty->assign('data', $showArray);
 			$smarty->assign('spacer', true);
 			$show = $smarty->fetch('smarty.a.img.tpl');
