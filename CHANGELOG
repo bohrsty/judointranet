@@ -97,7 +97,10 @@ Thirdparty licenses see LICENSE
 [++] added webservice handling
 [++] added webservice Judoterminbox for calendar entries, fixes #1
 [!!] fixed empty filters on creating or editing calendar entries, added filter to existing entries on update
+--
 [!!] fixed global version to r022
+--
+[!!] fixed not used argument in setupSql.php 
 
 
 

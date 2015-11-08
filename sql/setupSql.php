@@ -3443,8 +3443,7 @@ function mysql_22() {
 			SET `name`=\'- keine Gruppe -\',
 			`valid`=1
 		WHERE `id`=1
-	',
-	array($newId))) {
+	')) {
 		$return['returnValue'] = false;
 		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
 		return $return;
