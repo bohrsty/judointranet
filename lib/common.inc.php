@@ -36,7 +36,7 @@ session_name('JudoIntranet');
 /*
  * define code version
  */
-define('CONF_GLOBAL_VERSION', '021');
+define('CONF_GLOBAL_VERSION', '022');
 
 /*
  * determine app path
