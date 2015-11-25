@@ -97,6 +97,10 @@ class TributeViewListall extends TributeView {
 		$jtfStartDate->setTitle(_l('tribute start date'));
 		$jtfStartDate->setEdit(false);
 		$jtfStartDate->setWidth('1%');
+		$jtfState = new JtableField('state');
+		$jtfState->setTitle(_l('state'));
+		$jtfState->setEdit(false);
+		$jtfState->setWidth('1%');
 		$jtfPlannedDate = new JtableField('planned_date');
 		$jtfPlannedDate->setTitle(_l('planned date'));
 		$jtfPlannedDate->setEdit(false);
@@ -118,6 +122,7 @@ class TributeViewListall extends TributeView {
 		$jtable->addField($jtfStartDate);
 		$jtable->addField($jtfPlannedDate);
 		$jtable->addField($jtfDate);
+		$jtable->addField($jtfState);
 		// add admin colum if logged in
 		if($this->getUser()->get_loggedin() === true) {
 			$jtable->addField($jtfAdmin);
@@ -153,6 +158,7 @@ class TributeViewListall extends TributeView {
 				var val = $("#year").val();
 				if(val != "") {
 					$("#testimonial").val("");
+					$("#state").val("");
 					$("#'.$containerId.'").jtable("load", {select:"year", value:val});
 				}
 			});
@@ -160,7 +166,16 @@ class TributeViewListall extends TributeView {
 				var val = $("#testimonial").val();
 				if(val != "") {
 					$("#year").val("");
+					$("#state").val("");
 					$("#'.$containerId.'").jtable("load", {select:"testimonial", value:val});
+				}
+			});
+			$("#state").change(function() {
+				var val = $("#state").val();
+				if(val != "") {
+					$("#testimonial").val("");
+					$("#year").val("");
+					$("#'.$containerId.'").jtable("load", {select:"state", value:val});
 				}
 			});
 			$("#reset").click(function() {
@@ -184,6 +199,7 @@ class TributeViewListall extends TributeView {
 		// add template
 		$this->smarty->assign('containerId', $containerId);
 		$this->smarty->assign('testimonialId', 'testimonial');
+		$this->smarty->assign('stateId', 'state');
 		$this->smarty->assign('yearId', 'year');
 		$this->smarty->assign('searchId', 'search');
 		

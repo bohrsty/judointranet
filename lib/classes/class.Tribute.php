@@ -40,6 +40,7 @@ class Tribute extends Page {
 	private $date;
 	private $testimonialId;
 	private $description;
+	private $state;
 	
 	/*
 	 * getter/setter
@@ -102,6 +103,12 @@ class Tribute extends Page {
 	public function setDescription($description) {
 		$this->description = $description;
 	}
+	public function getState(){
+		return $this->state;
+	}
+	public function setState($state) {
+		$this->state = $state;
+	}
 	
 	/*
 	 * constructor/destructor
@@ -123,6 +130,7 @@ class Tribute extends Page {
 			$this->setTestimonialId($id['testimonialId']);
 			$this->setDescription($id['description']);
 			$this->setValid($id['valid']);
+			$this->setState($id['state']);
 			
 			// set year
 			$this->setYear();
@@ -151,7 +159,7 @@ class Tribute extends Page {
 		
 		// get result values from db
 		$result = Db::ArrayValue('
-			SELECT `name`, `year`, `start_date`, `planned_date`, `date`, `testimonial_id`, `description`, `last_modified`, `modified_by`, `valid`
+			SELECT `name`, `year`, `start_date`, `planned_date`, `date`, `state_id`, `testimonial_id`, `description`, `last_modified`, `modified_by`, `valid`
 			FROM `tribute`
 			WHERE `id`=#?	
 		',
@@ -175,6 +183,7 @@ class Tribute extends Page {
 			$this->setValid($result[0]['valid']);
 			$this->setLastModified((strtotime($result[0]['last_modified']) < 0 ? 0 : strtotime($result[0]['last_modified'])));
 			$this->setModifiedBy($result[0]['modified_by']);
+			$this->setState($result[0]['state_id']);
 			
 			// set year
 			$this->setYear();
@@ -208,6 +217,8 @@ class Tribute extends Page {
 				$this->setDescription($value);
 			} elseif($name == 'valid') {
 				$this->setValid($value);
+			} elseif($name == 'state') {
+				$this->setState($value);
 			}
 		}
 		
@@ -225,14 +236,15 @@ class Tribute extends Page {
 		
 		// insert into database
 		if(!Db::executeQuery('
-			INSERT INTO `tribute` (`id`,`name`,`year`,`start_date`,`planned_date`,`date`,`testimonial_id`,`description`,`valid`,`last_modified`,`modified_by`)
-			VALUES (#?, \'#?\', \'#?\', \'#?\', '.(is_null($this->getPlannedDate()) ? '#?' : '\'#?\'').', '.(is_null($this->getDate()) ? '#?' : '\'#?\'').', #?, \'#?\', #?, CURRENT_TIMESTAMP, #?)
+			INSERT INTO `tribute` (`id`,`name`,`year`,`start_date`,`planned_date`,`date`,`state_id`,`testimonial_id`,`description`,`valid`,`last_modified`,`modified_by`)
+			VALUES (#?, \'#?\', \'#?\', \'#?\', '.(is_null($this->getPlannedDate()) ? '#?' : '\'#?\'').', '.(is_null($this->getDate()) ? '#?' : '\'#?\'').', #?, #?, \'#?\', #?, CURRENT_TIMESTAMP, #?)
 			ON DUPLICATE KEY UPDATE
 				`name`=\'#?\',
 				`year`=\'#?\',
 				`start_date`=\'#?\',
 				`planned_date`='.(is_null($this->getPlannedDate()) ? '#?' : '\'#?\'').',
 				`date`='.(is_null($this->getDate()) ? '#?' : '\'#?\'').',
+				`state_id`=#?,
 				`testimonial_id`=#?,
 				`description`=\'#?\',
 				`valid`=#?,
@@ -246,6 +258,7 @@ class Tribute extends Page {
 				$this->getStartDate(),
 				(is_null($this->getPlannedDate()) ? 'NULL' : $this->getPlannedDate()),
 				(is_null($this->getDate()) ? 'NULL' : $this->getDate()),
+				$this->getState(),
 				$this->getTestimonialId(),
 				$this->getDescription(),
 				$this->getValid(),
@@ -256,6 +269,7 @@ class Tribute extends Page {
 				$this->getStartDate(),
 				(is_null($this->getPlannedDate()) ? 'NULL' : $this->getPlannedDate()),
 				(is_null($this->getDate()) ? 'NULL' : $this->getDate()),
+				$this->getState(),
 				$this->getTestimonialId(),
 				$this->getDescription(),
 				$this->getValid(),
@@ -574,6 +588,7 @@ class Tribute extends Page {
 		$tribute['tribute_startdate_dmY'] = date('d.m.Y', strtotime($this->getStartDate()));
 		$tribute['tribute_planneddate_dmY'] = date('d.m.Y', strtotime($this->getPlannedDate()));
 		$tribute['tribute_tributedate_dmY'] = date('d.m.Y', strtotime($this->getDate()));
+		$tribute['tribute_state'] = $this->getState();
 		$tribute['tribute_testimonial'] = self::getTestimonialNameById($this->getTestimonialId());
 		$tribute['tribute_description'] = $this->getDescription();
 		$tribute['tribute_history'] = self::getAllHistory($this->getId(), true, true);
@@ -610,6 +625,71 @@ class Tribute extends Page {
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		} else {
 			return $result[0]['name'];
+		}
+		
+	}
+	
+	
+	/**
+	 * getAllStates() gets all tribute states from database and returns them
+	 * as array id => ; name =>
+	 * 
+	 * @return array tribute state ids and names as array
+	 */
+	public static function getAllStates() {
+		
+		// execute query
+		$result = Db::ArrayValue('
+				SELECT `id`, `name`
+				FROM `tribute_state`
+				WHERE `valid`=TRUE
+				ORDER BY `name`
+			',
+				MYSQL_ASSOC,
+				array());
+		if($result === false) {
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		} else {
+			if(count($result) > 0) {
+				return $result;
+			} else {
+				return array();
+			}
+		}
+		
+	}
+	
+	
+	/**
+	 * getStateById($id) gets the tribute state given by $id from database and returns
+	 * it as array id => ; name => if $id exists, else returns the default type
+	 * 
+	 * @param int $id id of the state to get
+	 * @return array tribute state id and name as array
+	 */
+	public static function getStateById($id) {
+		
+		// check if id exists
+		if(Page::exists('tribute_state', $id)) {
+			$sqlId = $id;
+		} else {
+			$sqlId = 1;
+		}
+		
+		// execute query
+		$result = Db::ArrayValue('
+				SELECT `id`, `name`
+				FROM `tribute_state`
+				WHERE `id`=#?
+			',
+				MYSQL_ASSOC,
+				array($sqlId,));
+		if($result === false) {
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		} else {
+			return $result[0];
 		}
 		
 	}

@@ -173,6 +173,42 @@ class TributeViewEdit extends TributeView {
 					'date',			// for
 					_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDDATE)	// note text
 			);
+		
+		
+		// state
+		$states = Tribute::getAllStates(); 
+		$options = array();
+		foreach($states as $entry) {
+			$options[$entry['id']] = $entry['name'];
+		}
+		$formIds['state'] = array('valueType' => 'int', 'type' => 'select',);
+		$form->add(
+				'label',		// type
+				'labelState',	// id/name
+				'state',			// for
+				_l('state')	// label text
+		);
+		$state = $form->add(
+				$formIds['state']['type'],	// type
+				'state',		// id/name
+				$tribute->getState(),			// default
+				array(		// attributes
+				)
+		);
+		$state->add_options($options);
+		$state->set_rule(
+				array(
+						'required' => array(
+								'error', _l('required state')
+						),
+				)
+		);
+		$form->add(
+				'note',		// type
+				'noteState',	// id/name
+				'state',		// for
+				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
+		);
 			
 			
 			// testimonial
@@ -473,6 +509,7 @@ class TributeViewEdit extends TributeView {
 								'name' => $data['name'],
 								'plannedDate' => ($data['plannedDate'] != '' ? $data['plannedDate'] : null),
 								'date' => ($data['date'] != '' ? $data['date'] : null),
+								'state' => $data['state'],
 								'testimonialId' => $data['testimonial'],
 								'description' => $data['description'],
 							)

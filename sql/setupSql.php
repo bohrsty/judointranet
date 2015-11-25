@@ -3557,6 +3557,101 @@ function mysql_22() {
 	// return
 	return $return;
 }
+
+
+function mysql_23() {
+	
+	// prepare return
+	$return = array(
+			'returnValue' => true,
+			'returnMessage' => '',
+		);
+	
+
+	/*
+	 * delete unique index for club number
+	 */
+	if(!Db::executeQuery('
+		ALTER TABLE `club` DROP INDEX IF EXISTS `unique_number`
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+
+	/*
+	 * add state to tribute
+	 */
+	// create state table
+	if(!Db::executeQuery('
+		CREATE TABLE IF NOT EXISTS `tribute_state` (
+		  `id` INT(11) NOT NULL AUTO_INCREMENT ,
+		  `name` VARCHAR(50) NOT NULL , 
+		  `valid` BOOLEAN NOT NULL , 
+		  `last_modified` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+		  `modified_by` INT(11) NOT NULL,
+		  PRIMARY KEY (`id`)
+		) ENGINE = InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// add column to tribute table
+	if(!Db::executeQuery('
+		ALTER TABLE `tribute` ADD IF NOT EXISTS `state_id` INT(11) NOT NULL AFTER `date`
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	// add table config
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+		VALUES
+			(\'tableConfig.tribute_state\', \'{"cols":"name,valid","fk":[],"fieldType":[],"orderBy":"ORDER BY `name` ASC"}\', \'configuration for table tribute_state\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// insert test tribute state
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `tribute_state`
+			(`id`, `name`, `valid`, `last_modified`, `modified_by`) 
+			VALUES (1, \'Default State\', 0, CURRENT_TIMESTAMP, 0)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// set existing state of existing tributes to 1
+	if(!Db::executeQuery('
+		UPDATE `tribute` SET `state_id`=1
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		
+	// return
+	return $return;
+}
+	
+	
 	
 
 ?>

@@ -35,6 +35,12 @@
 			<option value="{$testimonial.id}">{$testimonial.name}</option>
 {/foreach}
 		</select>
+		<select name="{$stateId}" id="{$stateId}">
+			<option value="">- {lang}select state{/lang} -</option>
+{foreach Tribute::getAllStates() as $state}
+			<option value="{$state.id}">{$state.name}</option>
+{/foreach}
+		</select>
 		<input type="text" name="{$searchId}" id="{$searchId}" />
 	</span>
 </p>

@@ -37,6 +37,9 @@ Thirdparty licenses see LICENSE
 -----------------------------------------------------------------------------------------
 [!!] fixed sql statement for webservice log and handling of job id
 [!!] fixed generation of "isTeam" selection
+--
+[cc] changed unique index for number in table club
+[++] add state field to tribute entry (show in list and edit screen)
 
 
 

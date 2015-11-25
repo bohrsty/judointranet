@@ -1335,6 +1335,9 @@ $lang = array(
 	'Successfully updated event in Judoterminbox.' => 'Termin erfolgreich in der Judoterminbox aktualisert.',
 	'existing webservice results' => 'Webservice-Anbindungen vorhanden',
 	'Webservice connections' => 'Webservice-Anbindungen',
+	'tribute_state' => 'Ehrungsstatus',
+	'required state' => 'Status erforderlich',
+	'select state' => 'Status ausw&auml;hlen',
 //	'' => '',
 );
 

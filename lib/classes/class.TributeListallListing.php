@@ -128,6 +128,8 @@ class TributeListallListing extends Listing implements ListingInterface {
 				$postWhere = 'AND `t`.`year`=\''.$postValue.'\'';
 			} elseif($postSelect == 'testimonial') {
 				$postWhere = 'AND `tm`.`id`=\''.$postValue.'\'';
+			} elseif($postSelect == 'state') {
+				$postWhere = 'AND `ts`.`id`=\''.$postValue.'\'';
 			}
 		}
 		
@@ -140,11 +142,12 @@ class TributeListallListing extends Listing implements ListingInterface {
 			}
 			
 			$sql = '
-				SELECT `t`.`id`, `t`.`name`, `t`.`year`, `tm`.`name` AS `testimonial`, `t`.`planned_date`, `t`.`start_date`, `t`.`date`
-				FROM `tribute` AS `t`, `testimonials` AS `tm`
+				SELECT `t`.`id`, `t`.`name`, `t`.`year`, `tm`.`name` AS `testimonial`, `t`.`planned_date`, `t`.`start_date`, `t`.`date`, `ts`.`name` AS `state`
+				FROM `tribute` AS `t`, `testimonials` AS `tm`, `tribute_state` AS `ts`
 				WHERE `t`.`id` IN (#?)
 					AND `t`.`valid`=TRUE
 					AND `t`.`testimonial_id`=`tm`.`id`
+					AND `t`.`state_id`=`ts`.`id`
 					'.$postWhere.'
 				'.$getData['orderBy'].'
 				'.$getData['limit'].'
@@ -152,11 +155,12 @@ class TributeListallListing extends Listing implements ListingInterface {
 		} else {
 			
 			$sql = '
-				SELECT `t`.`id`, `t`.`name`, `t`.`year`, `tm`.`name` AS `testimonial`, `t`.`planned_date`, `t`.`start_date`, `t`.`date`
-				FROM `tribute` AS `t`, `testimonials` AS `tm`
+				SELECT `t`.`id`, `t`.`name`, `t`.`year`, `tm`.`name` AS `testimonial`, `t`.`planned_date`, `t`.`start_date`, `t`.`date`, `ts`.`name` AS `state`
+				FROM `tribute` AS `t`, `testimonials` AS `tm`, `tribute_state` AS `ts`
 				WHERE `t`.`id` IN (#?)
 					AND `t`.`valid`=TRUE
 					AND `t`.`testimonial_id`=`tm`.`id`
+					AND `ts`.`id`=`t`.`state_id`
 					'.$postWhere.'
 				ORDER BY `t`.`name` ASC
 			';
@@ -284,6 +288,7 @@ class TributeListallListing extends Listing implements ListingInterface {
 					'start_date' => date('d.m.Y', strtotime($row['start_date'])),
 					'planned_date' => (is_null($row['planned_date']) ? '' : date('d.m.Y', strtotime($row['planned_date']))),
 					'date' => (is_null($row['date']) ? '' : date('d.m.Y', strtotime($row['date']))),
+					'state' => $row['state'],
 					'admin' => $admin
 				);
 		}
