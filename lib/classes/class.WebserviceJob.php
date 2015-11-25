@@ -229,7 +229,7 @@ class WebserviceJob extends Object {
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		} else {
 			$config = json_decode($result, true);
-			$config['jobId'] = $jobId;
+			$config['config']['jobId'] = $jobId;
 			$this->setJobConfig($config);
 		}
 	}
@@ -322,7 +322,7 @@ class WebserviceJob extends Object {
 		
 		// execute query
 		if(!Db::executeQuery('
-			UPDATE `webservice_results`
+			UPDATE `webservice_jobs`
 			SET `log`=\'#?\'
 			WHERE `id`=#?
 		',

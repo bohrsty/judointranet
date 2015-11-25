@@ -309,14 +309,13 @@ class ResultViewNew extends ResultView {
 			);
 		
 		// isTeam
-		$attributes = array();
 		$sessionIsTeam = $_SESSION['import']['isTeam'];
-		$options = array(_l('single'));
-		$optionsOverride = false;
-		if(is_null($sessionIsTeam)) {
-			$options[] = _l('team');
-		} else {
-			$optionsOverride = true;
+		$options = array(
+				'' => _l('- choose -'),
+				0 => _l('single'),
+			);
+		if($sessionIsTeam !== false) {
+			$options[1] = _l('team');
 		}
 		$formIds['isTeam'] = array('valueType' => 'int', 'type' => 'select',);
 		$form->add(
@@ -330,7 +329,7 @@ class ResultViewNew extends ResultView {
 				'isTeam',		// id/name
 				(is_null($sessionIsTeam) ? '' : ($sessionIsTeam === false ? 0 : 1))		// default
 			);
-		$isTeam->add_options($options, $optionsOverride);
+		$isTeam->add_options($options);
 		$isTeam->set_rule(
 				array(
 						'required' => array(
