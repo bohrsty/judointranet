@@ -81,10 +81,17 @@ class TributeViewListall extends TributeView {
 		$jtable = new Jtable();
 		// set settings
 		$jtable->setActions('tribute.php', 'TributeListall', false, false, false);
+		$jtable->setSetting('multisort', true);
+		$jtable->setSetting('title', _l('Tributes'));
+		$jtable->setSetting('toolbar', '{items: [{icon: \'img/jtable_pdf.png\', text: \''._l('Export as PDF').'\', click: function() {$.ajax({url:\'api/export/tribute/0/timestamp\',dataType: \'json\',cache: false}).done(function(response) {if(response.result ==\'OK\') { window.location.href = \'api/export/tribute/0\'; } else {var div = $(\'<div>\').appendTo($(\'body\')).text(response.message).dialog({autoOpen: true, modal: true, position: {my: \'center\',at: \'center\',of: window}, closeText: \''._l('close').'\', close: function() {div.remove();}, buttons: [{text:\'OK\', click: function() {div.dialog(\'close\');}}]});}});}},{icon: \'img/jtable_refresh.png\', text: \''._l('Refresh this table').'\', click: function() {$(\'#'.$containerId.'\').jtable(\'reload\')}}]}', false);
 		// get JtableFields
 		$jtfName = new JtableField('name');
 		$jtfName->setTitle(_l('name'));
 		$jtfName->setEdit(false);
+		$jtfClub = new JtableField('club');
+		$jtfClub->setTitle(_l('club'));
+		$jtfClub->setEdit(false);
+		$jtfClub->setWidth('1%');
 		$jtfYear = new JtableField('year');
 		$jtfYear->setTitle(_l('year'));
 		$jtfYear->setEdit(false);
@@ -117,6 +124,7 @@ class TributeViewListall extends TributeView {
 		
 		// add fields to $jtable
 		$jtable->addField($jtfName);
+		$jtable->addField($jtfClub);
 		$jtable->addField($jtfYear);
 		$jtable->addField($jtfTestimonial);
 		$jtable->addField($jtfStartDate);
@@ -167,6 +175,7 @@ class TributeViewListall extends TributeView {
 				if(val != "") {
 					$("#year").val("");
 					$("#state").val("");
+					$("#club").val("");
 					$("#'.$containerId.'").jtable("load", {select:"testimonial", value:val});
 				}
 			});
@@ -175,13 +184,24 @@ class TributeViewListall extends TributeView {
 				if(val != "") {
 					$("#testimonial").val("");
 					$("#year").val("");
+					$("#club").val("");
 					$("#'.$containerId.'").jtable("load", {select:"state", value:val});
+				}
+			});
+			$("#club").change(function() {
+				var val = $("#club").val();
+				if(val != "") {
+					$("#testimonial").val("");
+					$("#year").val("");
+					$("#state").val("");
+					$("#'.$containerId.'").jtable("load", {select:"club", value:val});
 				}
 			});
 			$("#reset").click(function() {
 				$("#year").val("");
 				$("#testimonial").val("");
 				$("#search").val("");
+				$("#club").val("");
 				$("#'.$containerId.'").jtable("load");
 			});
 			$("#search").autocomplete({
@@ -202,6 +222,7 @@ class TributeViewListall extends TributeView {
 		$this->smarty->assign('stateId', 'state');
 		$this->smarty->assign('yearId', 'year');
 		$this->smarty->assign('searchId', 'search');
+		$this->smarty->assign('clubId', 'club');
 		
 		// return
 		return $this->smarty->fetch('smarty.tribute.listall.tpl');

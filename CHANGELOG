@@ -40,6 +40,15 @@ Thirdparty licenses see LICENSE
 --
 [cc] changed unique index for number in table club
 [++] add state field to tribute entry (show in list and edit screen)
+--
+[!!] added permission management for tribute edit and delete
+[!!] fixed date formatting in edit tribute
+[cc] renamed some entries in translation (tribute)
+[cc] enabled jtable multisort for tribute listall
+[++] added club field to tribute entry (show in list and edit screen)
+[++] added PDF print for tribute list view
+[cc] make year choosable for schedule download
+[cc] added more theme buttons to tmce config
 
 
 

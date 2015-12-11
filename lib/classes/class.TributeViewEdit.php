@@ -109,6 +109,35 @@ class TributeViewEdit extends TributeView {
 					'name',			// for
 					_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDNAME)	// note text
 			);
+		
+		
+		// club
+		$clubs = Page::readClubs(true);
+		$options = array();
+		foreach($clubs as $no => $temp) {
+			$options[$no] = $clubs[$no]['name'];
+		}
+		$formIds['club'] = array('valueType' => 'int', 'type' => 'select',);
+		$form->add(
+				'label',		// type
+				'labelClub',	// id/name
+				'club',			// for
+				_l('club')	// label text
+		);
+		$state = $form->add(
+				$formIds['club']['type'],	// type
+				'club',		// id/name
+				$tribute->getClub(),			// default
+				array(		// attributes
+				)
+		);
+		$state->add_options($options);
+		$form->add(
+				'note',		// type
+				'noteClub',	// id/name
+				'club',		// for
+				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
+		);
 			
 			
 			// plannedDate
@@ -122,7 +151,7 @@ class TributeViewEdit extends TributeView {
 			$plannedDate = $form->add(
 					$formIds['plannedDate']['type'],			// type
 					'plannedDate',			// id/name
-					$tribute->getPlannedDate()	// default
+					$tribute->getPlannedDate('d.m.Y')	// default
 			);
 			// format/position
 			$plannedDate->format('d.m.Y');
@@ -154,7 +183,7 @@ class TributeViewEdit extends TributeView {
 			$date = $form->add(
 					$formIds['date']['type'],			// type
 					'date',			// id/name
-					$tribute->getDate()	// default
+					$tribute->getDate('d.m.Y')	// default
 			);
 			// format/position
 			$date->format('d.m.Y');
@@ -175,40 +204,40 @@ class TributeViewEdit extends TributeView {
 			);
 		
 		
-		// state
-		$states = Tribute::getAllStates(); 
-		$options = array();
-		foreach($states as $entry) {
-			$options[$entry['id']] = $entry['name'];
-		}
-		$formIds['state'] = array('valueType' => 'int', 'type' => 'select',);
-		$form->add(
-				'label',		// type
-				'labelState',	// id/name
-				'state',			// for
-				_l('state')	// label text
-		);
-		$state = $form->add(
-				$formIds['state']['type'],	// type
-				'state',		// id/name
-				$tribute->getState(),			// default
-				array(		// attributes
-				)
-		);
-		$state->add_options($options);
-		$state->set_rule(
-				array(
-						'required' => array(
-								'error', _l('required state')
-						),
-				)
-		);
-		$form->add(
-				'note',		// type
-				'noteState',	// id/name
-				'state',		// for
-				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
-		);
+			// state
+			$states = Tribute::getAllStates(); 
+			$options = array();
+			foreach($states as $entry) {
+				$options[$entry['id']] = $entry['name'];
+			}
+			$formIds['state'] = array('valueType' => 'int', 'type' => 'select',);
+			$form->add(
+					'label',		// type
+					'labelState',	// id/name
+					'state',			// for
+					_l('state')	// label text
+			);
+			$state = $form->add(
+					$formIds['state']['type'],	// type
+					'state',		// id/name
+					$tribute->getState(),			// default
+					array(		// attributes
+					)
+			);
+			$state->add_options($options);
+			$state->set_rule(
+					array(
+							'required' => array(
+									'error', _l('required state')
+							),
+					)
+			);
+			$form->add(
+					'note',		// type
+					'noteState',	// id/name
+					'state',		// for
+					_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
+			);
 			
 			
 			// testimonial
@@ -507,6 +536,7 @@ class TributeViewEdit extends TributeView {
 				$tribute->update(
 						array(
 								'name' => $data['name'],
+								'club' => $data['club'],
 								'plannedDate' => ($data['plannedDate'] != '' ? $data['plannedDate'] : null),
 								'date' => ($data['date'] != '' ? $data['date'] : null),
 								'state' => $data['state'],

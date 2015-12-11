@@ -140,6 +140,57 @@
 					})
 				});
 {/literal}
+{if isset($naviSecondJs) && $naviSecondJs===true}
+{literal}
+				$.each([{/literal}{$naviSecondIds}{literal}], function(id, value) {
+					$(document).on('click', '#naviItem_'+ value +' a', function(event) {
+						event.preventDefault();
+						$.ajax({
+							url:'api/calendar/schedule/'+ value,
+							dataType: 'json',
+							cache: false
+						})
+						.done(function(response) {
+							var div = $('<div>')
+								.appendTo($('body'))
+								.dialog({
+									autoOpen: true,
+									modal: true,
+									position:
+									{
+										my: 'center',
+										at: 'center',
+										of: window
+									},
+									minWidth: 600,
+									minHeight: 250,
+									maxHeight: 500,
+									closeText: '{/literal}{$naviSecondCloseText}{literal}',
+									close: function() {div.remove();}
+								});
+							if(response.result == 'OK') {
+								div.append($('<p>')
+										.text(response.data.message)
+										.css({"font-weight":"bold"})
+								);
+								$.each(response.data.values, function(id, entry) {
+									div.append($('<p>')
+										.text(entry.text)
+										.append($('<a>')
+											.attr('href', 'calendar.php?id=schedule&year='+ entry.year)
+											.attr('title', entry.title)
+											.text(entry.year)
+										)
+									)
+								});
+							} else {
+								div.append($('<p>').text(response.message));
+							}
+						});
+					});
+				});
+{/literal}
+{/if}
 {if isset($jsRedirect) && $jsRedirect === true}
 				setTimeout(function() {ldelim} window.location.replace('{$jsRedirectUri}'); {rdelim}, {$jsRedirectTimeout});
 {/if}
@@ -155,12 +206,12 @@
 			        mode : "exact",
 			        elements : "{$tmce.element}",
 			        theme : "advanced",
-			        plugins : "spellchecker,pagebreak,style",
+			        plugins : "spellchecker,pagebreak,style,table",
 			        language : "{if is_file('js/tiny_mce/langs/{$sLang}.js')}{$sLang}{else}de{/if}",
 			        height : 500,
 			
 			        // Theme options
-			        theme_advanced_buttons1 : "bold,|,styleselect,|,undo,redo,|,spellchecker",
+			        theme_advanced_buttons1 : "bold,italic,underline,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,|,fontselect,fontsizeselect,styleselect,removeformat,|,undo,redo,|,spellchecker,|,tablecontrols,table,row_props,cell_props,delete_col,delete_row,col_after,col_before,row_after,row_before,split_cells,merge_cells",
 			        theme_advanced_buttons2 : "",
 			        theme_advanced_buttons3 : "",
 			        theme_advanced_toolbar_location : "top",

@@ -3639,6 +3639,58 @@ function mysql_23() {
 	}
 	
 	
+	// insert missing navi entries for tribute
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `navi` (`id`, `name`, `parent`, `file_param`, `position`, `show`, `valid`, `required_permission`, `last_modified`)
+			VALUES
+				(67, \'navi: tributePage.edit\', \'64\', \'tribute.php|edit\', \'2\', \'0\', \'1\', \'w\', CURRENT_TIMESTAMP),
+				(68, \'navi: tributePage.delete\', \'64\', \'tribute.php|delete\', \'3\', \'0\', \'1\', \'w\', CURRENT_TIMESTAMP)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	// change required_permission for tribute new
+	if(!Db::executeQuery('
+		UPDATE `navi` SET `required_permission` = \'w\' WHERE `navi`.`id` = 66
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// add column to tribute table
+	if(!Db::executeQuery('
+		ALTER TABLE `tribute` ADD IF NOT EXISTS `club_id` INT(11) NOT NULL AFTER `name`
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// add config for tribute print timeout
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+			VALUES (\'tribute.printTimeout\', \'300\', \'Time the list result is valid for print (s)\'),
+				(\'tribute.printTemplate\', \'printList.tpl\', \'Filename of the print list template\'),
+				(\'tribute.printFilename\', \'Listendruck-Ehrungen_{$l.printDate_d_m_Y}.pdf\', \'Template string to generate the print list PDF filename\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// add config for navi second level javascript
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+			VALUES (\'navi.secondJs\', \'{"63":["CalendarViewSchedule","naviGetScheduleLinks"]}\', \'Configuration which method is called to get navi second level content\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	
 	
 	
 	

@@ -41,6 +41,12 @@
 			<option value="{$state.id}">{$state.name}</option>
 {/foreach}
 		</select>
+		<select name="{$clubId}" id="{$clubId}">
+			<option value="">- {lang}select club{/lang} -</option>
+{foreach Page::readClubs(true) as $id => $club}
+			<option value="{$id}">{$club.name}</option>
+{/foreach}
+		</select>
 		<input type="text" name="{$searchId}" id="{$searchId}" />
 	</span>
 </p>

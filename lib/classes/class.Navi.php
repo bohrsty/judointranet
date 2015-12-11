@@ -197,6 +197,18 @@ class Navi extends PageView {
 		// get smarty object
 		$smartyTpl = new JudoIntranetSmarty();
 		
+		// get second level ids
+		$secondConfig = json_decode($this->getGc()->get_config('navi.secondJs'), true);
+		if(is_null($secondConfig)) {
+			$secondConfig = array();
+		}
+		$keys = array_keys($secondConfig);
+		$secondIds = implode(',', $keys);
+		$secondJs = false;
+		if(count($secondIds) > 0) {
+			$secondJs = true;
+		}
+		
 		// get sorted tree
 		$data = $this->allItems();
 		
@@ -205,6 +217,9 @@ class Navi extends PageView {
 		$smartyTpl->assign('data', $data);
 		$smartyTpl->assign('param', $param);
 		$smartyTpl->assign('file', $file);
+		$this->getTpl()->assign('naviSecondJs', $secondJs);
+		$this->getTpl()->assign('naviSecondIds', $secondIds);
+		$this->getTpl()->assign('naviSecondCloseText', _l('close'));
 		
 		
 		// return smarty template

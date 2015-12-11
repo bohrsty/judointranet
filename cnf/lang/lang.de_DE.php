@@ -147,6 +147,9 @@ $lang = array(
 	'Error: tribute not exists' => 'Diese Ehrung existiert nicht, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
 										Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
 										Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />',
+	'Error: no valid year given' => 'Es wurde kein g&uuml;ltiges Jahr angegeben, wenn Sie die Adresse manuell eingegeben haben, bitte &uuml;berpr&uuml;fen.<br />
+										Wenn Sie einem Link gefolgt sind, versuchen Sie es bitte erneut von der <a href="javascript:history.back(1)">vorherigen Seite</a>.<br />
+										Wenn der Fehler unerwartet auftritt, wenden Sie sich bitte an den Systembetreuer.<br />',
 	/*
 	 * API error messages
 	 */
@@ -1058,6 +1061,8 @@ $lang = array(
 	'navi: tributePage' => 'Ehrungen',
 	'navi: tributePage.listall' => 'Ehrungen auflisten',
 	'navi: tributePage.new' => 'Neue Ehrung planen',
+	'navi: tributePage.edit' => 'Ehrung bearbeiten',
+	'navi: tributePage.delete' => 'Ehrung l&ouml;schen',
 	/*
 	 * ************************
 	 */
@@ -1194,7 +1199,8 @@ $lang = array(
 	'show older appointments' => '&auml;ltere Termine anzeigen...',
 	'archived appointments' => 'Archivierte Termine',
 	'validity' => 'G&uuml;ltigkeit',
-	'club' => 'Vereine',
+	'clubs' => 'Vereine',
+	'club' => 'Verein',
 	'contact' => 'Ansprechpartner',
 	'judo' => 'Judo',
 	'judo_belt' => 'G&uuml;rtelfarben',
@@ -1254,11 +1260,11 @@ $lang = array(
 	'list tributes' => 'Ehrungen auflisten',
 	'year' => 'Jahr',
 	'testimonial' => 'Ehrengabe',
-	'planned date' => 'geplant',
+	'planned date' => 'Ehrungsziel',
 	'tribute start date' => 'begonnen',
 	'tribute date' => 'geehrt',
-	'select year' => 'Jahr ausw&auml;hlen',
-	'select testimonial' => 'Ehrengabe ausw&auml;hlen',
+	'select year' => 'Jahr',
+	'select testimonial' => 'Ehrengabe',
 	'Show all' => 'Alle anzeigen',
 	'edit tribute' => 'Ehrung bearbeiten',
 	'delete tribute' => 'Ehrung l&ouml;schen',
@@ -1337,7 +1343,13 @@ $lang = array(
 	'Webservice connections' => 'Webservice-Anbindungen',
 	'tribute_state' => 'Ehrungsstatus',
 	'required state' => 'Status erforderlich',
-	'select state' => 'Status ausw&auml;hlen',
+	'select state' => 'Status',
+	'select club' => 'Verein',
+	'Export as PDF' => 'Als PDF exportieren',
+	'View of list expired, please refresh table view.' => 'Die Listenansicht ist abgelaufen, bitte die Tabelle aktualisieren.',
+	'Schedule for' => 'Terminplan f&uuml;r',
+	'Please select year' => 'Bitte Jahr ausw&auml;hlen',
+	'printed' => 'gedruckt',
 //	'' => '',
 );
 

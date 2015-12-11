@@ -278,20 +278,22 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 	
 	
 	/**
-	 * readClubs() reads all clubs from database and sets $this->clubArray as an
-	 * array club_id->name and number
+	 * readClubs() reads all clubs from database and returns them as array
 	 * 
+	 * @param bool $valid if true only valid clubs are returned
 	 * @return array array containing all club information
 	 */
-	public static function readClubs() {
+	public static function readClubs($valid=false) {
 		
 		// get clubs from db
 		$result = Db::ArrayValue('
 			SELECT `id`, `number`, `name`
-			FROM `club`	
+			FROM `club`
+			WHERE `valid`=#?
+			ORDER BY `name`
 		',
 		MYSQL_ASSOC,
-		array());
+		array($valid,));
 		if($result === false) {
 			throw new MysqlErrorException($this, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}

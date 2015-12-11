@@ -41,6 +41,7 @@ class Tribute extends Page {
 	private $testimonialId;
 	private $description;
 	private $state;
+	private $club;
 	
 	/*
 	 * getter/setter
@@ -73,20 +74,32 @@ class Tribute extends Page {
 			}
 		}
 	}
-	public function getStartDate(){
-		return $this->startDate;
+	public function getStartDate($format=''){
+		if($format == '') {
+			return $this->startDate;
+		} else {
+			return date($format, strtotime($this->startDate));
+		}
 	}
 	public function setStartDate($startDate) {
 		$this->startDate = $startDate;
 	}
-	public function getPlannedDate(){
-		return $this->plannedDate;
+	public function getPlannedDate($format=''){
+		if($format == '') {
+			return $this->plannedDate;
+		} else {
+			return (is_null($this->plannedDate) ? '' : date($format, strtotime($this->plannedDate)));
+		}
 	}
 	public function setPlannedDate($plannedDate) {
 		$this->plannedDate = $plannedDate;
 	}
-	public function getDate(){
-		return $this->date;
+	public function getDate($format=''){
+		if($format == '') {
+			return $this->date;
+		} else {
+			return (is_null($this->date) ? '' : date($format, strtotime($this->date)));
+		}
 	}
 	public function setDate($date) {
 		$this->date = $date;
@@ -108,6 +121,12 @@ class Tribute extends Page {
 	}
 	public function setState($state) {
 		$this->state = $state;
+	}
+	public function getClub(){
+		return $this->club;
+	}
+	public function setClub($club) {
+		$this->club = $club;
 	}
 	
 	/*
@@ -131,6 +150,7 @@ class Tribute extends Page {
 			$this->setDescription($id['description']);
 			$this->setValid($id['valid']);
 			$this->setState($id['state']);
+			$this->setClub($id['club']);
 			
 			// set year
 			$this->setYear();
@@ -159,7 +179,7 @@ class Tribute extends Page {
 		
 		// get result values from db
 		$result = Db::ArrayValue('
-			SELECT `name`, `year`, `start_date`, `planned_date`, `date`, `state_id`, `testimonial_id`, `description`, `last_modified`, `modified_by`, `valid`
+			SELECT `name`, `club_id`, `year`, `start_date`, `planned_date`, `date`, `state_id`, `testimonial_id`, `description`, `last_modified`, `modified_by`, `valid`
 			FROM `tribute`
 			WHERE `id`=#?	
 		',
@@ -184,6 +204,7 @@ class Tribute extends Page {
 			$this->setLastModified((strtotime($result[0]['last_modified']) < 0 ? 0 : strtotime($result[0]['last_modified'])));
 			$this->setModifiedBy($result[0]['modified_by']);
 			$this->setState($result[0]['state_id']);
+			$this->setClub($result[0]['club_id']);
 			
 			// set year
 			$this->setYear();
@@ -219,6 +240,8 @@ class Tribute extends Page {
 				$this->setValid($value);
 			} elseif($name == 'state') {
 				$this->setState($value);
+			} elseif($name == 'club') {
+				$this->setClub($value);
 			}
 		}
 		
@@ -236,10 +259,11 @@ class Tribute extends Page {
 		
 		// insert into database
 		if(!Db::executeQuery('
-			INSERT INTO `tribute` (`id`,`name`,`year`,`start_date`,`planned_date`,`date`,`state_id`,`testimonial_id`,`description`,`valid`,`last_modified`,`modified_by`)
-			VALUES (#?, \'#?\', \'#?\', \'#?\', '.(is_null($this->getPlannedDate()) ? '#?' : '\'#?\'').', '.(is_null($this->getDate()) ? '#?' : '\'#?\'').', #?, #?, \'#?\', #?, CURRENT_TIMESTAMP, #?)
+			INSERT INTO `tribute` (`id`,`name`,`club_id`,`year`,`start_date`,`planned_date`,`date`,`state_id`,`testimonial_id`,`description`,`valid`,`last_modified`,`modified_by`)
+			VALUES (#?, \'#?\', #?, \'#?\', \'#?\', '.(is_null($this->getPlannedDate()) ? '#?' : '\'#?\'').', '.(is_null($this->getDate()) ? '#?' : '\'#?\'').', #?, #?, \'#?\', #?, CURRENT_TIMESTAMP, #?)
 			ON DUPLICATE KEY UPDATE
 				`name`=\'#?\',
+				`club_id`=#?,
 				`year`=\'#?\',
 				`start_date`=\'#?\',
 				`planned_date`='.(is_null($this->getPlannedDate()) ? '#?' : '\'#?\'').',
@@ -254,6 +278,7 @@ class Tribute extends Page {
 			array(// insert
 				($this->getId() == 0 ? 'NULL' : $this->getId()),
 				$this->getName(),
+				$this->getClub(),
 				$this->getYear(),
 				$this->getStartDate(),
 				(is_null($this->getPlannedDate()) ? 'NULL' : $this->getPlannedDate()),
@@ -265,6 +290,7 @@ class Tribute extends Page {
 				(int)$this->getUser()->get_id(),
 				// update
 				$this->getName(),
+				$this->getClub(),
 				$this->getYear(),
 				$this->getStartDate(),
 				(is_null($this->getPlannedDate()) ? 'NULL' : $this->getPlannedDate()),

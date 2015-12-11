@@ -937,6 +937,36 @@ class Calendar extends Page {
 		// return
 		return $webservices;
 	}
+	
+	
+	/**
+	 * getYearsWithAppointment() gets any year from database, that has >0 appointments
+	 * 
+	 * @return array array containing the years
+	 */
+	public static function getYearsWithAppointment() {
+		
+		// get values from db
+		$result = Db::ArrayValue('
+			SELECT DISTINCT YEAR(`date`) AS `year`
+			FROM `calendar`
+			WHERE `valid`=1
+		',
+				MYSQL_ASSOC,
+				array());
+		if($result === false) {
+			throw new MysqlErrorException($this, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		}
+		
+		// walk through result
+		$years = array();
+		foreach($result as $row) {
+			$years[] = $row['year'];
+		}
+		
+		// return
+		return $years;
+	}
 }
 
 

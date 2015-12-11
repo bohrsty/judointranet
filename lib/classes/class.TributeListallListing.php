@@ -127,13 +127,40 @@ class TributeListallListing extends Listing implements ListingInterface {
 			if($postSelect == 'year') {
 				$postWhere = 'AND `t`.`year`=\''.$postValue.'\'';
 			} elseif($postSelect == 'testimonial') {
-				$postWhere = 'AND `tm`.`id`=\''.$postValue.'\'';
+				$postWhere = 'AND `t`.`testimonial_id`=\''.$postValue.'\'';
 			} elseif($postSelect == 'state') {
-				$postWhere = 'AND `ts`.`id`=\''.$postValue.'\'';
+				$postWhere = 'AND `t`.`state_id`=\''.$postValue.'\'';
+			} elseif($postSelect == 'club') {
+				$postWhere = 'AND `t`.`club_id`=\''.$postValue.'\'';
 			}
 		}
 		
+		// prepare sql
+		$sql = '
+				SELECT
+					`t`.`id`,
+					`t`.`name`,
+				    `c`.`name` AS `club`,
+				    `t`.`year`,
+				    `tm`.`name` AS `testimonial`,
+				    `t`.`planned_date`,
+				    `t`.`start_date`,
+				    `t`.`date`,
+				    `ts`.`name` AS `state`
+				FROM
+					`tribute` AS `t`
+				JOIN `testimonials` AS `tm` ON `t`.`testimonial_id`=`tm`.`id`
+				JOIN `tribute_state` AS `ts` ON `t`.`state_id`=`ts`.`id`
+				LEFT JOIN `club` AS `c` ON `c`.`id`=`t`.`club_id`
+				WHERE `t`.`id` IN (#?)
+					AND `t`.`valid`=TRUE
+					'.$postWhere;
+		
 		// check jTable and get data
+		$_SESSION['printTributeList']['timestamp'] = time() + $this->getGc()->get_config('tribute.printTimeout');
+		$_SESSION['printTributeList']['timestampChecked'] = false;
+		$_SESSION['printTributeList']['printDate'] = time();
+		
 		if(count($getData) > 0) {
 			
 			// check order by
@@ -141,29 +168,21 @@ class TributeListallListing extends Listing implements ListingInterface {
 				$getData['orderBy'] = 'ORDER BY `name` ASC';
 			}
 			
-			$sql = '
-				SELECT `t`.`id`, `t`.`name`, `t`.`year`, `tm`.`name` AS `testimonial`, `t`.`planned_date`, `t`.`start_date`, `t`.`date`, `ts`.`name` AS `state`
-				FROM `tribute` AS `t`, `testimonials` AS `tm`, `tribute_state` AS `ts`
-				WHERE `t`.`id` IN (#?)
-					AND `t`.`valid`=TRUE
-					AND `t`.`testimonial_id`=`tm`.`id`
-					AND `t`.`state_id`=`ts`.`id`
-					'.$postWhere.'
-				'.$getData['orderBy'].'
-				'.$getData['limit'].'
-			';
+			// add order by clause
+			$sql .= $getData['orderBy'];
+			
+			// save sql w/o limit in session
+			$_SESSION['printTributeList']['sql'] = $sql;
+			
+			// add limit clause
+			$sql .= PHP_EOL.$getData['limit'];
 		} else {
 			
-			$sql = '
-				SELECT `t`.`id`, `t`.`name`, `t`.`year`, `tm`.`name` AS `testimonial`, `t`.`planned_date`, `t`.`start_date`, `t`.`date`, `ts`.`name` AS `state`
-				FROM `tribute` AS `t`, `testimonials` AS `tm`, `tribute_state` AS `ts`
-				WHERE `t`.`id` IN (#?)
-					AND `t`.`valid`=TRUE
-					AND `t`.`testimonial_id`=`tm`.`id`
-					AND `ts`.`id`=`t`.`state_id`
-					'.$postWhere.'
-				ORDER BY `t`.`name` ASC
-			';
+			// add order by clause
+			$sql .= PHP_EOL.'ORDER BY `t`.`name` ASC';
+
+			// save sql in session
+			$_SESSION['printTributeList']['sql'] = $sql;
 		}
 
 		$result = Db::ArrayValue($sql,
@@ -202,10 +221,14 @@ class TributeListallListing extends Listing implements ListingInterface {
 		if($postSelect !== false && $postValue !== false) {
 				
 			// year
-			if($postSelect == 'year') {
+		if($postSelect == 'year') {
 				$postWhere = 'AND `t`.`year`=\''.$postValue.'\'';
 			} elseif($postSelect == 'testimonial') {
 				$postWhere = 'AND `t`.`testimonial_id`=\''.$postValue.'\'';
+			} elseif($postSelect == 'state') {
+				$postWhere = 'AND `t`.`state_id`=\''.$postValue.'\'';
+			} elseif($postSelect == 'club') {
+				$postWhere = 'AND `t`.`club_id`=\''.$postValue.'\'';
 			}
 		}
 		
@@ -283,6 +306,7 @@ class TributeListallListing extends Listing implements ListingInterface {
 			// add to return array
 			$return[] = array(
 					'name' => $row['name'],
+					'club' => $row['club'],
 					'year' => $row['year'],
 					'testimonial' => $row['testimonial'],
 					'start_date' => date('d.m.Y', strtotime($row['start_date'])),
@@ -374,6 +398,86 @@ class TributeListallListing extends Listing implements ListingInterface {
 		if($result != $replace) {
 			return $replace;
 		}
+	}
+	
+	
+	/**
+	 * addPrintListMarks() returns an array with the data of the actual list view
+	 * 
+	 * @return array array containing list view data
+	 */
+	public static function addPrintListMarks() {
+		
+		// get permitted ids
+		$ids = self::getUser()->permittedItems('tribute', 'w');
+		
+		// check if empty result
+		$mysqlData = implode(',', $ids);
+		if(count($ids) == 0) {
+			$mysqlData = 'SELECT FALSE';
+		}
+		
+		// get sql and timestamp
+		$sql = $_SESSION['printTributeList']['sql'];
+		$printDate = $_SESSION['printTributeList']['printDate'];
+		
+		$result = Db::ArrayValue($sql,
+		MYSQL_ASSOC,
+		array($mysqlData,));
+		if($result === false) {
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		}
+		
+		// prepare result
+		$return = array();
+		if(count($result) > 0) {
+			foreach($result as $row) {
+				$return['list'][] = array(
+						'name' => $row['name'],
+					    'club' => $row['club'],
+					    'year' => $row['year'],
+					    'testimonial' => $row['testimonial'],
+					    'plannedDate_d_m_Y' => (is_null($row['planned_date']) ? '' : date('d.m.Y', strtotime($row['planned_date']))),
+					    'startDate_d_m_Y' => (is_null($row['start_date']) ? '' : date('d.m.Y', strtotime($row['start_date']))),
+					    'date_d_m_Y' => (is_null($row['date']) ? '' : date('d.m.Y', strtotime($row['date']))),
+					    'plannedDate_dmY' => (is_null($row['planned_date']) ? '' : date('dmY', strtotime($row['planned_date']))),
+					    'startDate_dmY' => (is_null($row['start_date']) ? '' : date('dmY', strtotime($row['start_date']))),
+					    'date_dmY' => (is_null($row['date']) ? '' : date('dmY', strtotime($row['date']))),
+					    'plannedDate_j_F_Y' => (is_null($row['planned_date']) ? '' : strftime('%e. %B %Y', strtotime($row['planned_date']))),
+					    'startDate_j_F_Y' => (is_null($row['start_date']) ? '' : strftime('%e. %B %Y', strtotime($row['start_date']))),
+					    'date_j_F_Y' => (is_null($row['date']) ? '' : strftime('%e. %B %Y', strtotime($row['date']))),
+					    'state' => $row['state'],
+					);
+			}
+		} else {
+			$return['list'][] = array(
+					'name' => _l('no results'),
+					'club' => '',
+					'year' => '',
+					'testimonial' => '',
+					'plannedDate_d_m_Y' => '',
+					'startDate_d_m_Y' => '',
+					'date_d_m_Y' => '',
+					'plannedDate_dmY' => '',
+					'startDate_dmY' => '',
+					'date_dmY' => '',
+					'plannedDate_j_F_Y' => '',
+					'startDate_j_F_Y' => '',
+					'date_j_F_Y' => '',
+					'state' => '',
+				);
+		}
+		
+		$return['printDate_j_F_Y'] = strftime('%e. %B %Y', $printDate);
+		$return['printDate_dmY'] = date('dmY', $printDate);
+		$return['printDate_d_m_Y'] = date('d.m.Y', $printDate);
+		$return['printDate_j_F_Y_HMS'] = strftime('%e. %B %Y, %H:%M:%S Uhr', $printDate);
+		$return['printDate_dmY_His'] = date('dmY_His', $printDate);
+		$return['printDate_d_m_Y_His'] = date('d.m.Y H:i:s', $printDate);
+		
+		// return
+		return $return;
 	}
 }
 ?>

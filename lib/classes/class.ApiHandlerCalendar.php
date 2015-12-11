@@ -201,6 +201,65 @@ class ApiHandlerCalendar extends ApiHandler {
 			);
 		}
 	}
+	
+	
+	/**
+	 * handleSchedule() returns the data for schedule links in navi popup
+	 * 
+	 * @return array array containing the details of the schedule links
+	 */
+	public function handleSchedule() {
+		
+		// get request
+		$request = $this->getRequest();
+		
+		// check tid given
+		if(!isset($request['data']['tid']) || !is_numeric($request['data']['tid'])) {
+			return array(
+					'result' => 'ERROR',
+					'message' => 'API call failed [tid not given or not numeric]',
+				);
+		}
+		
+		// check existance
+		if(Page::exists('navi', $request['data']['tid']) === false) {
+			return array(
+					'result' => 'ERROR',
+					'message' => 'API call failed [entry does not exists]',
+				);
+		}
+		
+		// check permission
+		if($this->getUser()->hasPermission('navi', $request['data']['tid']) === false) {
+			return array(
+					'result' => 'ERROR',
+					'message' => 'API call failed [not permitted to access this entry]',
+				);
+		}
+		
+		// get config
+		$secondConfig = json_decode($this->getGc()->get_config('navi.secondJs'), true);
+		
+		// get data
+		$data = array(
+						'message' => '',
+						'values' => array(),
+					);
+		if(is_callable($secondConfig[$request['data']['tid']])) {
+			$data = call_user_func($secondConfig[$request['data']['tid']]);
+		} else {
+			return array(
+					'result' => 'ERROR',
+					'message' => 'API call failed [callback not exists]',
+			);
+		}
+		
+		// return data
+		return array(
+				'result' => 'OK',
+				'data' => $data,
+		);
+	}
 }
 
 ?>

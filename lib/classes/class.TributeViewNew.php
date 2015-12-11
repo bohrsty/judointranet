@@ -102,6 +102,35 @@ class TributeViewNew extends TributeView {
 		);
 		
 		
+		// club
+		$clubs = Page::readClubs(true);
+		$options = array();
+		foreach($clubs as $no => $temp) {
+			$options[$no] = $clubs[$no]['name'];
+		}
+		$formIds['club'] = array('valueType' => 'int', 'type' => 'select',);
+		$form->add(
+				'label',		// type
+				'labelClub',	// id/name
+				'club',			// for
+				_l('club')	// label text
+		);
+		$state = $form->add(
+				$formIds['club']['type'],	// type
+				'club',		// id/name
+				'',			// default
+				array(		// attributes
+				)
+		);
+		$state->add_options($options);
+		$form->add(
+				'note',		// type
+				'noteClub',	// id/name
+				'club',		// for
+				_l('help').'&nbsp;'.$this->helpButton(HELP_MSG_FIELDTYPE)	// note text
+		);
+		
+		
 		// startDate
 		$formIds['startDate'] = array('valueType' => 'string', 'type' => 'date',);
 		$form->add(
@@ -338,6 +367,7 @@ class TributeViewNew extends TributeView {
 			$tribute = new Tribute(
 					array(
 							'name' => $data['name'],
+							'club' => $data['club'],
 							'startDate' => date('Y-m-d', strtotime($data['startDate'])),
 							'plannedDate' => ($data['plannedDate'] != '' ? $data['plannedDate'] : null),
 							'date' => ($data['date'] != '' ? $data['date'] : null),

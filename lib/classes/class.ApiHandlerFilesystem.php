@@ -73,7 +73,7 @@ class ApiHandlerFilesystem extends ApiHandler {
 				if(!is_null($request['data']['action'])) {
 					return array(
 							'result' => 'ERROR',
-							'message' => 'API call failed [id not found \''.get_class($this).'::'.$apiMethod.'\']',
+							'message' => 'API call failed [action not found \''.get_class($this).'::'.$apiMethod.'\']',
 						);
 				} else {
 					header("HTTP/1.1 400 Bad Request");

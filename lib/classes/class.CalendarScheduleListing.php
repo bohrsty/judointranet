@@ -55,14 +55,26 @@ class CalendarScheduleListing extends Listing implements ListingInterface {
 	 */
 	/**
 	 * listingAsArray() returns the listing data as array of associative
-	 * arrays
+	 * arrays calls listingAsArrayPerYear()
 	 * 
 	 * @return array array of associative arrays to use with template
 	 */
 	public function listingAsArray() {
+		return $this->listingAsArrayPerYear(date('Y'));
+	}
+	
+
+	/**
+	 * listingAsArrayPerYear($year) returns the listing data as array of associative
+	 * arrays for the given $year
+	 *
+	 * @param string $year the year to get the listing for 
+	 * @return array array of associative arrays to use with template
+	 */
+	public function listingAsArrayPerYear($year) {
 		
 		// get data from db
-		$dates = array_merge($this->getAppointments(), $this->getHolidays(), $this->getSchoolHolidays());
+		$dates = array_merge($this->getAppointments($year), $this->getHolidays($year), $this->getSchoolHolidays($year));
 		
 		// sort by date
 		usort($dates, array($this, 'callbackSortSchedule'));
@@ -104,13 +116,14 @@ class CalendarScheduleListing extends Listing implements ListingInterface {
 	/**
 	 * getAppointments() gets all required appointment data from database and returns it as array
 	 * 
+	 * @param string $year the year to get the data for
 	 * @return array array containing all required data
 	 */
-	private function getAppointments() {
+	private function getAppointments($year) {
 
 		// prepare dates (this year)
-		$start = date('Y-m-d', strtotime('first day of january'));
-		$end = date('Y-m-d', strtotime('last day of december'));
+		$start = date('Y-m-d', strtotime('first day of january' . $year));
+		$end = date('Y-m-d', strtotime('last day of december' . $year));
 		
 		// prepare public user
 		$publicUser = new User(false);
@@ -142,15 +155,16 @@ class CalendarScheduleListing extends Listing implements ListingInterface {
 	
 	
 	/**
-	 * getSchoolHolidays() gets all required school holiday data from database and returns it as array
+	 * getSchoolHolidays($year) gets all required school holiday data from database and returns it as array
 	 * 
+	 * @param string $year the year to get the data for
 	 * @return array array containing all required data
 	 */
-	private function getSchoolHolidays() {
+	private function getSchoolHolidays($year) {
 		
 		// prepare dates (this year)
-		$start = date('Y-m-d', strtotime('first day of january'));
-		$end = date('Y-m-d', strtotime('last day of december'));
+		$start = date('Y-m-d', strtotime('first day of january ' . $year));
+		$end = date('Y-m-d', strtotime('last day of december' . $year));
 		
 		// get data from database
 		$result = Db::ArrayValue('
@@ -181,14 +195,12 @@ class CalendarScheduleListing extends Listing implements ListingInterface {
 	
 	
 	/**
-	 * getHolidays() gets all required holiday data from configuration and returns it as array
+	 * getHolidays($year) gets all required holiday data from configuration and returns it as array
 	 * 
+	 * @param string $year the year to get the data for
 	 * @return array array containing all required data
 	 */
-	private function getHolidays() {
-		
-		// prepare year
-		$year = date('Y');
+	private function getHolidays($year) {
 		
 		// get data from config calculated
 		$holidays = Holiday::getHolidays($year);

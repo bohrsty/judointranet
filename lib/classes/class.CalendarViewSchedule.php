@@ -59,12 +59,19 @@ class CalendarViewSchedule extends CalendarView {
 	 */
 	public function show() {
 		
+		// check valid year
+		$year = $this->get('year');
+		if($year === false || !in_array($year, Calendar::getYearsWithAppointment())) {
+			throw new YearNotValidException();
+		}
+		
 		// get preset
 		$preset = new Preset($this->getGc()->get_config('schedule.presetId'), 'schedule');
 		
 		// assign data
 		$scheduleListing = new CalendarScheduleListing();
-		$this->smarty->assign('s', $scheduleListing->listingAsArray());
+		$this->smarty->assign('s', $scheduleListing->listingAsArrayPerYear($year));
+		$this->smarty->assign('year', $year);
 		
 		// fetch pdf
 		$pdfOut = $this->smarty->fetch('templates/schedules/'.$preset->get_path().'.tpl');
@@ -82,6 +89,37 @@ class CalendarViewSchedule extends CalendarView {
 		
 		// exit after download
 		exit;
+	}
+	
+	
+	/**
+	 * naviGetScheduleLinks() generates the navi second level links for the schedules
+	 * 
+	 * @return array array containing the links as HTML
+	 */
+	public static function naviGetScheduleLinks() {
+		
+		// get years with appointment
+		$years = Calendar::getYearsWithAppointment();
+		rsort($years);
+		
+		// walk through years
+		$links = array();
+		foreach($years as $year) {
+			
+			// add link to array
+			$links[] = array(
+					'text' => html_entity_decode(_l('Schedule for') . ': '),
+					'title' => html_entity_decode(_l('Schedule for') . ': '. $year),
+					'year' => $year,
+				);
+		}
+		
+		// return
+		return array(
+				'message' => html_entity_decode(_l('Please select year')),
+				'values' => $links,
+			);
 	}
 }
 

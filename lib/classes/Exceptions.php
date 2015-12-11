@@ -1191,4 +1191,35 @@ class DbActionUnknownException extends CustomException {
 }
 
 
+
+/**
+ * YearNotValidException is thrown, if the the given year has no appointment
+ */
+class YearNotValidException extends CustomException {
+	
+	/*
+	 * constructor/destructor
+	 */
+	public function __construct(&$view = null, $message = null, $code = 0) {
+		
+		// call parent constructor
+		parent::__construct($view, $message, $code);
+		
+		// set fatal
+		$this->setFatal(false);
+	}
+	
+	
+	/**
+	 * getInternalMessage() return the translated error message
+	 * 
+	 * @return string translated error message
+	 */
+	protected function getInternalMessage() {
+		
+		return _l('Error: no valid year given');
+	}
+}
+
+
 ?>
