@@ -95,9 +95,11 @@ class TributeTest extends PHPUnit_Framework_TestCase {
 		$data = 'Tribute';
 		$arg = array(
 				'name' => 'Bob Builder',
+				'club' => 0,
 				'startDate' => '1970-01-01',
 				'plannedDate' => '1970-02-01',
 				'date' => '1970-12-31',
+				'state' => 1,
 				'testimonialId' => 1,
 				'description' => 'Tribute for everything',
 				'valid' => '0',
@@ -111,10 +113,12 @@ class TributeTest extends PHPUnit_Framework_TestCase {
 		// values
 		$this->assertEquals(0, $tribute->getId());
 		$this->assertEquals($arg['name'], $tribute->getName());
+		$this->assertEquals($arg['club'], $tribute->getClub());
 		$this->assertEquals(date('Y', strtotime($arg['date'])), $tribute->getYear());
 		$this->assertEquals($arg['startDate'], $tribute->getStartDate());
 		$this->assertEquals($arg['plannedDate'], $tribute->getPlannedDate());
 		$this->assertEquals($arg['date'], $tribute->getDate());
+		$this->assertEquals($arg['state'], $tribute->getState());
 		$this->assertEquals($arg['testimonialId'], $tribute->getTestimonialId());
 		$this->assertEquals($arg['description'], $tribute->getDescription());
 		$this->assertEquals($arg['valid'], $tribute->getValid());
@@ -126,10 +130,12 @@ class TributeTest extends PHPUnit_Framework_TestCase {
 		// values
 		$this->assertEquals($data, $tribute->getId());
 		$this->assertEquals($arg['name'], $tribute->getName());
+		$this->assertEquals($arg['club'], $tribute->getClub());
 		$this->assertEquals(date('Y', strtotime($arg['date'])), $tribute->getYear());
 		$this->assertEquals($arg['startDate'], $tribute->getStartDate());
 		$this->assertEquals($arg['plannedDate'], $tribute->getPlannedDate());
 		$this->assertEquals($arg['date'], $tribute->getDate());
+		$this->assertEquals($arg['state'], $tribute->getState());
 		$this->assertEquals($arg['testimonialId'], $tribute->getTestimonialId());
 		$this->assertEquals($arg['description'], $tribute->getDescription());
 		$this->assertEquals($arg['valid'], $tribute->getValid());
@@ -139,7 +145,9 @@ class TributeTest extends PHPUnit_Framework_TestCase {
 		// start date
 		$arg = array(
 				'name' => 'Bob Builder',
+				'club' => 0,
 				'startDate' => '1970-01-01',
+				'state' => 1,
 				'testimonialId' => 1,
 				'description' => 'Tribute for everything',
 				'valid' => '0',
@@ -253,9 +261,11 @@ class TributeTest extends PHPUnit_Framework_TestCase {
 		
 		$new = array(
 				'name' => 'Paul Panzer',
+				'club' => 0,
 				'startDate' => '1971-01-01',
 				'plannedDate' => '1971-02-01',
 				'date' => '1971-12-31',
+				'state' => 1,
 				'testimonialId' => 2,
 				'description' => 'Tribute for something else',
 				'valid' => '1',
