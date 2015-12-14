@@ -36,6 +36,9 @@ Thirdparty licenses see LICENSE
   r024:
 -----------------------------------------------------------------------------------------
 [!!] fixed tests from last commit
+--
+[!!] fixed generation of club list (valid/not valid)
+[!!] fixed sql setup from r023 (setup not usable in that version)
 
 
 

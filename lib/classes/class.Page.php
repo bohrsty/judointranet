@@ -285,15 +285,21 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 	 */
 	public static function readClubs($valid=false) {
 		
+		// prepare valid
+		$validSql = '';
+		if($valid === true) {
+			$validSql = 'WHERE `valid`=TRUE';
+		}
+		
 		// get clubs from db
 		$result = Db::ArrayValue('
 			SELECT `id`, `number`, `name`
 			FROM `club`
-			WHERE `valid`=#?
+			' . $validSql . '
 			ORDER BY `name`
 		',
 		MYSQL_ASSOC,
-		array((int)$valid,));
+		array());
 		if($result === false) {
 			throw new MysqlErrorException($this, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}

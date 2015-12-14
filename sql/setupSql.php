@@ -3571,12 +3571,14 @@ function mysql_23() {
 	/*
 	 * delete unique index for club number
 	 */
-	if(!Db::executeQuery('
-		ALTER TABLE `club` DROP INDEX IF EXISTS `unique_number`
-	')) {
-		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
-		return $return;
+	if(Db::uniqueKeyExists('club', 'unique_number')) {
+		if(!Db::executeQuery('
+			ALTER TABLE `club` DROP INDEX `unique_number`
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
 	}
 	
 
@@ -3600,12 +3602,14 @@ function mysql_23() {
 	}
 	
 	// add column to tribute table
-	if(!Db::executeQuery('
-		ALTER TABLE `tribute` ADD IF NOT EXISTS `state_id` INT(11) NOT NULL AFTER `date`
-	')) {
-		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
-		return $return;
+	if(!Db::columnExists('tribute', 'state_id')) {
+		if(!Db::executeQuery('
+			ALTER TABLE `tribute` ADD `state_id` INT(11) NOT NULL AFTER `date`
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
 	}
 	// add table config
 	if(!Db::executeQuery('
@@ -3660,12 +3664,14 @@ function mysql_23() {
 	}
 	
 	// add column to tribute table
-	if(!Db::executeQuery('
-		ALTER TABLE `tribute` ADD IF NOT EXISTS `club_id` INT(11) NOT NULL AFTER `name`
-	')) {
-		$return['returnValue'] = false;
-		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
-		return $return;
+	if(!Db::columnExists('tribute', 'club_id')) {
+		if(!Db::executeQuery('
+			ALTER TABLE `tribute` ADD `club_id` INT(11) NOT NULL AFTER `name`
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
 	}
 	
 	// add config for tribute print timeout

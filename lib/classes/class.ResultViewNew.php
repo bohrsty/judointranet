@@ -428,7 +428,7 @@ class ResultViewNew extends ResultView {
 		$data = $_SESSION['import']['data'];
 		
 		// get club array
-		$clubs = Page::readClubs();
+		$clubs = Page::readClubs(true);
 		
 		// walk through data
 		for($i = 0; $i < count($data); $i++) {
