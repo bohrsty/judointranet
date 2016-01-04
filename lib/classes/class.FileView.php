@@ -221,48 +221,14 @@ class FileView extends PageView {
 	 */
 	private function readAllEntries() {
 		
-		// prepare return
-		$files = array();
-		
-		// get file objects
-		$fileEntries = self::getUser()->permittedItems('file', 'w');
-		foreach($fileEntries as $fileId) {
-			$files[] = new File($fileId);
-		}
-		
-		// sort file entries
-		usort($files, array($this, 'callbackCompareFiles'));
-		
 		// return file objects
-		return $files;
+		return File::readAllowedEntries();
 	}
 	
 	
 	
 	
 	
-	
-	
-	/**
-	 * callbackCompareFiles($first, $second) compares two file objects by name (for uksort)
-	 * 
-	 * @param object $first first file objects
-	 * @param object $second second file object
-	 * @return int -1 if $first<$second, 0 if equal, 1 if $first>$second
-	 */
-	public function callbackCompareFiles($first, $second) {
-	
-		// compare dates
-		if($first->getName() < $second->getName()) {
-			return -1;
-		}
-		if($first->getName() == $second->getName()) {
-			return 0;
-		}
-		if($first->getName() > $second->getName()) {
-			return 1;
-		}
-	}
 	
 	
 	/**

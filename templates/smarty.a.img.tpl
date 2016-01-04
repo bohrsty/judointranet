@@ -32,5 +32,6 @@
 {else}
 {if $data.$i.href !== false}<a{if isset($data.$i.id)} id="{$data.$i.id}"{/if}{if isset($data.$i.class)} class="{$data.$i.class}"{/if} href="{$data.$i.href|escape}" title="{$data.$i.title}">{/if}{if is_array($data.$i.name)}<img src="{$data.$i.name.src}" alt="{$data.$i.name.alt}" class="icon" />{else}{$data.$i.name}{/if}{if $data.$i.href !== false}</a>{/if}
 {/if}
+{if isset($data.$i.js) && $data.$i.js != ''}<script type="text/javascript">{$data.$i.js}</script>{/if}
 {/if}
 {/for}

@@ -155,6 +155,11 @@ class CalendarViewListall extends CalendarView {
 		if($this->getUser()->get_loggedin() === true) {
 			$jtable->addField($jtfTasks);
 		}
+				
+		// add javascript translations
+		$this->addJsTranslation('Failed to load file attachement dialog.');
+		$this->addJsTranslation('close');
+		$this->addJsTranslation('no attached files');
 		
 		// set recordsLoaded
 		$jtable->setSetting('recordsLoaded', $recordsLoaded, false);

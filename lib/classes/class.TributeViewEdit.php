@@ -332,6 +332,27 @@ class TributeViewEdit extends TributeView {
 			// activate validationEnginge
 			$this->getTpl()->assign('validationEngine', true);
 			
+			// get attached files
+			$attachedFileIds = File::attachedTo('tribute', $tid);
+			$attachedFiles = array();
+			foreach($attachedFileIds as $fileId) {
+				$attachedFiles[] = new File($fileId);
+			}
+			$sTributeFile->assign('attachedFiles', $attachedFiles);
+			
+			// add javascript translations
+			$this->addJsTranslation('Failed to load file attachement dialog.');
+			$this->addJsTranslation('close');
+			$this->addJsTranslation('no attached files');
+			
+			// add javascript for attaching files
+			$this->add_jquery('
+				handleFileAttachement("#showAttach", "tribute", '.$tid.', function() {
+					showAttachedFiles("#attachedFileElements", "tribute", '.$tid.', "#countAttachedFiles");
+				});
+				showAttachedFiles("#attachedFileElements", "tribute", '.$tid.', "#countAttachedFiles");
+			');
+			
 			// prepare api signature
 			// get random id
 			$randomId = Object::getRandomId();

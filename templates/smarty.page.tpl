@@ -63,6 +63,7 @@
 		<script type="text/javascript" src="js/jquery-upload-file/jquery.uploadfile.min.js"></script>
 		<script type="text/javascript" src="js/jquery.form.js"></script>
 {/if}
+		<script type="text/javascript">var globalTranslation = {if isset($globalTranslation) && $globalTranslation != ''}JSON.parse('{$globalTranslation}'){else}{ldelim}{rdelim}{/if}</script>
 		<script type="text/javascript" src="js/page.js"></script>
 {if isset($jtable) and $jtable}
 		<link rel="stylesheet" type="text/css" href="css/jtable/jtable_jqueryui.min.css" />

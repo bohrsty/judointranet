@@ -39,7 +39,6 @@ class Calendar extends Page {
 	private $type;
 	private $content;
 	private $preset_id;
-	private $valid;
 	private $lastModified;
 	private $modifiedBy;
 	private $filter;
@@ -95,10 +94,10 @@ class Calendar extends Page {
 		$this->preset_id = $preset_id;
 	}
 	public function get_valid(){
-		return $this->valid;
+		return $this->getValid();
 	}
 	public function set_valid($valid) {
-		$this->valid = $valid;
+		$this->setValid($valid);
 	}
 	public function getModifiedBy(){
 		return $this->modifiedBy;

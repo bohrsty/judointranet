@@ -39,6 +39,10 @@ Thirdparty licenses see LICENSE
 --
 [!!] fixed generation of club list (valid/not valid)
 [!!] fixed sql setup from r023 (setup not usable in that version)
+--
+[++] added translation mechanism for javascript via prepared array
+[cc] changed the file attach/detach process to api calls and ui dialog
+[++] added file attachement to tribute entries
 
 
 

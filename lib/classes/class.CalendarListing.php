@@ -90,6 +90,10 @@ class CalendarListing extends Listing implements ListingInterface {
 		
 		// walk through data
 		$return = array();
+				
+		// prepare file attachement javascript
+		$jsFileAttachement = '';
+		
 		foreach($results as $row) {
 			
 			// prepare smarty templates for links and images
@@ -229,8 +233,12 @@ class CalendarListing extends Listing implements ListingInterface {
 					);
 				// attachment
 				$adminArray[] = array(
-						'href' => 'file.php?id=attach&table=calendar&tid='.$row['id'],
+						'params' => 'id="attachDetachFiles_'.$row['id'].'" style="cursor: pointer"',
+						'span' => true,
 						'title' => _l('attach file(s)'),
+						'js' => 'handleFileAttachement("#attachDetachFiles_'.$row['id'].'", "calendar", '.$row['id'].', function() {
+										$("#calendarListallTable").jtable("reload");
+									});',
 						'name' => array(
 								'src' => 'img/attachment.png',
 								'alt' => ('attach file(s)'),

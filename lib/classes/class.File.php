@@ -554,26 +554,23 @@ class File extends Page {
 	 */
 	public static function attachedTo($table, $tableId) {
 		
-		// get db object
-		$db = Db::newDb();
-		
-		// prepare sql
-		$sql = 'SELECT file_id FROM `files_attached`
-				WHERE `table_name`=\''.$db->real_escape_string($table).'\'
-					AND `table_id`='.$db->real_escape_string($tableId);
-		
-		// execute statement
-		$result = $db->query($sql);
-		
-		// get data
-		$fileIds = array();
-		if($result) {
-			while(list($fileId) = $result->fetch_array(MYSQL_NUM)) {
-				$fileIds[] = $fileId;
-			}
-		} else {
+		// execute sql statement
+		$result = Db::ArrayValue('
+			SELECT `file_id`
+			FROM `files_attached`
+			WHERE `table_name`=\'#?\'
+				AND `table_id`=#?
+		',
+				MYSQL_NUM,
+				array($table, $tableId,));
+		if($result === false) {
 			$n = null;
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		}
+		// prepare return
+		$fileIds = array();
+		foreach($result as $fileId) {
+			$fileIds[] = $fileId[0];
 		}
 		
 		// return
@@ -588,7 +585,7 @@ class File extends Page {
 	 * @param string $table the table name of the entry the file is to attach to
 	 * @param int $tableId the id of the entry the file is to attach to
 	 * @param array $files array of ids of the files to attach
-	 * @return void
+	 * @return bool true in case of success, throws exception in case of error
 	 */
 	public static function attachFiles($table, $tableId, $files) {
 		
@@ -614,8 +611,11 @@ class File extends Page {
 			// get data
 			if(!$result) {
 				$n = null;
-			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+				throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 			}
+			
+			// return true in case of success
+			return true;
 		}
 	}
 	
@@ -671,6 +671,107 @@ class File extends Page {
 			$n = null;
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
+	}
+	
+	/**
+	 * readAllowedEntries() get all file entries from db for that the actual
+	 * user has sufficient rights. returns an array with file objects
+	 *
+	 * @return array all entries as file objects
+	 */
+	public static function readAllowedEntries() {
+	
+		// prepare return
+		$files = array();
+	
+		// get file objects
+		$fileEntries = self::getUser()->permittedItems('file', 'w');
+		foreach($fileEntries as $fileId) {
+			$files[] = new File($fileId);
+		}
+	
+		// sort file entries
+		usort($files, array('File', 'callbackCompareFiles'));
+	
+		// return file objects
+		return $files;
+	}
+	
+	/**
+	 * callbackCompareFiles($first, $second) compares two file objects by name (for usort)
+	 *
+	 * @param object $first first file objects
+	 * @param object $second second file object
+	 * @return int -1 if $first<$second, 0 if equal, 1 if $first>$second
+	 */
+	public static function callbackCompareFiles($first, $second) {
+	
+		// compare dates
+		if($first->getName() < $second->getName()) {
+			return -1;
+		}
+		if($first->getName() == $second->getName()) {
+			return 0;
+		}
+		if($first->getName() > $second->getName()) {
+			return 1;
+		}
+	}
+	
+	
+	/**
+	 * attachFile($table, $tableId, $fileId) attaches the given $fileId to the
+	 * given $table->$tableId
+	 * 
+	 * @param string $table the table name of the entry the file is to attach to
+	 * @param int $tableId the id of the entry the file is to attach to
+	 * @param int $fileId id of the file to attach
+	 * @return bool true in case of success, throws exception in case of error
+	 */
+	public static function attachFile($table, $tableId, $fileId) {
+		
+		// execute sql statement
+		if(!Db::executeQuery('
+			INSERT INTO `files_attached` (`table_name`, `table_id`, `file_id`)
+			VALUES (\'#?\', #?, #?)
+		',
+			array($table, $tableId, $fileId))
+		) {
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		}
+		
+		// return true in case of success
+		return true;
+	}
+	
+	
+	/**
+	 * detachFile($table, $tableId, $fileId) detaches the given $fileId to the
+	 * given $table->$tableId
+	 * 
+	 * @param string $table the table name of the entry the file is to detach to
+	 * @param int $tableId the id of the entry the file is to detach to
+	 * @param int $fileId id of the file to detach
+	 * @return bool true in case of success, throws exception in case of error
+	 */
+	public static function detachFile($table, $tableId, $fileId) {
+		
+		// execute sql statement
+		if(!Db::executeQuery('
+			DELETE FROM `files_attached`
+			WHERE `table_name`=\'#?\'
+				AND `table_id`=#?
+				AND `file_id`=#?
+		',
+			array($table, $tableId, $fileId))
+		) {
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		}
+		
+		// return true in case of success
+		return true;
 	}
 }
 

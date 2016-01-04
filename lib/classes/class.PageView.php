@@ -64,6 +64,12 @@ class PageView extends Object {
 	public function setAddedWebserviceRunner($addedWebserviceRunner) {
 		return $GLOBALS['addedWebserviceRunner'] = $addedWebserviceRunner;
 	}
+	public function getJsTranslation(){
+		return $GLOBALS['jsTranslation'];
+	}
+	public function setJsTranslation($jsTranslation) {
+		return $GLOBALS['jsTranslation'] = $jsTranslation;
+	}
 	
 	/*
 	 * constructor/destructor
@@ -90,6 +96,9 @@ class PageView extends Object {
 		}
 		if(!isset($GLOBALS['addedWebserviceRunner'])) {
 			$this->setAddedWebserviceRunner(false);
+		}
+		if(!isset($GLOBALS['jsTranslation'])) {
+			$this->setJsTranslation(array());
 		}
 		
 		// set logo
@@ -377,6 +386,9 @@ class PageView extends Object {
 		
 		// manualjquery
 		$this->getTpl()->assign('manualjquery', $this->get_jquery());
+		
+		// javascript translation
+		$this->getTpl()->assign('globalTranslation', json_encode($this->getJsTranslation()));
 		
 		// navi
 		$navi = '';
@@ -1085,6 +1097,26 @@ class PageView extends Object {
 			// set marker that runner was added
 			$this->setAddedWebserviceRunner(true);
 		}
+	}
+	
+	
+	/**
+	 * addJsTranslation($string) translates $string and stores it in an array for use as
+	 * global translation object in javascript
+	 * 
+	 * @param string $string string to store as translation
+	 * @return void
+	 */
+	public function addJsTranslation($string) {
+		
+		// get actual translation array
+		$translation = $this->getJsTranslation();
+		
+		// translate $string and add
+		$translation[$string] = html_entity_decode(_l($string));
+		
+		// reset translation array
+		$this->setJsTranslation($translation);
 	}
 }
 
