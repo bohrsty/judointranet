@@ -26,26 +26,19 @@
 if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index.php.");}
 
 /**
- * class Api implements the data handling of the public api
+ * class ApiHandlerSearch implements the data handling of full text search with the public api
  */
-class ApiHandler extends Object {
+class ApiHandlerSearch extends ApiHandler {
 	
 	
 	/*
 	 * class-variables
 	 */
-	private $request;
 	
 	
 	/*
 	 * getter/setter
 	 */
-	public function getRequest() {
-		return $this->request;
-	}
-	public function setRequest($request) {
-		$this->request = $request;
-	}
 	
 	/*
 	 * constructor/destructor
@@ -53,11 +46,19 @@ class ApiHandler extends Object {
 	public function __construct($request) {
 		
 		// setup parent
-		parent::__construct();
+		parent::__construct($request);
+		
+		// set request
+		$this->setRequest($request);
 	}
 	
 	/*
 	 * methods
+	 */
+	/**
+	 * getResult() handles the api requests for filesystem
+	 * 
+	 * @return array array containing the result 
 	 */
 	/**
 	 * getResult($request) handles the api requests
@@ -70,21 +71,37 @@ class ApiHandler extends Object {
 		if($this->getRequest()['data']['id'] != '') {
 			$apiMethod = 'handle'.ucfirst($this->getRequest()['data']['id']);
 			if(is_callable(array($this, $apiMethod))) {
-		
+				
+				// get search term
+				$query = $this->get('term');
+				
 				// call method and return result
-				return call_user_func(array($this, $apiMethod));
+				return call_user_func(array($this, $apiMethod), $query);
 			} else {
 				return array(
-						'result' => 'ERROR',
-						'message' => 'API call failed [id not found \''.get_class($this).'::'.$apiMethod.'\']',
-				);
+						'label' => _l('ERROR').': API call failed [id not found \''.get_class($this).'::'.$apiMethod.'\']',
+						'value' => 'file.php?id=listall',
+					);
 			}
 		} else {
 			return array(
-					'result' => 'ERROR',
-					'message' => 'API call failed [id not given]',
-			);
+					'label' => _l('ERROR').': API call failed [id not given]',
+					'value' => 'file.php?id=listall',
+				);
 		}
+	}
+	
+	
+	/**
+	 * handleFile($query) returns the prepared and highlighted search result as array 
+	 * 
+	 * @param string $query the search string
+	 * @return array array containing the result data
+	 */
+	public function handleFile($query) {
+		
+		// search and return
+		return FileListallListing::apiSearch($query);
 	}
 }
 

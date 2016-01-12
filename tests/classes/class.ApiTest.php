@@ -55,7 +55,7 @@ class ApiTest extends PHPUnit_Framework_TestCase {
 		
 		// get object
 		$api = new Api();
-		$this->expectOutputString('[]', $api->handle());
+		$this->expectOutputString('{"result":"ERROR","message":"API call failed [id not given]"}', $api->handle());
 	}
 	
 	

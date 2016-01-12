@@ -719,4 +719,83 @@ class Tribute extends Page {
 		}
 		
 	}
+	
+	
+	/**
+	 * readClubs() reads all used clubs from database and returns them as array
+	 * 
+	 * @return array array containing all club information
+	 */
+	public static function readClubs() {
+		
+		// get clubs from db
+		$result = Db::ArrayValue('
+			SELECT DISTINCT `c`.`id`, `c`.`number`, `c`.`name`
+			FROM `club` AS `c`
+			JOIN `tribute` AS `t` ON `c`.`id`=`t`.`club_id`
+			ORDER BY `c`.`name`
+		',
+		MYSQL_ASSOC,
+		array());
+		if($result === false) {
+			throw new MysqlErrorException($this, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		}
+		
+		// fill return array
+		$clubs = array();
+		foreach($result as $club) {
+			$clubs[$club['id']]['number'] = $club['number'];
+			$clubs[$club['id']]['name'] = $club['name'];
+		}
+		
+		// return
+		return $clubs;
+	}
+	
+	
+	/**
+	 * getAllTestimonialCategories() gets all used (or all existing) testimonial categories from
+	 * database and returns them
+	 * 
+	 * @param bool $all all existing if true, all used if false
+	 * @return array array containing all testimonial categories
+	 */
+	public static function getAllTestimonialCategories($all=false) {
+		
+		if($all === false) {
+			
+			// select all used testimonial categories
+			$sql = '
+				SELECT DISTINCT `tm`.`category_id` AS `id`, `tc`.`name`
+				FROM `testimonial_category` AS `tc`, `testimonials` AS `tm`
+				WHERE `tc`.`valid`=TRUE
+					AND `tm`.`category_id`=`tc`.`id`
+				ORDER BY `name`
+			';
+		} else {
+
+			// select all existing testimonials
+			$sql = '
+				SELECT `id`, `name`
+				FROM `testimonial_categories`
+				WHERE `valid`=TRUE
+				ORDER BY `name`
+			';
+		}
+		
+		$result = Db::ArrayValue($sql,
+		MYSQL_ASSOC,
+		array());
+		if($result === false) {
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		}
+		
+		// return
+		if(count($result) > 0) {
+			return $result;
+		} else {
+			return array();
+		}
+	}
 }

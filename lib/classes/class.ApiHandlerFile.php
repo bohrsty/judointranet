@@ -60,28 +60,7 @@ class ApiHandlerFile extends ApiHandler {
 	 * 
 	 * @return array array containing the result 
 	 */
-	public function getResult() {
-		
-		// check "id" parameter of $request
-		if($this->getRequest()['data']['id'] != '') {
-			$apiMethod = 'handle'.ucfirst($this->getRequest()['data']['id']);
-			if(is_callable(array($this, $apiMethod))) {
-				
-				// call method and return result
-				return call_user_func(array($this, $apiMethod));
-			} else {
-				return array(
-						'result' => 'ERROR',
-						'message' => 'API call failed [action not found \''.get_class($this).'::'.$apiMethod.'\']',
-					);
-			}
-		} else {
-			return array(
-					'result' => 'ERROR',
-					'message' => 'API call failed [id not given]',
-				);
-		}
-	}
+	// inherit from parent
 	
 	
 	/**

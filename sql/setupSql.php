@@ -3708,6 +3708,114 @@ function mysql_23() {
 	// return
 	return $return;
 }
+
+
+function mysql_24() {
+	
+	// prepare return
+	$return = array(
+			'returnValue' => true,
+			'returnMessage' => '',
+		);
+	
+
+	/*
+	 * add category to testimonial
+	 */
+	// create category table
+	if(!Db::executeQuery('
+		CREATE TABLE IF NOT EXISTS `testimonial_category` (
+		  `id` INT(11) NOT NULL AUTO_INCREMENT ,
+		  `name` VARCHAR(50) NOT NULL , 
+		  `valid` BOOLEAN NOT NULL , 
+		  `last_modified` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+		  `modified_by` INT(11) NOT NULL,
+		  PRIMARY KEY (`id`)
+		) ENGINE = InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// add column to testimonial table
+	if(!Db::columnExists('testimonials', 'category_id')) {
+		if(!Db::executeQuery('
+			ALTER TABLE `testimonials` ADD `category_id` INT(11) NOT NULL AFTER `name`
+		')) {
+			$return['returnValue'] = false;
+			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+			return $return;
+		}
+	}
+	// add table config
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+		VALUES
+			(\'tableConfig.testimonial_category\', \'{"cols":"name,valid","fk":[],"fieldType":[],"orderBy":"ORDER BY `name` ASC"}\', \'configuration for table tribute_category\')
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// insert test testimonial category
+	if(!Db::executeQuery('
+		INSERT IGNORE INTO `testimonial_category`
+			(`id`, `name`, `valid`, `last_modified`, `modified_by`) 
+			VALUES (1, \'Default Category\', 0, CURRENT_TIMESTAMP, 0)
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// set category of existing testimonials to 1
+	if(!Db::executeQuery('
+		UPDATE `testimonials` SET `category_id`=1
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	// get testimonial config
+	$testimonialConfig = Db::singleValue('
+			SELECT `value`
+			FROM `config`
+			WHERE `name`=\'tableConfig.testimonials\'
+		'
+			);
+	if($testimonialConfig === false) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	$testimonialConfigArray = json_decode($testimonialConfig, true);
+	$testimonialConfigArray['fk'] = array('category_id' => 'SELECT `id`,`name` AS `readable_name` FROM `testimonial_category` WHERE `valid`=1');
+	$testimonialConfigArray['cols'] = str_replace(',valid', ',category_id,valid', $testimonialConfigArray['cols']);
+	// update testimonial config
+	if(!Db::executeQuery('
+		UPDATE `config` SET `value`=\''.json_encode($testimonialConfigArray).'\'
+		WHERE `name`=\'tableConfig.testimonials\'
+	')) {
+		$return['returnValue'] = false;
+		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+		return $return;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		
+	// return
+	return $return;
+}
 	
 	
 	

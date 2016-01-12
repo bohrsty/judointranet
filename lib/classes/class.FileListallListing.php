@@ -277,5 +277,77 @@ class FileListallListing extends Listing implements ListingInterface {
 		// return
 		return $return;
 	}
+	
+	
+	/**
+	 * apiSearch($query) searches for $query in the database and returns an array to be used
+	 * with jquery ui autocomplete
+	 * 
+	 * @param string $query string to be seached for in database
+	 * @return array array containing 'label' and 'value' of the seach results
+	 */
+	public static function apiSearch($query) {
+		
+		// get permitted ids
+		$ids = self::getUser()->permittedItems('file', 'r');
+		
+		// check if empty result
+		$mysqlData = implode(',', $ids);
+		if(count($ids) == 0) {
+			$mysqlData = 'SELECT FALSE';
+		}
+		
+		// prepare query
+		$sqlQuery = $query;
+		if(strpos($query, ' ')) {
+			$sqlQuery = str_replace(' ', '%', $query);
+		}
+		
+		// prepare sql
+		$sql = '
+			SELECT `f`.`id`, `f`.`name`, `f`.`filename`, `f`.`cached`
+			FROM `file` AS `f`
+			WHERE `f`.`valid`=TRUE
+				AND (`f`.`name` LIKE \'%#?%\'
+					OR `f`.`filename` LIKE \'%#?%\')
+				AND `f`.`id` IN (#?)
+			ORDER BY `f`.`name`
+			LIMIT 10		
+		';
+		
+		$result = Db::ArrayValue($sql,
+		MYSQL_ASSOC,
+		array(	$sqlQuery,
+				$sqlQuery,
+				$mysqlData,
+			));
+		if($result === false) {
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		}
+		
+		// prepare result
+		$return = array();
+		if(count($result) > 0) {
+			foreach($result as $row) {
+				
+				// prepare and translate table name
+				$tableName = _l('table name uploaded');
+				if(!is_null($row['cached'])) {
+					$tableName = _l('table name '. explode('|', $row['cached'])[0]);
+				}
+				
+				$return[] = array(
+						'label' => self::highlightApiSearch($query, $row['name'] .' ('.$row['filename']).') ['.$tableName.']',
+						'value' => 'file.php?id=download&fid='.$row['id'],
+					);
+			}
+		} else {
+			$return[] = array('label' => '- '._l('no results').' -', 'value' => 'file.php?id=listall');
+		}
+		
+		// return
+		return $return;
+	}
 }
 ?>

@@ -103,7 +103,7 @@ class TributeListallListing extends Listing implements ListingInterface {
 	 * 
 	 * @return array prepared data from db
 	 */
-	private function getData($getData = array()) {
+	private function getData($postData = array()) {
 		
 		// prepare return
 		$return = array();
@@ -118,21 +118,43 @@ class TributeListallListing extends Listing implements ListingInterface {
 		}
 		
 		// check dropdown selection
-		$postSelect = $this->post('select');
-		$postValue = $this->post('value');
-		$postWhere = '';
-		if($postSelect !== false && $postValue !== false) {
-			
-			// year
-			if($postSelect == 'year') {
-				$postWhere = 'AND `t`.`year`=\''.$postValue.'\'';
-			} elseif($postSelect == 'testimonial') {
-				$postWhere = 'AND `t`.`testimonial_id`=\''.$postValue.'\'';
-			} elseif($postSelect == 'state') {
-				$postWhere = 'AND `t`.`state_id`=\''.$postValue.'\'';
-			} elseif($postSelect == 'club') {
-				$postWhere = 'AND `t`.`club_id`=\''.$postValue.'\'';
+		$postFilter = array();
+		$postWhere = 'AND (';
+		if($this->post('filter') !== false) {
+			$postFilter = json_decode($this->post('filter'), true);
+		
+			$postBool = 'AND ';
+			if($this->post('bool') !== false) {
+				if($this->post('bool') == 'or') {
+					$postBool = 'OR ';
+				}
 			}
+			// year
+			if($postFilter['year'] !== '') {
+				$postWhere .= '`t`.`year`=\''.$postFilter['year'].'\' '.$postBool;
+			}
+			// testimonial category
+			if($postFilter['category'] !== '') {
+				$postWhere .= '`tm`.`category_id`=\''.$postFilter['category'].'\' '.$postBool;
+			}
+			// testimonial
+			if($postFilter['testimonial'] !== '') {
+				$postWhere .= '`t`.`testimonial_id`=\''.$postFilter['testimonial'].'\' '.$postBool;
+			}
+			// state
+			if($postFilter['state'] !== '') {
+				$postWhere .= '`t`.`state_id`=\''.$postFilter['state'].'\' '.$postBool;
+			}
+			// club
+			if($postFilter['club'] !== '') {
+				$postWhere .= '`t`.`club_id`=\''.$postFilter['club'].'\' '.$postBool;
+			}
+		}
+		if($postWhere == 'AND (') {
+			$postWhere = '';
+		} else {
+			$postWhere = substr($postWhere, 0, -strlen($postBool));
+			$postWhere .= ')';
 		}
 		
 		// prepare sql
@@ -142,6 +164,7 @@ class TributeListallListing extends Listing implements ListingInterface {
 					`t`.`name`,
 				    `c`.`name` AS `club`,
 				    `t`.`year`,
+					`tc`.`name` AS `category_id`,
 				    `tm`.`name` AS `testimonial`,
 				    `t`.`planned_date`,
 				    `t`.`start_date`,
@@ -150,6 +173,7 @@ class TributeListallListing extends Listing implements ListingInterface {
 				FROM
 					`tribute` AS `t`
 				JOIN `testimonials` AS `tm` ON `t`.`testimonial_id`=`tm`.`id`
+				JOIN `testimonial_category` AS `tc` ON `tm`.`category_id`=`tc`.`id`
 				JOIN `tribute_state` AS `ts` ON `t`.`state_id`=`ts`.`id`
 				LEFT JOIN `club` AS `c` ON `c`.`id`=`t`.`club_id`
 				WHERE `t`.`id` IN (#?)
@@ -161,25 +185,25 @@ class TributeListallListing extends Listing implements ListingInterface {
 		$_SESSION['printTributeList']['timestampChecked'] = false;
 		$_SESSION['printTributeList']['printDate'] = time();
 		
-		if(count($getData) > 0) {
+		if(count($postData) > 0) {
 			
 			// check order by
-			if($getData['orderBy'] == '') {
-				$getData['orderBy'] = 'ORDER BY `name` ASC';
+			if($postData['orderBy'] == '') {
+				$postData['orderBy'] = 'ORDER BY `name` ASC';
 			}
 			
 			// add order by clause
-			$sql .= $getData['orderBy'];
+			$sql .= $postData['orderBy'];
 			
 			// save sql w/o limit in session
 			$_SESSION['printTributeList']['sql'] = $sql;
 			
 			// add limit clause
-			$sql .= PHP_EOL.$getData['limit'];
+			$sql .= PHP_EOL . $postData['limit'];
 		} else {
 			
 			// add order by clause
-			$sql .= PHP_EOL.'ORDER BY `t`.`name` ASC';
+			$sql .= PHP_EOL . 'ORDER BY `t`.`name` ASC';
 
 			// save sql in session
 			$_SESSION['printTributeList']['sql'] = $sql;
@@ -215,26 +239,49 @@ class TributeListallListing extends Listing implements ListingInterface {
 		}
 		
 		// check dropdown selection
-		$postSelect = $this->post('select');
-		$postValue = $this->post('value');
-		$postWhere = '';
-		if($postSelect !== false && $postValue !== false) {
-				
-			// year
-		if($postSelect == 'year') {
-				$postWhere = 'AND `t`.`year`=\''.$postValue.'\'';
-			} elseif($postSelect == 'testimonial') {
-				$postWhere = 'AND `t`.`testimonial_id`=\''.$postValue.'\'';
-			} elseif($postSelect == 'state') {
-				$postWhere = 'AND `t`.`state_id`=\''.$postValue.'\'';
-			} elseif($postSelect == 'club') {
-				$postWhere = 'AND `t`.`club_id`=\''.$postValue.'\'';
+		$postFilter = array();
+		$postWhere = 'AND (';
+		if($this->post('filter') !== false) {
+			$postFilter = json_decode($this->post('filter'), true);
+		
+			$postBool = 'AND ';
+			if($this->post('bool') !== false) {
+				if($this->post('bool') == 'or') {
+					$postBool = 'OR ';
+				}
 			}
+			// year
+			if($postFilter['year'] !== '') {
+				$postWhere .= '`t`.`year`=\''.$postFilter['year'].'\' '.$postBool;
+			}
+			// testimonial category
+			if($postFilter['category'] !== '') {
+				$postWhere .= '`tm`.`category_id`=\''.$postFilter['category'].'\' '.$postBool;
+			}
+			// testimonial
+			if($postFilter['testimonial'] !== '') {
+				$postWhere .= '`t`.`testimonial_id`=\''.$postFilter['testimonial'].'\' '.$postBool;
+			}
+			// state
+			if($postFilter['state'] !== '') {
+				$postWhere .= '`t`.`state_id`=\''.$postFilter['state'].'\' '.$postBool;
+			}
+			// club
+			if($postFilter['club'] !== '') {
+				$postWhere .= '`t`.`club_id`=\''.$postFilter['club'].'\' '.$postBool;
+			}
+		}
+		if($postWhere == 'AND (') {
+			$postWhere = '';
+		} else {
+			$postWhere = substr($postWhere, 0, -strlen($postBool));
+			$postWhere .= ')';
 		}
 		
 		$countRows = Db::singleValue('
 				SELECT COUNT(*)
 				FROM `tribute` AS `t`
+				JOIN `testimonials` AS `tm` ON `t`.`testimonial_id`=`tm`.`id`
 				WHERE `t`.`id` IN (#?)
 					AND `t`.`valid`=TRUE
 					'.$postWhere.'
@@ -260,7 +307,12 @@ class TributeListallListing extends Listing implements ListingInterface {
 		
 		// walk through data
 		$return = array();
+		$index = $this->get('jtStartIndex') + 1;
 		foreach($results as $row) {
+			
+			// add index
+			$row['index'] = $index;
+			$index++;
 			
 			// prepare smarty templates for links and images
 			$smarty = new JudoIntranetSmarty();
@@ -305,9 +357,11 @@ class TributeListallListing extends Listing implements ListingInterface {
 			
 			// add to return array
 			$return[] = array(
+					'index'	=> $row['index'],
 					'name' => $row['name'],
 					'club' => $row['club'],
 					'year' => $row['year'],
+					'category_id' => $row['category_id'],
 					'testimonial' => $row['testimonial'],
 					'start_date' => date('d.m.Y', strtotime($row['start_date'])),
 					'planned_date' => (is_null($row['planned_date']) ? '' : date('d.m.Y', strtotime($row['planned_date']))),
@@ -331,19 +385,35 @@ class TributeListallListing extends Listing implements ListingInterface {
 	 */
 	public static function apiSearch($query) {
 		
+		// get permitted ids
+		$ids = self::getUser()->permittedItems('tribute', 'w');
+		
+		// check if empty result
+		$mysqlData = implode(',', $ids);
+		if(count($ids) == 0) {
+			$mysqlData = 'SELECT FALSE';
+		}
+		
 		// prepare sql
 		$sql = '
-			SELECT `id`, `name`, `year`
-			FROM `tribute`
-			WHERE `valid`=TRUE
-				AND `name` LIKE \'%#?%\'
-			ORDER BY `name`
+			SELECT `t`.`id`, `t`.`name`, `t`.`year`, `tm`.`name` AS `testimonial`, `c`.`name` AS `club`
+			FROM `tribute` AS `t`
+			LEFT JOIN `club` AS `c` ON `t`.`club_id` = `c`.`id`
+			JOIN `testimonials` AS `tm` ON `t`.`testimonial_id` = `tm`.`id`
+			WHERE `t`.`valid`=TRUE
+				AND (`t`.`name` LIKE \'%#?%\'
+					OR `c`.`name` LIKE \'%#?%\')
+				AND `t`.`id` IN (#?)
+			ORDER BY `t`.`name`
 			LIMIT 10		
 		';
 		
 		$result = Db::ArrayValue($sql,
 		MYSQL_ASSOC,
-		array($query,));
+		array(	$query,
+				$query,
+				$mysqlData,
+			));
 		if($result === false) {
 			$n = null;
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
@@ -354,7 +424,7 @@ class TributeListallListing extends Listing implements ListingInterface {
 		if(count($result) > 0) {
 			foreach($result as $row) {
 				$return[] = array(
-						'label' => self::highlightApiSearch($query, $row['name']) .' ('.$row['year'].')',
+						'label' => self::highlightApiSearch($query, $row['name'] .' ['.$row['club']).'|'.$row['testimonial'].'|'.$row['year'].']',
 						'value' => 'tribute.php?id=edit&tid='.$row['id'],
 					);
 			}
@@ -364,40 +434,6 @@ class TributeListallListing extends Listing implements ListingInterface {
 		
 		// return
 		return $return;
-	}
-	
-	
-	/**
-	 * highlightApiSearch($query, $result) replaces $query with hightlighted version in $result
-	 * 
-	 * @param string $query the seach string that should be highlighted
-	 * @param string $result the result string from database that contains $query
-	 * @return string the highlighted result string
-	 */
-	private static function highlightApiSearch($query, $result) {
-		
-		// check if there are strings to replace
-		if(stripos($result, $query) === false) {
-			return $result;
-		}
-		
-		// direct replacement
-		$replace = str_replace($query, '<b>'.$query.'</b>', $result);
-		if($result != $replace) {
-			return $replace;
-		}
-		
-		// ucfirst replacement
-		$replace = str_replace(ucfirst($query), '<b>'.ucfirst($query).'</b>', $result);
-		if($result != $replace) {
-			return $replace;
-		}
-		
-		// ucwords replacement
-		$replace = str_replace(ucwords($query), '<b>'.ucwords($query).'</b>', $result);
-		if($result != $replace) {
-			return $replace;
-		}
 	}
 	
 	

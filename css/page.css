@@ -1169,6 +1169,19 @@ div.filter {
 	list-style-type: none;
 }
 
+#showTributeFilter {
+	padding: 3px;
+	cursor: pointer;
+	font-weight: bold;
+}
+
+#tributeFilter {
+	display: none;
+	padding: 3px;
+	border: 1px solid #b6d6e4;
+	border-radius: 3px;
+}
+
 
 
 

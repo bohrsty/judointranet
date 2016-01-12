@@ -99,7 +99,7 @@ class FileViewListall extends FileView {
 		$jtfShow->setEdit(false);
 		$jtfShow->setSorting(false);
 		$jtfTasks = new JtableField('admin');
-		$jtfTasks->setTitle(_l('tasks').$this->helpButton(HELP_MSG_FILELISTADMIN));
+		$jtfTasks->setTitle('<nobr>'._l('tasks').$this->helpButton(HELP_MSG_FILELISTADMIN).'</nobr>');
 		$jtfTasks->setEdit(false);
 		$jtfTasks->setWidth('5%');
 		$jtfTasks->setSorting(false);
@@ -122,12 +122,27 @@ class FileViewListall extends FileView {
 		// add to jquery
 		$this->add_jquery($jquery);
 		$this->add_jquery('$("#'.$containerId.'").jtable("load");');
+		$this->add_jquery('
+			$("#search").autocomplete({
+				delay: 100,
+				minLength: 3,
+				html: true,
+				source: "api/search/file/",
+				select: function(event, ui) {
+					window.location.href = ui.item.value;
+				}
+			});
+		');
 		
 		// enable jtable in template
 		$this->getTpl()->assign('jtable', true);
 		
+		// prepare template
+		$sListall = new JudoIntranetSmarty();
+		$sListall->assign('containerId', $containerId);
+		
 		// return
-		return '<div id="'.$containerId.'" class="jTable"></div>';
+		return $sListall->fetch('smarty.file.listall.tpl');
 	}
 }
 

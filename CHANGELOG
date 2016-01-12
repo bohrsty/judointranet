@@ -43,6 +43,12 @@ Thirdparty licenses see LICENSE
 [++] added translation mechanism for javascript via prepared array
 [cc] changed the file attach/detach process to api calls and ui dialog
 [++] added file attachement to tribute entries
+--
+[++] added index column to tribute listing
+[cc] improved tribute filter (made selects additional with AND or OR)
+[cc] improved full text search (added search for club) and search result highlighting
+[++] added testimonial category and filter for category
+[++] added full text search to file list (searching name and filename) incl. result highlighting
 
 
 

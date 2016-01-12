@@ -85,6 +85,11 @@ class TributeViewListall extends TributeView {
 		$jtable->setSetting('title', _l('Tributes'));
 		$jtable->setSetting('toolbar', '{items: [{icon: \'img/jtable_pdf.png\', text: \''._l('Export as PDF').'\', click: function() {$.ajax({url:\'api/export/tribute/0/timestamp\',dataType: \'json\',cache: false}).done(function(response) {if(response.result ==\'OK\') { window.location.href = \'api/export/tribute/0\'; } else {var div = $(\'<div>\').appendTo($(\'body\')).text(response.message).dialog({autoOpen: true, modal: true, position: {my: \'center\',at: \'center\',of: window}, closeText: \''._l('close').'\', close: function() {div.remove();}, buttons: [{text:\'OK\', click: function() {div.dialog(\'close\');}}]});}});}},{icon: \'img/jtable_refresh.png\', text: \''._l('Refresh this table').'\', click: function() {$(\'#'.$containerId.'\').jtable(\'reload\')}}]}', false);
 		// get JtableFields
+		$jtfIndex = new JtableField('index');
+		$jtfIndex->setTitle('#');
+		$jtfIndex->setEdit(false);
+		$jtfIndex->setWidth('1%');
+		$jtfIndex->setSorting(false);
 		$jtfName = new JtableField('name');
 		$jtfName->setTitle(_l('name'));
 		$jtfName->setEdit(false);
@@ -100,6 +105,10 @@ class TributeViewListall extends TributeView {
 		$jtfTestimonial->setTitle(_l('testimonial'));
 		$jtfTestimonial->setEdit(false);
 		$jtfTestimonial->setWidth('5%');
+		$jtfTestimonialCategory = new JtableField('category_id');
+		$jtfTestimonialCategory->setTitle(_l('Category'));
+		$jtfTestimonialCategory->setEdit(false);
+		$jtfTestimonialCategory->setWidth('5%');
 		$jtfStartDate = new JtableField('start_date');
 		$jtfStartDate->setTitle(_l('tribute start date'));
 		$jtfStartDate->setEdit(false);
@@ -123,9 +132,11 @@ class TributeViewListall extends TributeView {
 		$jtfAdmin->setWidth('1%');
 		
 		// add fields to $jtable
+		$jtable->addField($jtfIndex);
 		$jtable->addField($jtfName);
 		$jtable->addField($jtfClub);
 		$jtable->addField($jtfYear);
+		$jtable->addField($jtfTestimonialCategory);
 		$jtable->addField($jtfTestimonial);
 		$jtable->addField($jtfStartDate);
 		$jtable->addField($jtfPlannedDate);
@@ -162,46 +173,25 @@ class TributeViewListall extends TributeView {
 		$this->add_jquery($jquery);
 		$this->add_jquery('$("#'.$containerId.'").jtable("load");');
 		$this->add_jquery('
-			$("#year").change(function() {
-				var val = $("#year").val();
-				if(val != "") {
-					$("#testimonial").val("");
-					$("#state").val("");
-					$("#'.$containerId.'").jtable("load", {select:"year", value:val});
-				}
+			$("#showTributeFilter").on("click", document, function() {
+				$("#tributeFilter").slideToggle(400, function() {
+					if($("#tributeFilter").is(":visible")) {
+						$("#search").focus();
+					}
+				});
 			});
-			$("#testimonial").change(function() {
-				var val = $("#testimonial").val();
-				if(val != "") {
-					$("#year").val("");
-					$("#state").val("");
-					$("#club").val("");
-					$("#'.$containerId.'").jtable("load", {select:"testimonial", value:val});
-				}
+			$(".tributeFilter, input[name=\'bool\'").change(function() {
+				var filter = {};
+				var bool = $("input[name=\'bool\']:checked").val();
+				$("	.tributeFilter").each(function() {
+					filter[$(this).attr("id")] = $(this).val();
+				});
+				$("#'.$containerId.'").jtable("load", {filter:JSON.stringify(filter), bool:bool});
 			});
-			$("#state").change(function() {
-				var val = $("#state").val();
-				if(val != "") {
-					$("#testimonial").val("");
-					$("#year").val("");
-					$("#club").val("");
-					$("#'.$containerId.'").jtable("load", {select:"state", value:val});
-				}
-			});
-			$("#club").change(function() {
-				var val = $("#club").val();
-				if(val != "") {
-					$("#testimonial").val("");
-					$("#year").val("");
-					$("#state").val("");
-					$("#'.$containerId.'").jtable("load", {select:"club", value:val});
-				}
-			});
-			$("#reset").click(function() {
-				$("#year").val("");
-				$("#testimonial").val("");
-				$("#search").val("");
-				$("#club").val("");
+			$("#reset").on("click", document, function() {
+				$(".tributeFilter").val("");
+				$("input[type=\'radio\'][name=\'bool\'][value=\'and\']").prop("checked", true);
+				var filter = {};
 				$("#'.$containerId.'").jtable("load");
 			});
 			$("#search").autocomplete({
@@ -213,11 +203,11 @@ class TributeViewListall extends TributeView {
 					window.location.href = ui.item.value;
 				}
 			});
-			$("#search").focus();
 		');
 		
 		// add template
 		$this->smarty->assign('containerId', $containerId);
+		$this->smarty->assign('categoryId', 'category');
 		$this->smarty->assign('testimonialId', 'testimonial');
 		$this->smarty->assign('stateId', 'state');
 		$this->smarty->assign('yearId', 'year');

@@ -20,34 +20,49 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
-<p>
-	<span class="Zebra_Form">
-		<span class="spanLink" id="reset">{lang}Show all{/lang}</span>&nbsp;
-		<select name="{$yearId}" id="{$yearId}">
+<div class="ui-corner-all ui-state-active" id="showTributeFilter">{lang}Filter tributes{/lang}</div>
+<div id="tributeFilter" class="Zebra_Form">
+	<p>
+		<span class="spanLink" id="reset">{lang}Show all{/lang}</span>
+	</p>
+	<p>
+		{lang}Filter tributes by{/lang}:<br />
+		<select name="{$yearId}" id="{$yearId}" class="tributeFilter">
 			<option value="">- {lang}select year{/lang} -</option>
 {foreach Tribute::getAllYears() as $year}
 			<option value="{$year}">{$year}</option>'
 {/foreach}
 		</select>
-		<select name="{$testimonialId}" id="{$testimonialId}">
+		<select name="{$categoryId}" id="{$categoryId}" class="tributeFilter">
+			<option value="">- {lang}select testimonial category{/lang} -</option>
+{foreach Tribute::getAllTestimonialCategories() as $category}
+			<option value="{$category.id}">{$category.name}</option>
+{/foreach}
+		</select>
+		<select name="{$testimonialId}" id="{$testimonialId}" class="tributeFilter">
 			<option value="">- {lang}select testimonial{/lang} -</option>
 {foreach Tribute::getAllTestimonials() as $testimonial}
 			<option value="{$testimonial.id}">{$testimonial.name}</option>
 {/foreach}
 		</select>
-		<select name="{$stateId}" id="{$stateId}">
+		<select name="{$stateId}" id="{$stateId}" class="tributeFilter">
 			<option value="">- {lang}select state{/lang} -</option>
 {foreach Tribute::getAllStates() as $state}
 			<option value="{$state.id}">{$state.name}</option>
 {/foreach}
 		</select>
-		<select name="{$clubId}" id="{$clubId}">
+		<select name="{$clubId}" id="{$clubId}" class="tributeFilter">
 			<option value="">- {lang}select club{/lang} -</option>
-{foreach Page::readClubs(true) as $id => $club}
+{foreach Tribute::readClubs() as $id => $club}
 			<option value="{$id}">{$club.name}</option>
 {/foreach}
-		</select>
+		</select>&nbsp;
+		<input type="radio" name="bool" value="and" checked="checked" /> {lang}AND{/lang}&nbsp;
+		<input type="radio" name="bool" value="or" /> {lang}OR{/lang}
+	</p>
+	<p>
+		{lang}Fulltext search{/lang} ({lang}name and club{/lang}):<br />
 		<input type="text" name="{$searchId}" id="{$searchId}" />
-	</span>
-</p>
+	</p>
+</div>
 <div id="{$containerId}" class="jTable"></div>

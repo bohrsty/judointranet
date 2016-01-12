@@ -79,5 +79,33 @@ class Listing extends Object implements ListingInterface {
 		return '';
 	}
 	
+	
+	/**
+	 * highlightApiSearch($query, $result) replaces $query with hightlighted version in $result
+	 * 
+	 * @param string $query the seach string that should be highlighted
+	 * @param string $result the result string from database that contains $query
+	 * @return string the highlighted result string
+	 */
+	protected static function highlightApiSearch($query, $result) {
+		
+		// check if there are strings to replace
+		if(stripos($result, $query) === false && strpos($query, ' ') === false) {
+			return $result;
+		}
+		
+		// check ' '
+		if(strpos(trim($query), ' ') === false) {
+			return preg_replace('/'.preg_quote(trim($query), '/').'/i', '<b>$0</b>', $result);
+		}
+		
+		// highlight each word separately
+		foreach(explode(' ', $query) as $queryPart) {
+			$result = preg_replace('/'.preg_quote($queryPart, '/').'/i', '<b>$0</b>', $result);
+		}
+		
+		return $result;
+	}
+	
 }
 ?>
