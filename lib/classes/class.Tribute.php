@@ -668,7 +668,7 @@ class Tribute extends Page {
 		$result = Db::ArrayValue('
 				SELECT `id`, `name`
 				FROM `tribute_state`
-				WHERE `valid`=TRUE
+				WHERE `valid`=1
 				ORDER BY `name`
 			',
 				MYSQL_ASSOC,

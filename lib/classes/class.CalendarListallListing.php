@@ -136,6 +136,14 @@ class CalendarListallListing extends CalendarListing implements ListingInterface
 			$to = date('Y-m-d', strtotime($to));
 		}
 		
+		// query
+		$query = $this->post('query');
+		if($query == '' || $query === false) {
+			$querySql = '';
+		} else {
+			$querySql = 'AND `c`.`name` LIKE \'%'.str_replace(' ', '%', $query).'%\'';
+		}
+		
 		// get permitted and filtered ids
 		$filter = $this->post('filter');
 		$filterIds = false;
@@ -205,6 +213,7 @@ class CalendarListallListing extends CalendarListing implements ListingInterface
 				FROM `calendar` AS `c`
 				WHERE `c`.`id` IN (#?)
 					AND `c`.`valid`=TRUE
+					'.$querySql.'
 				'.$getData['orderBy'].'
 				'.$getData['limit'].'
 			';

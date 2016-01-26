@@ -778,85 +778,78 @@ class Field extends Object {
 		$db = Db::newDb();
 		
 		// get defaults
-		// prepare sql
-		$sql = 'SELECT d.id,d.name
-				FROM defaults AS d
-				WHERE category=\''.$db->real_escape_string($this->get_category()).'\'
-				AND d.valid=1		
-				ORDER BY d.name ASC';
-		
-		// execute
-		$result = $db->query($sql);
-		
-		// get data
-		if($result) {
-			while(list($id,$name) = $result->fetch_array(MYSQL_NUM)) {
-				
-				// check name length
-				$truncName = '';
-				if(strlen($name) > 30) {
-					$truncName = substr($name,0,27).'...';
-				} else {
-					$truncName = $name;
-				}
-				
-				// add options
-				$optionDefaults['d'.$id] = $truncName;
-			}
-		} else {
+		$defaultsResult = Db::ArrayValue('
+				SELECT `d`.`id`, `d`.`name`
+				FROM `defaults` AS `d`
+				WHERE `category`=\'#?\'
+					AND `d`.`valid`=1		
+				ORDER BY `d`.`name` ASC
+			',
+				MYSQL_ASSOC,
+				array($this->get_category()));
+		if($defaultsResult === false) {
 			$n = null;
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		} else {
+			
+			foreach($defaultsResult as $row) {
+				
+				// check name length
+				$truncName = $row['name'];
+				if(strlen($truncName) > 30) {
+					$truncName = substr($truncName, 0, 27).'...';
+				}
+
+				// add to options
+				$optionDefaults['d'.$row['id']] = $truncName;
+			}
 		}
 		
-		// prepare sql
-		$sql = 'SELECT v.id,v.table_id,v.value
-				FROM value AS v,field AS f
-				WHERE v.table_name=\''.$db->real_escape_string($this->get_table()).'\'
-				AND f.type=\''.$db->real_escape_string($this->get_type()).'\'
-				AND f.id=v.field_id
-				ORDER BY v.id DESC';
-		
-		// execute
-		$result = $db->query($sql);
-		
-		// get data
-		if($result) {
-			// set index
-			$index = 0;
-			while(list($id,$table_id,$value) = $result->fetch_array(MYSQL_NUM)) {
+		// get last used
+		$lastUsedResult = Db::ArrayValue('
+				SELECT `v`.`id`, `v`.`value`
+				FROM `value` AS `v`, `field` AS `f`
+				WHERE `v`.`table_name`=\'#?\'
+					AND `f`.`type`=\'#?\'
+					AND `f`.`category`=\'#?\'
+					AND `f`.`id`=`v`.`field_id`
+				ORDER BY `v`.`id` DESC
+			',
+				MYSQL_ASSOC,
+				array(
+					$this->get_table(),
+					$this->get_type(),
+					$this->get_category(),
+				));
+		if($lastUsedResult === false) {
+			$n = null;
+			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+		} else {
+			
+			// determine max
+			$max = (count($lastUsedResult) >= 30 ? 30 : count($lastUsedResult));
+			for($i=0; $i < $max; $i++) {
 				
 				// replace linebreak
-				$value = str_replace(array("\r\n","\r","\n")," ",$value);
+				$value = str_replace(array("\r\n", "\r", "\n",), " ", $lastUsedResult[$i]['value']);
 				
 				// check value length
-				$truncValue = '';
-				if(strlen($value) > 30) {
-					$truncValue = substr($value,0,27).'...';
-				} else {
-					$truncValue = $value;
+				$truncValue = $value;
+				if(strlen($truncValue) > 30) {
+					$truncValue = substr($truncValue, 0, 27).'...';
 				}
 				
 				// check if truncated value has already been added
-				for($i=0; $i<count($optionLastUsed); $i++) {
-					if(isset($optionLastUsed[$i]) && $optionLastUsed[$i] == $truncValue) {
+				foreach($optionLastUsed as $entry) {
+					$foundKey = array_search($truncValue, $optionLastUsed);
+					if($foundKey !== false) {
 						continue 2;
 					}
 				}
 				
-				// add options
-				$optionLastUsed['l'.$id] = $truncValue;
-				
-				// increment index
-				$index++;
-				
-				// check count of options
-				if($index == 29) {
-					break;
-				}
+				// add to options
+				$optionLastUsed['l'.$lastUsedResult[$i]['id']] = $truncValue;
 			}
-		} else {
-			$n = null;
-			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// return optgroups

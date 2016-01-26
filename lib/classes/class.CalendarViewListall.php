@@ -217,7 +217,7 @@ class CalendarViewListall extends CalendarView {
 		$this->add_jquery('
 			var filterIds = {};
 			var updateTable = function() {
-				$("#'.$containerId.'").jtable("load", {filter: JSON.stringify(filterIds),from: $("#dateFrom").val(), to: $("#dateTo").val()});
+				$("#'.$containerId.'").jtable("load", {filter: JSON.stringify(filterIds),from: $("#dateFrom").val(), to: $("#dateTo").val(), query: $("#search").val()});
 			};
 			$("#'.$containerId.'").jtable('.$jtableJscript.');
 			$("#showFilterButton").click(function(event) {
@@ -282,6 +282,13 @@ class CalendarViewListall extends CalendarView {
 				updateTable();
 			});
 			$(".dateInput").change(function() {
+				updateTable();
+			});
+			$("#doSearch").on("click", document, function() {
+				updateTable();
+			});
+			$("#clearSearch").on("click", document, function() {
+				$("#search").val("");
 				updateTable();
 			});
 			updateTable();

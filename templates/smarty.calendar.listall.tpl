@@ -20,6 +20,9 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************}
+<p class="Zebra_Form">
+	<input type="text" id="search" title="{lang}full text search{/lang} ({lang}event{/lang})" />&nbsp;<img src="img/search.png" id="doSearch" class="clickable" title="{lang}search{/lang}" alt="{lang}search{/lang}" />&nbsp;<img src="img/common_delete.png" id="clearSearch" class="clickable" title="{lang}clear search{/lang}" alt="{lang}clear{/lang}" />
+</p>
 <div id="showFilterButton" class="ui-corner-all ui-state-active">
 {lang}show filter{/lang}{if isset($helpButton) and $helpButton!=''}&nbsp;{$helpButton}{/if}
 </div>

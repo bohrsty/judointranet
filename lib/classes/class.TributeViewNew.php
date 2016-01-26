@@ -142,7 +142,7 @@ class TributeViewNew extends TributeView {
 		$startDate = $form->add(
 				$formIds['startDate']['type'],			// type
 				'startDate',			// id/name
-				date('d.m.Y')	// default
+				null	// default
 		);
 		// format/position
 		$startDate->format('d.m.Y');
@@ -150,9 +150,6 @@ class TributeViewNew extends TributeView {
 		// rules
 		$startDate->set_rule(
 				array(
-						'required' => array(
-								'error', _l('required date'),
-						),
 						'date' => array(
 								'error', _l('check date')
 						),
@@ -368,9 +365,9 @@ class TributeViewNew extends TributeView {
 					array(
 							'name' => $data['name'],
 							'club' => $data['club'],
-							'startDate' => date('Y-m-d', strtotime($data['startDate'])),
-							'plannedDate' => ($data['plannedDate'] != '' ? $data['plannedDate'] : null),
-							'date' => ($data['date'] != '' ? $data['date'] : null),
+							'startDate' => ($data['startDate'] != '' ? date('Y-m-d', strtotime($data['startDate'])) : null),
+							'plannedDate' => ($data['plannedDate'] != '' ? date('Y-m-d', strtotime($data['plannedDate'])) : null),
+							'date' => ($data['date'] != '' ? date('Y-m-d', strtotime($data['date'])) : null),
 							'state' => $data['state'],
 							'testimonialId' => $data['testimonial'],
 							'description' => $data['description'],
@@ -391,7 +388,7 @@ class TributeViewNew extends TributeView {
 				);
 			// check startdate for history entry (and only in past)
 			if(date('U', strtotime($data['startDate'])) < strtotime('today 00:00')) {
-				$tributeHistoryArray['lastModified'] = date('Y-m-d', strtotime($data['startDate'])); 
+				$tributeHistoryArray['lastModified'] = ($data['startDate'] != '' ? date('Y-m-d', strtotime($data['startDate'])) : date('Y-m-d')); 
 			}
 			$tributeHistory = new TributeHistory($tributeHistoryArray);
 			$tributeHistory->writeDb();

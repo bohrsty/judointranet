@@ -49,6 +49,10 @@ Thirdparty licenses see LICENSE
 [cc] improved full text search (added search for club) and search result highlighting
 [++] added testimonial category and filter for category
 [++] added full text search to file list (searching name and filename) incl. result highlighting
+--
+[cc] start date in new tribute not required
+[++] added full text search to calendar list (searching event name) result in jtable
+[cc] improved generation of last used options for announcement textarea field
 
 
 

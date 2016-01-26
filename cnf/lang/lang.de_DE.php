@@ -1372,6 +1372,9 @@ $lang = array(
 	'select testimonial category' => 'Ehrengabenkategorie',
 	'full text search' => 'Volltextsuche',
 	'name and filename' => 'Name und Dateiname',
+	'search' => 'Suchen',
+	'clear search' => 'Suche zur&uuml;cksetzen',
+	'clear' => 'zur&uuml;cksetzen',
 //	'' => '',
 );
 
