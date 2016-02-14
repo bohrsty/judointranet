@@ -438,6 +438,13 @@ class Result extends Page {
 			$this->set_id($newId);
 			// read announcement values
 			$this->readAnnouncementValues();
+			// reread result
+			$this->setResultStore($resultStore = array(
+				'agegroups' => array(),
+				'weightclasses' => array(),
+				'standings' => array(),
+			));
+			$this->getFromDb($this->getId());
 			
 			// create cached file
 			$this->createCachedFile(File::idFromCache('result|'.$newId));
