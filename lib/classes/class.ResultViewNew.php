@@ -446,7 +446,7 @@ class ResultViewNew extends ResultView {
 			$keysClubLevenshtein = array_keys($clubLevenshtein);
 			
 			// create options array for select
-			$options = array();
+			$options = array(0 => _l('- choose -'));
 			foreach($clubs as $no => $temp) {
 				$options[$no] = $clubs[$no]['name'];
 			}
