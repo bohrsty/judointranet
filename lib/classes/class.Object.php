@@ -566,6 +566,19 @@ class Object {
 		// return
 		return '';
 	}
+	
+	
+	/**
+	 * requestedFilename() determines the filename requested by the browser to handle
+	 * navigation and permissions for compatibility reason
+	 * 
+	 * @return string the filename requested by the browser
+	 */
+	public static function requestedFilename() {
+		
+		// parse url and return filename
+		return basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+	}
 }
 
 

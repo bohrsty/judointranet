@@ -164,7 +164,7 @@ class Inventory extends Object {
 		
 		// get inventories
 		$inventories = array();
-		$inventoryIds = self::getUser()->permittedItems('inventory', $mode);
+		$inventoryIds = self::staticGetUser()->permittedItems('inventory', $mode);
 		foreach($inventoryIds as $inventoryId) {
 			$inventories[$inventoryId] = new Inventory($inventoryId);
 		}
@@ -191,13 +191,13 @@ class Inventory extends Object {
 				if($action[0] == 'taken') {
 					
 					// check user_id
-					if($user_id[0] == self::getUser()->userid() || ($user_id[1] == self::getUser()->userid() && $user_id[0] != $user_id[2])) {
+					if($user_id[0] == self::staticGetUser()->userid() || ($user_id[1] == self::staticGetUser()->userid() && $user_id[0] != $user_id[2])) {
 						$return[$object->get_id()] = $object;
 					}
 				} else {
 					
 					// check user_id
-					if($user_id[0] == self::getUser()->userid() || $user_id[1] == self::getUser()->userid()) {
+					if($user_id[0] == self::staticGetUser()->userid() || $user_id[1] == self::staticGetUser()->userid()) {
 						$return[$object->get_id()] = $object;
 					}
 				}

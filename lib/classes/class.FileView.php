@@ -50,9 +50,10 @@ class FileView extends PageView {
 	/**
 	 * init chooses the functionality by using $_GET['id']
 	 * 
+	 * @param bool $show uses smarty display method to show, if true, smarty fetch method if false
 	 * @return void
 	 */
-	public function init() {
+	public function init($show = true) {
 		
 		// set pagename
 		$this->getTpl()->assign('pagename',_l('files'));
@@ -64,7 +65,7 @@ class FileView extends PageView {
 		if($this->get('id') !== false) {
 			
 			// check permissions
-			$naviId = Navi::idFromFileParam(basename($_SERVER['SCRIPT_FILENAME']), $this->get('id'));
+			$naviId = Navi::idFromFileParam(self::requestedFilename(), $this->get('id'));
 			if($this->getUser()->hasPermission('navi', $naviId)) {
 				
 				switch($this->get('id')) {
@@ -124,7 +125,7 @@ class FileView extends PageView {
 						
 						// smarty
 						$this->getTpl()->assign('title', $this->title(_l('files: delete')));
-						$this->getTpl()->assign('main', $this->delete());
+						$this->getTpl()->assign('main', $this->delete(null));
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', true);
 						$this->getTpl()->assign('tinymce', false);
@@ -175,7 +176,11 @@ class FileView extends PageView {
 		}
 		
 		// global smarty
-		$this->showPage('smarty.main.tpl');
+		if($show === true) {
+			$this->showPage('smarty.main.tpl', $show);
+		} else {
+			return $this->showPage('smarty.main.tpl', $show);
+		}
 	}
 	
 	
@@ -336,9 +341,10 @@ class FileView extends PageView {
 	/**
 	 * delete() handles the deletion of the file
 	 * 
+	 * @param array $config config for the deletion page (translation names, links, etc.) (compatible to parent delaration)
 	 * @return string html of the deletion page
 	 */
-	protected function delete() {
+	protected function delete($config) {
 		
 		// get $fid
 		$fid = $this->get('fid');
@@ -503,13 +509,15 @@ class FileView extends PageView {
 								_l('only the following file extensions are allowed!').' ['.$allowedFileTypes.']',
 							),
 						'upload' => array(
-								$this->getGc()->get_config('global.temp'),
+								JIPATH.'/'.$this->getGc()->get_config('global.temp'),
 								ZEBRA_FORM_UPLOAD_RANDOM_NAMES,
 								'error',
 								_l('could not upload file!'),
 							),
 					)
 			);
+		// set paths to mimes.json and process.php
+		$form->assets_path(JIPATH.'/lib/zebra_form/', '/');
 		
 		// checkbox public
 		$formIds['public'] = array('valueType' => 'int', 'type' => 'checkbox', 'default' => 1);
@@ -587,7 +595,7 @@ class FileView extends PageView {
 			$sCD->assign('data', $file->details());
 			return $sCD->fetch('smarty.file.details.tpl');
 		} else {
-			return $form->render('lib/zebraTemplate.php', true, array($formIds, 'smarty.zebra.permissions.tpl', $permissionConfig,));
+			return $form->render(__DIR__.'/../zebraTemplate.php', true, array($formIds, 'smarty.zebra.permissions.tpl', $permissionConfig,));
 		}
 	}
 	
@@ -691,13 +699,15 @@ class FileView extends PageView {
 									_l('only the following file extensions are allowed!').' ['.$allowedFileTypes.']',
 								),
 							'upload' => array(
-									$this->getGc()->get_config('global.temp'),
+									JIPATH.'/'.$this->getGc()->get_config('global.temp'),
 									ZEBRA_FORM_UPLOAD_RANDOM_NAMES,
 									'error',
 									_l('could not upload file!'),
 								),
 						)
 				);
+			// set paths to mimes.json and process.php
+			$form->assets_path(JIPATH.'/lib/zebra_form/', '/');
 			
 			// checkbox public
 			$formIds['public'] = array('valueType' => 'int', 'type' => 'checkbox', 'default' => 1);
@@ -772,7 +782,7 @@ class FileView extends PageView {
 				$sCD->assign('data', $file->details());
 				return $sCD->fetch('smarty.file.details.tpl');
 			} else {
-				return $form->render('lib/zebraTemplate.php', true, array($formIds, 'smarty.zebra.permissions.tpl', $permissionConfig,));
+				return $form->render(__DIR__.'/../zebraTemplate.php', true, array($formIds, 'smarty.zebra.permissions.tpl', $permissionConfig,));
 			}
 		} else {
 			throw new NotAuthorizedException($this);

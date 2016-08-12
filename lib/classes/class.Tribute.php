@@ -724,9 +724,10 @@ class Tribute extends Page {
 	/**
 	 * readClubs() reads all used clubs from database and returns them as array
 	 * 
+	 * @param bool $valid if true only valid clubs are returned
 	 * @return array array containing all club information
 	 */
-	public static function readClubs() {
+	public static function readClubs($valid = false) {
 		
 		// get clubs from db
 		$result = Db::ArrayValue('

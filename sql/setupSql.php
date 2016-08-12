@@ -82,11 +82,11 @@ function versionMysql() {
 	} elseif($_SESSION['setup']['dbVersion'] == '0.0.4') {
 		$dbVersion = 4;
 	} else {
-		$dbVersion = (int)$_SESSION['setup']['dbVersion'];
+		$dbVersion = getVersionAsInt($_SESSION['setup']['dbVersion']);
 	}
 	
 	// walk through version functions
-	for($i = $dbVersion; $i <= (int)CONF_GLOBAL_VERSION; $i++) {
+	for($i = $dbVersion; $i <= getVersionAsInt(CONF_GLOBAL_VERSION); $i++) {
 		
 		// excute functions and return their return value
 		if(function_exists('mysql_'.$i)) {
@@ -95,12 +95,24 @@ function versionMysql() {
 			// check return 
 			if($return['returnValue'] === true) {
 				
-				if($i >= 3) {
+				if($i >= 3 && $i < 200) {
 					
-					// update version in database
+					// update version in database (old style)
 					if(!Db::executeQuery('
 						UPDATE `config`
 							SET `value`=\''.str_pad($i, 3, '0', STR_PAD_LEFT).'\'
+						WHERE `name`=\'global.version\'
+					')) {
+						$return['returnValue'] = false;
+						$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
+						return $return;
+					}
+				} elseif($i >= 200) {
+					
+					// update version in database (new style)
+					if(!Db::executeQuery('
+						UPDATE `config`
+							SET `value`=\''.$return['returnVersion'].'\'
 						WHERE `name`=\'global.version\'
 					')) {
 						$return['returnValue'] = false;
@@ -3815,6 +3827,19 @@ function mysql_24() {
 		
 	// return
 	return $return;
+}
+
+
+function mysql_200() {
+	
+	// just set version, the next database versions are done with doctrine migrations
+	
+	// prepare return
+	return array(
+			'returnValue' => true,
+			'returnMessage' => '',
+			'returnVersion' => '2.0.0',
+		);
 }
 	
 	

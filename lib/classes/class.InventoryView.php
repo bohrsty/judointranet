@@ -53,9 +53,10 @@ class InventoryView extends PageView {
 	/**
 	 * init chooses the functionality by using $_GET['id']
 	 * 
+	 * @param bool $show uses smarty display method to show, if true, smarty fetch method if false
 	 * @return void
 	 */
-	public function init() {
+	public function init($show = true) {
 		
 		// set pagename
 		$this->getTpl()->assign('pagename',_l('inventory'));
@@ -67,7 +68,7 @@ class InventoryView extends PageView {
 		if($this->get('id') !== false) {
 			
 			// check permissions
-			$naviId = Navi::idFromFileParam(basename($_SERVER['SCRIPT_FILENAME']), $this->get('id'));
+			$naviId = Navi::idFromFileParam(self::requestedFilename(), $this->get('id'));
 			if($this->getUser()->hasPermission('navi', $naviId)) {
 				
 				switch($this->get('id')) {
@@ -160,7 +161,11 @@ class InventoryView extends PageView {
 		}
 		
 		// global smarty
-		$this->showPage('smarty.main.tpl');
+		if($show === true) {
+			$this->showPage('smarty.main.tpl', $show);
+		} else {
+			return $this->showPage('smarty.main.tpl', $show);
+		}
 	}
 	
 	

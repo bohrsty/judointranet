@@ -54,8 +54,13 @@ class InternalApi extends Object {
 	 */
 	/**
 	 * handle() handles the internal AJAX calls
+	 * 
+	 * @param bool $show echoes directly if true, returns data if false
 	 */
-	public final function handle() {
+	public final function handle($show = true) {
+		
+		// prepare return
+		$return = '';
 		
 		// get random id
 		$randomId = $this->get('id');
@@ -86,10 +91,10 @@ class InternalApi extends Object {
 				// check error
 				if($signedError === true) {
 				// signature error
-					echo json_encode(array(
+					$return = array(
 						'Result' => 'ERROR',
 						'Message' => _l('API call failed [not signed]')
-					));
+					);
 				} elseif($timeoutError === true) {
 				// timeout error
 					
@@ -102,19 +107,19 @@ class InternalApi extends Object {
 						);
 					$sLink->assign('span', $data);
 					
-					echo json_encode(array(
+					$return = array(
 						'Result' => 'ERROR',
 						'Message' => _l('API call failed [timeout] #?reloadLink', array('reloadLink' => $sLink->fetch('smarty.span.tpl')))
-					));
+					);
 				} else {
 				// get api object
 					$jtable = new InternalApiJtable();
-					echo json_encode($jtable->result());
+					$return = $jtable->result();
 				}
 			break;
 			
 			case 'PresetForm':
-				echo json_encode($this->calendarSetPreset());
+				$return = $this->calendarSetPreset();
 			break;
 			
 			case 'Fullcalendar':
@@ -122,21 +127,21 @@ class InternalApi extends Object {
 				// check error
 				if($signedError === true) {
 					// signature error
-					echo json_encode(array(
+					$return = array(
 							'Result' => 'ERROR',
 							'Message' => _l('API call failed [not signed]')
-					));
+					);
 				} elseif($timeoutError === true) {
 					// timeout error
-					echo json_encode(array(
+					$return = array(
 							'Result' => 'ERROR',
 							'Message' => _l('API call failed [timeout]')
-					));
+					);
 				} else {
 					
 					// get object
 					$fullcalendar = new CalendarFullcalendar();
-					echo json_encode($fullcalendar->getEvents());
+					$return = $fullcalendar->getEvents();
 				}
 			break;
 			
@@ -145,20 +150,20 @@ class InternalApi extends Object {
 				// check error
 				if($signedError === true) {
 					// signature error
-					echo json_encode(array(
+					$return = array(
 							'label' => _l('ERROR').': '._l('API call failed [not signed]'),
 							'value' => 'tribute.php?id=listall',
-					));
+					);
 				} elseif($timeoutError === true) {
 					// timeout error
-					echo json_encode(array(
+					$return = array(
 							'label' => _l('ERROR').': '._l('API call failed [timeout]'),
 							'value' => 'tribute.php?id=listall',
-					));
+					);
 				} else {
 					
 					// get object
-					echo json_encode(TributeListallListing::apiSearch($this->get('term')));
+					$return = TributeListallListing::apiSearch($this->get('term'));
 				}
 			break;
 			
@@ -215,7 +220,7 @@ class InternalApi extends Object {
 				}
 				
 				// echo template
-				echo $template->fetch('smarty.tributeHistoryEntry.tpl');
+				$return = $template->fetch('smarty.tributeHistoryEntry.tpl');
 			break;
 			
 			case 'ResultLinkForm':
@@ -223,20 +228,20 @@ class InternalApi extends Object {
 				// check error
 				if($signedError === true) {
 					// signature error
-					echo json_encode(array(
+					$return = array(
 							'result' => 'ERROR',
 							'message' => _l('API call failed [not signed]'),
-					));
+					);
 				} elseif($timeoutError === true) {
 					// timeout error
-					echo json_encode(array(
+					$return = array(
 							'result' => 'ERROR',
 							'message' => _l('API call failed [timeout]'),
-					));
+					);
 				} else {
 					
 					// get object
-					echo json_encode(Calendar::linkTo($this->post('cid'), $this->post('lcid')));
+					$return = Calendar::linkTo($this->post('cid'), $this->post('lcid'));
 				}
 			break;
 			
@@ -245,28 +250,35 @@ class InternalApi extends Object {
 				// check error
 				if($signedError === true) {
 					// signature error
-					echo json_encode(array(
+					$return = array(
 							'result' => 'ERROR',
 							'message' => _l('API call failed [not signed]'),
-					));
+					);
 				} elseif($timeoutError === true) {
 					// timeout error
-					echo json_encode(array(
+					$return = array(
 							'result' => 'ERROR',
 							'message' => _l('API call failed [timeout]'),
-					));
+					);
 				} else {
 					
 					// generate file
 					$tributeFile = TributeFile::factoryFile();
 					// echo result
-					echo json_encode($tributeFile->getError());
+					$return = $tributeFile->getError();
 				}
 			break;
 			
 			default:
-				echo 'ERROR: '._l('API call failed [unknown apiClass]');
+				$return = 'ERROR: '._l('API call failed [unknown apiClass]');
 			break;
+		}
+		
+		// check show or echo
+		if($show === true) {
+			echo json_encode($return);
+		} else {
+			return $return;
 		}
 	}
 	

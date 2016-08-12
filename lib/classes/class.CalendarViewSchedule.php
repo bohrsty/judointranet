@@ -74,7 +74,7 @@ class CalendarViewSchedule extends CalendarView {
 		$this->smarty->assign('year', $year);
 		
 		// fetch pdf
-		$pdfOut = $this->smarty->fetch('templates/schedules/'.$preset->get_path().'.tpl');
+		$pdfOut = $this->smarty->fetch(JIPATH.'/templates/schedules/'.$preset->get_path().'.tpl');
 		
 		// get HTML2PDF-object
 		$pdf = new HTML2PDF('P', 'A4', 'de', true, 'UTF-8', array(0, 0, 0, 0));

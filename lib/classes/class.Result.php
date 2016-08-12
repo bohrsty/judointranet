@@ -603,7 +603,7 @@ class Result extends Page {
 		// smarty
 		$sR->assign('r', $infos);
 		$sR->assign('nopdf', $noPdf);
-		$return = $sR->fetch('templates/results/'.$preset->get_path().'.tpl');
+		$return = $sR->fetch(JIPATH.'/templates/results/'.$preset->get_path().'.tpl');
 		
 		// check $includeFilename
 		if($includeFilename === true) {
@@ -611,7 +611,7 @@ class Result extends Page {
 			// prepare array
 			$return = array();
 			$return['filename'] = $this->replace_umlaute(html_entity_decode($sR->fetch('string:'.utf8_encode($preset->get_filename())), ENT_XHTML, 'UTF-8'));
-			$return['html'] = $sR->fetch('templates/results/'.$preset->get_path().'.tpl');
+			$return['html'] = $sR->fetch(JIPATH.'/templates/results/'.$preset->get_path().'.tpl');
 		}
 		
 		return $return;

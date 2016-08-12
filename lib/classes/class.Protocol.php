@@ -592,7 +592,7 @@ class Protocol extends Page {
 		
 		// smarty
 		$sP->assign('p', $infos);
-		$pdfOut = $sP->fetch('templates/protocols/'.$this->get_preset()->get_path().'.tpl');			
+		$pdfOut = $sP->fetch(JIPATH.'/templates/protocols/'.$this->get_preset()->get_path().'.tpl');			
 		
 		// replace <p></p> to <div></div> for css use with HTML2PDF
 		$pdfOut = preg_replace('/<p class="tmceItem">(.*)<\/p>/U','<div class="tmceItem">$1</div>', $pdfOut);

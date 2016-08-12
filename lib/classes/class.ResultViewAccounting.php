@@ -191,7 +191,7 @@ class ResultViewAccounting extends ResultView {
 				$preset = new Preset($results[0]->getPreset(), 'result', $results[0]->getId());
 				
 				// get HTML string
-				$pdfOut = $this->smarty->fetch('templates/results/bill_'.$preset->get_path().'.tpl');			
+				$pdfOut = $this->smarty->fetch(JIPATH.'/templates/results/bill_'.$preset->get_path().'.tpl');			
 				
 				// get HTML2PDF-object
 				$pdf = new HTML2PDF('P', 'A4', 'de', true, 'UTF-8', array(0, 0, 0, 0));

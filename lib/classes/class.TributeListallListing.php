@@ -386,7 +386,7 @@ class TributeListallListing extends Listing implements ListingInterface {
 	public static function apiSearch($query) {
 		
 		// get permitted ids
-		$ids = self::getUser()->permittedItems('tribute', 'w');
+		$ids = self::staticGetUser()->permittedItems('tribute', 'w');
 		
 		// check if empty result
 		$mysqlData = implode(',', $ids);
@@ -445,7 +445,7 @@ class TributeListallListing extends Listing implements ListingInterface {
 	public static function addPrintListMarks() {
 		
 		// get permitted ids
-		$ids = self::getUser()->permittedItems('tribute', 'w');
+		$ids = self::staticGetUser()->permittedItems('tribute', 'w');
 		
 		// check if empty result
 		$mysqlData = implode(',', $ids);

@@ -195,7 +195,9 @@ class Preset extends Object {
 		// fetch result
 		while(list($field_id) = $result->fetch_array(MYSQL_NUM)) {
 			
-			$tempFields[] = new Field($field_id,$table,$table_id,$this->get_id(), $this->getView());
+			$tempId = $this->get_id();
+			$tempView = $this->getView();
+			$tempFields[] = new Field($field_id,$table,$table_id, $tempId, $tempView);
 		}
 		
 		// walk through fields

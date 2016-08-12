@@ -56,8 +56,10 @@ class Help extends Object {
 	 */
 	/**
 	 * handle() handles the generation and translation of the help messages
+	 * 
+	 * @param bool $show echoes directly if true, returns data if false
 	 */
-	public function handle() {
+	public function handle($show = true) {
 		
 		// get message id
 		$messageId = $this->get('hid');
@@ -91,7 +93,11 @@ class Help extends Object {
 				'title' => $translateTitle,
 				'content' => $translateMessage,
 			);
-		echo json_encode($output);
+		if($show === true) {
+			echo json_encode($output);
+		} else {
+			return $output;
+		}
 	}
 
 }

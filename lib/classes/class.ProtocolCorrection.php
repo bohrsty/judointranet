@@ -155,7 +155,7 @@ class ProtocolCorrection extends Object {
 		
 		// check uid
 		if(is_null($uid)) {
-			$uid = self::getUser()->get_id();
+			$uid = self::staticGetUser()->get_id();
 		}
 		
 		// prepare sql-statement

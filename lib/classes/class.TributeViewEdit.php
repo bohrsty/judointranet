@@ -515,7 +515,8 @@ class TributeViewEdit extends TributeView {
 						beforeSend: function(){
 							submit.val("'._l('saving').'...").attr("disabled", "disabled");
 						},
-						success: function(data){
+						success: function(rawData){
+							var data = JSON.parse(rawData);
 							var item = $(data).hide().show("fade", 800);
 							$("#tributeHistoryEntries").append(item);
 							$("#historySubject").val("");
@@ -579,7 +580,7 @@ class TributeViewEdit extends TributeView {
 				// return message
 				return _l('Saved successfully.');
 			} else {
-				return $form->render('lib/zebraTemplate.php', true, array($formIds, 'smarty.zebra.permissions.tpl', $permissionConfig,$this->smarty,));
+				return $form->render(__DIR__.'/../zebraTemplate.php', true, array($formIds, 'smarty.zebra.permissions.tpl', $permissionConfig,$this->smarty,));
 			}
 		} else {
 			throw new NotAuthorizedException($this);

@@ -243,7 +243,7 @@ class Field extends Object {
 		$defaults = (isset($config['defaults']) ? $config['defaults'] : $defaults);
 				
 		// get and simplify $this->form
-		$form = &$this->getForm();
+		$form = $this->getForm();
 		// simplify id
 		$elementId = $this->get_table().'-'.$this->get_id();
 		
@@ -424,6 +424,9 @@ class Field extends Object {
 			// add hierselect
 			$this->hierselect($form, $optionsFirst, $optionsSecond, $elementId.'-1', $elementId.'-2');
 		}
+		
+		// set form back
+		$this->setForm($form);
 	}
 	
 	

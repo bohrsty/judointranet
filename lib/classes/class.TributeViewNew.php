@@ -403,7 +403,7 @@ class TributeViewNew extends TributeView {
 			// return message
 			return _l('Saved successfully.');
 		} else {
-			return $form->render('lib/zebraTemplate.php', true, array($formIds, 'smarty.zebra.permissions.tpl', $permissionConfig,$this->smarty,));
+			return $form->render(__DIR__.'/../zebraTemplate.php', true, array($formIds, 'smarty.zebra.permissions.tpl', $permissionConfig,$this->smarty,));
 		}
 	}
 }

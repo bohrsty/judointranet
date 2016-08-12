@@ -193,7 +193,7 @@ class ResultViewNew extends ResultView {
 		$formContent->set_rule(
 				array(
 						'upload' => array(
-								$this->getGc()->get_config('global.temp'),
+								JIPATH.'/'.$this->getGc()->get_config('global.temp'),
 								ZEBRA_FORM_UPLOAD_RANDOM_NAMES,
 								'error',
 								_l('error upload'),
@@ -209,6 +209,8 @@ class ResultViewNew extends ResultView {
 							),
 					)
 			);
+		// set paths to mimes.json and process.php
+		$form->assets_path(JIPATH.'/lib/zebra_form/', '/');
 		
 		// submit-button
 		$form->add(
@@ -408,7 +410,7 @@ class ResultViewNew extends ResultView {
 			// pagecaption
 			$this->getTpl()->assign('pagecaption', _l('result import check club'));
 			
-			return $form->render('lib/zebraTemplate.php', true, array($formIds, 'smarty.resultimporter.tpl', null, $sCorrectClubs));
+			return $form->render(__DIR__.'/../zebraTemplate.php', true, array($formIds, 'smarty.resultimporter.tpl', null, $sCorrectClubs));
 		}
 		
 	}

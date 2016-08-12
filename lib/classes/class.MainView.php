@@ -53,9 +53,10 @@ class MainView extends PageView {
 	/**
 	 * init chooses the functionality by using $_GET['id']
 	 * 
+	 * @param bool $show uses smarty display method to show, if true, smarty fetch method if false
 	 * @return void
 	 */
-	public function init() {
+	public function init($show=true) {
 		
 		// set pagename
 		$this->getTpl()->assign('pagename',_l('JudoIntranet'));
@@ -109,7 +110,11 @@ class MainView extends PageView {
 		}
 		
 		// global smarty
-		$this->showPage('smarty.main.tpl');
+		if($show === true) {
+			$this->showPage('smarty.main.tpl', $show);
+		} else {
+			return $this->showPage('smarty.main.tpl', $show);
+		}
 	}
 	
 	

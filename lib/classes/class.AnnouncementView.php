@@ -53,9 +53,10 @@ class AnnouncementView extends PageView {
 	/**
 	 * init chooses the functionality by using $_GET['id']
 	 * 
+	 * @param bool $show uses smarty display method to show, if true, smarty fetch method if false
 	 * @return void
 	 */
-	public function init() {
+	public function init($show = true) {
 		
 		// set pagename
 		$this->getTpl()->assign('pagename',_l('announcement'));
@@ -67,7 +68,7 @@ class AnnouncementView extends PageView {
 		if($this->get('id') !== false) {
 			
 			// check permissions
-			$naviId = Navi::idFromFileParam(basename($_SERVER['SCRIPT_FILENAME']), $this->get('id'));
+			$naviId = Navi::idFromFileParam(self::requestedFilename(), $this->get('id'));
 			if($this->getUser()->hasPermission('navi', $naviId)) {
 				
 				switch($this->get('id')) {
@@ -94,7 +95,7 @@ class AnnouncementView extends PageView {
 						
 						// smarty
 						$this->getTpl()->assign('title', $this->title(_l('announcement: delete')));
-						$this->getTpl()->assign('main', $this->delete());
+						$this->getTpl()->assign('main', $this->delete(null));
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', true);
 					break;
@@ -154,7 +155,11 @@ class AnnouncementView extends PageView {
 		}
 		
 		// global smarty
-		$this->showPage('smarty.main.tpl');
+		if($show === true) {
+			$this->showPage('smarty.main.tpl', $show);
+		} else {
+			return $this->showPage('smarty.main.tpl', $show);
+		}
 	}
 	
 	
@@ -470,10 +475,10 @@ class AnnouncementView extends PageView {
 	/**
 	 * delete deletes the given entry
 	 * 
-	 * @param int $cid entry-id for calendar
+	 * @param array $config config for the deletion page (translation names, links, etc.) (compatible to parent delaration)
 	 * @return string html-string
 	 */
-	protected function delete() {
+	protected function delete($config) {
 	
 		// check permissions
 		if($this->getUser()->hasPermission('calendar', $this->get('cid'), 'w')) {

@@ -201,7 +201,7 @@ class Filter extends Object {
 	public static function filterItems($filterId, $table, $dateFrom=null, $dateTo=null) {
 		
 		// get permitted items
-		$permittedItems = self::getUser()->permittedItems($table, 'w', $dateFrom, $dateTo);
+		$permittedItems = self::staticGetUser()->permittedItems($table, 'w', $dateFrom, $dateTo);
 		// prepare filtered items
 		$filteredItems = array();
 		
@@ -366,7 +366,7 @@ class Filter extends Object {
 	public static function filterItemIdsAsArray($filterId, $table, $dateFrom=null, $dateTo=null) {
 		
 		// get permitted items
-		$permittedItems = self::getUser()->permittedItems($table, 'w', $dateFrom, $dateTo);
+		$permittedItems = self::staticGetUser()->permittedItems($table, 'w', $dateFrom, $dateTo);
 		$itemIds = 'SELECT FALSE';
 		if(count($permittedItems) > 0) {
 			$itemIds = implode(',', $permittedItems);

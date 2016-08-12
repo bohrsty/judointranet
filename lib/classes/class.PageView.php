@@ -374,9 +374,10 @@ class PageView extends Object {
 	 * showPage() sets some global template variables and displays the page
 	 * 
 	 * @param string $template name of the template file to use
+	 * @param bool $show uses smarty display method to show, if true, smarty fetch method if false
 	 * @return void
 	 */
-	public function showPage($template) {
+	public function showPage($template, $show=true) {
 		
 		// logininfo
 		$this->getTpl()->assign('logininfo', $this->put_userinfo());
@@ -392,7 +393,7 @@ class PageView extends Object {
 		
 		// navi
 		$navi = '';
-		$file = basename($_SERVER['SCRIPT_FILENAME']);
+		$file = self::requestedFilename();
 		$param = $this->get('id');
 		$naviItems = $this->naviFromDb();
 		$active = 0;
@@ -430,7 +431,11 @@ class PageView extends Object {
 		}
 		
 		// smarty-display
-		$this->getTpl()->display($template);
+		if($show === true) {
+			$this->getTpl()->display($template);
+		} else {
+			return $this->getTpl()->fetch($template);
+		}
 	}
 	
 	
@@ -868,12 +873,17 @@ class PageView extends Object {
 	/**
 	 * toHtml() handles the exceptions maybe thrown and calls each init() method
 	 * 
+	 * @param bool $show uses smarty display method to show, if true, smarty fetch method if false
 	 * @return void
 	 */
-	final public function toHtml() {
+	final public function toHtml($show=true) {
 		
 		// run init
-		$this->init();
+		if($show === true) {
+			$this->init($show);
+		} else {
+			return $this->init($show);
+		}
 	}
 	
 	

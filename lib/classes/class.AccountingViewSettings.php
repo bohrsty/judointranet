@@ -124,6 +124,7 @@ class AccountingViewSettings extends AccountingView {
 		
 		// enable jtable in template
 		$this->getTpl()->assign('jtable', true);
+		$this->getTpl()->assign('validationEngine', true);
 		
 		// return
 		return array(

@@ -239,7 +239,7 @@ class AdministrationViewSchoolholidays extends AdministrationView {
 				// return
 				return $this->smarty->fetch('smarty.holiday.edit.tpl');
 			} else {
-				return $form->render('lib/zebraTemplate.php', true, array($formIds, 'smarty.holiday.edit.tpl',array() ,$this->smarty));
+				return $form->render(__DIR__.'/../zebraTemplate.php', true, array($formIds, 'smarty.holiday.edit.tpl',array() ,$this->smarty));
 			}
 		} else {
 			

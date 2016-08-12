@@ -398,7 +398,7 @@ class CalendarListing extends Listing implements ListingInterface {
 	public static function getListing($fields) {
 		
 		// get permitted ids
-		$ids = self::getUser()->permittedItems('calendar', 'w') ;
+		$ids = self::staticGetUser()->permittedItems('calendar', 'w') ;
 		
 		// check if empty result
 		$mysqlData = implode(',', $ids);

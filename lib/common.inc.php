@@ -1,4 +1,5 @@
 <?php
+
 /* ********************************************************************************************
  * Copyright (c) 2011 Nils Bohrs
  *
@@ -21,7 +22,8 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************/
- 
+
+use Symfony\Component\HttpFoundation\Session\Session;
  
 /*
  * define constant to check in each .php-file
@@ -29,14 +31,11 @@
 define('JUDOINTRANET', 'secured');
 
 /*
- * set session name
+ * create session
  */
-session_name('JudoIntranet');
-
-/*
- * define code version
- */
-define('CONF_GLOBAL_VERSION', '024');
+$session = new Session();
+$session->setName('JudoIntranet');
+$session->start();
 
 /*
  * determine app path
@@ -47,6 +46,17 @@ while(!is_dir($scriptPath.'/lib') && !is_file($scriptPath.'/administration.php')
 }
 define('JIPATH', $scriptPath);
 unset($scriptPath);
+
+/*
+ * get composer.json as array
+ */
+$composerJsonString = file_get_contents(JIPATH.'/composer.json');
+$composerJson = json_decode($composerJsonString, true);
+
+/*
+ * define code version
+ */
+define('CONF_GLOBAL_VERSION', $composerJson['version']);
 
 /*
  * define constants
@@ -130,66 +140,16 @@ define('JTABLE_NOT_AUTHORIZED', 1);
 define('JTABLE_ROW_NOT_EXISTS', 2);
 
 
-
-
-/**
- * loads the class-definition of given class from lib
- */
-include_once(JIPATH.'/lib/classes/Exceptions.php');
-
-// register autoload
-spl_autoload_register(
-	function ($class) {
-		
-		// load interfaces
-		if(substr($class, -9) == 'Interface') {
-			include_once(JIPATH.'/lib/interfaces/iface.'.substr($class, 0, -9).'.php');
-		// load Services_JSON
-		} elseif($class == 'Services_JSON') {
-			include_once(JIPATH.'/lib/Services_JSON/json.php');
-		// load HTML2PDF
-		} elseif($class == 'HTML2PDF') {
-			include_once(JIPATH.'/lib/html2pdf/html2pdf.class.php');
-		// load smarty
-		} elseif($class == 'Smarty') {
-			include_once(JIPATH.'/lib/smarty/libs/Smarty.class.php');
-		// load smarty plugins
-		} elseif(substr($class,0,6) == 'Smarty') {
-			include_once(JIPATH.'/lib/smarty/libs/sysplugins/'.strtolower($class).'.php');
-		// load Zebra_Form
-		} elseif($class == 'Zebra_Form') {
-			include_once(JIPATH.'/lib/zebra_form/Zebra_Form.php');
-		// load FPDI
-		} elseif($class == 'FPDI') {
-			include_once(JIPATH.'/lib/FPDI/fpdi.php');
-		} elseif(substr($class, 0, 4) == 'fpdi') {
-			include_once(JIPATH.'/lib/FPDI/'.$class.'.php');
-		} elseif($class == 'FPDF_TPL') {
-			include_once(JIPATH.'/lib/FPDI/fpdf_tpl.php');
-		} elseif(substr($class,0,4) == 'pdf_') {
-			include_once(JIPATH.'/lib/FPDI/'.$class.'.php');
-		// load PHPExcel
-		} elseif(substr($class,0,8) == 'PHPExcel') {
-			// get path parts
-			$pathParts = explode('_', $class);
-			// get path
-			$path = implode('/', $pathParts);
-			include_once(JIPATH.'/lib/PHPExcel/Classes/'.$path.'.php');
-		// load classes
-		} else {
-			include_once(JIPATH.'/lib/classes/class.'.$class.'.php');
-		}
-	}
-);
-
-
 // check versions if not api
-if(basename($_SERVER['SCRIPT_FILENAME']) != 'internal.php') {
-	$dbVersion = checkDbVersion();
-	if($dbVersion != VERSION_EQUAL && basename($_SERVER['SCRIPT_NAME']) != 'setup.php') {
-		
-		// redirect to setup
-		header('Location: setup.php');
+if(isset($_SERVER['REQUEST_URI'])) {
+	if(basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) != 'internal.php') {
+		$dbVersion = checkDbVersion();
+		if($dbVersion != VERSION_EQUAL && basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) != 'setup.php') {
+			
+			// redirect to setup
+			header('Location: setup.php', true);
+			exit;
+		}
 	}
 }
 
@@ -197,6 +157,24 @@ if(basename($_SERVER['SCRIPT_FILENAME']) != 'internal.php') {
 /*
  * methods used before objects are instanciated
  */
+/**
+ * getVersionAsInt($mixed) checks if the version $mixed contains ".", removes them and
+ * returns the version as integer
+ * 
+ * @param mixed $mixed the version to check and convert
+ * @return int the version as integer
+ */
+function getVersionAsInt($mixed) {
+	
+	if(strpos($mixed, '.') === false) {
+		$version = (int)$mixed;
+	} else {
+		$version = str_replace('.', '', $mixed);
+	}
+	return $version;
+}
+
+
 /**
  * checkDbVersion() checks the code version against the db version and returns a
  * constant VERSION_xxx
@@ -269,7 +247,7 @@ function checkDbVersion() {
 	// set version number globally
 	$_SESSION['setup']['dbVersion'] = false;
 	if(!is_null($return)) {
-		$_SESSION['setup']['dbVersion'] = (int)$return[0];
+		$_SESSION['setup']['dbVersion'] = $return[0];
 	}
 	
 	// check action
@@ -279,12 +257,16 @@ function checkDbVersion() {
 		return VERSION_DO_UPGRADE;
 	}
 	
+	// prepare db version
+	$dbVersion = getVersionAsInt($return[0]);
+	// prepare code version
+	$codeVersion = getVersionAsInt(CONF_GLOBAL_VERSION);
 	// check version
-	if(is_null($return) || (int)$return[0] > (int)CONF_GLOBAL_VERSION) {
+	if(is_null($return) || (int)$dbVersion > (int)$codeVersion) {
 		return VERSION_LOWER;
-	} elseif((int)$return[0] < (int)CONF_GLOBAL_VERSION) {
+	} elseif((int)$dbVersion < (int)$codeVersion) {
 		return VERSION_HIGHER;
-	} elseif((int)$return[0] == (int)CONF_GLOBAL_VERSION) {
+	} elseif((int)$dbVersion == (int)$codeVersion) {
 		return VERSION_EQUAL;
 	}
 	
@@ -299,9 +281,13 @@ function checkDbVersion() {
  * 
  * @param Exception $e the thrown exception object to be handled
  * @param int $outputType type of the error message (i.e. HTML or JSON output)
+ * @param bool $show if true echoes the error, if false return it
  * @return void
  */
-function handleExceptions($e, $outputType) {
+function handleExceptions($e, $outputType, $show = true) {
+	
+	// prepare return
+	$return = '';
 	
 	// determine type of exception
 	switch(get_class($e)) {
@@ -313,22 +299,29 @@ function handleExceptions($e, $outputType) {
 			
 			// check $outputType
 			if($outputType == HANDLE_EXCEPTION_JSON) {
-				echo json_encode(array(
+				$return = json_encode(array(
 						'Result' => 'ERROR',
 						'Message' => $e->__toString(),
 					));
 			} else {
-				echo '<table>'.$e->xdebug_message.'</table>';
+				$return = '<table>'.$e->xdebug_message.'</table>';
 			}
 		break;
 		
 		default:
 			if($e instanceof CustomException) {
-				$e->errorMessage($outputType);
+				$return = $e->errorMessage($outputType, $show);
 			} else {
-				echo $e;
+				$return = $e;
 			}
 		break;
+	}
+	
+	// check return or echo
+	if($show === true) {
+		echo $return;
+	} else {
+		return $return;
 	}
 }
 

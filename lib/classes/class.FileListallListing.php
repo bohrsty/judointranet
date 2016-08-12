@@ -289,7 +289,7 @@ class FileListallListing extends Listing implements ListingInterface {
 	public static function apiSearch($query) {
 		
 		// get permitted ids
-		$ids = self::getUser()->permittedItems('file', 'r');
+		$ids = self::staticGetUser()->permittedItems('file', 'r');
 		
 		// check if empty result
 		$mysqlData = implode(',', $ids);

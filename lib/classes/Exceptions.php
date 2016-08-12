@@ -76,9 +76,13 @@ class CustomException extends Exception {
 	 * error message
 	 * 
 	 * @param int $outputType type to determine the type of output (i.e. HTML or JSON)
+	 * @param bool $show if true echoes the error, if false return it
 	 * @return string HTML string of error message or void if dies on fatal error
 	 */
-	final public function errorMessage($outputType = HANDLE_EXCEPTION_VIEW) {
+	final public function errorMessage($outputType = HANDLE_EXCEPTION_VIEW, $show = true) {
+		
+		// prepare return
+		$return = '';
 		
 		// check $outpuType
 		if($outputType == HANDLE_EXCEPTION_JSON) {
@@ -89,7 +93,7 @@ class CustomException extends Exception {
 					'.(Object::staticDebugAll() === true ? $this->getTraceAsString() : '');
 			
 			// output jtable json
-			echo json_encode(array(
+			$return = json_encode(array(
 						'Result' => 'ERROR',
 						'Message' => $message,
 					));
@@ -128,7 +132,11 @@ class CustomException extends Exception {
 				';
 				
 				// die
-				die($html);
+				if($show === true) {
+					die($html);
+				} else {
+					$return = $html;
+				}
 				
 			} else {
 				
@@ -136,8 +144,19 @@ class CustomException extends Exception {
 				$view->getTpl()->assign('title', $view->title(_l('error')));
 				$view->getTpl()->assign('main', $message);
 				// show page
-				$view->showPage('smarty.main.tpl');
+				if($show == true) {
+					$view->showPage('smarty.main.tpl');
+				} else {
+					$return = $view->showPage('smarty.main.tpl', $show);
+				}
 			}
+		}
+		
+		// check echo or return
+		if($show == true) {
+			echo $return;
+		} else {
+			return $return;
 		}
 	}
 	
@@ -165,11 +184,11 @@ class CustomException extends Exception {
 		foreach($traceArray as $no => $traceEntry) {
 			
 			// get file
-			$file = substr($traceEntry['file'], strlen($_SERVER['DOCUMENT_ROOT']));
+			$file = (isset($traceEntry['file']) ? substr($traceEntry['file'], strlen(JIPATH) + 1) : '');
 			$trace .= '	<tr>
 							<td class="center">'.($no+1).'</td>
-							<td>'.$traceEntry['class'].$traceEntry['type'].$traceEntry['function'].'()</td>
-							<td>'.$file.':'.$traceEntry['line'].'</td>
+							<td>'.(isset($traceEntry['class']) ? $traceEntry['class'] : '').(isset($traceEntry['type']) ? $traceEntry['type'] : '').$traceEntry['function'].'()</td>
+							<td>'.$file.':'.(isset($traceEntry['line']) ? $traceEntry['line'] : '').'</td>
 						</tr>';
 		}		
 		// prepare HTML

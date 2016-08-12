@@ -51,9 +51,10 @@ class ProtocolView extends PageView {
 	/**
 	 * init chooses the functionality by using $_GET['id']
 	 * 
+	 * @param bool $show uses smarty display method to show, if true, smarty fetch method if false
 	 * @return void
 	 */
-	public function init() {
+	public function init($show = true) {
 		
 		// set pagename
 		$this->getTpl()->assign('pagename',_l('protocols'));
@@ -65,7 +66,7 @@ class ProtocolView extends PageView {
 		if($this->get('id') !== false) {
 			
 			// check permissions
-			$naviId = Navi::idFromFileParam(basename($_SERVER['SCRIPT_FILENAME']), $this->get('id'));
+			$naviId = Navi::idFromFileParam(self::requestedFilename(), $this->get('id'));
 			if($this->getUser()->hasPermission('navi', $naviId)) {
 				
 				switch($this->get('id')) {
@@ -188,7 +189,11 @@ class ProtocolView extends PageView {
 		}
 		
 		// global smarty
-		$this->showPage('smarty.main.tpl');
+		if($show === true) {
+			$this->showPage('smarty.main.tpl', $show);
+		} else {
+			return $this->showPage('smarty.main.tpl', $show);
+		}
 	}
 	
 	
@@ -668,7 +673,7 @@ class ProtocolView extends PageView {
 			$sCD->assign('data', $protocol->details());
 			return $sCD->fetch('smarty.protocol.details.tpl');
 		} else {
-			return $form->render('lib/zebraTemplate.php', true, array($formIds, 'smarty.zebra.permissions.tpl', $permissionConfig,));
+			return $form->render(__DIR__.'/../zebraTemplate.php', true, array($formIds, 'smarty.zebra.permissions.tpl', $permissionConfig,));
 		}
 	}
 	
@@ -1285,7 +1290,7 @@ class ProtocolView extends PageView {
 				
 				return $sCD->fetch('smarty.protocol.details.tpl');
 			} else {
-				return $form->render('lib/zebraTemplate.php', true, array($formIds, 'smarty.zebra.permissions.tpl', $permissionConfig,));
+				return $form->render(__DIR__.'/../zebraTemplate.php', true, array($formIds, 'smarty.zebra.permissions.tpl', $permissionConfig,));
 			}
 		} else {
 			throw new NotAuthorizedException($this);
@@ -1355,7 +1360,7 @@ class ProtocolView extends PageView {
 			
 			// smarty
 			$sP->assign('p', $infos);
-			$div_out = $sP->fetch('templates/protocols/'.$protocol->get_preset()->get_path().'.tpl');
+			$div_out = $sP->fetch(JIPATH.'/templates/protocols/'.$protocol->get_preset()->get_path().'.tpl');
 			
 			// smarty
 			$sPd = new JudoIntranetSmarty();

@@ -71,7 +71,7 @@ class CalendarFullcalendar extends Object {
 		if($this->get('filter') == '') {
 			$filterId = false;
 		}
-		$ids = self::getUser()->permittedItems('calendar', 'r', $this->get('start'), $this->get('end'));
+		$ids = self::staticGetUser()->permittedItems('calendar', 'r', $this->get('start'), $this->get('end'));
 				
 		// check if empty result
 		$mysqlData = implode(',', $ids);

@@ -1,0 +1,74 @@
+{
+    "name": "bohrsty/judointranet",
+    "license": "MIT",
+    "type": "project",
+    "version": "2.0.0",
+    "autoload": {
+        "psr-4": {
+            "": "src/"
+        },
+        "classmap": [
+            "lib/",
+            "app/AppKernel.php",
+            "app/AppCache.php"
+        ],
+        "files": [
+        	"lib/common.inc.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "5.6.*",
+        "symfony/symfony": "3.1.*",
+        "doctrine/orm": "^2.5",
+        "doctrine/doctrine-bundle": "^1.6",
+        "doctrine/doctrine-cache-bundle": "^1.2",
+        "symfony/swiftmailer-bundle": "^2.3",
+        "symfony/monolog-bundle": "^2.8",
+        "symfony/polyfill-apcu": "^1.0",
+        "sensio/distribution-bundle": "^5.0",
+        "sensio/framework-extra-bundle": "^3.0.2"
+    },
+    "require-dev": {
+        "sensio/generator-bundle": "^3.0",
+        "symfony/phpunit-bridge": "^3.0"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget",
+            "JudoIntranet\\Migrate\\ScriptHandler::createSymlinks"
+        ],
+        "post-update-cmd": [
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget",
+            "JudoIntranet\\Migrate\\ScriptHandler::createSymlinks"
+        ]
+    },
+    "extra": {
+        "symfony-app-dir": "app",
+        "symfony-bin-dir": "bin",
+        "symfony-var-dir": "var",
+        "symfony-web-dir": "web",
+        "symfony-tests-dir": "tests",
+        "symfony-assets-install": "relative",
+        "symlinks": {
+        	"js": "web/js",
+        	"css": "web/css",
+        	"img": "web/img",
+        	"templates": "web/templates",
+        	"lib/zebra_form/mimes.json": "web/mimes.json",
+        	"lib/zebra_form/process.php": "web/process.php"
+        }
+    }
+}

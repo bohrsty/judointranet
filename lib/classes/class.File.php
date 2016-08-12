@@ -404,7 +404,7 @@ class File extends Page {
 	public static function allowedFileTypes() {
 		
 		// get file type ids from config
-		$fileTypeIds = self::getGc()->get_config('file.allowedFileTypes');
+		$fileTypeIds = self::staticGetGc()->get_config('file.allowedFileTypes');
 		
 		// get db object
 		$db = Db::newDb();
@@ -507,7 +507,7 @@ class File extends Page {
 		$days = round($seconds / 60 / 60 / 24, 0);
 				
 		// return
-		return ($days < 0 ? self::getGc()->get_config('file.maxCacheAge') + 1 : $days);
+		return ($days < 0 ? self::staticGetGc()->get_config('file.maxCacheAge') + 1 : $days);
 	}
 	
 	
@@ -685,7 +685,7 @@ class File extends Page {
 		$files = array();
 	
 		// get file objects
-		$fileEntries = self::getUser()->permittedItems('file', 'w');
+		$fileEntries = self::staticGetUser()->permittedItems('file', 'w');
 		foreach($fileEntries as $fileId) {
 			$files[] = new File($fileId);
 		}

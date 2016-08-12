@@ -68,9 +68,11 @@ class Api extends Object {
 	 * JSON object contains two field:
 	 * "result" = ERROR or OK
 	 * if result is ERROR the second has to be "message" that explains the error
-	 * if result is OK the second has to be "data" an array containig the result of the request 
+	 * if result is OK the second has to be "data" an array containig the result of the request
+	 * 
+	 *  @param bool $show echoes directly if true, returns data if false
 	 */
-	public final function handle() {
+	public final function handle($show) {
 		
 		// check request
 		$request = $this->getRequest();
@@ -97,18 +99,29 @@ class Api extends Object {
 			}
 			
 			// check html param and output
-			if(isset($request['options']['html']) && $request['options']['html'] == 1) {
-				echo (isset($result['data']) ? $result['data'] : $result['message']);
+			$return = array(
+					'html' => isset($request['options']['html']) && $request['options']['html'] == 1,
+				);
+			if($return['html'] === true) {
+				$return['data'] = (isset($result['data']) ? $result['data'] : $result['message']);
 			} else {
-				echo json_encode($result);
+				$return['data'] = $result;
 			}
 		} else {
 			
 			// prepare and output error
-			echo json_encode(array(
+			$return['html'] = false;
+			$return['data'] = array(
 					'result' => 'ERROR',
 					'message' => 'API call failed [invalid characters in request string]',
-				));
+				);
+		}
+		
+		// return or echo result
+		if($show === true) {
+			echo json_encode($return['data']);
+		} else {
+			return $return;
 		}
 	}
 	
