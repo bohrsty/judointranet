@@ -517,7 +517,7 @@ class FileView extends PageView {
 					)
 			);
 		// set paths to mimes.json and process.php
-		$form->assets_path(JIPATH.'/lib/zebra_form/', '/');
+		$form->assets_path(JIPATH.'/vendor/stefangabos/zebra_form/', '/');
 		
 		// checkbox public
 		$formIds['public'] = array('valueType' => 'int', 'type' => 'checkbox', 'default' => 1);
@@ -707,7 +707,7 @@ class FileView extends PageView {
 						)
 				);
 			// set paths to mimes.json and process.php
-			$form->assets_path(JIPATH.'/lib/zebra_form/', '/');
+			$form->assets_path(JIPATH.'/vendor/stefangabos/zebra_form/', '/');
 			
 			// checkbox public
 			$formIds['public'] = array('valueType' => 'int', 'type' => 'checkbox', 'default' => 1);

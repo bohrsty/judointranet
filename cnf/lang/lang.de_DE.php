@@ -563,7 +563,7 @@ $lang = array(
 	'HELP_MESSAGE_error' => '<p>Dieses Hilfe-Thema konnte nicht gefunden werden.</p>',
 	'HELP_MESSAGE_1' => '<p><b>JudoIntranet</b></p>
 						<p>Author: Nils Bohrs<br />
-						Version: r{$replace.version}<br />Lizenz: MIT</p>
+						Version: {$replace.version}<br />Lizenz: MIT</p>
 						<p>&nbsp;</p>
 						<p>Copyright &copy; 2011-{date(\'Y\')} Nils Bohrs</p>
 						<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this

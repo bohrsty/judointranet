@@ -2,7 +2,7 @@
     "name": "bohrsty/judointranet",
     "license": "MIT",
     "type": "project",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "autoload": {
         "psr-4": {
             "": "src/"
@@ -21,6 +21,12 @@
             "Tests\\": "tests/"
         }
     },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/pear/Services_JSON"
+        }
+    ],
     "require": {
         "php": "5.6.*",
         "symfony/symfony": "3.1.*",
@@ -31,7 +37,13 @@
         "symfony/monolog-bundle": "^2.8",
         "symfony/polyfill-apcu": "^1.0",
         "sensio/distribution-bundle": "^5.0",
-        "sensio/framework-extra-bundle": "^3.0.2"
+        "sensio/framework-extra-bundle": "^3.0.2",
+        "stefangabos/zebra_form": "2.9.*",
+        "phpoffice/phpexcel": "1.8.*",
+        "pear/services_json": "dev-trunk",
+        "spipu/html2pdf": "4.4.*",
+        "smarty/smarty": "3.1.*",
+        "setasign/fpdi-fpdf": "1.6.*"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
@@ -67,8 +79,10 @@
         	"css": "web/css",
         	"img": "web/img",
         	"templates": "web/templates",
-        	"lib/zebra_form/mimes.json": "web/mimes.json",
-        	"lib/zebra_form/process.php": "web/process.php"
+        	"web/mimes.json": "vendor/stefangabos/zebra_form/mimes.json",
+        	"vendor/stefangabos/zebra_form/process.php": "web/process.php",
+        	"vendor/stefangabos/zebra_form/public/css": "web/css/zebra_form",
+        	"vendor/stefangabos/zebra_form/public/javascript/zebra_form.js": "web/js/zebra_form.js"
         }
     }
 }

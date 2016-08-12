@@ -630,7 +630,7 @@ class Result extends Page {
 		
 		// get HTML2PDF-object
 		$pdf = new HTML2PDF('P', 'A4', 'de', true, 'UTF-8', array(0, 0, 0, 0));
-		
+		$pdf->setTestTdInOnePage(false);
 		// convert
 		$pdf->writeHTML($pdfOut['html'], false);
 		

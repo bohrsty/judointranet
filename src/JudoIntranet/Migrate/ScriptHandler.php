@@ -74,6 +74,9 @@ class ScriptHandler
 			));
 			
 			// create symlink
+			if(file_exists(sprintf('%s/%s', $rootPath, $targetRelativePath))) {
+				unlink(sprintf('%s/%s', $rootPath, $targetRelativePath));
+			}
 			$filesystem->symlink($sourceAbsolutePath, sprintf('%s/%s', $rootPath, $targetRelativePath));
 		}
 	}

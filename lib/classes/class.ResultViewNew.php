@@ -210,7 +210,7 @@ class ResultViewNew extends ResultView {
 					)
 			);
 		// set paths to mimes.json and process.php
-		$form->assets_path(JIPATH.'/lib/zebra_form/', '/');
+		$form->assets_path(JIPATH.'/vendor/stefangabos/zebra_form/', '/');
 		
 		// submit-button
 		$form->add(

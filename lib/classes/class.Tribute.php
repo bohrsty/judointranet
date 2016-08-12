@@ -559,6 +559,7 @@ class Tribute extends Page {
 		
 		// get HTML2PDF-object
 		$tempPdf = new HTML2PDF('P', 'A4', 'de', true, 'UTF-8', array(0, 0, 0, 0));
+		$tempPdf->setTestTdInOnePage(false);
 		$tempPdf->writeHTML($pdfOut, false);
 		
 		// output (D=download; F=save on filesystem; S=string)

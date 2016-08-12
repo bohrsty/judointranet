@@ -25,9 +25,6 @@
 // secure against direct execution
 if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index.php.");}
 
-// to explicitly use TCPDF include source manually
-require_once(JIPATH.'/lib/html2pdf/_tcpdf_5.0.002/tcpdf.php');
-
 
 /**
  * class Tribute implements the representation of a tribute object

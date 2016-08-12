@@ -3841,6 +3841,19 @@ function mysql_200() {
 			'returnVersion' => '2.0.0',
 		);
 }
+
+
+function mysql_210() {
+	
+	// just set version, the next database versions are done with doctrine migrations
+	
+	// prepare return
+	return array(
+			'returnValue' => true,
+			'returnMessage' => '',
+			'returnVersion' => '2.1.0',
+		);
+}
 	
 	
 	
