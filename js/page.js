@@ -206,7 +206,10 @@ function _l(string) {
  * @param int tid the id the of table the files are attached/detached
  * @param mixed updateList false if unused, callback function to update list of files
  */
-function handleFileAttachement(selector, table, tid, updateList=false) {
+function handleFileAttachement(selector, table, tid, updateList) {
+	
+	// check optional parameter
+	var updateList = typeof updateList !== 'undefined' ? updateList : false;
 	
 	$(selector).on("click", document, function() {
 		var div = $("<div>")
@@ -371,7 +374,11 @@ function handleFileAttachement(selector, table, tid, updateList=false) {
  * @param int tid the id the of table the files are attached
  * @param mixed counter false if not used, selector to update with count of files attached
  */
-function showAttachedFiles(selector, table, tid, counter=false) {
+function showAttachedFiles(selector, table, tid, counter) {
+	
+	// check optional parameter
+	var counter = typeof counter !== 'undefined' ? counter : false;
+	
 	var selectorObject = $("<div>").attr("id", selector.substring(1));
 	$.ajax({
 		url: "api/file/attach/" + table + "|" + tid,

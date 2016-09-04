@@ -27,6 +27,9 @@
 !/templates/tributes/index.php
 nbproject/
 
+# react
+mock*
+
 # symfony
 /app/config/parameters.yml
 /build/
@@ -51,3 +54,8 @@ nbproject/
 /web/templates
 /web/process.php
 /css/zebra_form
+
+# webpack/npm
+/node_modules/
+/web/assets/*
+!/web/assets/index.php

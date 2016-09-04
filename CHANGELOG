@@ -26,6 +26,10 @@ file that was distributed with this source code.
 [!!] fixed some bugs in various files that come up on manual frontend testing
      (i.e. version update HTML2PDF)
 --
+[++] added npm, webpack, react, react-router, babel and a few modules/loader
+[++] added responsive menu bar, menu, submenu generation and the index page
+[++] added translation via react-translate-maker
+--
 [cc] changed MYSQL_* constants to MYSQLI_* constants
 
 

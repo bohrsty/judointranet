@@ -1,0 +1,9 @@
+@CHARSET "UTF-8";
+
+.center {
+	text-align: center;
+}
+
+.center img {
+	margin: auto;
+}
