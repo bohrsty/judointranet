@@ -33,6 +33,9 @@ file that was distributed with this source code.
 [++] added react components for todo list view (without any api interaction)
 [cc] improved build process
 --
+[!!] fixed generation of club name in team result
+[!!] fixed sorting and display of december events in schedule
+--
 [cc] changed MYSQL_* constants to MYSQLI_* constants
 
 

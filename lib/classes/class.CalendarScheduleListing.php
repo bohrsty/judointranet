@@ -84,8 +84,10 @@ class CalendarScheduleListing extends Listing implements ListingInterface {
 		foreach($dates as $date) {
 			
 			// get month
-			$month = strftime('%B', $date['date']);
+			$month = strftime('%B%Y', $date['date']);
 			// format dates
+			$date['monthName'] = strftime('%B', $date['date']);
+			$date['year'] = date('Y', $date['date']);
 			$date['date'] = date('d.m.', $date['date']);
 			$date['end_date'] = (is_null($date['end_date']) ? null : date('d.m.', $date['end_date']));
 			

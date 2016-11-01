@@ -130,7 +130,7 @@ class Result extends Page {
 				$clubName = (isset($this->clubArray[$data['club_id']]) ? $this->clubArray[$data['club_id']]['name'] : '');
 				$this->resultStore['standings'][$data['agegroup']][] = array(
 						'place' => $data['place'],
-						'name' => (is_null($data['name']) ? $clubName : ''),
+						'name' => (is_null($data['name']) ? $clubName : $data['name']),
 						'club_id' => $data['club_id'],
 						'club_name' => $clubName,
 						'club_number' => (isset($this->clubArray[$data['club_id']]) ? $this->clubArray[$data['club_id']]['number'] : ''),
