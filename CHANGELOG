@@ -38,6 +38,8 @@ file that was distributed with this source code.
 --
 [cc] removed test title from index
 --
+[++] added config etc. for doctrine migrations
+--
 [cc] changed MYSQL_* constants to MYSQLI_* constants
 
 

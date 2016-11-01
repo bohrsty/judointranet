@@ -47,6 +47,7 @@ doctrine:
         user:     "%database_user%"
         password: "%database_password%"
         charset:  UTF8
+        schema_filter: ~^(orm_.*)~
         # if using pdo_sqlite as your database driver:
         #   1. add the path in parameters.yml
         #     e.g. database_path: "%kernel.root_dir%/data/data.db3"
@@ -58,6 +59,12 @@ doctrine:
         auto_generate_proxy_classes: "%kernel.debug%"
         naming_strategy: doctrine.orm.naming_strategy.underscore
         auto_mapping: true
+        
+doctrine_migrations:
+    dir_name: "%kernel.root_dir%/Migrations"
+    namespace: Application/Migrations
+    table_name: migration_versions
+    name: Application Migrations
 
 # Swiftmailer Configuration
 swiftmailer:
