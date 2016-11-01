@@ -36,6 +36,8 @@ file that was distributed with this source code.
 [!!] fixed generation of club name in team result
 [!!] fixed sorting and display of december events in schedule
 --
+[cc] removed test title from index
+--
 [cc] changed MYSQL_* constants to MYSQLI_* constants
 
 
