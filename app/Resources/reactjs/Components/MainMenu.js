@@ -57,7 +57,7 @@ export default class MainMenu extends Component {
 					<Nav pullRight>
 						{this.generateLocaleSelection(this.props.locales, this.props.handleLocaleChange)}
 						<LinkContainer to={{pathname: "/user"}}>
-							<NavItem title={this.t("MainMenu.user") + " " + this.props.user}><FontAwesome name="user" /></NavItem>
+							<NavItem title={this.t("MainMenu.user") + ": " + this.props.user}><FontAwesome name="user" /></NavItem>
 						</LinkContainer>
 						<LinkContainer to={{pathname: "/settings"}}>
 							<NavItem title={this.t("MainMenu.settings")}><FontAwesome name="cog" /></NavItem>

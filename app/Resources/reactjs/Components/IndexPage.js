@@ -12,17 +12,25 @@
 // import required modules
 import React, {Component} from 'react';
 import {Jumbotron, Image} from 'react-bootstrap';
+import {provideTranslations} from 'react-translate-maker';
 
 
 /**
  * Component for the index page of any route
  */
+@provideTranslations
 export default class IndexPage extends Component {
 	
+	/**
+	 * constructor
+	 */
 	constructor(props) {
 		
 		// parent constructor
 		super(props);
+		
+		// get translation method
+		this.t = this.props.t;
 	}
 	
 	
@@ -33,11 +41,11 @@ export default class IndexPage extends Component {
 		
 		switch(this.props.route.pageContent) {
 			
-			case "homePage":
+			case 'homePage':
 				return (
 					<Jumbotron className="center">
 						<h1>JudoIntranet</h1>
-						<Image src={require('../assets/ji.png')} responsive />
+						<Image src={require('../assets/ji.png')} className="vh50" responsive />
 					</Jumbotron>
 				);
 				break;

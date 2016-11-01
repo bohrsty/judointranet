@@ -15,17 +15,7 @@ module.exports = {
 		filename: "app.js"
 	},
 	plugins: [
-		new ExtractTextPlugin('app.css'),
-		new webpack.optimize.UglifyJsPlugin({
-			compress: {
-				warnings: false
-			}
-		}),
-		new webpack.DefinePlugin({
-			'process.env':{
-				'NODE_ENV': JSON.stringify('production')
-			}
-		})
+		new ExtractTextPlugin('app.css')
 	],
 	module: {
 		loaders: [

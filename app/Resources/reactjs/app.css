@@ -7,3 +7,41 @@
 .center img {
 	margin: auto;
 }
+
+.noMarginBottom {
+	margin-bottom: 0px;
+}
+
+.notSelectableText {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-ms-user-select: none;
+}
+
+.bg-error {
+	background-color: #f2dede;
+}
+
+.border-error {
+	border-color: #ebccd1;
+}
+
+.text-error {
+	color: #a94442;
+}
+
+p.noMargin {
+	margin: 0;
+}
+
+.vh50 {
+	height: calc(50vh) !important;
+}
+
+.modal-container {
+	position: relative;
+}
+.modal-container .modal, .modal-container .modal-backdrop {
+	position: absolute;
+}

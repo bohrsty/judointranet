@@ -30,6 +30,9 @@ file that was distributed with this source code.
 [++] added responsive menu bar, menu, submenu generation and the index page
 [++] added translation via react-translate-maker
 --
+[++] added react components for todo list view (without any api interaction)
+[cc] improved build process
+--
 [cc] changed MYSQL_* constants to MYSQLI_* constants
 
 

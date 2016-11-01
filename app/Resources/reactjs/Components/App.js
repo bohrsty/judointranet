@@ -12,13 +12,15 @@
 // import required modules
 import React, {Component} from 'react';
 import MainMenu from './MainMenu';
-import {provideTranslations, LocaleProvider} from 'react-translate-maker';
+import Translate, {LocaleProvider} from 'react-translate-maker';
+import moment from 'moment';
+import Notification from './Notification';
 
 
 /**
  * the main Component to layout the app
  */
-export default class App extends Component {
+class App extends Component {
 	
 	/**
 	 * constructor
@@ -28,23 +30,46 @@ export default class App extends Component {
 		// parent constructor
 		super(props);
 		
-		// get default locale
-		var {defaultLocale} = this.getLocaleData();
+		// prepare locale
+		this.locale = {};
+		// prepare menu
+		this.menu = {};
 		
 		// set initial state
 		this.state = {
-			locale: defaultLocale
+			locale: '',
+			alerts: []
 		}
 	}
 	
 	
 	/**
-	 * getNavItems()
-	 * retrieves the navigation items
+	 * updates given parts of the state
 	 * 
-	 * @return object object with the navigation data
+	 * @param state the state name to be updated
+	 * @param value the value for state
 	 */
-	getNavItems() { 
+	updateState(state, value) {
+		
+		var currentState = this.state;
+		
+		// check if state exists
+		if(this.state[state] != undefined) {
+			currentState[state] = value;
+			this.setState(currentState);
+		}
+	}
+	
+	
+	/**
+	 * componentWillMount()
+	 * executed directly before component will be mounted to DOM
+	 */
+	componentWillMount() {
+		
+		// get mock locale (to be replaced by AJAX call to api)
+		this.locale = require('../mockLocale');
+		this.updateState('locale', this.locale.defaultLocale);
 		
 		/*
 		 * mock menu (old and new), to be replaced with AJAX call to api
@@ -72,42 +97,53 @@ export default class App extends Component {
 				.
 			]
 		 */
-		return require("../mockMenu");
+		this.menu = require('../mockMenu');
 	}
 	
 	
 	/**
-	 * getLocaleData()
-	 * retrieves the locale data, the usable locales and the default locale
-	 * 
-	 * @return object {data, locales, defaultLocale} the locale data, the usable locales and the default locale
+	 * getChildContext()
+	 * register the context
 	 */
-	getLocaleData() {
-		return {
-			data: require("../mockLocale"),
-			locales: [{
-					label: 'localeName.de_DE',
-					value: 'de_DE'
-				},{
-					label: 'localeName.en_US',
-					value: 'en_US'
-				}],
-			defaultLocale: 'de_DE'
-		};
+	getChildContext() {
+		return {addNotification: this.addNotification.bind(this)};
+	}
+	
+	
+	/**
+	 * addNotification(params)
+	 * given to context to add notifications
+	 * 
+	 * @param object params the parameter object for the notification
+	 */
+	addNotification(params) {
+		
+		// get current alerts
+		var alerts = this.state.alerts;
+		
+		// add new alert
+		alerts.unshift({
+			id: (new Date()).getTime(),
+			type: params.type,
+			headline: params.headline,
+			message: params.message,
+			dismissTitle: params.dismissTitle
+		});
+		
+		// update state
+		this.updateState('alerts', alerts);
 	}
 	
 	
 	/**
 	 * handleLocaleChange(locale)
-	 * handle the locale change (set state)
+	 * eventhandler to handle the locale change
 	 * 
 	 * @param string locale the new locale to change to
 	 */
 	handleLocaleChange(locale) {
 		
-		this.setState({
-			locale: locale
-		});
+		this.UpdateState('locale', locale);
 	}
 	
 	
@@ -119,22 +155,33 @@ export default class App extends Component {
 		// set title
 		document.title = 'JudoIntranet';
 		
-		// get locale
-		var {data, locales} = this.getLocaleData();
-		
+		// set locale for date picker (moment)
+		moment.locale(this.state.locale);
+				
 		return (
-			<LocaleProvider adapter={data} locale={this.state.locale}>
+			<LocaleProvider adapter={this.locale.data} locale={this.state.locale}>
 				<div>
 					{/* mocked loggedin user, TODO: get from session/cookie */}
 					<MainMenu
-						navitems={this.getNavItems()}
+						navitems={this.menu}
 						user="Administrator"
-						locales={locales}
+						locales={this.locale.locales}
 						handleLocaleChange={this.handleLocaleChange.bind(this)}
 					/>
+					<Notification alerts={this.state.alerts}/>
 					{this.props.children}
 				</div>
 			</LocaleProvider>
 		);
 	}
 }
+
+
+// set child context types
+App.childContextTypes = {
+	addNotification: React.PropTypes.func
+};
+
+
+//export
+export default App;

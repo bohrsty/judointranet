@@ -57,5 +57,3 @@ mock*
 
 # webpack/npm
 /node_modules/
-/web/assets/*
-!/web/assets/index.php
