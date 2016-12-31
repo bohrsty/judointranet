@@ -122,7 +122,7 @@ class Inventory extends Object {
 		$result = $db->query($sql);
 		
 		// fetch result
-		list($inventory_no,$name,$serial_no,$preset_id,$valid) = $result->fetch_array(MYSQL_NUM);
+		list($inventory_no,$name,$serial_no,$preset_id,$valid) = $result->fetch_array(MYSQLI_NUM);
 		
 		// set variables to object
 		$this->set_id($id);
@@ -246,7 +246,7 @@ class Inventory extends Object {
 			$element = $result->num_rows -1 -$i;
 			$result->data_seek($element);
 			
-			$fetch = $result->fetch_array(MYSQL_ASSOC);
+			$fetch = $result->fetch_array(MYSQLI_ASSOC);
 			$movement[] = $fetch[$field];
 		}
 		
@@ -288,7 +288,7 @@ class Inventory extends Object {
 		$result = $db->query($sql);
 		
 		// fetch result
-		list($value) = $result->fetch_array(MYSQL_NUM);
+		list($value) = $result->fetch_array(MYSQLI_NUM);
 		
 		// return
 		if($value == 1) {
@@ -328,7 +328,7 @@ class Inventory extends Object {
 		
 		// fetch result
 		$return = array();
-		while(list($field_id,$value) = $result->fetch_array(MYSQL_NUM)) {
+		while(list($field_id,$value) = $result->fetch_array(MYSQLI_NUM)) {
 			$return['inventory-'.$field_id] = $value;
 		}
 		

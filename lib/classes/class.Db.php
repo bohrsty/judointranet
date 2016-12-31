@@ -179,7 +179,7 @@ class Db {
 		$result = $db->query($sql);
 		
 		// fetch result, close db and return
-		$return = $result->fetch_array(MYSQL_NUM);
+		$return = $result->fetch_array(MYSQLI_NUM);
 		$db->close();
 		return $return[0];
 	}
@@ -300,7 +300,7 @@ class Db {
 		
 		// fetch result
 		$value = null;
-		list($value) = $result->fetch_array(MYSQL_NUM);
+		list($value) = $result->fetch_array(MYSQLI_NUM);
 		
 		// close and return
 		$result->close();
@@ -313,11 +313,11 @@ class Db {
 	 * values as array
 	 * 
 	 * @param string $sql the statement with placeholders
-	 * @param int $arrayType indicates the array type (MYSQL_ASSOC, MYSQL_NUM or MYSQL_BOTH)
+	 * @param int $arrayType indicates the array type (MYSQLI_ASSOC, MYSQLI_NUM or MYSQL_BOTH)
 	 * @param array $args the values of the placeholders for the statement
 	 * @return array all values as array the statement produces 
 	 */
-	public static function arrayValue($sql, $arrayType=MYSQL_NUM, $args=array()) {
+	public static function arrayValue($sql, $arrayType=MYSQLI_NUM, $args=array()) {
 		
 		// get result
 		$result = self::resultValue($sql, $args);

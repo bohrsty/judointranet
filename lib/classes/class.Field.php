@@ -182,7 +182,7 @@ class Field extends Object {
 		
 		// get data
 		if($result) {
-			list($name, $type, $required, $category, $config) = $result->fetch_array(MYSQL_NUM);
+			list($name, $type, $required, $category, $config) = $result->fetch_array(MYSQLI_NUM);
 		} else {
 			$n = null;
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
@@ -202,7 +202,7 @@ class Field extends Object {
 		$lastModified = 0;
 		if($result) {
 			if($result->num_rows == 1) {
-				list($lastModified) = $result->fetch_array(MYSQL_NUM);
+				list($lastModified) = $result->fetch_array(MYSQLI_NUM);
 			}
 		} else {
 			$n = null;
@@ -479,7 +479,7 @@ class Field extends Object {
 			// check if value is set
 			if($result->num_rows != 0) {
 				// fetch result
-				list($value,$defaults,$lastModified,$modifiedBy) = $result->fetch_array(MYSQL_NUM);
+				list($value,$defaults,$lastModified,$modifiedBy) = $result->fetch_array(MYSQLI_NUM);
 			}
 		} else {
 			$n = null;
@@ -533,7 +533,7 @@ class Field extends Object {
 					
 					// get last-used-value
 					$result = $db->query("SELECT value FROM value WHERE id=$vid");
-					list($lvalue) = $result->fetch_array(MYSQL_NUM);
+					list($lvalue) = $result->fetch_array(MYSQLI_NUM);
 					$checked_value = $lvalue;
 				}
 			} else {
@@ -788,7 +788,7 @@ class Field extends Object {
 					AND `d`.`valid`=1		
 				ORDER BY `d`.`name` ASC
 			',
-				MYSQL_ASSOC,
+				MYSQLI_ASSOC,
 				array($this->get_category()));
 		if($defaultsResult === false) {
 			$n = null;
@@ -818,7 +818,7 @@ class Field extends Object {
 					AND `f`.`id`=`v`.`field_id`
 				ORDER BY `v`.`id` DESC
 			',
-				MYSQL_ASSOC,
+				MYSQLI_ASSOC,
 				array(
 					$this->get_table(),
 					$this->get_type(),
@@ -887,7 +887,7 @@ class Field extends Object {
 		
 		// check result
 		if($result) {
-			list($value) = $result->fetch_array(MYSQL_NUM);
+			list($value) = $result->fetch_array(MYSQLI_NUM);
 		} else {
 			$n = null;
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
@@ -927,7 +927,7 @@ class Field extends Object {
 		
 		// fetch result
 		if($result) {
-			while(list($id,$name) = $result->fetch_array(MYSQL_NUM)) {
+			while(list($id,$name) = $result->fetch_array(MYSQLI_NUM)) {
 				$options[$id] = $name;
 			}
 		} else {
@@ -976,7 +976,7 @@ class Field extends Object {
 				// check result
 				if($result) {
 					// fetch result
-					$field_values[] = $result->fetch_array(MYSQL_ASSOC);
+					$field_values[] = $result->fetch_array(MYSQLI_ASSOC);
 				} else {
 					$n = null;
 					throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
@@ -991,7 +991,7 @@ class Field extends Object {
 			// check result
 			if($result) {
 				// fetch result
-				$field_values = $result->fetch_array(MYSQL_ASSOC);
+				$field_values = $result->fetch_array(MYSQLI_ASSOC);
 			} else {
 					$n = null;
 					throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
@@ -1031,7 +1031,7 @@ class Field extends Object {
 		
 		// fetch result
 		if($result) {
-			while(list($id,$secondId,$name) = $result->fetch_array(MYSQL_NUM)) {
+			while(list($id,$secondId,$name) = $result->fetch_array(MYSQLI_NUM)) {
 				
 				// set first options
 				$optionsFirst[$id] = $name;
@@ -1042,7 +1042,7 @@ class Field extends Object {
 				
 				// fetch result
 				if($resultSecond) {
-					while(list($id2,$name2) = $resultSecond->fetch_array(MYSQL_NUM)) {
+					while(list($id2,$name2) = $resultSecond->fetch_array(MYSQLI_NUM)) {
 						$optionsSecond[$id][$id2] = $name2;				
 					}
 				} else {
@@ -1088,7 +1088,7 @@ class Field extends Object {
 		// check result
 		if($result) {
 			// fetch result
-			$field_values = $result->fetch_array(MYSQL_ASSOC);
+			$field_values = $result->fetch_array(MYSQLI_ASSOC);
 		} else {
 			$n = null;
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');

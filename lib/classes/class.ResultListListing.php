@@ -149,7 +149,7 @@ class ResultListListing extends ResultListing implements ListingInterface {
 			';
 		}
 		$result = Db::ArrayValue($sql,
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array(
 				implode(',', $resultIds),
 				$this->get('cid'),

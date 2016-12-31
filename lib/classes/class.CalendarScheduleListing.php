@@ -142,7 +142,7 @@ class CalendarScheduleListing extends Listing implements ListingInterface {
 				WHERE `c`.`valid`=1
 					AND `c`.`id` IN (#?)
 			',
-			MYSQL_ASSOC,
+			MYSQLI_ASSOC,
 			array($mysqlData,));
 		if($result === false) {
 			$n = null;
@@ -176,7 +176,7 @@ class CalendarScheduleListing extends Listing implements ListingInterface {
 						OR \'#?\' BETWEEN `h`.`date` AND `h`.`end_date`
 						OR \'#?\' BETWEEN `h`.`date` AND `h`.`end_date`)
 			',
-			MYSQL_ASSOC,
+			MYSQLI_ASSOC,
 			array(	$start,
 					$end,
 					$start,

@@ -150,7 +150,7 @@ class ProtocolDecisionsListing extends Listing implements ListingInterface {
 			}
 	
 			$result = Db::ArrayValue($sql,
-			MYSQL_ASSOC,
+			MYSQLI_ASSOC,
 			array($mysqlData,));
 			if($result === false) {
 				$n = null;
@@ -209,7 +209,7 @@ class ProtocolDecisionsListing extends Listing implements ListingInterface {
 					WHERE `id` IN (#?)
 						AND `valid`=TRUE
 				',
-				MYSQL_ASSOC,
+				MYSQLI_ASSOC,
 				array($mysqlData,)
 			);
 			if($rows === false) {

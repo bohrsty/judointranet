@@ -90,7 +90,7 @@ class Filter extends Object {
 		
 		// get data
 		if($result) {
-			list($name) = $result->fetch_array(MYSQL_NUM);
+			list($name) = $result->fetch_array(MYSQLI_NUM);
 		} else {
 			$n = null;
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
@@ -127,7 +127,7 @@ class Filter extends Object {
 		// get data
 		$allFilter = array();
 		if($result) {
-			while(list($id) = $result->fetch_array(MYSQL_NUM)) {
+			while(list($id) = $result->fetch_array(MYSQLI_NUM)) {
 				
 				$filter = new Filter($id);
 				// check $value
@@ -172,7 +172,7 @@ class Filter extends Object {
 		// get data
 		$filter = array();
 		if($result) {
-			while(list($id) = $result->fetch_array(MYSQL_NUM)) {
+			while(list($id) = $result->fetch_array(MYSQLI_NUM)) {
 				$filter[$id] = new Filter($id);
 			}
 		} else {
@@ -226,7 +226,7 @@ class Filter extends Object {
 			// get filtered items
 			if($result) {
 			
-				while(list($id) = $result->fetch_array(MYSQL_NUM)) {
+				while(list($id) = $result->fetch_array(MYSQLI_NUM)) {
 					$filteredItems[] = $id;
 				}
 			} else {
@@ -389,7 +389,7 @@ class Filter extends Object {
 						AND `item_id` IN (#?)
 						AND `filter_id` IN (#?)
 				',
-				MYSQL_ASSOC,
+				MYSQLI_ASSOC,
 				array(
 						$table,
 						$itemIds,

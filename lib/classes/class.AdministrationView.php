@@ -180,7 +180,7 @@ class AdministrationView extends PageView {
 		$result = Db::ArrayValue('
 			SHOW TABLES
 		',
-		MYSQL_NUM);
+		MYSQLI_NUM);
 		if($result === false) {
 			$n = null;
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
@@ -1221,7 +1221,7 @@ class AdministrationView extends PageView {
 					WHERE `parent`=0
 						AND `valid`=1
 					';
-			$naviEntries = Db::arrayValue($sql, MYSQL_ASSOC);
+			$naviEntries = Db::arrayValue($sql, MYSQLI_ASSOC);
 			
 			if($naviEntries === false) {
 				throw new MysqlErrorException($this, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');

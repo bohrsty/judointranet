@@ -195,7 +195,7 @@ class File extends Page {
 		// get data
 		$id = false;
 		if($result) {
-			list($id) = $result->fetch_array(MYSQL_NUM);
+			list($id) = $result->fetch_array(MYSQLI_NUM);
 		} else {
 			$n = null;
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
@@ -227,7 +227,7 @@ class File extends Page {
 		// get data
 		$name = $fileType = $filename = $content = $uploaded = $valid = null;
 		if($result) {
-			list($name, $fileType, $filename, $content, $cached, $valid) = $result->fetch_array(MYSQL_NUM);
+			list($name, $fileType, $filename, $content, $cached, $valid) = $result->fetch_array(MYSQLI_NUM);
 		} else {
 			$n = null;
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
@@ -351,9 +351,9 @@ class File extends Page {
 			
 			// check $field
 			if($field == 'name') {
-				list($mimetype) = $result->fetch_array(MYSQL_NUM);
+				list($mimetype) = $result->fetch_array(MYSQLI_NUM);
 			} else {
-				list($value) = $result->fetch_array(MYSQL_NUM);
+				list($value) = $result->fetch_array(MYSQLI_NUM);
 			}
 		} else {
 			$n = null;
@@ -420,7 +420,7 @@ class File extends Page {
 		// get data
 		$extensions = '';
 		if($result) {
-			while(list($ext) = $result->fetch_array(MYSQL_NUM)) {
+			while(list($ext) = $result->fetch_array(MYSQLI_NUM)) {
 				$extensions .= $ext.',';
 			}
 		} else {
@@ -458,7 +458,7 @@ class File extends Page {
 		$id = false;
 		if($result) {
 			if($result->num_rows == 1) {
-				list($id) = $result->fetch_array(MYSQL_NUM);
+				list($id) = $result->fetch_array(MYSQLI_NUM);
 			}
 		} else {
 			$n = null;
@@ -494,7 +494,7 @@ class File extends Page {
 		$lastModified = null;
 		if($result) {
 			if($result->num_rows == 1) {
-				list($lastModified) = $result->fetch_array(MYSQL_NUM);
+				list($lastModified) = $result->fetch_array(MYSQLI_NUM);
 			}
 		} else {
 			$n = null;
@@ -561,7 +561,7 @@ class File extends Page {
 			WHERE `table_name`=\'#?\'
 				AND `table_id`=#?
 		',
-				MYSQL_NUM,
+				MYSQLI_NUM,
 				array($table, $tableId,));
 		if($result === false) {
 			$n = null;

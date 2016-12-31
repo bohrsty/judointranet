@@ -131,7 +131,7 @@ class Group extends Object {
 		
 		// get data
 		if($result) {
-			list($name, $parent, $valid) = $result->fetch_array(MYSQL_NUM);
+			list($name, $parent, $valid) = $result->fetch_array(MYSQLI_NUM);
 		} else {
 			$n = null;
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
@@ -152,7 +152,7 @@ class Group extends Object {
 		$subGroups = array();
 		if($result) {
 			
-			while(list($subId) = $result->fetch_array(MYSQL_NUM)) {
+			while(list($subId) = $result->fetch_array(MYSQLI_NUM)) {
 				$subGroups[] = new Group($subId);
 			}
 		} else {
@@ -227,7 +227,7 @@ class Group extends Object {
 		
 		// get data
 		if($result) {
-			list($id) = $result->fetch_array(MYSQL_NUM);
+			list($id) = $result->fetch_array(MYSQLI_NUM);
 		} else {
 			$n = null;
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
@@ -291,7 +291,7 @@ class Group extends Object {
 		
 		// get data
 		if($result) {
-			list($mode) = $result->fetch_array(MYSQL_NUM);
+			list($mode) = $result->fetch_array(MYSQLI_NUM);
 		} else {
 			$n = null;
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');

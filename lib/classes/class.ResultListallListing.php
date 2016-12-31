@@ -154,7 +154,7 @@ class ResultListallListing extends ResultListing implements ListingInterface {
 			';
 		}
 		$result = Db::ArrayValue($sql,
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array($mysqlData,));
 		if($result === false) {
 			$n = null;

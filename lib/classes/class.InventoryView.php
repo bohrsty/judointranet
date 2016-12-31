@@ -859,7 +859,7 @@ class InventoryView extends PageView {
 		$result = $db->query($sql);
 		
 		// fetch result
-		list($inventory_id) = $result->fetch_array(MYSQL_NUM);
+		list($inventory_id) = $result->fetch_array(MYSQLI_NUM);
 		
 		// get invetory-object
 		$inventory = new Inventory($inventory_id);
@@ -888,7 +888,7 @@ class InventoryView extends PageView {
 			// fetch result
 			$i = 0;
 			$movements_data = array();
-			while(list($m_id,$m_user_id,$m_action,$m_date_time) = $result->fetch_array(MYSQL_NUM)) {
+			while(list($m_id,$m_user_id,$m_action,$m_date_time) = $result->fetch_array(MYSQLI_NUM)) {
 				$movements_data[$i]['id'] = $m_id;
 				$movements_data[$i]['user_id'] = $m_user_id;
 				$movements_data[$i]['action'] = $m_action;
@@ -1084,7 +1084,7 @@ class InventoryView extends PageView {
 		$result = $db->query($sql);
 		
 		$movements = array();
-		while(list($name,$movement_id,$date_time) = $result->fetch_array(MYSQL_NUM)) {
+		while(list($name,$movement_id,$date_time) = $result->fetch_array(MYSQLI_NUM)) {
 			
 			// smarty
 			$movements[] = array(

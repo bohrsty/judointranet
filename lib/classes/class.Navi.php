@@ -143,7 +143,7 @@ class Navi extends PageView {
 		
 		// get data
 		if($result) {
-			list($name, $parent, $fileParam, $position, $show, $valid, $requiredPermission) = $result->fetch_array(MYSQL_NUM);
+			list($name, $parent, $fileParam, $position, $show, $valid, $requiredPermission) = $result->fetch_array(MYSQLI_NUM);
 		} else {
 			$n = null;
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
@@ -164,7 +164,7 @@ class Navi extends PageView {
 		$subItems = array();
 		if($result) {
 			
-			while(list($subId) = $result->fetch_array(MYSQL_NUM)) {
+			while(list($subId) = $result->fetch_array(MYSQLI_NUM)) {
 				$subItems[] = new Navi($subId);
 			}
 		} else {
@@ -385,7 +385,7 @@ class Navi extends PageView {
 		
 		// get data
 		if($result) {
-			list($id) = $result->fetch_array(MYSQL_NUM);
+			list($id) = $result->fetch_array(MYSQLI_NUM);
 		} else {
 			$n = null;
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');

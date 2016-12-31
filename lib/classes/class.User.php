@@ -305,7 +305,7 @@ class User extends Object {
 		$user = array();
 		if($result) {
 			if($result->num_rows > 0) {
-				$user = $result->fetch_array(MYSQL_ASSOC);
+				$user = $result->fetch_array(MYSQLI_ASSOC);
 			}
 		} else {
 			$n = null;
@@ -368,7 +368,7 @@ class User extends Object {
 		
 		// check result
 		if($result) {
-			$db_result = $result->fetch_array(MYSQL_ASSOC);
+			$db_result = $result->fetch_array(MYSQLI_ASSOC);
 		} else {
 			$n = null;
 			throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
@@ -423,7 +423,7 @@ class User extends Object {
 		$result = $db->query($sql);
 		
 		// fetch result	
-		while(list($g_id,$name,$sortable) = $result->fetch_array(MYSQL_NUM)) {
+		while(list($g_id,$name,$sortable) = $result->fetch_array(MYSQLI_NUM)) {
 			
 			// check if sortable
 			if($param == 'sort') {
@@ -499,7 +499,7 @@ class User extends Object {
 		$result = $db->query($sql);
 		
 		//fetch result
-		while(list($username) = $result->fetch_array(MYSQL_NUM)) {
+		while(list($username) = $result->fetch_array(MYSQLI_NUM)) {
 			
 			// safe object in array
 			$user = new User(false);
@@ -561,7 +561,7 @@ class User extends Object {
 		// get data
 		$groups = array();
 		if($result) {
-			while(list($id) = $result->fetch_array(MYSQL_NUM)) {
+			while(list($id) = $result->fetch_array(MYSQLI_NUM)) {
 				$groups[] = new Group($id);
 			}
 		} else {
@@ -672,7 +672,7 @@ class User extends Object {
 			$sql = 'SELECT t.id
 				FROM `'.$itemTable.'` AS t'.$sqlDate;
 			
-			$adminResult = Db::arrayValue($sql, MYSQL_ASSOC);
+			$adminResult = Db::arrayValue($sql, MYSQLI_ASSOC);
 			
 			// get data
 			if(is_array($adminResult)) {
@@ -704,7 +704,7 @@ class User extends Object {
 					';
 				$cachedCalendarResult = Db::arrayValue(
 					$sql,
-					MYSQL_ASSOC,
+					MYSQLI_ASSOC,
 					array(
 							$this->get_id(),
 							$groupIds,
@@ -730,7 +730,7 @@ class User extends Object {
 					';
 				$cachedProtocolResult = Db::arrayValue(
 					$sql,
-					MYSQL_ASSOC,
+					MYSQLI_ASSOC,
 					array(
 							$this->get_id(),
 							$groupIds,
@@ -771,7 +771,7 @@ class User extends Object {
 					';
 				$resultResult = Db::arrayValue(
 					$sql,
-					MYSQL_ASSOC,
+					MYSQLI_ASSOC,
 					array(
 							$this->get_id(),
 							$groupIds,
@@ -800,7 +800,7 @@ class User extends Object {
 					'.$sqlMode.$sqlDate;
 			$itemResult = Db::arrayValue(
 				$sql,
-				MYSQL_ASSOC,
+				MYSQLI_ASSOC,
 				array(
 						$itemTable,
 						$itemTable,

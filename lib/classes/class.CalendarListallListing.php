@@ -263,7 +263,7 @@ class CalendarListallListing extends CalendarListing implements ListingInterface
 		}
 
 		$result = Db::ArrayValue($sql,
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array($mysqlData,));
 		if($result === false) {
 			$n = null;

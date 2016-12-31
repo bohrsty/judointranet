@@ -250,7 +250,7 @@ class Protocol extends Page {
 		$result = $db->query($sql);
 		
 		// fetch result
-		list($date,$typeId,$typeName,$location,$member,$protocol,$preset_id,$valid,$owner,$correctable,$recorder,$lastModified) = $result->fetch_array(MYSQL_NUM);
+		list($date,$typeId,$typeName,$location,$member,$protocol,$preset_id,$valid,$owner,$correctable,$recorder,$lastModified) = $result->fetch_array(MYSQLI_NUM);
 		
 		// set variables to object
 		$this->set_id($id);
@@ -332,7 +332,7 @@ class Protocol extends Page {
 		
 		// fill array
 		$return = array();
-		while($row = $result->fetch_array(MYSQL_ASSOC)) {
+		while($row = $result->fetch_array(MYSQLI_ASSOC)) {
 			$return[$row['id']] = $row['name'];
 		}
 		

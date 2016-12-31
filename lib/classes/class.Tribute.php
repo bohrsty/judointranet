@@ -183,7 +183,7 @@ class Tribute extends Page {
 			FROM `tribute`
 			WHERE `id`=#?	
 		',
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array($id,));
 		if($result === false) {
 			$n = null;
@@ -358,7 +358,7 @@ class Tribute extends Page {
 			WHERE `valid`=TRUE
 			ORDER BY `year`
 		',
-		MYSQL_NUM,
+		MYSQLI_NUM,
 		array());
 		if($result === false) {
 			$n = null;
@@ -408,7 +408,7 @@ class Tribute extends Page {
 		}
 		
 		$result = Db::ArrayValue($sql,
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array());
 		if($result === false) {
 			$n = null;
@@ -447,7 +447,7 @@ class Tribute extends Page {
 				'.$sqlAnd.'
 			ORDER BY `last_modified`, `history_type_id`
 		',
-				MYSQL_ASSOC,
+				MYSQLI_ASSOC,
 				array($id,));
 		if($result === false) {
 			$n = null;
@@ -504,7 +504,7 @@ class Tribute extends Page {
 				'.$sqlAnd.'
 			ORDER BY `last_modified`
 		',
-				MYSQL_ASSOC,
+				MYSQLI_ASSOC,
 				array($id,));
 		if($result === false) {
 			$n = null;
@@ -645,7 +645,7 @@ class Tribute extends Page {
 				FROM `testimonials`
 				WHERE `id`=#?
 			',
-				MYSQL_ASSOC,
+				MYSQLI_ASSOC,
 				array($sqlId,));
 		if($result === false) {
 			$n = null;
@@ -672,7 +672,7 @@ class Tribute extends Page {
 				WHERE `valid`=1
 				ORDER BY `name`
 			',
-				MYSQL_ASSOC,
+				MYSQLI_ASSOC,
 				array());
 		if($result === false) {
 			$n = null;
@@ -710,7 +710,7 @@ class Tribute extends Page {
 				FROM `tribute_state`
 				WHERE `id`=#?
 			',
-				MYSQL_ASSOC,
+				MYSQLI_ASSOC,
 				array($sqlId,));
 		if($result === false) {
 			$n = null;
@@ -737,7 +737,7 @@ class Tribute extends Page {
 			JOIN `tribute` AS `t` ON `c`.`id`=`t`.`club_id`
 			ORDER BY `c`.`name`
 		',
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array());
 		if($result === false) {
 			throw new MysqlErrorException($this, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
@@ -786,7 +786,7 @@ class Tribute extends Page {
 		}
 		
 		$result = Db::ArrayValue($sql,
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array());
 		if($result === false) {
 			$n = null;

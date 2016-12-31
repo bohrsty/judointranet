@@ -241,7 +241,7 @@ function checkDbVersion() {
 	}
 	
 	// fetch result, close db and return
-	$return = $result->fetch_array(MYSQL_NUM);
+	$return = $result->fetch_array(MYSQLI_NUM);
 	$db->close();
 	
 	// set version number globally

@@ -147,7 +147,7 @@ class Preset extends Object {
 		$result = $db->query($sql);
 		
 		// fetch result
-		list($name,$desc,$path,$filename, $useDraft) = $result->fetch_array(MYSQL_NUM);
+		list($name,$desc,$path,$filename, $useDraft) = $result->fetch_array(MYSQLI_NUM);
 		
 		// set variables to object
 		$this->set_id($id);
@@ -193,7 +193,7 @@ class Preset extends Object {
 		$result = $db->query($sql);
 		
 		// fetch result
-		while(list($field_id) = $result->fetch_array(MYSQL_NUM)) {
+		while(list($field_id) = $result->fetch_array(MYSQLI_NUM)) {
 			
 			$tempId = $this->get_id();
 			$tempView = $this->getView();
@@ -262,7 +262,7 @@ class Preset extends Object {
 		
 		// fetch result
 		$presets = array();
-		while(list($id,$name) = $result->fetch_array(MYSQL_NUM)) {
+		while(list($id,$name) = $result->fetch_array(MYSQLI_NUM)) {
 			$presets[$id] = $name;
 		}
 		
@@ -297,7 +297,7 @@ class Preset extends Object {
 		// fetch result
 		$presets = array();
 		if($result) {
-			while(list($id, $path) = $result->fetch_array(MYSQL_NUM)) {
+			while(list($id, $path) = $result->fetch_array(MYSQLI_NUM)) {
 				$presets[$id] = 'templates/protocols/tmce_'.$path.'.css';
 			}
 		} else {
@@ -435,7 +435,7 @@ class Preset extends Object {
 							$sql = substr($sql, 0, $wherePos -1);
 						}
 						// execute statement
-						$result = DB::arrayValue($sql, MYSQL_ASSOC);
+						$result = DB::arrayValue($sql, MYSQLI_ASSOC);
 						if(!$result) {
 							$n = null;
 							throw new MysqlErrorException($n, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');

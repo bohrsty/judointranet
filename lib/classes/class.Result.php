@@ -283,7 +283,7 @@ class Result extends Page {
 			FROM `result`
 			WHERE `id`=#?	
 		',
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array($id,));
 		if($result === false) {
 			$n = null;
@@ -304,7 +304,7 @@ class Result extends Page {
 			FROM `standings`
 			WHERE `result_id`=#?	
 		',
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array($id,));
 		if($standings === false) {
 			$n = null;
@@ -682,7 +682,7 @@ class Result extends Page {
 			FROM `result`
 			WHERE `calendar_id`=#?	
 		',
-		MYSQL_NUM,
+		MYSQLI_NUM,
 		array($cid,));
 		if($result === false) {
 			$n = null;

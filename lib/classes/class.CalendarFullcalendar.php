@@ -87,7 +87,7 @@ class CalendarFullcalendar extends Object {
 				AND `c`.`valid`=TRUE
 		';
 		$sqlResult = Db::ArrayValue($sql,
-			MYSQL_ASSOC,
+			MYSQLI_ASSOC,
 			array($mysqlData,));
 		if($sqlResult === false) {
 			$n = null;
@@ -177,7 +177,7 @@ class CalendarFullcalendar extends Object {
 		';
 		
 		$sqlResult = Db::ArrayValue($sql,
-				MYSQL_ASSOC,
+				MYSQLI_ASSOC,
 				array($start,
 						$end,
 						$start,

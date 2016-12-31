@@ -123,7 +123,7 @@ class AdministrationUsertableFieldListing extends Listing implements ListingInte
 			';
 		}
 		$result = Db::ArrayValue($sql,
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array(
 				$select,
 				$this->get('table'),
@@ -256,7 +256,7 @@ class AdministrationUsertableFieldListing extends Listing implements ListingInte
 				FROM `#?`
 				WHERE `id`=#?
 			',
-			MYSQL_ASSOC,
+			MYSQLI_ASSOC,
 			array(
 					$select,
 					$this->get('table'),

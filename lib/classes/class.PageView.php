@@ -496,7 +496,7 @@ class PageView extends Object {
 		$result = $db->query($sql);
 		
 		// fetch rows
-		list($rows) = $result->fetch_array(MYSQL_NUM);
+		list($rows) = $result->fetch_array(MYSQLI_NUM);
 		
 		// get total pages
 		$pagesize = $this->getGc()->get_config('pagesize');
@@ -572,7 +572,7 @@ class PageView extends Object {
 		$naviItems = array();
 		if($result) {
 			
-			while(list($naviId) = $result->fetch_array(MYSQL_NUM)) {
+			while(list($naviId) = $result->fetch_array(MYSQLI_NUM)) {
 				
 				// get navi object
 				$tempNavi = new Navi($naviId);

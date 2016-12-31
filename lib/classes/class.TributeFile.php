@@ -165,7 +165,7 @@ class TributeFile extends Object {
 			FROM `tribute_file`
 			WHERE `id`=#?
 		',
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array($id,));
 		if($result === false) {
 			$n = null;
@@ -324,7 +324,7 @@ class TributeFile extends Object {
 				FROM `tribute_file_type`
 				WHERE `id`=#?
 			',
-				MYSQL_ASSOC,
+				MYSQLI_ASSOC,
 				array($sqlId,));
 		if($result === false) {
 			$n = null;
@@ -350,7 +350,7 @@ class TributeFile extends Object {
 				FROM `tribute_file_type`
 				WHERE `valid`=TRUE
 			',
-				MYSQL_ASSOC,
+				MYSQLI_ASSOC,
 				array());
 		if($result === false) {
 			$n = null;

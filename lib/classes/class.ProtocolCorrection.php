@@ -122,7 +122,7 @@ class ProtocolCorrection extends Object {
 		$result = $db->query($sql);
 		
 		// fetch result
-		list($protocol,$modified,$finished) = $result->fetch_array(MYSQL_NUM);
+		list($protocol,$modified,$finished) = $result->fetch_array(MYSQLI_NUM);
 		
 		// set variables to object
 		$this->set_pid($id);
@@ -297,7 +297,7 @@ class ProtocolCorrection extends Object {
 		
 		// get result
 		$corrections = array();
-		while($correction = $result->fetch_array(MYSQL_ASSOC)) {
+		while($correction = $result->fetch_array(MYSQLI_ASSOC)) {
 			$corrections[] = $correction;
 		} 
 		

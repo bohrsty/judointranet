@@ -132,7 +132,7 @@ class Holiday extends Page {
 			WHERE `h`.`name`=\'#?\'
 				AND `h`.`year`=\'#?\'
 		',
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array($name, $year,));
 		if($result === false) {
 			throw new MysqlErrorException($this, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
@@ -361,7 +361,7 @@ class Holiday extends Page {
 			WHERE `valid`=1
 				AND `year`=\'#?\'
 		',
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array($year,));
 		if($result === false) {
 			$n = null;

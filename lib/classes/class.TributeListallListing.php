@@ -210,7 +210,7 @@ class TributeListallListing extends Listing implements ListingInterface {
 		}
 
 		$result = Db::ArrayValue($sql,
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array(	$mysqlData,));
 		if($result === false) {
 			$n = null;
@@ -409,7 +409,7 @@ class TributeListallListing extends Listing implements ListingInterface {
 		';
 		
 		$result = Db::ArrayValue($sql,
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array(	$query,
 				$query,
 				$mysqlData,
@@ -458,7 +458,7 @@ class TributeListallListing extends Listing implements ListingInterface {
 		$printDate = $_SESSION['printTributeList']['printDate'];
 		
 		$result = Db::ArrayValue($sql,
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array($mysqlData,));
 		if($result === false) {
 			$n = null;

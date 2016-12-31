@@ -298,7 +298,7 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 			' . $validSql . '
 			ORDER BY `name`
 		',
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array());
 		if($result === false) {
 			throw new MysqlErrorException($this, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');

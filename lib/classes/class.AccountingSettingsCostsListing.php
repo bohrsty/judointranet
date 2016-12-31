@@ -140,7 +140,7 @@ class AccountingSettingsCostsListing extends Listing implements ListingInterface
 			';
 		}
 		$result = Db::ArrayValue($sql,
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array());
 		if($result === false) {
 			$n = null;
@@ -224,7 +224,7 @@ class AccountingSettingsCostsListing extends Listing implements ListingInterface
 				FROM `accounting_costs`
 				WHERE `id`=#?
 			',
-			MYSQL_ASSOC,
+			MYSQLI_ASSOC,
 			array($id,)
 		);
 		if($singleRow === false) {

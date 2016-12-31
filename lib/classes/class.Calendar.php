@@ -245,7 +245,7 @@ class Calendar extends Page {
 			FROM `calendar` AS `c`
 			WHERE `c`.`id`=#?	
 		',
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array($id,));
 		if($result === false) {
 			throw new MysqlErrorException($this, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
@@ -922,7 +922,7 @@ class Calendar extends Page {
 			WHERE `table`=\'calendar\'
 				AND `table_id`=#?
 		',
-				MYSQL_ASSOC,
+				MYSQLI_ASSOC,
 				array($this->get_id(),));
 		if($result === false) {
 			throw new MysqlErrorException($this, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
@@ -952,7 +952,7 @@ class Calendar extends Page {
 			FROM `calendar`
 			WHERE `valid`=1
 		',
-				MYSQL_ASSOC,
+				MYSQLI_ASSOC,
 				array());
 		if($result === false) {
 			throw new MysqlErrorException($this, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');

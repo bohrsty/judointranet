@@ -147,7 +147,7 @@ class ProtocolListallListing extends Listing implements ListingInterface {
 		}
 
 		$result = Db::ArrayValue($sql,
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array(	$this->getUser()->get_id(),
 				$mysqlData,));
 		if($result === false) {

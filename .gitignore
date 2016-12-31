@@ -25,6 +25,7 @@
 /files/tribute/thumbs/*.png
 /templates/tributes/*
 !/templates/tributes/index.php
+nbproject/
 
 # symfony
 /app/config/parameters.yml

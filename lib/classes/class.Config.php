@@ -110,7 +110,7 @@ class Config extends Object {
 		$result = $db->query($sql);
 		
 		// fetch result
-		while(list($name,$value) = $result->fetch_array(MYSQL_NUM)) {
+		while(list($name,$value) = $result->fetch_array(MYSQLI_NUM)) {
 			$config[$name] = $value;
 		}
 		

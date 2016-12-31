@@ -161,7 +161,7 @@ class AccountingResultTaskListing extends Listing implements ListingInterface {
 			';
 		}
 		$result = Db::ArrayValue($sql,
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array());
 		if($result === false) {
 			$n = null;

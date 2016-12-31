@@ -25,6 +25,8 @@ file that was distributed with this source code.
 [cc] switched external libraries to composer dependencies
 [!!] fixed some bugs in various files that come up on manual frontend testing
      (i.e. version update HTML2PDF)
+--
+[cc] changed MYSQL_* constants to MYSQLI_* constants
 
 
 

@@ -512,7 +512,7 @@ class Object {
 			foreach($tableConfigArray['fk'] as $fk => $sql) {
 				
 				// get sql result for fk
-				$fkArray = Db::arrayValue($sql, MYSQL_ASSOC);
+				$fkArray = Db::arrayValue($sql, MYSQLI_ASSOC);
 				
 				if($fkArray === false) {
 					$n = null;

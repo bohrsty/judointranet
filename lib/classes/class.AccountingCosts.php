@@ -61,7 +61,7 @@ class AccountingCosts extends Object {
 			FROM `accounting_costs`
 			WHERE `valid`=TRUE
 		',
-		MYSQL_ASSOC,
+		MYSQLI_ASSOC,
 		array());
 		if($result === false) {
 			$n = null;

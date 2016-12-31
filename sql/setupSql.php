@@ -716,7 +716,7 @@ function mysql_8() {
 				FROM `group`
 				WHERE `sortable`=1
 			',
-			MYSQL_ASSOC
+			MYSQLI_ASSOC
 		);
 	
 		if($sortableGroups === false) {
@@ -764,7 +764,7 @@ function mysql_8() {
 					WHERE `table_name`=\'calendar\'
 						AND `g_id`=#?
 				',
-				MYSQL_ASSOC,
+				MYSQLI_ASSOC,
 				array($oldGid)
 			);
 			if($rights === false) {
@@ -812,7 +812,7 @@ function mysql_8() {
 				WHERE `sortable`=0
 					AND `id`<>1
 			',
-			MYSQL_ASSOC
+			MYSQLI_ASSOC
 		);
 		if($groups === false) {
 			$return['returnValue'] = false;
@@ -860,7 +860,7 @@ function mysql_8() {
 					SELECT *
 					FROM `group2group`
 				',
-				MYSQL_ASSOC
+				MYSQLI_ASSOC
 			);
 			if($group2group === false) {
 				$return['returnValue'] = false;
@@ -1052,7 +1052,7 @@ function mysql_9() {
 					WHERE `table_name`=\'calendar\'
 						AND `g_id` IN (#?)
 				',
-				MYSQL_ASSOC,
+				MYSQLI_ASSOC,
 				array(implode(',', $gids))
 			);
 			if($calendarRights === false) {
@@ -1106,7 +1106,7 @@ function mysql_9() {
 					WHERE `table_name`=\'protocol\'
 						AND `g_id` IN (#?)
 				',
-				MYSQL_ASSOC,
+				MYSQLI_ASSOC,
 				array(implode(',', $gids))
 			);
 			if($protocolRights === false) {
@@ -1158,7 +1158,7 @@ function mysql_9() {
 					SELECT `id`, `file_param`
 					FROM `navi`
 				',
-				MYSQL_ASSOC
+				MYSQLI_ASSOC
 			);
 			if($navi === false) {
 				$return['returnValue'] = false;
@@ -1181,7 +1181,7 @@ function mysql_9() {
 						WHERE `table_id`=\'#?\'
 							AND `g_id` IN (#?)
 					',
-					MYSQL_ASSOC,
+					MYSQLI_ASSOC,
 					array($md5, implode(',', $gids))
 				);
 				if($naviRights === false) {
@@ -1716,7 +1716,7 @@ function mysql_16() {
 			FROM `value`
 			WHERE `table_name`=\'calendar\'
 		',
-		MYSQL_ASSOC
+		MYSQLI_ASSOC
 	);
 	if($existingValues === false) {
 		$return['returnValue'] = false;
@@ -1894,7 +1894,7 @@ function mysql_18() {
 	$usertableCols = Db::arrayValue('
 		SELECT * FROM `config` WHERE `name` LIKE \'usertableCols.%\'
 		',
-		MYSQL_ASSOC);
+		MYSQLI_ASSOC);
 	if($usertableCols === false) {
 		$return['returnValue'] = false;
 		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
@@ -2312,7 +2312,7 @@ function mysql_18() {
 				SELECT `id`
 				FROM `result`
 		',
-		MYSQL_ASSOC);
+		MYSQLI_ASSOC);
 		if($resultIds === false) {
 			$return['returnValue'] = false;
 			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
@@ -2470,7 +2470,7 @@ function mysql_18() {
 			FROM `field`
 			WHERE `config`<>\'\'
 	',
-	MYSQL_ASSOC);
+	MYSQLI_ASSOC);
 	if($configs === false) {
 		$return['returnValue'] = false;
 		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
@@ -2544,7 +2544,7 @@ function mysql_19() {
 			FROM `config`
 			WHERE `name` LIKE \'usertableConfig.%\'
 		',
-		MYSQL_NUM);
+		MYSQLI_NUM);
 		if($configs === false) {
 			$return['returnValue'] = false;
 			$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';
@@ -2702,7 +2702,7 @@ function mysql_19() {
 			FROM `club`
 			ORDER BY `id` ASC
 	',
-	MYSQL_ASSOC);
+	MYSQLI_ASSOC);
 	if($numbers === false) {
 		$return['returnValue'] = false;
 		$return['returnMessage'] = lang('setup#initMysql#error#dbQueryFailed').Db::$error.'['.Db::$statement.']';

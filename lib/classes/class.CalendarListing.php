@@ -420,7 +420,7 @@ class CalendarListing extends Listing implements ListingInterface {
 				AND `valid`=TRUE
 			ORDER BY `date` DESC
 		',
-				MYSQL_ASSOC,
+				MYSQLI_ASSOC,
 				array_merge($fields,array($mysqlData)));
 		if($result === false) {
 			$n = null;
