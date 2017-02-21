@@ -537,7 +537,7 @@ class Result extends Page {
 				$setMethod = 'set'.ucfirst($name);
 				// set value
 				if(method_exists($this, $setMethod)) {
-					call_user_method($setMethod, $this, $value);
+					call_user_func(array($this, $setMethod), $value);
 				}
 				
 				// reset value

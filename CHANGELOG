@@ -41,6 +41,8 @@ file that was distributed with this source code.
 [++] added config etc. for doctrine migrations
 --
 [cc] changed MYSQL_* constants to MYSQLI_* constants
+--
+[!!] fixed use of depricate "call_user_method"
 
 
 
