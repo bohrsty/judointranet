@@ -188,7 +188,9 @@ class AdministrationView extends PageView {
 		
 		// get tables that are not system tables
 		foreach($result as $table) {
-			if(!in_array($table[0],$systemtables)) {
+			if(!in_array($table[0],$systemtables)
+				&& substr($table[0], 0, 4) !== 'orm_'
+				&& $table[0] !== 'migration_versions') {
 				$usertables[] = $table[0];
 			}
 		}

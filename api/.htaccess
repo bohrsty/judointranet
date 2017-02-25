@@ -1,4 +1,0 @@
-RewriteEngine on
-RewriteCond %{REQUEST_URI} !internal.php
-RewriteCond %{REQUEST_URI} !help.php
-RewriteRule ^(.*)$ index.php [L,QSA,E=no-gzip:1,E=dont-vary:1]

@@ -43,6 +43,10 @@ file that was distributed with this source code.
 [cc] changed MYSQL_* constants to MYSQLI_* constants
 --
 [!!] fixed use of depricate "call_user_method"
+--
+[!!] fixed systemtables config with "orm_" and "migration_versions"
+[cc] cleanup unused index.php dummies
+[cc] cleanup unused php files in root
 
 
 
