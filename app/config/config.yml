@@ -47,7 +47,7 @@ doctrine:
         user:     "%database_user%"
         password: "%database_password%"
         charset:  UTF8
-        schema_filter: ~^(orm_.*)~
+        schema_filter: ~^(orm_.*|migration_versions)~
         # if using pdo_sqlite as your database driver:
         #   1. add the path in parameters.yml
         #     e.g. database_path: "%kernel.root_dir%/data/data.db3"
@@ -62,9 +62,9 @@ doctrine:
         
 doctrine_migrations:
     dir_name: "%kernel.root_dir%/Migrations"
-    namespace: Application/Migrations
+    namespace: JudoIntranetMigrations
     table_name: migration_versions
-    name: Application Migrations
+    name: JudoIntranet Migrations
 
 # Swiftmailer Configuration
 swiftmailer:
