@@ -278,12 +278,12 @@ class Object {
 	
 	
 	/**
-	 * replace_umlaute replaces german umlaute in $string
+	 * staticReplaceUmlaute replaces german umlaute in $string in static context
 	 * 
 	 * @param string $string string containing umlaute to be replaced
 	 * @return string string where the umlaute are replaced
 	 */
-	public function replace_umlaute($string) {
+	public static function staticReplaceUmlaute($string) {
 		
 		// replacement table
 		$table = array(
@@ -299,11 +299,27 @@ class Object {
 		
 		// replace
 		foreach($table as $char => $replacement) {
-			$string = str_replace($char,$replacement,$string);
+			$string = str_replace($char, $replacement, $string);
 		}
 		
 		// return
 		return $string;
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * replace_umlaute replaces german umlaute in $string
+	 * 
+	 * @param string $string string containing umlaute to be replaced
+	 * @return string string where the umlaute are replaced
+	 */
+	public function replace_umlaute($string) {
+		return Object::staticReplaceUmlaute($string);
 	}
 	
 	

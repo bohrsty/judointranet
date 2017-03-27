@@ -62,6 +62,12 @@ class Logo {
 	 */
 	private $fileType;
 	
+	// non persisted
+	/**
+	 * @deprecated to be removed if API migrated to symfony
+	 */
+	private $apiResult;
+	
 	
 
 	/**
@@ -206,6 +212,31 @@ class Logo {
 	}
 	
 	/**
+	 * Get api result
+	 * 
+	 * @deprecated to be removed if API migrated to symfony
+	 * @return array
+	 */
+	public function getApiResult() {
+		return $this->apiResult;
+	}
+	
+	/**
+	 * Set api result
+	 * 
+	 * @deprecated to be removed if API migrated to symfony
+	 * @param array
+	 */
+	public function setApiResult($apiResult) {
+		$this->apiResult = $apiResult;
+	}
+	
+	
+	
+	
+	
+	
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -214,6 +245,9 @@ class Logo {
 		if(is_null($this->getLastModified())) {
 			$this->setLastModified(new \DateTime());
 		}
+		
+		// set api result
+		$this->setApiResult(array());
 	}
 	
 	
@@ -235,6 +269,87 @@ class Logo {
 	 */
 	public function getAsImgSrc() {
 		
-		return 'base64:'.base64_encode($this->getData());
+		return 'data:'.$this->getFileType()->getMimeType().';base64,'.base64_encode(stream_get_contents($this->getData()));
+	}
+	
+	
+	/**
+	 * factory() creates an object from the given data in $_FILES and $_POST and persists
+	 * it in the database. It returns the object
+	 * 
+	 * @param object $doctrine the dotrine entity manager
+	 * @return object the Logo object
+	 */
+	public static function factory($doctrine) {
+		
+		// create object
+		$logo = new Logo();
+		
+		// prepare data
+		$tempName = $_FILES['file']['tmp_name'];
+		$origName = \Object::staticReplaceUmlaute($_FILES['file']['name']);
+		// get file type
+		$mimeType = mime_content_type($tempName);
+		$repositoryFileType = $doctrine->getRepository('AppBundle:FileType');
+		$fileType = $repositoryFileType->findOneByMimeType($mimeType);
+		// get user
+		$legacyUser = \Object::staticGetUser();
+		$repositoryUser = $doctrine->getRepository('AppBundle:User');
+		$user = $repositoryUser->findOneById($legacyUser->getId());
+		
+		// check and take file
+		$data = null;
+		if(is_uploaded_file($tempName) === true) {
+			$data = @file_get_contents($tempName);
+		} else {
+			
+			// set error
+			$logo->setApiResult(
+				array(
+						'result' => 'ERROR',
+						'message' => _l('ERROR').': '._l('no uploaded file to process'),
+					)
+			);
+			return $logo;
+		}
+		// check moving uploaded file
+		if(is_null($data) || $data === false) {
+			
+			// set error
+			$logo->setApiResult(
+				array(
+						'result' => 'ERROR',
+						'message' => _l('ERROR').': '._l('file processing failed'),
+					)
+			);
+			return $logo;
+		}
+		
+		// persist object
+		$logo
+			->setName($origName)
+			->setFileType($fileType)
+			->setData($data)
+			->setModifiedBy($user)
+			->setValid(true);
+		$em = $doctrine->getManager();
+		$em->persist($logo);
+		$em->flush();
+		
+		// set error
+		$logo->setApiResult(
+			array(
+					'result' => 'OK',
+					'message' => _l('File saved successfully'),
+					'data' => array(
+							'id' => $logo->getId(),
+							'name' => $logo->getName(),
+							'src' => 'data:'.$logo->getFileType()->getMimeType().';base64,'.base64_encode($logo->getData()),
+						),
+				)
+		);
+		
+		// return
+		return $logo;
 	}
 }

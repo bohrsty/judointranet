@@ -31,6 +31,9 @@ class FileController extends Controller {
     		
     		// create object
     		$fileView = new \FileView();
+			
+    		// add doctrine to access it from inside
+    		$fileView->setDoctrine($this->getDoctrine());
     		
     		// get HTML from smarty template, put into response and return
     		return new Response($fileView->toHtml(false));

@@ -1,4 +1,6 @@
 <?php
+use AppBundle\Entity\Logo;
+
 /* ********************************************************************************************
  * Copyright (c) 2011 Nils Bohrs
  *
@@ -34,11 +36,18 @@ class InternalApi extends Object {
 	/*
 	 * class-variables
 	 */
+	private $doctrine;
 	
 	
 	/*
 	 * getter/setter
 	 */
+	public function getDoctrine() {
+		return $this->doctrine;
+	}
+	public function setDoctrine($doctrine) {
+		$this->doctrine = $doctrine;
+	}
 	
 	/*
 	 * constructor/destructor
@@ -266,6 +275,84 @@ class InternalApi extends Object {
 					$tributeFile = TributeFile::factoryFile();
 					// echo result
 					$return = $tributeFile->getError();
+				}
+			break;
+			
+			case 'LogoFileUpload':
+				
+				// check error
+				if($signedError === true) {
+					// signature error
+					$return = array(
+							'result' => 'ERROR',
+							'message' => _l('API call failed [not signed]'),
+					);
+				} elseif($timeoutError === true) {
+					// timeout error
+					$return = array(
+							'result' => 'ERROR',
+							'message' => _l('API call failed [timeout]'),
+					);
+				} else {
+					
+					// generate logo
+					$logo = Logo::factory($this->getDoctrine());
+					// echo result
+					$return = $logo->getApiResult();
+				}
+			break;
+			
+			case 'LogoFileDelete':
+				
+				// check error
+				if($signedError === true) {
+					// signature error
+					$return = array(
+							'result' => 'ERROR',
+							'message' => _l('API call failed [not signed]'),
+					);
+				} elseif($timeoutError === true) {
+					// timeout error
+					$return = array(
+							'result' => 'ERROR',
+							'message' => _l('API call failed [timeout]'),
+					);
+				} else {
+					
+					// check if deletion is confirmed
+					if($this->post('confirmed') !== false) {
+						
+						// check if logo id is given
+						if($this->post('logoId') !== false) {
+							
+							// get entity manager
+							$em = $this->getDoctrine()->getManager();
+							
+							// get logo reference
+							$logo = $em->getReference('AppBundle:Logo', $this->post('logoId'));
+							
+							// remove logo
+							$em->remove($logo);
+							$em->flush();
+							
+							// if reached here, no exception occurred, return success
+							$return = array(
+									'result' => 'OK',
+									'message' => _l('Deletion successful'),
+								);
+							
+						} else {
+							$return = array(
+									'result' => 'ERROR',
+									'message' => _l('Logo id not given!'),
+								);
+						}
+					} else {
+						$return = array(
+								'result' => 'ERROR',
+								'message' => _l('Deletion not confirmed!'),
+							);
+					}
 				}
 			break;
 			

@@ -1050,6 +1050,16 @@ div.linkForm {
 	cursor: pointer;
 }
 
+#logoFiles {
+	padding: 5px;
+}
+
+#logoUploadForm {
+	padding: 3px;
+	border: 1px solid #b6d6e4;
+	border-radius: 3px;
+}
+
 .inlineBlock {
 	display: inline-block;
 }

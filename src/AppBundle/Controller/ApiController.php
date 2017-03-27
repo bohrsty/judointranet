@@ -63,6 +63,9 @@ class ApiController extends Controller {
     		// create object
     		$api = new \InternalApi();
     		
+    		// set doctrine
+    		$api->setDoctrine($this->getDoctrine());
+    		
     		// get data from the api
     		return new Response(json_encode($api->handle(false)));
     	}

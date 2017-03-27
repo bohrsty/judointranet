@@ -33,6 +33,7 @@ class PageView extends Object {
 	/*
 	 * class-variables
 	 */
+	private $doctrine;
 	
 	/*
 	 * getter/setter
@@ -69,6 +70,12 @@ class PageView extends Object {
 	}
 	public function setJsTranslation($jsTranslation) {
 		return $GLOBALS['jsTranslation'] = $jsTranslation;
+	}
+	public function getDoctrine() {
+		return $this->doctrine;
+	}
+	public function setDoctrine($doctrine) {
+		$this->doctrine = $doctrine;
 	}
 	
 	/*

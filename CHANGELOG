@@ -50,6 +50,9 @@ file that was distributed with this source code.
 --
 [!!] fixed handling of "migration_version" table in Doctrine migrations
 [++] added entities and migration for logo (for use in templates as field)
+--
+[++] added view, logic and internal API to show, upload and delete logos
+[++] added common file types
 
 
 

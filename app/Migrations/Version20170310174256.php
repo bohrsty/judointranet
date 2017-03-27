@@ -71,13 +71,36 @@ class Version20170310174256 extends AbstractMigration {
 		');
 		
 		// add manual SQL
-		$this->addSql(
-			'UPDATE `config` SET `value`=:value WHERE `name`=:name',
+		$this->addSql('
+				UPDATE `config` SET `value`=:value WHERE `name`=:name
+			',
 			array(
 				'value' => 'calendar,category,config,defaults,field,fields2presets,group,group2group,inventory,inventory_movement,preset,rights,user,user2group,value,protocol,protocol_correction,helpmessages,user2groups,permissions,navi,item2filter,groups,filter,file,file_type,files_attached,club,result,standings,accounting_tasks,accounting_costs,holiday,tribute,tribute_history,accounting_settings,tribute_file,webservice_jobs,webservice_results,orm_filetype,orm_logo',
 				'name' => 'systemtables',),
 			array('string', 'string')
 		);
+		
+		// add navi entry
+		$this->addSql('
+			INSERT IGNORE INTO `navi` (`id`, `name`, `parent`, `file_param`, `position`, `show`, `valid`, `required_permission`, `last_modified`)
+				VALUES (69, \'navi: filePage.logo\', 37, \'file.php|logo\', 8, 1, 1, \'w\', CURRENT_TIMESTAMP)
+		');
+		
+		// add allowed filetypes to config
+		$this->addSql('
+			INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+				VALUES (\'logo.allowedFileTypes\', \'\', \'Ids of the allowed filetypes (orm_filetype) for uploading logos\')
+		');
+		
+		// add max file size to config
+		$this->addSql('
+			INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+				VALUES (\'logo.maxFileSize\', \'100\', \'The maximum file size for uploading logos in kB\')
+		');
+		
+		// add file types
+		$sql = file_get_contents(__DIR__.'/'.(strrpos(static::class, '\\') === false ? static::class : substr(static::class, strrpos(static::class, '\\') + 1)).'.sql');
+		$this->addSql($sql);
 	}
 
 	/**
@@ -107,5 +130,20 @@ class Version20170310174256 extends AbstractMigration {
 				'name' => 'systemtables',),
 			array('string', 'string')
 		);
+		
+		$this->addSql('
+			DELETE FROM `navi`
+				WHERE `id`=69
+		');
+		
+		$this->addSql('
+			DELETE FROM `config`
+				WHERE `name`=\'logo.allowedFileTypes\'
+		');
+		
+		$this->addSql('
+			DELETE FROM `config`
+				WHERE `name`=\'logo.maxFileSize\'
+		');
 	}
 }

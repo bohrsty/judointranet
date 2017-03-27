@@ -129,6 +129,7 @@ define('HELP_MSG_MANAGESCHOOLHOLIDAYSYEAR', 50);
 define('HELP_MSG_TRIBUTENEW', 51);
 define('HELP_MSG_TRIBUTELISTALL', 52);
 define('HELP_MSG_TRIBUTEEDIT', 53);
+define('HELP_MSG_FILELOGO', 54);
 // write to db
 define('DB_WRITE_NEW', 1);
 define('DB_WRITE_UPDATE', 2);

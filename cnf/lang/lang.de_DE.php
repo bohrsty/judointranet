@@ -560,6 +560,7 @@ $lang = array(
 	'HELP_TITLE_51' => 'Neue Ehrung planen',
 	'HELP_TITLE_52' => 'Auflistung der geplanten und durchgef&uuml;hrten Ehrungen',
 	'HELP_TITLE_53' => 'Ehrung bearbeiten',
+	'HELP_TITLE_54' => 'Logos',
 	'HELP_MESSAGE_error' => '<p>Dieses Hilfe-Thema konnte nicht gefunden werden.</p>',
 	'HELP_MESSAGE_1' => '<p><b>JudoIntranet</b></p>
 						<p>Author: Nils Bohrs<br />
@@ -989,6 +990,8 @@ $lang = array(
 						kann das Datumsfeld &uuml;ber den Button <img src="css/zebra_form/calendar.png" alt="Bild im Hilfetext" /> eingeblendet werden.
 						Nachtr&auml;glich erstellte Verlaufseintr&auml;ge sind an der Uhrzeit "00:00" erkennbar, ihre Sortierung nach Datum wird erst mit
 						dem Neuladen der Seite korrigiert.</p>',
+	'HELP_MESSAGE_54' => '<p>Diese Seite listet alle Logos auf und erlaubt das Hochladen oder Löschen der Logos. Die maximale Dateigr&ouml;&szlig;e betr&auml;gt:
+						{if $object->getGc()->get_config(\'logo.maxFileSize\') != \'\'}{$object->getGc()->get_config(\'logo.maxFileSize\')|escape}kB{else}[unbekannt, Konfiguration pr&uuml;fen!]{/if}.</p>',
 	/*
 	 * ************************
 	 */
@@ -1048,6 +1051,7 @@ $lang = array(
 	'navi: filePage.cached' => 'Datei herunterladen (zwischengespeichert)',
 	'navi: filePage.attach' => 'Datei anh&auml;ngen',
 	'navi: filePage.download' => 'Datei herunterladen (hochgeladen)',
+	'navi: filePage.logo' => 'Logos verwalten',
 	'navi: resultPage' => 'Ergebnisse',
 	'navi: resultPage.listall' => 'Ergebnisse pro Termin auflisten',
 	'navi: resultPage.details' => 'Ergebnis-Details',
@@ -1077,6 +1081,7 @@ $lang = array(
 	'files: delete file' => 'Dateien: Datei l&ouml;schen',
 	'files: download file' => 'Dateien: Datei herunterladen',
 	'files: attach files' => 'Dateien: Datei anh&auml;ngen',
+	'files: logos' => 'Dateien: Logos',
 	'upload file' => 'Datei hochladen',
 	'edit file' => 'Datei bearbeiten',
 	'delete file' => 'Datei l&ouml;schen',
@@ -1375,6 +1380,12 @@ $lang = array(
 	'search' => 'Suchen',
 	'clear search' => 'Suche zur&uuml;cksetzen',
 	'clear' => 'zur&uuml;cksetzen',
+	'logos' => 'Logos',
+	'Available logos' => 'Vorhandene Logos',
+	'no logos available' => 'keine Logos vorhanden',
+	'Logo id not given' => 'Keine Logo-Id angegeben!',
+	'Deletion successful' => 'Erfolgreich gel&ouml;scht',
+	'The config for uploading logos is not complete, please check that none of the config entries starting with "logo." aren\'t empty.' => 'Die Konfiguration f&uuml;r das Hochladen von Logos ist nicht vollst&auml;ndig, bitte pr&uuml;fen, dass keiner der Konfigurationseintr&auml;ge, die mit "logo." beginnen, leer ist.',
 //	'' => '',
 );
 

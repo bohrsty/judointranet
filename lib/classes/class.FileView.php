@@ -22,6 +22,8 @@
  * 
  * ********************************************************************************************/
 
+use JudoIntranet\Legacy\View\File\FileViewLogo;
+
 // secure against direct execution
 if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index.php.");}
 
@@ -146,6 +148,18 @@ class FileView extends PageView {
 						// smarty
 						$this->getTpl()->assign('title', $this->title(_l('files: attach')));
 						$this->getTpl()->assign('main', $this->attach());
+						$this->getTpl()->assign('jquery', true);
+						$this->getTpl()->assign('zebraform', true);
+						$this->getTpl()->assign('tinymce', false);
+					break;
+					
+					case 'logo':
+						
+						// smarty
+						$this->getTpl()->assign('title', $this->title(_l('files: logos')));
+						$fileViewLogo = new FileViewLogo();
+						$fileViewLogo->setDoctrine($this->getDoctrine());
+						$this->getTpl()->assign('main', $fileViewLogo->show());
 						$this->getTpl()->assign('jquery', true);
 						$this->getTpl()->assign('zebraform', true);
 						$this->getTpl()->assign('tinymce', false);
