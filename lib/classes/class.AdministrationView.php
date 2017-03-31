@@ -1219,8 +1219,8 @@ class AdministrationView extends PageView {
 			// navi list
 			// get and sort navi entries
 			$sql = 'SELECT `id`
-					FROM `navi`
-					WHERE `parent`=0
+					FROM `orm_navi`
+					WHERE `parent` IS NULL
 						AND `valid`=1
 					';
 			$naviEntries = Db::arrayValue($sql, MYSQLI_ASSOC);

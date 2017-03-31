@@ -135,8 +135,8 @@ class Navi extends PageView {
 		
 		// prepare sql statement to get group details
 		$sql = 'SELECT `name`,`parent`,`file_param`,`position`,`show`,`valid`,`required_permission`
-				FROM navi
-				WHERE id=\''.$db->real_escape_string($this->getId()).'\'';
+				FROM `orm_navi`
+				WHERE `id`=\''.$db->real_escape_string($this->getId()).'\'';
 		
 		// execute statement
 		$result = $db->query($sql);
@@ -150,9 +150,9 @@ class Navi extends PageView {
 		}
 		
 		// prepare sql statement to get subgroups
-		$sql = 'SELECT id
-				FROM navi
-				WHERE parent=\''.$db->real_escape_string($this->getId()).'\'';
+		$sql = 'SELECT `id`
+				FROM `orm_navi`
+				WHERE `parent`=\''.$db->real_escape_string($this->getId()).'\'';
 		
 		// execute statement
 		$result = $db->query($sql);
@@ -376,9 +376,9 @@ class Navi extends PageView {
 		$db = Db::newDb();
 		
 		// prepare sql statement to get id
-		$sql = 'SELECT id
-				FROM navi
-				WHERE file_param=\''.$db->real_escape_string($fileParam).'\'';
+		$sql = 'SELECT `id`
+				FROM `orm_navi`
+				WHERE `file_param`=\''.$db->real_escape_string($fileParam).'\'';
 		
 		// execute statement
 		$result = $db->query($sql);
@@ -413,7 +413,7 @@ class Navi extends PageView {
 		// prepare sql
 		$sql = '
 				SELECT COUNT(*)
-				FROM `navi`
+				FROM `orm_navi`
 				WHERE `id`=#?
 				';
 		

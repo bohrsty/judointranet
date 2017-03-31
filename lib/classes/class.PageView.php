@@ -564,9 +564,9 @@ class PageView extends Object {
 		$db = Db::newDb();
 		
 		// prepare sql statement to get subgroups
-		$sql = 'SELECT id
-				FROM navi
-				WHERE `parent`=\''.$db->real_escape_string(0).'\'
+		$sql = 'SELECT `id`
+				FROM `orm_navi`
+				WHERE `parent` IS NULL
 				AND `show`=\''.$db->real_escape_string(1).'\'';
 		
 		// execute statement
