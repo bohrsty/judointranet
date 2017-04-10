@@ -80,9 +80,29 @@ class Version20170331051047 extends AbstractMigration {
 			);
 		}
 		
+		// update icons
+		foreach($this->getIcons() as $id => $icon) {
+			
+			$this->addSql('
+					UPDATE `orm_navi` SET `icon`=:icon WHERE `id`=:id
+				',
+					array(
+							'id' => $id,
+							'icon' => $icon,
+					),
+					array('string', 'string')
+					);
+		}
+		
 		// delete old table
 		$this->addSql('
 			DROP TABLE navi
+		');
+		
+		// add max navi max depth to config
+		$this->addSql('
+			INSERT IGNORE INTO `config` (`name`, `value`, `comment`)
+				VALUES (\'navi.maxDepth\', \'2\', \'The maximum depth that the navigation is generated\')
 		');
 	}
 	
@@ -135,6 +155,11 @@ class Version20170331051047 extends AbstractMigration {
 				array('string', 'string')
 			);
 		}
+		
+		$this->addSql('
+			DELETE FROM `config`
+				WHERE `name`=\'navi.maxDepth\'
+		');
 		
 		// add SQL from ORM
 		$this->addSql('
@@ -225,6 +250,42 @@ class Version20170331051047 extends AbstractMigration {
 			'navi: tributePage.new' => 'MainMenu.menu.tribute.new',
 			'navi: tributePage.edit' => 'MainMenu.menu.tribute.edit',
 			'navi: tributePage.delete' => 'MainMenu.menu.tribute.delete',
+		);
+	}
+	
+	/**
+	 * get icons
+	 *
+	 * @return array
+	 */
+	private function getIcons() {
+		
+		// prepare icons
+		return array(
+			4 => 'calendar-o',
+			6 => 'list',
+			60 => 'calendar',
+			63 => 'list-alt',
+			10 => 'book',
+			12 => 'list',
+			11 => 'bookmark-o',
+			24 => 'file-text-o',
+			26 => 'list',
+			33 => 'check-square-o',
+			37 => 'file',
+			38 => 'files-o',
+			42 => 'upload',
+			47 => 'flag-checkered',
+			48 => 'calendar',
+			53 => 'money',
+			54 => 'dashboard',
+			56 => 'cog',
+			64 => 'gift',
+			65 => 'list',
+			34 => 'cogs',
+			35 => 'table',
+			45 => 'users',
+			62 => 'calendar',
 		);
 	}
 }

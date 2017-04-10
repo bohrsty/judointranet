@@ -22,8 +22,15 @@ file that was distributed with this source code.
 -----------------------------------------------------------------------------------------
   2.2.0:
 -----------------------------------------------------------------------------------------
-[++] added entity for navi, migration to migrate `navi` into `orm_navi` and switched 
-     legacy code to `orm_navi` and navi translations to new format in reactjs
+[++] added entity for navi
+[++] migration to migrate `navi` into `orm_navi`
+[cc] switched legacy code to `orm_navi`
+[cc] changed navi translations to new format in reactjs
+--
+[++] added building navi tree (preparation for api use)
+[++] added collection to get all navi entries
+[cc] prepared API controller to ignore v2
+[cc] changed navi children to be valid, show and sort them
 
 
 

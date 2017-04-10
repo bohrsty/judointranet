@@ -13,6 +13,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 
 
 /**
@@ -347,7 +348,15 @@ class Navi {
 	 * @return \Doctrine\Common\Collections\ArrayCollection\ArrayCollection
 	 */
 	public function getChildren() {
-		return $this->children;
+		
+		// create criteria
+		$criteria = Criteria::create()
+			->where(Criteria::expr()->eq('valid', true))
+			->andWhere(Criteria::expr()->eq('show', true))
+			->orderBy(array('position' => Criteria::ASC));
+		
+		// match criteria
+		return $this->children->matching($criteria);
 	}
 	
 	
@@ -371,5 +380,70 @@ class Navi {
 	 */
 	public function getRouter() {
 		return $this->fileParam === null && $this->url !== null;
+	}
+	
+	
+	/**
+	 * get legacy url and parameter
+	 * 
+	 * @return string
+	 */
+	private function getLegacyUrl() {
+		
+		// split file_param by |
+		$urlParts = explode('|', $this->getFileParam());
+		
+		// check params
+		if($urlParts[1] == '') {
+			return $urlParts[0];
+		} else {
+			return $urlParts[0].'?id='.$urlParts[1];
+		}
+	}
+	
+	
+	/**
+	 * get complete URL (router or legacy)
+	 * 
+	 * @return string
+	 */
+	public function getCompleteUrl() {
+		
+		if($this->getRouter() === true) {
+			return $this->getUrl();
+		} else {
+			return $this->getLegacyUrl();
+		}
+	}
+	
+	
+	/**
+	 * return this navi object and its children as array accorting to $maxDepth
+	 * 
+	 * @param int $maxDepth the max depth to return the children
+	 * @param int $currentDepth the current depth in the tree of children
+	 * @return array 
+	 */
+	public function getNaviTree(int $maxDepth, int $currentDepth) {
+		
+		// if reached max depth, subitems remain empty
+		$children = array();
+		if($currentDepth < $maxDepth) {
+			
+			// return $this and children as array
+			foreach($this->getChildren() as $child) {
+				$children[] = $child->getNaviTree($maxDepth, $currentDepth + 1);
+			}
+		}
+		
+		// return array
+		return array(
+			'name' => $this->getName(),
+			'url' => $this->getCompleteUrl(),
+			'key' => $this->getKey(),
+			'icon' => $this->getIcon(),
+			'router' => $this->getRouter(),
+			'subItems' => $children,
+		);
 	}
 }

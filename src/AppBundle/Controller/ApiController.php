@@ -23,10 +23,10 @@ class ApiController extends Controller {
     
     /**
      * @Route("/api/", name="apihome")
-     * @Route("/api/{method}/{table}/", name="apipath2")
-     * @Route("/api/{table}/{method}/{id}", name="apipath3")
-     * @Route("/api/{table}/{id}/{tid}/{action}", name="apipath")
-     * @Route("/api/{table}/{id}/{tid}/{action}/", name="apipath4")
+     * @Route("/api/{method}/{table}/", name="apipath2", requirements={"method":"!v2"})
+     * @Route("/api/{table}/{method}/{id}", name="apipath3", requirements={"table":"!v2"})
+     * @Route("/api/{table}/{id}/{tid}/{action}", name="apipath", requirements={"table":"!v2"})
+     * @Route("/api/{table}/{id}/{tid}/{action}/", name="apipath4", requirements={"table":"!v2"})
      * @Route("/api/index.php", name="apiindex")
      */
     public function indexAction(Request $request) {
