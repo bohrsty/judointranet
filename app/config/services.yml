@@ -4,6 +4,10 @@ parameters:
 #    parameter_name: value
 
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    global_config:
+        class: AppBundle\Collections\ConfigCollection
+        arguments: ["@doctrine.orm.entity_manager"]
+    
+    navi_collection:
+        class: AppBundle\Collections\NaviCollection
+        arguments: ["@doctrine.orm.entity_manager","@global_config"]

@@ -1,4 +1,5 @@
 <?php
+
 /* ********************************************************************************************
  * Copyright (c) 2011 Nils Bohrs
  *
@@ -21,6 +22,10 @@
  * Thirdparty licenses see LICENSE
  * 
  * ********************************************************************************************/
+
+
+use JudoIntranet\JudoIntranet;
+
 
 // secure against direct execution
 if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index.php.");}
@@ -65,7 +70,7 @@ class Help extends Object {
 		$messageId = $this->get('hid');
 		
 		// add version
-		$replacements['version'] = $this->getGc()->get_config('global.version');
+		$replacements['version'] = JudoIntranet::getVersion();
 		
 		// translate
 		$translateTitle = _l('HELP_TITLE_'.$messageId);

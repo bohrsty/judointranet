@@ -48,15 +48,9 @@ define('JIPATH', $scriptPath);
 unset($scriptPath);
 
 /*
- * get composer.json as array
- */
-$composerJsonString = file_get_contents(JIPATH.'/composer.json');
-$composerJson = json_decode($composerJsonString, true);
-
-/*
  * define code version
  */
-define('CONF_GLOBAL_VERSION', $composerJson['version']);
+define('CONF_GLOBAL_VERSION', \JudoIntranet\JudoIntranet::getVersion());
 
 /*
  * define constants
@@ -222,9 +216,25 @@ function checkDbVersion() {
 		return VERSION_DO_UPGRADE;
 	}
 	
+	// prepare sql if global.version exists
+	$sql = 'SELECT COUNT(`value`)
+			FROM `orm_config`
+			WHERE `name`=\'global.version\'';
+	
+	// execute
+	$result = $db->query($sql);
+	
+	// fetch result
+	$return = $result->fetch_array(MYSQLI_NUM);
+	
+	// check num_row
+	if($return[0] == 0) {
+		return VERSION_EQUAL;
+	}
+	
 	// prepare sql-statement
 	$sql = 'SELECT `value`
-			FROM `config`
+			FROM `orm_config`
 			WHERE `name`=\'global.version\'';
 	
 	// execute
@@ -244,6 +254,11 @@ function checkDbVersion() {
 	// fetch result, close db and return
 	$return = $result->fetch_array(MYSQLI_NUM);
 	$db->close();
+	
+	// check if version = 2.0.0, no update possible here
+	if($return[0] == '2.0.0') {
+		return VERSION_EQUAL;
+	}
 	
 	// set version number globally
 	$_SESSION['setup']['dbVersion'] = false;

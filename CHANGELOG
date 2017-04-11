@@ -31,6 +31,13 @@ file that was distributed with this source code.
 [++] added collection to get all navi entries
 [cc] prepared API controller to ignore v2
 [cc] changed navi children to be valid, show and sort them
+--
+[cc] switched getting the global code version to reading composer.json and
+     removed config entry global.version
+[cc] removed update check in common.inc.php
+[++] migration to migrate `config` into `orm_config`
+[cc] switched legacy code to `orm_config`
+[cc] moved NaviCollection to Collections namespace
 
 
 

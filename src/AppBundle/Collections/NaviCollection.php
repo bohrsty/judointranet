@@ -9,8 +9,10 @@
  * file that was distributed with this source code.
  */
 
-namespace AppBundle;
+namespace AppBundle\Collections;
 
+
+use Doctrine\ORM\EntityManager;
 
 class NaviCollection {
 	
@@ -18,28 +20,19 @@ class NaviCollection {
 	/*
 	 * Class variables
 	 */
-	private $doctrine;
-	
-	/*
-	 * Getter/Setter
-	 */
-	public function getDoctrine() {
-		return $this->doctrine;
-	}
-	
-	public function setDoctrine($doctrine) {
-		$this->doctrine = $doctrine;
-		
-		return $this;
-	}
+	private $em;
+	private $gc;
 	
 	/**
 	 * Constructor
 	 */
-	public function __construct($doctrine) {
+	public function __construct(EntityManager $em, ConfigCollection $gc) {
 		
-		// set doctrine
-		$this->setDoctrine($doctrine);
+		// set em
+		$this->em = $em;
+		
+		// set config
+		$this->gc = $gc;
 	}
 	
 	
@@ -54,7 +47,7 @@ class NaviCollection {
 	public function loadNavi() {
 		
 		// get all entries level 0 (parent == NULL)
-		$repositoryNavi = $this->getDoctrine()->getRepository('AppBundle:Navi');
+		$repositoryNavi = $this->em->getRepository('AppBundle:Navi');
 		$naviEntries = $repositoryNavi->findBy(
 			array(
 				'parent' => null,
@@ -67,10 +60,9 @@ class NaviCollection {
 		// walk through entries and get tree
 		$naviTree = array();
 		foreach($naviEntries as $entry) {
-// TODO: config to orm -> get navi.maxDepth (\Object::staticGetGc()->get_config('navi.maxDepth'))
 			// exclude "homepage"
 			if($entry->getId() != 1) {
-				$naviTree[] = $entry->getNaviTree(2, 1);
+				$naviTree[] = $entry->getNaviTree($this->gc->getConfigByName('navi.maxDepth'), 1);
 			}
 		}
 		

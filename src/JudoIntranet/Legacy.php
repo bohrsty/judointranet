@@ -36,7 +36,11 @@ class Legacy {
 
         // execute query and fetch data
         $globalVersion = $connection->fetchAssoc($sql);
-
+		// if "global.version" does not exist, > 2.1.0 
+		if($globalVersion === false) {
+			return true;
+		}
+		
         // check version format
         $versionMatches = array();
         $hasMatch = \preg_match('/(\d)+\.(\d)+\.(\d)+/', $globalVersion['value'], $versionMatches);
