@@ -11,7 +11,7 @@
 
 // import required modules
 import React, {Component} from 'react';
-import AlertList from 'react-bs-notifier';
+import {AlertList} from 'react-bs-notifier';
 
 
 /**

@@ -15,14 +15,18 @@ import {Navbar, Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
 import {LinkContainer} from 'react-router-bootstrap';
 import {Link} from 'react-router';
-import {provideTranslations} from 'react-translate-maker';
 
 
 /**
  * Component for the main menu to navigate through the app
  */
-@provideTranslations
 export default class MainMenu extends Component {
+	
+	// context
+	static contextTypes = {
+		t: React.PropTypes.func.isRequired
+	};
+	
 	
 	/**
 	 * constructor
@@ -31,9 +35,17 @@ export default class MainMenu extends Component {
 		
 		// parent constructor
 		super(props);
+	}
+	
+	
+	/**
+	 * componentWillMount()
+	 * executed directly before component will be mounted to DOM
+	 */
+	componentWillMount() {
 		
 		// get translation method
-		this.t = this.props.t;
+		this.t = this.context.t;
 	}
 	
 	

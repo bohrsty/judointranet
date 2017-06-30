@@ -12,7 +12,7 @@
 // import required modules
 import React, {Component} from 'react';
 import MainMenu from './MainMenu';
-import Translate, {LocaleProvider} from 'react-translate-maker';
+import {LocaleProvider} from 'react-translate-maker';
 import moment from 'moment';
 import Notification from './Notification';
 
@@ -143,7 +143,7 @@ class App extends Component {
 	 */
 	handleLocaleChange(locale) {
 		
-		this.UpdateState('locale', locale);
+		this.updateState('locale', locale);
 	}
 	
 	
@@ -159,7 +159,7 @@ class App extends Component {
 		moment.locale(this.state.locale);
 				
 		return (
-			<LocaleProvider adapter={this.locale.data} locale={this.state.locale}>
+			<LocaleProvider data={this.locale.data} locale={this.state.locale}>
 				<div>
 					{/* mocked loggedin user, TODO: get from session/cookie */}
 					<MainMenu
