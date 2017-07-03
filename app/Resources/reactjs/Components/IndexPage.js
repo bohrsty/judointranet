@@ -39,7 +39,7 @@ export default class IndexPage extends Component {
 	 */
 	render() {
 		
-		switch(this.props.route.pageContent) {
+		switch(this.props.pageContent) {
 			
 			case 'homePage':
 				return (

@@ -116,7 +116,7 @@ class HorizontalForm extends Component {
 				{this.props.fields.map((field, fieldId) => <Field data={field} key={fieldId} ref={(ref) => this.addField(ref, field.name)} />)}
 				<FormGroup controlId="buttons">
 					<Col mdOffset={this.props.buttonMdOffset || 2} md={this.props.buttonMd || 10} xs={this.props.buttonXs || 12}>
-						<Button onClick={() => this.context.router.goBack()}>{this.props.cancelButtonLabel}</Button>
+						<Button onClick={() => this.props.history.goBack()}>{this.props.cancelButtonLabel}</Button>
 						{' '}
 						<Button type="submit" bsStyle="primary">{this.props.saveButtonLabel}</Button>
 					</Col>
@@ -132,15 +132,15 @@ HorizontalForm.propTypes = {
 	onSubmit: React.PropTypes.func.isRequired,
 	fields: React.PropTypes.array.isRequired,
 	cancelButtonLabel: React.PropTypes.string.isRequired,
-	saveButtonLabel: React.PropTypes.string.isRequired
+	saveButtonLabel: React.PropTypes.string.isRequired,
+	history: React.PropTypes.object.isRequired
 };
 
 
 //set context types
 HorizontalForm.contextTypes = {
 	addNotification: React.PropTypes.func.isRequired,
-	t: React.PropTypes.func.isRequired,
-	router: React.PropTypes.object.isRequired
+	t: React.PropTypes.func.isRequired
 };
 
 

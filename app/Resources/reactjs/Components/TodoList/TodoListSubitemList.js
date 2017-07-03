@@ -12,7 +12,7 @@
 // import required modules
 import React, {Component} from 'react';
 import {ListGroup, ListGroupItem, ButtonGroup, Button, Popover, OverlayTrigger} from 'react-bootstrap';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import {LinkContainer} from 'react-router-bootstrap';
 import FontAwesome from 'react-fontawesome';
 

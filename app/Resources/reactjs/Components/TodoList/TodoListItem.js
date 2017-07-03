@@ -12,7 +12,7 @@
 // import required modules
 import React, {Component} from 'react';
 import {Panel, Row, Col, Badge} from 'react-bootstrap';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import FontAwesome from 'react-fontawesome';
 import EditablePopover from '../EditablePopover';
 import Toolbar from '../Toolbar';
@@ -50,7 +50,7 @@ class TodoListItem extends Component {
 		this.t = this.context.t;
 		
 		// set subtitle
-		this.props.handleSetSubtitle(this.t('TodoListItem.subtitle'));
+		this.props.handleSetSubtitle('TodoListItem.subtitle');
 		
 		// get data
 		this.getAjaxData();
@@ -79,7 +79,7 @@ class TodoListItem extends Component {
 	componentWillReceiveProps(newProps) {
 		
 		// get data
-		this.getAjaxData(newProps.params.id);
+		this.getAjaxData(newProps.match.params.id);
 	}
 	
 	
@@ -115,7 +115,7 @@ class TodoListItem extends Component {
 			 			},
 			 			{
 			 				type: 'link',
-							pathname: '/todolist/edit/'+ this.props.params.id,
+							pathname: '/todolist/edit/'+ this.props.match.params.id,
 							onClick: undefined,
 			 				bsStyle: 'default',
 			 				icon: 'edit',
@@ -135,7 +135,7 @@ class TodoListItem extends Component {
 			 			},
 			 			{
 			 				type: 'link',
-							pathname: '/todolist/delete/'+ this.props.params.id,
+							pathname: '/todolist/delete/'+ this.props.match.params.id,
 							onClick: undefined,
 			 				bsStyle: 'danger',
 			 				icon: 'remove',
@@ -160,7 +160,7 @@ class TodoListItem extends Component {
 		
 		// check id
 		if(id == 0) {
-			id = this.props.params.id;
+			id = this.props.match.params.id;
 		}
 		
 		// TODO: AJAX call to get the data
@@ -201,7 +201,7 @@ class TodoListItem extends Component {
 		
 		// prevent jump to link target
 		e.preventDefault();
-		console.log('finish: '+ this.props.params.id);
+		console.log('finish: '+ this.props.match.params.id);
 	}
 	
 	

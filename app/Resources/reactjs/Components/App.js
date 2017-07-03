@@ -11,9 +11,12 @@
 
 // import required modules
 import React, {Component} from 'react';
+import {Route, Switch} from 'react-router-dom';
 import MainMenu from './MainMenu';
 import {LocaleProvider} from 'react-translate-maker';
 import moment from 'moment';
+import IndexPage from './IndexPage';
+import TodoList from './TodoList';
 import Notification from './Notification';
 
 
@@ -168,8 +171,11 @@ class App extends Component {
 						locales={this.locale.locales}
 						handleLocaleChange={this.handleLocaleChange.bind(this)}
 					/>
-					<Notification alerts={this.state.alerts}/>
-					{this.props.children}
+					<Switch>
+						<Route exact path="/" children={() => <IndexPage pageContent="homePage" />} />
+						<Route path="/todolist" component={TodoList} />
+					</Switch>
+					<Notification alerts={this.state.alerts} />
 				</div>
 			</LocaleProvider>
 		);

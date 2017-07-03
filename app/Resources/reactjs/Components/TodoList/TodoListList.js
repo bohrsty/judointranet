@@ -11,7 +11,7 @@
 
 // import required modules
 import React, {Component} from 'react';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import {PanelGroup, ButtonGroup, Button, Badge} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import FontAwesome from 'react-fontawesome';
@@ -57,7 +57,7 @@ class TodoListList extends Component {
 		this.getTodoListItems();
 		
 		// set subtitle
-		this.props.handleSetSubtitle(this.t('TodoListList.subtitle'));
+		this.props.handleSetSubtitle('TodoListList.subtitle');
 	}
 	
 	
@@ -161,7 +161,7 @@ class TodoListList extends Component {
 	 */
 	handleTitleOnClick(column) {
 		
-		this.context.router.push('/todolist/view/'+ column.id);
+		this.props.history.push('/todolist/view/'+ column.id);
 	}
 	
 	

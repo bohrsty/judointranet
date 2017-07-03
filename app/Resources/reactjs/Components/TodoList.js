@@ -11,8 +11,12 @@
 
 // import required modules
 import React, {Component} from 'react';
+import {Route, Switch, Redirect} from 'react-router-dom';
 import {PageHeader} from 'react-bootstrap';
 import {provideTranslations} from 'react-translate-maker';
+import TodoListList from './TodoList/TodoListList';
+import TodoListForm from './TodoList/TodoListForm';
+import TodoListItem from './TodoList/TodoListItem';
 
 
 /**
@@ -34,24 +38,10 @@ export default class TodoList extends Component {
 		
 		// set initial state
 		this.state = {
-			pageHeader: '',
+			pageHeader: 'TodoList.pageCaption',
 			pageHeaderSmall: '',
 			listItems: {}
 		};
-	}
-	
-	
-	/**
-	 * componentWillMount()
-	 * executed directly before component will be mounted to DOM
-	 */
-	componentWillMount() {
-		
-		// set page header
-		this.updateState('pageHeader', this.t('TodoList.pageCaption'));
-		
-		// set title
-		document.title = 'JudoIntranet - ' + this.state.pageHeader;
 	}
 	
 	
@@ -104,25 +94,58 @@ export default class TodoList extends Component {
 	 */
 	render() {
 		
-		// clone child to add prop for setting the subtitle
-		var newChildren = React.cloneElement(
-			this.props.children, 
-			{
-				handleSetSubtitle: this.handleSetSubtitle.bind(this),
-				handleListItems: this.handleListItems.bind(this),
-				listItemsState: this.state.listItems
-			}
-		);
+		// set title
+		document.title = 'JudoIntranet - ' + this.t(this.state.pageHeader);
 		
 		return (
 			<div className="container">
 				<PageHeader>
-					{this.state.pageHeader}{' '}
+					{this.t(this.state.pageHeader)}{' '}
 					<small>
-						{this.state.pageHeaderSmall}
+						{this.t(this.state.pageHeaderSmall)}
 					</small>
 				</PageHeader>
-				{newChildren}
+				<Switch>
+					<Route exact path={this.props.match.url} render={() => <Redirect to={this.props.match.url + '/listall'} />} />
+					<Route path={this.props.match.url + '/listall'} children={({match, history}) =>
+						<TodoListList
+							handleSetSubtitle={this.handleSetSubtitle.bind(this)}
+							handleListItems={this.handleListItems.bind(this)}
+							listItemsState={this.state.listItems}
+							match={match}
+							history={history}
+						/>}
+					/>
+					<Route path={this.props.match.url + '/new'} children={({match, history}) => 
+						<TodoListForm 
+							form="new"
+							handleSetSubtitle={this.handleSetSubtitle.bind(this)}
+							handleListItems={this.handleListItems.bind(this)}
+							listItemsState={this.state.listItems}
+							match={match}
+							history={history}
+						/>}
+					/>
+					<Route path={this.props.match.url + '/edit/:id'} children={({match, history}) => 
+						<TodoListForm 
+							form="edit"
+							handleSetSubtitle={this.handleSetSubtitle.bind(this)}
+							handleListItems={this.handleListItems.bind(this)}
+							listItemsState={this.state.listItems}
+							match={match}
+							history={history}
+						/>}
+					/>
+					<Route path={this.props.match.url + '/view/:id'} children={({match, history}) =>
+						<TodoListItem
+							handleSetSubtitle={this.handleSetSubtitle.bind(this)}
+							handleListItems={this.handleListItems.bind(this)}
+							listItemsState={this.state.listItems}
+							match={match}
+							history={history}
+						/>}
+					/>
+				</Switch>
 			</div>
 		);
 	}

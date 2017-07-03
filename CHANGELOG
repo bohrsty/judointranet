@@ -54,7 +54,9 @@ file that was distributed with this source code.
 [++] added view, logic and internal API to show, upload and delete logos
 [++] added common file types
 --
-[!!] fixed a few typos and cleanup in UI translation 
+[!!] fixed a few typos and cleanup in UI translation
+--
+[cc] updated react-router and changed to the new router structure
 
 
 
