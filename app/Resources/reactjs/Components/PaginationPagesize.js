@@ -12,6 +12,7 @@
 // import required modules
 import React, {Component} from 'react';
 import {Pagination, FormControl, Row, Col} from 'react-bootstrap';
+import PropTypes from 'prop-types';
 
 
 /**
@@ -90,16 +91,16 @@ class PaginationPagesize extends Component {
 
 // set prop types
 PaginationPagesize.propTypes = {
-	activePage: React.PropTypes.number.isRequired,
-	pageSize: React.PropTypes.number.isRequired,
-	pageCount: React.PropTypes.number.isRequired,
-	onSelect: React.PropTypes.func.isRequired
+	activePage: PropTypes.number.isRequired,
+	pageSize: PropTypes.number.isRequired,
+	pageCount: PropTypes.number.isRequired,
+	onSelect: PropTypes.func.isRequired
 };
 
 
 //set context types
 PaginationPagesize.contextTypes = {
-	t: React.PropTypes.func.isRequired
+	t: PropTypes.func.isRequired
 };
 
 

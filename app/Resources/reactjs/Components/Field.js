@@ -24,6 +24,7 @@ import FieldText from './Field/FieldText';
 import FieldTextarea from './Field/FieldTextarea';
 import FieldDatepicker from './Field/FieldDatepicker';
 import FieldSelect from './Field/FieldSelect';
+import PropTypes from 'prop-types';
 
 /**
  * Component for the field component
@@ -298,13 +299,13 @@ class Field extends Component {
 
 // set context types
 Field.contextTypes = {
-	t: React.PropTypes.func.isRequired
+	t: PropTypes.func.isRequired
 };
 
 
 // set props types
 Field.propTypes = {
-	data: React.PropTypes.object.isRequired
+	data: PropTypes.object.isRequired
 };
 
 

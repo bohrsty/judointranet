@@ -17,6 +17,7 @@ import FontAwesome from 'react-fontawesome';
 import EditablePopover from '../EditablePopover';
 import Toolbar from '../Toolbar';
 import TodoListSubitemList from './TodoListSubitemList';
+import PropTypes from 'prop-types';
 
 
 /**
@@ -290,7 +291,7 @@ class TodoListItem extends Component {
 
 //set context types
 TodoListItem.contextTypes = {
-	t: React.PropTypes.func.isRequired
+	t: PropTypes.func.isRequired
 };
 
 

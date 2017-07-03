@@ -16,6 +16,7 @@ import {PanelGroup, ButtonGroup, Button, Badge} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import FontAwesome from 'react-fontawesome';
 import FullTable from '../FullTable';
+import PropTypes from 'prop-types';
 
 
 /**
@@ -275,8 +276,7 @@ class TodoListList extends Component {
 
 //set context types
 TodoListList.contextTypes = {
-	router: React.PropTypes.object.isRequired,
-	t: React.PropTypes.func.isRequired
+	t: PropTypes.func.isRequired
 };
 
 

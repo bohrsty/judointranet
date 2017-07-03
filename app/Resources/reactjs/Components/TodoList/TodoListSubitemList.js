@@ -15,6 +15,7 @@ import {ListGroup, ListGroupItem, ButtonGroup, Button, Popover, OverlayTrigger} 
 import {Link} from 'react-router-dom';
 import {LinkContainer} from 'react-router-bootstrap';
 import FontAwesome from 'react-fontawesome';
+import PropTypes from 'prop-types';
 
 
 /**
@@ -114,7 +115,7 @@ class TodoListSubitemList extends Component {
 
 //set context types
 TodoListSubitemList.contextTypes = {
-	t: React.PropTypes.func.isRequired
+	t: PropTypes.func.isRequired
 };
 
 

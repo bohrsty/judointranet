@@ -35,6 +35,7 @@
 		"font-awesome": "4.*",
 		"react-fontawesome": "1.*",
 		"react-bs-notifier": "4.*",
-		"react-bootstrap-table": "2.5.5"
+		"react-bootstrap-table": "2.5.5",
+		"prop-types": "15.*"
 	}
 }

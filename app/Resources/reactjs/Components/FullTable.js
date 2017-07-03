@@ -16,7 +16,7 @@ import FontAwesome from 'react-fontawesome';
 import PaginationPagesize from './PaginationPagesize';
 import Toolbar from './Toolbar';
 import LoadingModal from './LoadingModal';
-
+import PropTypes from 'prop-types';
 
 /**
  * Component for the table
@@ -381,25 +381,25 @@ class FullTable extends Component {
 
 // set prop types
 FullTable.propTypes = {
-	cols: React.PropTypes.object.isRequired,
+	cols: PropTypes.object.isRequired,
 	infoContent: React.PropTypes.oneOfType([
-		React.PropTypes.func,
-		React.PropTypes.bool
+		PropTypes.func,
+		PropTypes.bool
 	]).isRequired,
 	viewContent: React.PropTypes.oneOfType([
-		React.PropTypes.func,
-		React.PropTypes.bool
+		PropTypes.func,
+		PropTypes.bool
 	]).isRequired,
 	actionContent: React.PropTypes.oneOfType([
-		React.PropTypes.func,
-		React.PropTypes.bool
+		PropTypes.func,
+		PropTypes.bool
 	]).isRequired
 };
 
 
 //set context types
 FullTable.contextTypes = {
-	t: React.PropTypes.func.isRequired
+	t: PropTypes.func.isRequired
 };
 
 

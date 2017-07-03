@@ -14,6 +14,7 @@ import React, {Component} from 'react';
 import {ButtonToolbar, ButtonGroup, Button, InputGroup, FormControl} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import FontAwesome from 'react-fontawesome';
+import PropTypes from 'prop-types';
 
 
 /**
@@ -333,11 +334,11 @@ class ToolbarSearch extends Component {
 
 //set prop types
 ToolbarSearch.propTypes = {
-	onChange: React.PropTypes.func.isRequired
+	onChange: PropTypes.func.isRequired
 };
 
 
 //set context types
 ToolbarSearch.contextTypes = {
-	t: React.PropTypes.func.isRequired
+	t: PropTypes.func.isRequired
 };

@@ -57,6 +57,8 @@ file that was distributed with this source code.
 [!!] fixed a few typos and cleanup in UI translation
 --
 [cc] updated react-router and changed to the new router structure
+--
+[cc] changed React.PropTypes to prop-type package
 
 
 

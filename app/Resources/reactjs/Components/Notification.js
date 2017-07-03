@@ -12,6 +12,7 @@
 // import required modules
 import React, {Component} from 'react';
 import {AlertList} from 'react-bs-notifier';
+import PropTypes from 'prop-types';
 
 
 /**
@@ -48,7 +49,7 @@ class Notification extends Component {
 
 //set context types
 Notification.contextTypes = {
-	t: React.PropTypes.func.isRequired
+	t: PropTypes.func.isRequired
 };
 
 

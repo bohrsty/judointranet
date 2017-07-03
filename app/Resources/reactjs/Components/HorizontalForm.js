@@ -18,6 +18,7 @@ import {
 	Button
 } from 'react-bootstrap';
 import Field from './Field';
+import PropTypes from 'prop-types';
 
 
 /**
@@ -129,18 +130,18 @@ class HorizontalForm extends Component {
 
 // set prop types
 HorizontalForm.propTypes = {
-	onSubmit: React.PropTypes.func.isRequired,
-	fields: React.PropTypes.array.isRequired,
-	cancelButtonLabel: React.PropTypes.string.isRequired,
-	saveButtonLabel: React.PropTypes.string.isRequired,
-	history: React.PropTypes.object.isRequired
+	onSubmit: PropTypes.func.isRequired,
+	fields: PropTypes.array.isRequired,
+	cancelButtonLabel: PropTypes.string.isRequired,
+	saveButtonLabel: PropTypes.string.isRequired,
+	history: PropTypes.object.isRequired
 };
 
 
 //set context types
 HorizontalForm.contextTypes = {
-	addNotification: React.PropTypes.func.isRequired,
-	t: React.PropTypes.func.isRequired
+	addNotification: PropTypes.func.isRequired,
+	t: PropTypes.func.isRequired
 };
 
 

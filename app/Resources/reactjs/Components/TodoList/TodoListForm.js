@@ -13,6 +13,7 @@
 import React, {Component} from 'react';
 import moment from 'moment';
 import HorizontalForm from '../HorizontalForm';
+import PropTypes from 'prop-types';
 
 /**
  * Component for the todo list form component
@@ -245,8 +246,7 @@ class TodoListForm extends Component {
 
 // set context types
 TodoListForm.contextTypes = {
-	router: React.PropTypes.object.isRequired,
-	t: React.PropTypes.func.isRequired
+	t: PropTypes.func.isRequired
 };
 
 

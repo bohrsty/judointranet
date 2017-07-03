@@ -13,6 +13,7 @@
 import React, {Component} from 'react';
 import {Modal} from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
+import PropTypes from 'prop-types';
 
 
 /**
@@ -67,13 +68,13 @@ class LoadingModal extends Component {
 
 // set prop types
 LoadingModal.propTypes = {
-	show: React.PropTypes.bool.isRequired
+	show: PropTypes.bool.isRequired
 };
 
 
 //set context types
 LoadingModal.contextTypes = {
-	t: React.PropTypes.func.isRequired
+	t: PropTypes.func.isRequired
 };
 
 
