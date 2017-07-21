@@ -38,6 +38,9 @@ file that was distributed with this source code.
 [++] migration to migrate `config` into `orm_config`
 [cc] switched legacy code to `orm_config`
 [cc] moved NaviCollection to Collections namespace
+--
+[!!] fixed table name from config to orm_config in Config class
+[cc] migrated users and groups to sonatra_security/fos_user_bundle
 
 
 

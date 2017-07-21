@@ -103,8 +103,10 @@ class Config extends Object {
 		$db = Db::newDb();
 		
 		// prepare sql-statement
-		$sql = "SELECT c.name,c.value
-				FROM config AS c";
+		$sql = '
+			SELECT name, value
+			FROM orm_config
+		';
 		
 		// execute statement
 		$result = $db->query($sql);

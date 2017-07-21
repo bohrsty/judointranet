@@ -12,18 +12,16 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use FOS\UserBundle\Model\User as BaseUser;
-use Sonatra\Component\Security\Model\UserInterface;
-use AppBundle\Entity\Group;
+use Sonatra\Component\Security\Model\Permission as BasePermission;
+use Doctrine\Common\Collections\ArrayCollection;
 
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="fos_user")
+ * @ORM\Table(name="son_permission")
  * @ORM\HasLifecycleCallbacks
  */
-class User extends BaseUser implements UserInterface {
-	
+class Permission extends BasePermission {
 	
 	/**
 	 * @ORM\Column(type="integer")
@@ -33,23 +31,21 @@ class User extends BaseUser implements UserInterface {
 	protected $id;
 	
 	/**
-	 * @ORM\Column(type="string", length=50)
-	 */
-	private $name;
-	
-	/**
 	 * @ORM\Column(type="datetime", name="last_modified")
 	 */
 	private $lastModified;
 	
 	/**
-	 * @ORM\ManyToMany(targetEntity="Group")
-	 * @ORM\JoinTable(name="fos_user_groups",
-	 *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
-	 *      inverseJoinColumns={@ORM\JoinColumn(name="group_id", referencedColumnName="id")}
-	 * )
+	 * roles
+	 * @ORM\ManyToMany(targetEntity="Role", mappedBy="permissions")
 	 */
-	protected $groups;
+	protected $roles;
+	
+	/**
+	 * roles
+	 * @ORM\ManyToMany(targetEntity="Sharing", mappedBy="permissions")
+	 */
+	protected $sharingEntries;
 	
 	
 	
@@ -65,12 +61,16 @@ class User extends BaseUser implements UserInterface {
 		if(is_null($this->getLastModified())) {
 			$this->setLastModified(new \DateTime());
 		}
+		
+		// setup parent and children
+		$this->roles = new ArrayCollection();
+		$this->sharingEntries = new ArrayCollection();
 	}
 	
 	
 	/**
 	 * update the last modified timestamp
-	 * 
+	 *
 	 * @ORM\PrePersist()
 	 * @ORM\PreUpdate()
 	 */
@@ -79,33 +79,11 @@ class User extends BaseUser implements UserInterface {
 	}
 	
 	/**
-	 * Set name
-	 *
-	 * @param string $name
-	 *
-	 * @return User
-	 */
-	public function setName($name) {
-		$this->name = $name;
-		
-		return $this;
-	}
-	
-	/**
-	 * Get name
-	 *
-	 * @return string
-	 */
-	public function getName() {
-		return $this->name;
-	}
-	
-	/**
 	 * Set lastModified
 	 *
 	 * @param \DateTime $lastModified
 	 *
-	 * @return User
+	 * @return Permission
 	 */
 	public function setLastModified($lastModified) {
 		$this->lastModified = $lastModified;

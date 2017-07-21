@@ -32,11 +32,6 @@ framework:
     http_method_override: true
     assets: ~
 
-# Twig Configuration
-twig:
-    debug:            "%kernel.debug%"
-    strict_variables: "%kernel.debug%"
-
 # Doctrine Configuration
 doctrine:
     dbal:
@@ -47,24 +42,35 @@ doctrine:
         user:     "%database_user%"
         password: "%database_password%"
         charset:  UTF8
-        schema_filter: ~^(orm_.*|migration_versions)~
-        # if using pdo_sqlite as your database driver:
-        #   1. add the path in parameters.yml
-        #     e.g. database_path: "%kernel.root_dir%/data/data.db3"
-        #   2. Uncomment database_path in parameters.yml.dist
-        #   3. Uncomment next line:
-        #     path:     "%database_path%"
+        schema_filter: ~^(orm_.*|migration_versions|fos_.*|son_.*)~
 
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
-        naming_strategy: doctrine.orm.naming_strategy.underscore
-        auto_mapping: true
+        entity_managers:
+            default:
+                naming_strategy: doctrine.orm.naming_strategy.underscore
+                auto_mapping: true
+                filters:
+                    sonatra_sharing:
+                        class:      Sonatra\Component\Security\Doctrine\ORM\Filter\SharingFilter
+                        enabled:    true
         
 doctrine_migrations:
     dir_name: "%kernel.root_dir%/Migrations"
     namespace: JudoIntranetMigrations
     table_name: migration_versions
     name: JudoIntranet Migrations
+
+# user configuration
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: AppBundle\Entity\User
+    from_email:
+        address: "%mailer_user%"
+        sender_name: "%mailer_user%"
+    group:
+        group_class: AppBundle\Entity\Group
 
 # Swiftmailer Configuration
 swiftmailer:
@@ -73,3 +79,44 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+# sonatra security configuration
+sonatra_security:
+    role_class: AppBundle\Entity\Role
+    permission_class: AppBundle\Entity\Permission
+    sharing_class: AppBundle\Entity\Sharing
+    object_filter:
+        enabled: true # Enable the object filter (optional)
+    role_hierarchy:
+        enabled: true # Enable the role hierarchy for organizational context (optional)
+        cache: null # Defined the service cache for role hierarchy (optional)
+    security_voter:
+        role_security_identity: true # Override the Symfony Role Hierarchy Voter (optional)
+        groupable: true # Enable to check the group in the Symfony Security Authorization Checker
+    sharing:
+        enabled: true
+        identity_types:
+            AppBundle\Entity\User:
+                roleable: true # (optional)
+            AppBundle\Entity\Role:
+                permissible: true # (optional)
+        subjects:
+            AppBundle\Entity\Navi: private
+    default_permissions:
+        master_mapping_permissions:
+            view:      read
+            update:    edit
+            create:    edit
+            delete:    edit
+    permissions:
+        AppBundle\Entity\Navi:
+            enabled: true
+    doctrine:
+        orm:
+            object_filter_voter: true # Ebable the Doctrine ORM Collection Object Filter (optional)
+            listeners:
+                permission_checker: true # Enable the Doctrine ORM Permission Checker Listener (optional)
+                object_filter: true # Enable the Doctrine ORM Object Filter Listener(optional)
+                role_hierarchy: true # Enable the Doctrine ORM listener of role hierarchy (optional)
+            filters:
+                sharing: true # Enable the Doctrine ORM SQL Filter for sharing the entities (optional)

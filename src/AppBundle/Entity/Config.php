@@ -12,6 +12,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Sonatra\Component\Security\Identity\SubjectIdentityInterface;
 
 
 /**
@@ -19,7 +20,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="orm_config")
  * @ORM\HasLifecycleCallbacks
  */
-class Config {
+class Config implements SubjectIdentityInterface {
 	
 	/**
 	 * @ORM\Column(type="string", length=50)
@@ -66,6 +67,54 @@ class Config {
 			$this->setLastModified(new \DateTime());
 		}
 	}
+	
+	/*
+	 * implement SubjectIdentityInterface
+	 */
+	/**
+	 * Get the type of the subject. Typically, this is the PHP class name.
+	 *
+	 * @return string
+	 */
+	public function getType() {
+		return \get_class($this);
+	}
+	
+	
+	/**
+	 * Get the unique identifier.
+	 *
+	 * @return string
+	 */
+	public function getIdentifier() {
+		return $this->getName();
+	}
+	
+	
+	/**
+	 * Get the instance of subject.
+	 *
+	 * @return object|null
+	 */
+	public function getObject() {
+		return $this;
+	}
+	
+	
+	/**
+	 * We specifically require this method so we can check for object equality
+	 * explicitly, and do not have to rely on referential equality instead.
+	 *
+	 * @param SubjectIdentityInterface $identity The subject identity
+	 *
+	 * @return bool
+	 */
+	public function equals(SubjectIdentityInterface $identity) {
+		return $this->getName() === $identity->getName();
+	}
+	
+	
+	
 	
 	
 	/**

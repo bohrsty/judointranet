@@ -12,18 +12,16 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use FOS\UserBundle\Model\User as BaseUser;
-use Sonatra\Component\Security\Model\UserInterface;
-use AppBundle\Entity\Group;
+use Sonatra\Component\Security\Model\Sharing as BaseSharing;
+use Doctrine\Common\Collections\ArrayCollection;
 
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="fos_user")
+ * @ORM\Table(name="son_sharing")
  * @ORM\HasLifecycleCallbacks
  */
-class User extends BaseUser implements UserInterface {
-	
+class Sharing extends BaseSharing {
 	
 	/**
 	 * @ORM\Column(type="integer")
@@ -33,23 +31,25 @@ class User extends BaseUser implements UserInterface {
 	protected $id;
 	
 	/**
-	 * @ORM\Column(type="string", length=50)
-	 */
-	private $name;
-	
-	/**
 	 * @ORM\Column(type="datetime", name="last_modified")
 	 */
 	private $lastModified;
 	
 	/**
-	 * @ORM\ManyToMany(targetEntity="Group")
-	 * @ORM\JoinTable(name="fos_user_groups",
-	 *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
-	 *      inverseJoinColumns={@ORM\JoinColumn(name="group_id", referencedColumnName="id")}
+	 * identity id
+	 * @ORM\Column(type="integer", name="identity_id")
+	 */
+	protected $identityId;
+	
+	/**
+	 * permissions
+	 * @ORM\ManyToMany(targetEntity="Permission", inversedBy="sharingEntries")
+	 * @ORM\JoinTable(name="son_sharing_permissions",
+	 *      joinColumns={@ORM\JoinColumn(name="sharing_id", referencedColumnName="id")},
+	 *      inverseJoinColumns={@ORM\JoinColumn(name="permission_id", referencedColumnName="id")}
 	 * )
 	 */
-	protected $groups;
+	protected $permissions;
 	
 	
 	
@@ -65,12 +65,15 @@ class User extends BaseUser implements UserInterface {
 		if(is_null($this->getLastModified())) {
 			$this->setLastModified(new \DateTime());
 		}
+		
+		// setup permissions
+		$this->permissions = new ArrayCollection();
 	}
 	
 	
 	/**
 	 * update the last modified timestamp
-	 * 
+	 *
 	 * @ORM\PrePersist()
 	 * @ORM\PreUpdate()
 	 */
@@ -79,33 +82,11 @@ class User extends BaseUser implements UserInterface {
 	}
 	
 	/**
-	 * Set name
-	 *
-	 * @param string $name
-	 *
-	 * @return User
-	 */
-	public function setName($name) {
-		$this->name = $name;
-		
-		return $this;
-	}
-	
-	/**
-	 * Get name
-	 *
-	 * @return string
-	 */
-	public function getName() {
-		return $this->name;
-	}
-	
-	/**
 	 * Set lastModified
 	 *
 	 * @param \DateTime $lastModified
 	 *
-	 * @return User
+	 * @return Permission
 	 */
 	public function setLastModified($lastModified) {
 		$this->lastModified = $lastModified;

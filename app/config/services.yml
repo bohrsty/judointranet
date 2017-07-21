@@ -11,3 +11,6 @@ services:
     navi_collection:
         class: AppBundle\Collections\NaviCollection
         arguments: ["@doctrine.orm.entity_manager","@global_config"]
+    
+    md5bcrypt_encoder:
+        class: JudoIntranet\Legacy\Encoder\Md5Bcrypt

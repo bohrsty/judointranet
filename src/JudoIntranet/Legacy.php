@@ -19,14 +19,22 @@ use Doctrine\DBAL\Connection;
 class Legacy {
 
     /**
-    * checks if the global software version is greater than 2.0.0, previous verions
+    * checks if the global software version is greater than 2.0.0, previous versions
     * had format "rXXX"
     *
     * @param Doctrine\DBAL\Connection $connection the database connection
     * @return boolean
     */
     public static function isMigrationUsable(Connection $connection) {
-
+		
+    	// get schema manager
+    	$schemaManager = $connection->getSchemaManager();
+    	
+    	// check if table config exists
+    	if(!$schemaManager->tablesExist(array('config'))) {
+    		return true;
+    	}
+    	
         // prepare statement
         $sql = '
             SELECT `value`
@@ -36,10 +44,6 @@ class Legacy {
 
         // execute query and fetch data
         $globalVersion = $connection->fetchAssoc($sql);
-		// if "global.version" does not exist, > 2.1.0 
-		if($globalVersion === false) {
-			return true;
-		}
 		
         // check version format
         $versionMatches = array();
