@@ -24,6 +24,7 @@ import FieldText from './Field/FieldText';
 import FieldTextarea from './Field/FieldTextarea';
 import FieldDatepicker from './Field/FieldDatepicker';
 import FieldSelect from './Field/FieldSelect';
+import FieldAttachment from './Field/FieldAttachment';
 import PropTypes from 'prop-types';
 
 /**
@@ -144,6 +145,15 @@ class Field extends Component {
 						options={data.options}
 					/>
 				);
+            
+            case 'FieldAttachment':
+                return (
+                    <FieldAttachment
+                        value={this.state.value}
+                        onChange={this.handleAttachment.bind(this)}
+                        url={data.url}
+                    />
+                );
 		}
 	}
 	
@@ -270,6 +280,18 @@ class Field extends Component {
 	handleDate(date) {
 		this.validate(date);
 	}
+    
+    
+    /**
+     * handleAttachment(value)
+     * event handler for attachment
+     * 
+     * @param mixed value the value from Select
+     */
+	handleAttachment(value) {
+console.log(value);
+	    this.validate(value);
+    }
 	
 	
 	/**

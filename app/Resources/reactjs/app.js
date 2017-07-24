@@ -19,6 +19,7 @@ import App from './Components/App';
 require('bootstrap/dist/css/bootstrap.css');
 require('font-awesome/css/font-awesome.css');
 require('react-datetime/css/react-datetime.css');
+require('react-select/dist/react-select.css');
 require('./app.css');
 
 

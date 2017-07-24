@@ -11,7 +11,15 @@
 
 // import required modules
 import React, {Component} from 'react';
-import {ButtonToolbar, ButtonGroup, Button, InputGroup, FormControl} from 'react-bootstrap';
+import {
+    ButtonToolbar,
+    ButtonGroup,
+    Button,
+    InputGroup,
+    FormControl,
+    SplitButton,
+    MenuItem
+} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
@@ -153,14 +161,16 @@ class ToolbarButtonGroup extends Component {
 				{this.props.buttons.map((buttonObject, buttonId) => 
 					<ToolbarButton
 						key={buttonId}
+					    id={buttonId}
 						bsStyle={buttonObject.bsStyle}
 						type={buttonObject.type}
-						callback={buttonObject.type == 'link' ? undefined : buttonObject.onClick.bind(this)}
+						callback={buttonObject.type == 'callback' ? buttonObject.onClick.bind(this) : undefined}
 						icon={buttonObject.icon}
 						iconIsPrefix={buttonObject.iconIsPrefix}
 						text={buttonObject.text}
 						pathname={buttonObject.pathname}
 						disabled={buttonObject.disabled}
+					    dropdown={buttonObject.dropdown}
 					/>
 				)}
 			</ButtonGroup>
@@ -204,27 +214,68 @@ class ToolbarButton extends Component {
 			}
 		}
 		
-		// prepare button
-		var button = (
-			<Button
-				bsStyle={this.props.bsStyle}
-				onClick={this.props.type == 'callback' ? this.props.callback.bind(this) : undefined}
-				disabled={this.props.disabled}
-			>
-				{buttonText}
-			</Button>
-		);
+		// check if dropdown
+		var completeButton = null;
+		if(this.props.type == 'dropdown' && this.props.dropdown !== undefined && this.props.dropdown.length > 0) {
+		    
+		    completeButton = (
+	            <SplitButton
+	                id={this.props.id}
+	                bsStyle={this.props.bsStyle}
+	                title={buttonText}
+	            >
+	                {this.props.dropdown.map((item, id) => {
+	                    
+	                    // prepare menu item
+	                    var button = (
+	                        <MenuItem
+	                            key={id}
+	                            onClick={item.type == 'callback' ? item.callback.bind(this) : undefined}
+	                            disabled={item.disabled}
+	                        >
+	                            {item.text}
+	                        </MenuItem>
+	                    );
+	                    
+	                    // prepare link
+	                    var link = (
+	                        <LinkContainer key={id} to={{pathname: item.pathname}}>
+	                            {button}
+	                        </LinkContainer>
+	                    );
+	                    
+	                    // return
+	                    return item.type == 'link' ? link : button;
+	                })}
+	            </SplitButton>
+		    );
+		} else {
 		
-		// prepare link
-		var link = (
+    		// prepare button
+    		var button = (
+    			<Button
+    				bsStyle={this.props.bsStyle}
+    				onClick={this.props.type == 'callback' ? this.props.callback.bind(this) : undefined}
+    				disabled={this.props.disabled}
+    			>
+    				{buttonText}
+    			</Button>
+    		);
+    		
+    		// prepare link
+    		var link = (
 				<LinkContainer to={{pathname: this.props.pathname}}>
 					{button}
 				</LinkContainer>
 			);
+    		
+    		// prepare return
+    		completeButton = this.props.type == 'link' ? link : button;
+		}
 		
 		return (
 			
-			(this.props.type == 'link' ? link : button)
+			completeButton
 		);
 	}
 }

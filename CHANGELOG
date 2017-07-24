@@ -59,6 +59,11 @@ file that was distributed with this source code.
 [cc] updated react-router and changed to the new router structure
 --
 [cc] changed React.PropTypes to prop-type package
+--
+[!!] fixed forgotten React.PropTypes
+[++] added dropdown to Toolbar
+[++] added react components for faq and faq category view, new and edit (without any api interaction)
+[++] added attachment field for horizontal form
 
 
 

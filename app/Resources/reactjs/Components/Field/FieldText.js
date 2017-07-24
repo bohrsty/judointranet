@@ -12,6 +12,7 @@
 // import required modules
 import React, {Component} from 'react';
 import {FormControl} from 'react-bootstrap';
+import PropTypes from 'prop-types';
 
 
 /**
@@ -46,9 +47,9 @@ class FieldText extends Component {
 
 // set prop types
 FieldText.propTypes = {
-	placeholder: React.PropTypes.string.isRequired,
-	value: React.PropTypes.string.isRequired,
-	onChange: React.PropTypes.func.isRequired
+	placeholder: PropTypes.string.isRequired,
+	value: PropTypes.string.isRequired,
+	onChange: PropTypes.func.isRequired
 };
 
 

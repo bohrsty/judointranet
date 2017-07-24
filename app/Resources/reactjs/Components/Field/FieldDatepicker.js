@@ -12,6 +12,7 @@
 // import required modules
 import React, {Component} from 'react';
 import Datetime from 'react-datetime';
+import PropTypes from 'prop-types';
 
 
 /**
@@ -47,11 +48,11 @@ class FieldDatepicker extends Component {
 
 // set prop types
 FieldDatepicker.propTypes = {
-	value: React.PropTypes.oneOfType([
-		React.PropTypes.object,
-		React.PropTypes.string
+	value: PropTypes.oneOfType([
+		PropTypes.object,
+		PropTypes.string
 	]).isRequired,
-	onChange: React.PropTypes.func.isRequired
+	onChange: PropTypes.func.isRequired
 };
 
 

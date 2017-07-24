@@ -17,6 +17,7 @@ import {LocaleProvider} from 'react-translate-maker';
 import moment from 'moment';
 import IndexPage from './IndexPage';
 import TodoList from './TodoList';
+import Faq from './Faq';
 import Notification from './Notification';
 
 
@@ -174,6 +175,7 @@ class App extends Component {
 					<Switch>
 						<Route exact path="/" children={() => <IndexPage pageContent="homePage" />} />
 						<Route path="/todolist" component={TodoList} />
+						<Route path="/faq" component={Faq} />
 					</Switch>
 					<Notification alerts={this.state.alerts} />
 				</div>

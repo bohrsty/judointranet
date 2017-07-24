@@ -382,15 +382,15 @@ class FullTable extends Component {
 // set prop types
 FullTable.propTypes = {
 	cols: PropTypes.object.isRequired,
-	infoContent: React.PropTypes.oneOfType([
+	infoContent: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.bool
 	]).isRequired,
-	viewContent: React.PropTypes.oneOfType([
+	viewContent: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.bool
 	]).isRequired,
-	actionContent: React.PropTypes.oneOfType([
+	actionContent: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.bool
 	]).isRequired

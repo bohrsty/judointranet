@@ -163,7 +163,7 @@ class TodoListForm extends Component {
 		// save todo
 		console.dir(form);
 		// return to list
-		this.props.history.push('/todolist/view/'+ this.props.params.id);
+		this.props.history.push('/todolist/view/'+ this.props.match.params.id);
 	}
 	
 	

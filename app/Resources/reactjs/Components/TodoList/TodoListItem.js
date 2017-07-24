@@ -135,9 +135,9 @@ class TodoListItem extends Component {
 			 				disabled: !this.state.data.finishable
 			 			},
 			 			{
-			 				type: 'link',
-							pathname: '/todolist/delete/'+ this.props.match.params.id,
-							onClick: undefined,
+			 				type: 'callback',
+							pathname: '',
+							onClick: this.handleDelete.bind(this),
 			 				bsStyle: 'danger',
 			 				icon: 'remove',
 			 				iconIsPrefix: true,
@@ -217,6 +217,17 @@ class TodoListItem extends Component {
 		
 		console.log(id +': '+ content);
 	}
+    
+    
+    /**
+     * handleDelete()
+     * eventhandler to handle delete
+     * 
+     */
+    handleDelete() {
+        
+        console.log('delete: ' + this.props.match.params.id);
+    }
 	
 	
 	/**
