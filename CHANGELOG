@@ -64,7 +64,10 @@ file that was distributed with this source code.
 [++] added dropdown to Toolbar
 [++] added react components for faq and faq category view, new and edit (without any api interaction)
 [++] added attachment field for horizontal form
-
+--
+[cc] changed loading indicator to global and the backdrop filling the whole screen
+[cc] changed translation to use decorator and props for function t()
+[++] added provider to add contexts as props per decorator
 
 
 -----------------------------------------------------------------------------------------

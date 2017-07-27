@@ -43,6 +43,10 @@ p.noMargin {
 	position: relative;
 }
 
+.modal-container.modal-fullscreen {
+	height: calc(100vh) !important;
+}
+
 .modal-container .modal, .modal-container .modal-backdrop {
 	position: absolute;
 }
@@ -53,4 +57,8 @@ p.noMargin {
 
 .clickable:hover {
 	text-decoration: underline;
+}
+
+#content {
+	min-height: calc(100vh) !important;
 }

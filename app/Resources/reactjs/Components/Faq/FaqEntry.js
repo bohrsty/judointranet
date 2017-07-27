@@ -17,6 +17,7 @@ import FontAwesome from 'react-fontawesome';
 import Toolbar from '../Toolbar';
 import PropTypes from 'prop-types';
 import {provideTranslations} from 'react-translate-maker';
+import provideContext from '../../provideContext';
 import {LinkContainer} from 'react-router-bootstrap';
 import FaqFile from './FaqFile';
 
@@ -25,6 +26,7 @@ import FaqFile from './FaqFile';
  * Component for the faq entry component
  */
 @provideTranslations
+@provideContext
 class FaqEntry extends Component {
     
     /**
@@ -82,7 +84,9 @@ class FaqEntry extends Component {
     componentWillReceiveProps(newProps) {
         
         // get data
-        this.getAjaxData(newProps.match.params.id);
+        if(newProps.match.params.id != this.props.match.params.id) {
+            this.getAjaxData(newProps.match.params.id);
+        }
     }
     
     
@@ -142,6 +146,11 @@ class FaqEntry extends Component {
      */
     getAjaxData(id = 0) {
         
+        // TODO: AJAX calls to get the data
+        
+        // show loading modal
+        this.props.startLoading('FaqEntry.getAjaxData');
+        
         // check id
         if(id == 0) {
             id = this.props.match.params.id;
@@ -161,6 +170,9 @@ class FaqEntry extends Component {
         
         // update state
         this.updateState('data', item);
+        
+        // simulate ajax call and remove loading modal
+        setTimeout(() => this.props.stopLoading('FaqEntry.getAjaxData'), 1000);
     }
     
     

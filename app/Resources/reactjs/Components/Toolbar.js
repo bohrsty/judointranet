@@ -23,6 +23,7 @@ import {
 import {LinkContainer} from 'react-router-bootstrap';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
+import {provideTranslations} from 'react-translate-maker';
 
 
 /**
@@ -284,6 +285,7 @@ class ToolbarButton extends Component {
 /**
  * Component for the toolbar search component
  */
+@provideTranslations
 class ToolbarSearch extends Component {
 	
 	/**
@@ -293,6 +295,9 @@ class ToolbarSearch extends Component {
 		
 		// parent constructor
 		super(props);
+        
+        // set translation
+        this.t = this.props.t;
 		
 		// set initial state
 		this.state = {
@@ -364,14 +369,14 @@ class ToolbarSearch extends Component {
 					</InputGroup.Addon>
 					<FormControl
 						type="text"
-						placeholder={this.context.t('ToolbarSearch.find') +"..."}
+						placeholder={this.t('ToolbarSearch.find') +"..."}
 						value={this.state.value}
 						onChange={this.handleOnChange.bind(this)}
 					/>
 					<InputGroup.Button>
 						<Button
 							onClick={this.handleOnClear.bind(this)}
-							title={this.context.t('ToolbarSearch.clearSearch')}
+							title={this.t('ToolbarSearch.clearSearch')}
 						>
 							<FontAwesome name="close" /> 
 						</Button>
@@ -386,10 +391,4 @@ class ToolbarSearch extends Component {
 //set prop types
 ToolbarSearch.propTypes = {
 	onChange: PropTypes.func.isRequired
-};
-
-
-//set context types
-ToolbarSearch.contextTypes = {
-	t: PropTypes.func.isRequired
 };

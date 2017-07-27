@@ -26,10 +26,12 @@ import FieldDatepicker from './Field/FieldDatepicker';
 import FieldSelect from './Field/FieldSelect';
 import FieldAttachment from './Field/FieldAttachment';
 import PropTypes from 'prop-types';
+import {provideTranslations} from 'react-translate-maker';
 
 /**
  * Component for the field component
  */
+@provideTranslations
 class Field extends Component {
 	
 	/**
@@ -39,6 +41,9 @@ class Field extends Component {
 		
 		// parent constructor
 		super(props);
+        
+        // set translation
+        this.t = this.props.t;
 		
 		// set initial state
 		this.state = {
@@ -49,17 +54,6 @@ class Field extends Component {
 				date: ''
 			}
 		};
-	}
-	
-	
-	/**
-	 * componentWillMount()
-	 * executed directly before component will be mounted to DOM
-	 */
-	componentWillMount() {
-		
-		// get translation method
-		this.t = this.context.t;
 	}
 	
 	
@@ -318,11 +312,6 @@ console.log(value);
 		);
 	}
 }
-
-// set context types
-Field.contextTypes = {
-	t: PropTypes.func.isRequired
-};
 
 
 // set props types

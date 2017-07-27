@@ -14,11 +14,13 @@ import React, {Component} from 'react';
 import {Route, Switch} from 'react-router-dom';
 import MainMenu from './MainMenu';
 import {LocaleProvider} from 'react-translate-maker';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 import IndexPage from './IndexPage';
 import TodoList from './TodoList';
 import Faq from './Faq';
 import Notification from './Notification';
+import LoadingModal from './LoadingModal';
 
 
 /**
@@ -42,7 +44,8 @@ class App extends Component {
 		// set initial state
 		this.state = {
 			locale: '',
-			alerts: []
+			alerts: [],
+			loading: []
 		}
 	}
 	
@@ -110,7 +113,11 @@ class App extends Component {
 	 * register the context
 	 */
 	getChildContext() {
-		return {addNotification: this.addNotification.bind(this)};
+		return {
+		    addNotification: this.addNotification.bind(this),
+		    startLoading: this.startLoading.bind(this),
+		    stopLoading: this.stopLoading.bind(this)
+	    };
 	}
 	
 	
@@ -149,6 +156,47 @@ class App extends Component {
 		
 		this.updateState('locale', locale);
 	}
+    
+    
+    /**
+     * startLoading(loader)
+     * eventhandler to start loading state
+     * 
+     * @param string loader the loader to remember
+     */
+	startLoading(loader) {
+        
+	    // get current state
+	    var loading = this.state.loading;
+	    
+	    // add loader
+	    loading.push(loader);
+	    
+	    // update state
+        this.updateState('loading', loading);
+    }
+    
+    
+    /**
+     * stopLoading(loader)
+     * eventhandler to start loading state
+     * 
+     * @param string loader the loader to remove
+     */
+    stopLoading(loader) {
+        
+        // get current state
+        var loading = this.state.loading;
+        
+        // check loader
+        var index = loading.indexOf(loader);
+        if(index > -1) {
+            loading.splice(index, 1);
+        }
+        
+        // update state
+        this.updateState('loading', loading);
+    }
 	
 	
 	/**
@@ -164,21 +212,23 @@ class App extends Component {
 				
 		return (
 			<LocaleProvider data={this.locale.data} locale={this.state.locale}>
-				<div>
-					{/* mocked loggedin user, TODO: get from session/cookie */}
-					<MainMenu
-						navitems={this.menu}
-						user="Administrator"
-						locales={this.locale.locales}
-						handleLocaleChange={this.handleLocaleChange.bind(this)}
-					/>
-					<Switch>
-						<Route exact path="/" children={() => <IndexPage pageContent="homePage" />} />
-						<Route path="/todolist" component={TodoList} />
-						<Route path="/faq" component={Faq} />
-					</Switch>
-					<Notification alerts={this.state.alerts} />
-				</div>
+				<LoadingModal show={this.state.loading.length != 0} fullscreen={true}>
+					<div>
+						{/* mocked loggedin user, TODO: get from session/cookie */}
+						<MainMenu
+							navitems={this.menu}
+							user="Administrator"
+							locales={this.locale.locales}
+							handleLocaleChange={this.handleLocaleChange.bind(this)}
+						/>
+						<Switch>
+							<Route exact path="/" children={() => <IndexPage pageContent="homePage" />} />
+							<Route path="/todolist" component={TodoList} />
+							<Route path="/faq" component={Faq} />
+						</Switch>
+						<Notification alerts={this.state.alerts} />
+					</div>
+				</LoadingModal>
 			</LocaleProvider>
 		);
 	}
@@ -187,7 +237,9 @@ class App extends Component {
 
 // set child context types
 App.childContextTypes = {
-	addNotification: React.PropTypes.func
+	addNotification: PropTypes.func.isRequired,
+	startLoading: PropTypes.func.isRequired,
+	stopLoading: PropTypes.func.isRequired
 };
 
 

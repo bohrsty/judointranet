@@ -17,11 +17,15 @@ import {LinkContainer} from 'react-router-bootstrap';
 import FontAwesome from 'react-fontawesome';
 import FullTable from '../FullTable';
 import PropTypes from 'prop-types';
+import {provideTranslations} from 'react-translate-maker';
+import provideContext from '../../provideContext';
 
 
 /**
  * Component for the todo list listall component
  */
+@provideTranslations
+@provideContext
 class TodoListList extends Component {
 	
 	/**
@@ -50,9 +54,6 @@ class TodoListList extends Component {
 	 * executed directly before component will be mounted to DOM
 	 */
 	componentWillMount() {
-		
-		// get translation method
-		this.t = this.context.t;
 		
 		// get list items
 		this.getTodoListItems();
@@ -85,8 +86,11 @@ class TodoListList extends Component {
 	 * @param string query optional string to search for in list
 	 */
 	getTodoListItems(query = '') {
-		
-		// TODO: get items per AJAX call
+        
+        // TODO: AJAX calls to get the data
+        
+        // show loading modal
+        this.props.startLoading('TodoListList.getTodoListItems');
 		
 		// get all items, page number and size
 		var mockItems = require('../../mockTodolist');
@@ -122,6 +126,9 @@ class TodoListList extends Component {
 		// update list and page count
 		this.updateState('list', list);
 		this.updateState('pageCount', pageCount);
+        
+        // simulate ajax call and remove loading modal
+        setTimeout(() => this.props.stopLoading('TodoListList.getTodoListItems'), 1000);
 		
 	}
 	
@@ -272,12 +279,6 @@ class TodoListList extends Component {
 		);
 	}
 }
-
-
-//set context types
-TodoListList.contextTypes = {
-	t: PropTypes.func.isRequired
-};
 
 
 //export

@@ -28,12 +28,14 @@ import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 import {provideTranslations} from 'react-translate-maker';
 import Toolbar from '../Toolbar';
+import provideContext from '../../provideContext';
 
 
 /**
  * Component for the faq category component
  */
 @provideTranslations
+@provideContext
 class FaqCategory extends Component {
 	
 	
@@ -92,8 +94,11 @@ class FaqCategory extends Component {
 	 * @param string query optional string to search for in list
 	 */
 	getFaqCategoryList(query = '') {
-		
-		// TODO: get items per AJAX call
+        
+        // TODO: AJAX calls to get the data
+        
+        // show loading modal
+        this.props.startLoading('FaqCategory.getFaqCategoryList');
 		
 		// get all items, page number and size
 		var allItems = [];
@@ -134,6 +139,9 @@ class FaqCategory extends Component {
 		
 		// update list
 		this.updateState('list', list);
+        
+        // simulate ajax call and remove loading modal
+        setTimeout(() => this.props.stopLoading('FaqCategory.getFaqCategoryList'), 1000);
 		
 	}
     

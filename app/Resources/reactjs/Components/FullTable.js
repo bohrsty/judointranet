@@ -15,12 +15,15 @@ import {Table} from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
 import PaginationPagesize from './PaginationPagesize';
 import Toolbar from './Toolbar';
-import LoadingModal from './LoadingModal';
 import PropTypes from 'prop-types';
+import {provideTranslations} from 'react-translate-maker';
+import provideContext from '../provideContext';
 
 /**
  * Component for the table
  */
+@provideTranslations
+@provideContext
 class FullTable extends Component {
 	
 	/**
@@ -30,6 +33,9 @@ class FullTable extends Component {
 		
 		// parent constructor
 		super(props);
+        
+        // set translation
+        this.t = this.props.t;
 		
 		// prepare cols
 		this.cols = Object.keys(this.props.cols);
@@ -50,9 +56,6 @@ class FullTable extends Component {
 	 * executed directly before component will be mounted to DOM
 	 */
 	componentWillMount() {
-		
-		// get translation method
-		this.t = this.context.t;
 		
 		// get list items
 		this.getList();
@@ -86,7 +89,7 @@ class FullTable extends Component {
 		// TODO: get items per AJAX call
 		
 		// show loading modal
-		this.updateState('loading', true);
+		this.props.startLoading('FullTable.getList');
 		
 		// get all items, page number and size
 		var mockItems = require('../mockTodolist');		
@@ -124,7 +127,7 @@ class FullTable extends Component {
 		this.updateState('pageCount', pageCount);
 		
 		// simulate ajax call and remove loading modal
-		setTimeout(() => this.updateState('loading', false), 1000);
+		setTimeout(() => this.props.stopLoading('FullTable.getList'), 1000);
 		
 	}
 	
@@ -352,28 +355,26 @@ class FullTable extends Component {
 	render() {
 		
 		return (
-				<LoadingModal
-					show={this.state.loading}
+	        <div>
+				{this.getToolbar()}
+				<p></p>
+				<Table
+					striped
+					bordered
+					condensed
+					hover
+					responsive
 				>
-					{this.getToolbar()}
-					<p></p>
-					<Table
-						striped
-						bordered
-						condensed
-						hover
-						responsive
-					>
-						{this.getTableHead()}
-						{this.getTableBody()}
-					</Table>
-					<PaginationPagesize
-						activePage={this.state.activePage}
-						pageSize={this.state.pageSize}
-						pageCount={this.state.pageCount}
-						onSelect={this.handlePagination.bind(this)}
-					/>
-				</LoadingModal>
+					{this.getTableHead()}
+					{this.getTableBody()}
+				</Table>
+				<PaginationPagesize
+					activePage={this.state.activePage}
+					pageSize={this.state.pageSize}
+					pageCount={this.state.pageCount}
+					onSelect={this.handlePagination.bind(this)}
+				/>
+			</div>
 		);
 	}
 }
@@ -394,12 +395,6 @@ FullTable.propTypes = {
 		PropTypes.func,
 		PropTypes.bool
 	]).isRequired
-};
-
-
-//set context types
-FullTable.contextTypes = {
-	t: PropTypes.func.isRequired
 };
 
 

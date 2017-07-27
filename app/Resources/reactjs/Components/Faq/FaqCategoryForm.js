@@ -15,11 +15,13 @@ import moment from 'moment';
 import HorizontalForm from '../HorizontalForm';
 import PropTypes from 'prop-types';
 import {provideTranslations} from 'react-translate-maker';
+import provideContext from '../../provideContext';
 
 /**
  * Component for the faq category form component
  */
 @provideTranslations
+@provideContext
 class FaqCategoryForm extends Component {
     
     /**
@@ -87,6 +89,9 @@ class FaqCategoryForm extends Component {
         
         // TODO: AJAX calls to get the data
         
+        // show loading modal
+        this.props.startLoading('FaqCategoryForm.getAjaxData');
+        
         // switch type
         switch(type) {
             
@@ -107,6 +112,9 @@ class FaqCategoryForm extends Component {
                 this.updateState('data', item);
                 break;
         }
+        
+        // simulate ajax call and remove loading modal
+        setTimeout(() => this.props.stopLoading('FaqCategoryForm.getAjaxData'), 1000);
         
     }
     

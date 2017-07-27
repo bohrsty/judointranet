@@ -19,11 +19,15 @@ import {
 } from 'react-bootstrap';
 import Field from './Field';
 import PropTypes from 'prop-types';
+import {provideTranslations} from 'react-translate-maker';
+import provideContext from '../provideContext';
 
 
 /**
  * Component for the horizontal form component
  */
+@provideTranslations
+@provideContext
 class HorizontalForm extends Component {
 	
 	/**
@@ -33,20 +37,12 @@ class HorizontalForm extends Component {
 		
 		// parent constructor
 		super(props);
+        
+        // set translation
+        this.t = this.props.t;
 		
 		// prepare field objects
 		this.fields = {};
-	}
-	
-	
-	/**
-	 * componentWillMount()
-	 * executed directly before component will be mounted to DOM
-	 */
-	componentWillMount() {
-		
-		// get translation method
-		this.t = this.context.t;
 	}
 	
 	
@@ -98,7 +94,7 @@ class HorizontalForm extends Component {
 		} else {
 			
 			// add error notification
-			this.context.addNotification({
+			this.props.addNotification({
 				type: 'danger',
 				headline: this.t('HorizontalForm.formNotValid.heading'),
 				message: this.t('HorizontalForm.formNotValid.message')
@@ -135,13 +131,6 @@ HorizontalForm.propTypes = {
 	cancelButtonLabel: PropTypes.string.isRequired,
 	saveButtonLabel: PropTypes.string.isRequired,
 	history: PropTypes.object.isRequired
-};
-
-
-//set context types
-HorizontalForm.contextTypes = {
-	addNotification: PropTypes.func.isRequired,
-	t: PropTypes.func.isRequired
 };
 
 

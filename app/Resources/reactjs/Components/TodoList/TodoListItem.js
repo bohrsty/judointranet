@@ -18,11 +18,15 @@ import EditablePopover from '../EditablePopover';
 import Toolbar from '../Toolbar';
 import TodoListSubitemList from './TodoListSubitemList';
 import PropTypes from 'prop-types';
+import {provideTranslations} from 'react-translate-maker';
+import provideContext from '../../provideContext';
 
 
 /**
  * Component for the todo list item component
  */
+@provideTranslations
+@provideContext
 class TodoListItem extends Component {
 	
 	/**
@@ -32,6 +36,9 @@ class TodoListItem extends Component {
 		
 		// parent constructor
 		super(props);
+        
+        // set translation
+        this.t = this.props.t;
 		
 		// set initial state
 		this.state = {
@@ -46,9 +53,6 @@ class TodoListItem extends Component {
 	 * executed directly before component will be mounted to DOM
 	 */
 	componentWillMount() {
-		
-		// get translation method
-		this.t = this.context.t;
 		
 		// set subtitle
 		this.props.handleSetSubtitle('TodoListItem.subtitle');
@@ -158,6 +162,11 @@ class TodoListItem extends Component {
 	 * @param int id the id to get the data for
 	 */
 	getAjaxData(id = 0) {
+        
+        // TODO: AJAX calls to get the data
+        
+        // show loading modal
+        this.props.startLoading('TodoListItem.getAjaxData');
 		
 		// check id
 		if(id == 0) {
@@ -189,6 +198,9 @@ class TodoListItem extends Component {
 		
 		// update state
 		this.updateState('data', item);
+        
+        // simulate ajax call and remove loading modal
+        setTimeout(() => this.props.stopLoading('TodoListItem.getAjaxData'), 1000);
 	}
 	
 	
@@ -298,12 +310,6 @@ class TodoListItem extends Component {
 		);
 	}
 }
-
-
-//set context types
-TodoListItem.contextTypes = {
-	t: PropTypes.func.isRequired
-};
 
 
 // export
