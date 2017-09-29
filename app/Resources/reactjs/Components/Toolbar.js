@@ -233,6 +233,7 @@ class ToolbarButton extends Component {
 	                            key={id}
 	                            onClick={item.type == 'callback' ? item.callback.bind(this) : undefined}
 	                            disabled={item.disabled}
+	                            href={this.props.type == 'linkExternal' ? item.pathname : undefined}
 	                        >
 	                            {item.text}
 	                        </MenuItem>
@@ -251,27 +252,36 @@ class ToolbarButton extends Component {
 	            </SplitButton>
 		    );
 		} else {
-		
+		    
     		// prepare button
     		var button = (
     			<Button
     				bsStyle={this.props.bsStyle}
     				onClick={this.props.type == 'callback' ? this.props.callback.bind(this) : undefined}
     				disabled={this.props.disabled}
+    			    href={this.props.type == 'linkExternal' ? this.props.pathname : undefined}
     			>
     				{buttonText}
     			</Button>
     		);
     		
-    		// prepare link
-    		var link = (
-				<LinkContainer to={{pathname: this.props.pathname}}>
-					{button}
-				</LinkContainer>
-			);
-    		
     		// prepare return
-    		completeButton = this.props.type == 'link' ? link : button;
+            switch(this.props.type) {
+                
+                case 'callback':
+                case 'linkExternal':
+                    completeButton = button;
+                    break;
+                
+                case 'link':
+                    var link = (
+                        <LinkContainer to={{pathname: this.props.pathname}}>
+                            {button}
+                        </LinkContainer>
+                    );
+                    completeButton = link;
+                    break;
+            }
 		}
 		
 		return (

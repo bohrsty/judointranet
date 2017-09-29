@@ -68,6 +68,10 @@ file that was distributed with this source code.
 [cc] changed loading indicator to global and the backdrop filling the whole screen
 [cc] changed translation to use decorator and props for function t()
 [++] added provider to add contexts as props per decorator
+--
+[cc] changed FullTable for general use
+[++] added react components for calendar list, new and edit views (without any api interaction)
+[++] added checkbox field for horizontal form
 
 
 -----------------------------------------------------------------------------------------

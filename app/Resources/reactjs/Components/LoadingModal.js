@@ -42,19 +42,16 @@ class LoadingModal extends Component {
 	render() {
 		
 		return (
-			<div className={this.props.fullscreen ? 'modal-container modal-fullscreen' : 'modal-container'}>
-				<Modal
-					show={this.props.show}
-					animation={false}
-					container={this}
-					backdrop="static"
-				>
-					<Modal.Body>
-						<FontAwesome size="2x" name="spinner" spin />{' ...'}{this.t('LoadingModal.loadingData')}
-					</Modal.Body>
-				</Modal>
-				{this.props.children !== undefined ? this.props.children : ''}
-			</div>
+			<Modal
+				show={this.props.show}
+				animation={false}
+				container={this}
+				backdrop="static"
+			>
+				<Modal.Body>
+					<FontAwesome size="2x" name="spinner" spin />{' ...'}{this.t('LoadingModal.loadingData')}
+				</Modal.Body>
+			</Modal>
 		);
 	}
 }

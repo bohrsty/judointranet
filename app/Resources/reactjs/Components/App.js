@@ -21,6 +21,7 @@ import TodoList from './TodoList';
 import Faq from './Faq';
 import Notification from './Notification';
 import LoadingModal from './LoadingModal';
+import Calendar from './Calendar';
 
 
 /**
@@ -212,23 +213,23 @@ class App extends Component {
 				
 		return (
 			<LocaleProvider data={this.locale.data} locale={this.state.locale}>
-				<LoadingModal show={this.state.loading.length != 0} fullscreen={true}>
-					<div>
-						{/* mocked loggedin user, TODO: get from session/cookie */}
-						<MainMenu
-							navitems={this.menu}
-							user="Administrator"
-							locales={this.locale.locales}
-							handleLocaleChange={this.handleLocaleChange.bind(this)}
-						/>
-						<Switch>
-							<Route exact path="/" children={() => <IndexPage pageContent="homePage" />} />
-							<Route path="/todolist" component={TodoList} />
-							<Route path="/faq" component={Faq} />
-						</Switch>
-						<Notification alerts={this.state.alerts} />
-					</div>
-				</LoadingModal>
+				<div>
+					{/* mocked loggedin user, TODO: get from session/cookie */}
+					<MainMenu
+						navitems={this.menu}
+						user="Administrator"
+						locales={this.locale.locales}
+						handleLocaleChange={this.handleLocaleChange.bind(this)}
+					/>
+					<Switch>
+						<Route exact path="/" children={() => <IndexPage pageContent="homePage" />} />
+						<Route path="/todolist" component={TodoList} />
+						<Route path="/faq" component={Faq} />
+						<Route path="/calendar" component={Calendar} />
+					</Switch>
+					<Notification alerts={this.state.alerts} />
+				    {this.state.loading.length != 0 ? <LoadingModal show={true} /> : ''}
+				</div>
 			</LocaleProvider>
 		);
 	}

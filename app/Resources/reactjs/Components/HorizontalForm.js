@@ -18,6 +18,7 @@ import {
 	Button
 } from 'react-bootstrap';
 import Field from './Field';
+import AdditionalFieldSelection from './AdditionalFieldSelection';
 import PropTypes from 'prop-types';
 import {provideTranslations} from 'react-translate-maker';
 import provideContext from '../provideContext';
@@ -108,9 +109,20 @@ class HorizontalForm extends Component {
 	 */
 	render() {
 		
+	    // prepare fields
+	    var fields = this.props.fields.map((field, fieldId) => {
+	        
+	        // check formControl
+	        if(field.formControl == 'AdditionalFieldSelection') {
+	            return (<AdditionalFieldSelection data={field} key={fieldId} ref={(ref) => this.addField(ref, field.name)} />);
+	        } else {
+	            return (<Field data={field} key={fieldId} ref={(ref) => this.addField(ref, field.name)} />);
+	        }
+        });
+	        
 		return (
 			<Form horizontal onSubmit={this.onSubmit.bind(this)}>
-				{this.props.fields.map((field, fieldId) => <Field data={field} key={fieldId} ref={(ref) => this.addField(ref, field.name)} />)}
+				{fields}
 				<FormGroup controlId="buttons">
 					<Col mdOffset={this.props.buttonMdOffset || 2} md={this.props.buttonMd || 10} xs={this.props.buttonXs || 12}>
 						<Button onClick={() => this.props.history.goBack()}>{this.props.cancelButtonLabel}</Button>

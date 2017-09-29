@@ -62,3 +62,18 @@ p.noMargin {
 #content {
 	min-height: calc(100vh) !important;
 }
+
+.clickable-blue {
+	color: #337ab7;
+}
+
+.clickable-blue:hover,
+.clickable-blue:focus {
+  color: #23527c;
+  text-decoration: underline;
+}
+
+.clickable-blue:focus {
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
