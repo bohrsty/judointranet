@@ -85,6 +85,8 @@ sonatra_security:
     role_class: AppBundle\Entity\Role
     permission_class: AppBundle\Entity\Permission
     sharing_class: AppBundle\Entity\Sharing
+    anonymous_role:
+        enabled: true
     object_filter:
         enabled: true # Enable the object filter (optional)
     role_hierarchy:
@@ -118,5 +120,7 @@ sonatra_security:
                 permission_checker: true # Enable the Doctrine ORM Permission Checker Listener (optional)
                 object_filter: true # Enable the Doctrine ORM Object Filter Listener(optional)
                 role_hierarchy: true # Enable the Doctrine ORM listener of role hierarchy (optional)
+                private_sharing: true # Enable the 'private' sharing filter type
+                sharing_delete:  true # Enable the auto sharing delete when the entity is deleted
             filters:
                 sharing: true # Enable the Doctrine ORM SQL Filter for sharing the entities (optional)

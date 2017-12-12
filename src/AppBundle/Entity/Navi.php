@@ -345,7 +345,7 @@ class Navi {
 	/**
 	 * Get children
 	 * 
-	 * @return \Doctrine\Common\Collections\ArrayCollection\ArrayCollection
+	 * @return ArrayCollection
 	 */
 	public function getChildren() {
 		
@@ -394,7 +394,7 @@ class Navi {
 		$urlParts = explode('|', $this->getFileParam());
 		
 		// check params
-		if($urlParts[1] == '') {
+		if(!isset($urlParts[1]) || $urlParts[1] == '') {
 			return $urlParts[0];
 		} else {
 			return $urlParts[0].'?id='.$urlParts[1];

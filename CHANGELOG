@@ -41,6 +41,9 @@ file that was distributed with this source code.
 --
 [!!] fixed table name from config to orm_config in Config class
 [cc] migrated users and groups to sonatra_security/fos_user_bundle
+--
+[!!] fixed config for sonatra-security-bundle
+[++] added controller for v2 api and v2 navi controller
 
 
 
