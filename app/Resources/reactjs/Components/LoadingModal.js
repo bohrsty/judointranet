@@ -13,11 +13,14 @@
 import React, {Component} from 'react';
 import {Modal} from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
+import PropTypes from 'prop-types';
+import {provideTranslations} from 'react-translate-maker';
 
 
 /**
  * Component for the modal loading indicator
  */
+@provideTranslations
 class LoadingModal extends Component {
 	
 	/**
@@ -27,17 +30,9 @@ class LoadingModal extends Component {
 		
 		// parent constructor
 		super(props);
-	}
-	
-	
-	/**
-	 * componentWillMount()
-	 * executed directly before component will be mounted to DOM
-	 */
-	componentWillMount() {
-		
-		// get translation method
-		this.t = this.context.t;
+        
+        // get translation method
+        this.t = this.props.t;
 	}
 	
 	
@@ -47,19 +42,16 @@ class LoadingModal extends Component {
 	render() {
 		
 		return (
-			<div className="modal-container">
-				<Modal
-					show={this.props.show}
-					animation={false}
-					container={this}
-					backdrop="static"
-				>
-					<Modal.Body>
-						<FontAwesome size="2x" name="spinner" spin />{' ...'}{this.t('LoadingModal.loadingData')}
-					</Modal.Body>
-				</Modal>
-				{this.props.children}
-			</div>
+			<Modal
+				show={this.props.show}
+				animation={false}
+				container={this}
+				backdrop="static"
+			>
+				<Modal.Body>
+					<FontAwesome size="2x" name="spinner" spin />{' ...'}{this.t('LoadingModal.loadingData')}
+				</Modal.Body>
+			</Modal>
 		);
 	}
 }
@@ -67,13 +59,7 @@ class LoadingModal extends Component {
 
 // set prop types
 LoadingModal.propTypes = {
-	show: React.PropTypes.bool.isRequired
-};
-
-
-//set context types
-LoadingModal.contextTypes = {
-	t: React.PropTypes.func.isRequired
+	show: PropTypes.bool.isRequired
 };
 
 

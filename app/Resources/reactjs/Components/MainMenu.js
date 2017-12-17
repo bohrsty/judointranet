@@ -14,7 +14,7 @@ import React, {Component} from 'react';
 import {Navbar, Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
 import {LinkContainer} from 'react-router-bootstrap';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import {provideTranslations} from 'react-translate-maker';
 
 
@@ -31,9 +31,9 @@ export default class MainMenu extends Component {
 		
 		// parent constructor
 		super(props);
-		
-		// get translation method
-		this.t = this.props.t;
+        
+        // set translation
+        this.t = this.props.t;
 	}
 	
 	

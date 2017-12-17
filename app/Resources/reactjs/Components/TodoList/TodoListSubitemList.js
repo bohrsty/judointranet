@@ -12,14 +12,17 @@
 // import required modules
 import React, {Component} from 'react';
 import {ListGroup, ListGroupItem, ButtonGroup, Button, Popover, OverlayTrigger} from 'react-bootstrap';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import {LinkContainer} from 'react-router-bootstrap';
 import FontAwesome from 'react-fontawesome';
+import PropTypes from 'prop-types';
+import {provideTranslations} from 'react-translate-maker';
 
 
 /**
  * Component for the todo list item component
  */
+@provideTranslations
 class TodoListSubitemList extends Component {
 	
 	/**
@@ -29,20 +32,12 @@ class TodoListSubitemList extends Component {
 		
 		// parent constructor
 		super(props);
+        
+        // set translation
+        this.t = this.props.t;
 		
 		// set initial state
 		this.state = {};
-	}
-	
-	
-	/**
-	 * componentWillMount()
-	 * executed directly before component will be mounted to DOM
-	 */
-	componentWillMount() {
-		
-		// get translation method
-		this.t = this.context.t;
 	}
 	
 	
@@ -110,12 +105,6 @@ class TodoListSubitemList extends Component {
 		);
 	}
 }
-
-
-//set context types
-TodoListSubitemList.contextTypes = {
-	t: React.PropTypes.func.isRequired
-};
 
 
 //export

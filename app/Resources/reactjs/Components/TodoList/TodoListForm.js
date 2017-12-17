@@ -13,10 +13,15 @@
 import React, {Component} from 'react';
 import moment from 'moment';
 import HorizontalForm from '../HorizontalForm';
+import PropTypes from 'prop-types';
+import {provideTranslations} from 'react-translate-maker';
+import provideContext from '../../provideContext';
 
 /**
  * Component for the todo list form component
  */
+@provideTranslations
+@provideContext
 class TodoListForm extends Component {
 	
 	/**
@@ -26,6 +31,9 @@ class TodoListForm extends Component {
 		
 		// parent constructor
 		super(props);
+        
+        // set translation
+        this.t = this.props.t;
 		
 		// set initial state
 		this.state = {
@@ -46,14 +54,11 @@ class TodoListForm extends Component {
 	 */
 	componentWillMount() {
 		
-		// get translation method
-		this.t = this.context.t;
-		
 		// set form (new|edit)
-		this.form = this.props.route.form;
+		this.form = this.props.form;
 		
 		// set subtitle
-		this.props.handleSetSubtitle(this.t('TodoListForm.subtitle.' +this.form));
+		this.props.handleSetSubtitle('TodoListForm.subtitle.' + this.form);
 		
 		// get users
 		this.getAjaxData('users');
@@ -89,6 +94,9 @@ class TodoListForm extends Component {
 	getAjaxData(type) {
 		
 		// TODO: AJAX calls to get the data
+        
+        // show loading modal
+        this.props.startLoading('TodoListForm.getAjaxData');
 		
 		// switch type
 		switch(type) {
@@ -119,13 +127,13 @@ class TodoListForm extends Component {
 				// walk through list to the the current item
 				itemBlock: {
 					for(var key in listItems) {
-						if(listItems[key].id == this.props.params.id){
+						if(listItems[key].id == this.props.match.params.id){
 							item = listItems[key];
 							break;
 						} else {
 							if(listItems[key].subitems != undefined) {
 								for(var i in listItems[key].subitems) {
-									if(listItems[key].subitems[i].id == this.props.params.id) {
+									if(listItems[key].subitems[i].id == this.props.match.params.id) {
 										item = listItems[key].subitems[i];
 										break itemBlock;
 									}
@@ -147,6 +155,9 @@ class TodoListForm extends Component {
 				});
 				break;
 		}
+        
+        // simulate ajax call and remove loading modal
+        setTimeout(() => this.props.stopLoading('TodoListForm.getAjaxData'), 1000);
 		
 	}
 	
@@ -162,7 +173,7 @@ class TodoListForm extends Component {
 		// save todo
 		console.dir(form);
 		// return to list
-		this.context.router.push('/todolist/view/'+ this.props.params.id);
+		this.props.history.push('/todolist/view/'+ this.props.match.params.id);
 	}
 	
 	
@@ -236,17 +247,11 @@ class TodoListForm extends Component {
 				buttonMdOffset={2}
 				buttonMd={10}
 				buttonXs={12}
+				history={this.props.history}
 			/>
 		);
 	}
 }
-
-
-// set context types
-TodoListForm.contextTypes = {
-	router: React.PropTypes.object.isRequired,
-	t: React.PropTypes.func.isRequired
-};
 
 
 // export

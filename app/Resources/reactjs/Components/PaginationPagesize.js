@@ -12,11 +12,14 @@
 // import required modules
 import React, {Component} from 'react';
 import {Pagination, FormControl, Row, Col} from 'react-bootstrap';
+import PropTypes from 'prop-types';
+import {provideTranslations} from 'react-translate-maker';
 
 
 /**
  * Component for the pagination and page size component
  */
+@provideTranslations
 class PaginationPagesize extends Component {
 	
 	/**
@@ -26,6 +29,9 @@ class PaginationPagesize extends Component {
 		
 		// parent constructor
 		super(props);
+        
+        // set translation
+        this.t = this.props.t;
 	}
 	
 	
@@ -62,7 +68,7 @@ class PaginationPagesize extends Component {
 						componentClass="select"
 						value={this.props.pageSize}
 						onChange={this.handleChange.bind(this, 'pageSize')}
-						title={this.context.t('PaginationPagesize.entriesPerPage') +' ('+ this.props.pageSize +') '}
+						title={this.t('PaginationPagesize.entriesPerPage') +' ('+ this.props.pageSize +') '}
 					>
 						{entriesPerPage.map((count) => <option key={count} value={count}>{count}</option>)}
 					</FormControl>
@@ -90,16 +96,10 @@ class PaginationPagesize extends Component {
 
 // set prop types
 PaginationPagesize.propTypes = {
-	activePage: React.PropTypes.number.isRequired,
-	pageSize: React.PropTypes.number.isRequired,
-	pageCount: React.PropTypes.number.isRequired,
-	onSelect: React.PropTypes.func.isRequired
-};
-
-
-//set context types
-PaginationPagesize.contextTypes = {
-	t: React.PropTypes.func.isRequired
+	activePage: PropTypes.number.isRequired,
+	pageSize: PropTypes.number.isRequired,
+	pageCount: PropTypes.number.isRequired,
+	onSelect: PropTypes.func.isRequired
 };
 
 

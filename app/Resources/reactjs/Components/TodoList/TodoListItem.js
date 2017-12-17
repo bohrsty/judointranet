@@ -12,16 +12,21 @@
 // import required modules
 import React, {Component} from 'react';
 import {Panel, Row, Col, Badge} from 'react-bootstrap';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import FontAwesome from 'react-fontawesome';
 import EditablePopover from '../EditablePopover';
 import Toolbar from '../Toolbar';
 import TodoListSubitemList from './TodoListSubitemList';
+import PropTypes from 'prop-types';
+import {provideTranslations} from 'react-translate-maker';
+import provideContext from '../../provideContext';
 
 
 /**
  * Component for the todo list item component
  */
+@provideTranslations
+@provideContext
 class TodoListItem extends Component {
 	
 	/**
@@ -31,6 +36,9 @@ class TodoListItem extends Component {
 		
 		// parent constructor
 		super(props);
+        
+        // set translation
+        this.t = this.props.t;
 		
 		// set initial state
 		this.state = {
@@ -46,11 +54,8 @@ class TodoListItem extends Component {
 	 */
 	componentWillMount() {
 		
-		// get translation method
-		this.t = this.context.t;
-		
 		// set subtitle
-		this.props.handleSetSubtitle(this.t('TodoListItem.subtitle'));
+		this.props.handleSetSubtitle('TodoListItem.subtitle');
 		
 		// get data
 		this.getAjaxData();
@@ -79,7 +84,7 @@ class TodoListItem extends Component {
 	componentWillReceiveProps(newProps) {
 		
 		// get data
-		this.getAjaxData(newProps.params.id);
+		this.getAjaxData(newProps.match.params.id);
 	}
 	
 	
@@ -115,7 +120,7 @@ class TodoListItem extends Component {
 			 			},
 			 			{
 			 				type: 'link',
-							pathname: '/todolist/edit/'+ this.props.params.id,
+							pathname: '/todolist/edit/'+ this.props.match.params.id,
 							onClick: undefined,
 			 				bsStyle: 'default',
 			 				icon: 'edit',
@@ -134,9 +139,9 @@ class TodoListItem extends Component {
 			 				disabled: !this.state.data.finishable
 			 			},
 			 			{
-			 				type: 'link',
-							pathname: '/todolist/delete/'+ this.props.params.id,
-							onClick: undefined,
+			 				type: 'callback',
+							pathname: '',
+							onClick: this.handleDelete.bind(this),
 			 				bsStyle: 'danger',
 			 				icon: 'remove',
 			 				iconIsPrefix: true,
@@ -157,10 +162,15 @@ class TodoListItem extends Component {
 	 * @param int id the id to get the data for
 	 */
 	getAjaxData(id = 0) {
+        
+        // TODO: AJAX calls to get the data
+        
+        // show loading modal
+        this.props.startLoading('TodoListItem.getAjaxData');
 		
 		// check id
 		if(id == 0) {
-			id = this.props.params.id;
+			id = this.props.match.params.id;
 		}
 		
 		// TODO: AJAX call to get the data
@@ -188,6 +198,9 @@ class TodoListItem extends Component {
 		
 		// update state
 		this.updateState('data', item);
+        
+        // simulate ajax call and remove loading modal
+        setTimeout(() => this.props.stopLoading('TodoListItem.getAjaxData'), 1000);
 	}
 	
 	
@@ -201,7 +214,7 @@ class TodoListItem extends Component {
 		
 		// prevent jump to link target
 		e.preventDefault();
-		console.log('finish: '+ this.props.params.id);
+		console.log('finish: '+ this.props.match.params.id);
 	}
 	
 	
@@ -216,6 +229,17 @@ class TodoListItem extends Component {
 		
 		console.log(id +': '+ content);
 	}
+    
+    
+    /**
+     * handleDelete()
+     * eventhandler to handle delete
+     * 
+     */
+    handleDelete() {
+        
+        console.log('delete: ' + this.props.match.params.id);
+    }
 	
 	
 	/**
@@ -286,12 +310,6 @@ class TodoListItem extends Component {
 		);
 	}
 }
-
-
-//set context types
-TodoListItem.contextTypes = {
-	t: React.PropTypes.func.isRequired
-};
 
 
 // export

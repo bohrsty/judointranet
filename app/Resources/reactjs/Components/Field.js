@@ -24,10 +24,15 @@ import FieldText from './Field/FieldText';
 import FieldTextarea from './Field/FieldTextarea';
 import FieldDatepicker from './Field/FieldDatepicker';
 import FieldSelect from './Field/FieldSelect';
+import FieldAttachment from './Field/FieldAttachment';
+import FieldCheckbox from './Field/FieldCheckbox';
+import PropTypes from 'prop-types';
+import {provideTranslations} from 'react-translate-maker';
 
 /**
  * Component for the field component
  */
+@provideTranslations
 class Field extends Component {
 	
 	/**
@@ -37,11 +42,21 @@ class Field extends Component {
 		
 		// parent constructor
 		super(props);
+        
+        // set translation
+        this.t = this.props.t;
+        
+        // prepare value
+        if(this.props.data.formControl == 'FieldCheckbox') {
+            var value = false;
+        } else {
+            var value = '';
+        }
 		
 		// set initial state
 		this.state = {
 			valid: null,
-			value: this.props.data.value,
+			value: value,
 			validationMessages: {
 				required: '',
 				date: ''
@@ -51,14 +66,18 @@ class Field extends Component {
 	
 	
 	/**
-	 * componentWillMount()
-	 * executed directly before component will be mounted to DOM
-	 */
-	componentWillMount() {
-		
-		// get translation method
-		this.t = this.context.t;
-	}
+     * componentWillReceiveProps(newProps)
+     * executed directly before component receives new props
+     * 
+     * @param newProps the new props
+     */
+	componentWillReceiveProps(newProps) {
+        
+        // check value
+	    if(this.props.data.value !== newProps.data.value) {
+	        this.updateState('value', newProps.data.value);
+	    }
+    }
 	
 	
 	/**
@@ -143,6 +162,24 @@ class Field extends Component {
 						options={data.options}
 					/>
 				);
+            
+            case 'FieldAttachment':
+                return (
+                    <FieldAttachment
+                        value={this.state.value}
+                        onChange={this.handleAttachment.bind(this)}
+                        url={data.url}
+                    />
+                );
+            
+            case 'FieldCheckbox':
+
+                return (
+                    <FieldCheckbox
+                        value={this.state.value}
+                        onChange={this.handleCheckbox.bind(this)}
+                    />
+                );
 		}
 	}
 	
@@ -224,7 +261,7 @@ class Field extends Component {
 				switch(rule) {
 					
 					case 'required':
-						if(value == '') {
+						if(value == '' || value === false) {
 							valid = valid && false;
 							validationMessages.required = this.t('Field.validation.required');
 						} else {
@@ -234,8 +271,14 @@ class Field extends Component {
 					
 					case 'date':
 						if(Object.prototype.toString.call(value) != '[object Object]') {
-							valid = valid && false;
-							validationMessages.date = this.t('Field.validation.date');
+							
+						    // check empty value if optional
+						    if(value == '' && validate.indexOf('required') == -1) {
+						        validationMessages.date = '';
+						    } else {
+    						    valid = valid && false;
+    							validationMessages.date = this.t('Field.validation.date');
+						    }
 						} else {
 							validationMessages.date = '';
 						}
@@ -269,6 +312,28 @@ class Field extends Component {
 	handleDate(date) {
 		this.validate(date);
 	}
+    
+    
+    /**
+     * handleAttachment(value)
+     * event handler for attachment
+     * 
+     * @param mixed value the value from attachment
+     */
+	handleAttachment(value) {
+	    this.validate(value);
+    }
+    
+    
+    /**
+     * handleCheckbox(e)
+     * event handler for checked value
+     * 
+     * @param object e the event object
+     */
+    handleCheckbox(e) {
+        this.validate(e.target.checked);
+    }
 	
 	
 	/**
@@ -296,15 +361,10 @@ class Field extends Component {
 	}
 }
 
-// set context types
-Field.contextTypes = {
-	t: React.PropTypes.func.isRequired
-};
-
 
 // set props types
 Field.propTypes = {
-	data: React.PropTypes.object.isRequired
+	data: PropTypes.object.isRequired
 };
 
 

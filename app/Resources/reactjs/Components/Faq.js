@@ -13,17 +13,25 @@
 import React, {Component} from 'react';
 import {Route, Switch, Redirect} from 'react-router-dom';
 import {PageHeader} from 'react-bootstrap';
+import PropTypes from 'prop-types';
 import {provideTranslations} from 'react-translate-maker';
-import TodoListList from './TodoList/TodoListList';
-import TodoListForm from './TodoList/TodoListForm';
-import TodoListItem from './TodoList/TodoListItem';
+import FaqCategory from './Faq/FaqCategory';
+import FaqEntry from './Faq/FaqEntry';
+import FaqForm from './Faq/FaqForm';
+import FaqCategoryForm from './Faq/FaqCategoryForm';
 
 
 /**
- * Component for the todo list page
+ * Component for the faq index page
  */
 @provideTranslations
-export default class TodoList extends Component {
+export class Faq extends Component {
+	
+	// context
+	static contextTypes = {
+		t: PropTypes.func.isRequired
+	};
+	
 	
 	/**
 	 * constructor
@@ -38,9 +46,8 @@ export default class TodoList extends Component {
 		
 		// set initial state
 		this.state = {
-			pageHeader: 'TodoList.pageCaption',
-			pageHeaderSmall: '',
-			listItems: {}
+			pageHeader: 'Faq.pageCaption',
+			pageHeaderSmall: ''
 		};
 	}
 	
@@ -64,28 +71,22 @@ export default class TodoList extends Component {
 	
 	
 	/**
-	 * handleSetSubtitle(subtitle)
+	 * handleSetSubtitle(subtitle, translationArgs)
 	 * eventhandler to handle the change of the subtitle
 	 * 
 	 * @param string subtitle the new subtitle
+	 * @param object translationArgs arguments for the translation engine
 	 */
-	handleSetSubtitle(subtitle) {
+	handleSetSubtitle(subtitle, translationArgs = undefined) {
 		
+	    // prepare header
+	    var pageHeaderSmall = {
+            title: subtitle,
+            args: translationArgs
+	    };
+	    
 		// update the state with the new subtitle
-		this.updateState('pageHeaderSmall', subtitle);
-	}
-	
-	
-	/**
-	 * handleListItem(listItems)
-	 * eventhandler to handle the change of the list item open/close state
-	 * 
-	 * @param object listItems an object with the open/close state of the list items given by id
-	 */
-	handleListItems(listItems) {
-		
-		// update the state with the new state object
-		this.updateState('listItems', listItems);
+		this.updateState('pageHeaderSmall', pageHeaderSmall);
 	}
 	
 	
@@ -102,45 +103,53 @@ export default class TodoList extends Component {
 				<PageHeader>
 					{this.t(this.state.pageHeader)}{' '}
 					<small>
-						{this.t(this.state.pageHeaderSmall)}
+						{this.t(this.state.pageHeaderSmall.title, this.state.pageHeaderSmall.args)}
 					</small>
 				</PageHeader>
 				<Switch>
 					<Route exact path={this.props.match.url} render={() => <Redirect to={this.props.match.url + '/listall'} />} />
-					<Route path={this.props.match.url + '/listall'} children={({match, history}) =>
-						<TodoListList
+					<Route path={this.props.match.url + '/listall/:categoryId?'} children={({match, history}) =>
+						<FaqCategory
 							handleSetSubtitle={this.handleSetSubtitle.bind(this)}
-							handleListItems={this.handleListItems.bind(this)}
-							listItemsState={this.state.listItems}
 							match={match}
 							history={history}
 						/>}
 					/>
+                    <Route path={this.props.match.url + '/category/new'} children={({match, history}) => 
+                        <FaqCategoryForm 
+                            form="new"
+                            handleSetSubtitle={this.handleSetSubtitle.bind(this)}
+                            match={match}
+                            history={history}
+                        />}
+                    />
+                    <Route path={this.props.match.url + '/category/edit/:id'} children={({match, history}) => 
+                        <FaqCategoryForm 
+                            form="edit"
+                            handleSetSubtitle={this.handleSetSubtitle.bind(this)}
+                            match={match}
+                            history={history}
+                        />}
+                    />
 					<Route path={this.props.match.url + '/new'} children={({match, history}) => 
-						<TodoListForm 
+						<FaqForm 
 							form="new"
 							handleSetSubtitle={this.handleSetSubtitle.bind(this)}
-							handleListItems={this.handleListItems.bind(this)}
-							listItemsState={this.state.listItems}
 							match={match}
 							history={history}
 						/>}
 					/>
 					<Route path={this.props.match.url + '/edit/:id'} children={({match, history}) => 
-						<TodoListForm 
+						<FaqForm 
 							form="edit"
 							handleSetSubtitle={this.handleSetSubtitle.bind(this)}
-							handleListItems={this.handleListItems.bind(this)}
-							listItemsState={this.state.listItems}
 							match={match}
 							history={history}
 						/>}
 					/>
 					<Route path={this.props.match.url + '/view/:id'} children={({match, history}) =>
-						<TodoListItem
+						<FaqEntry
 							handleSetSubtitle={this.handleSetSubtitle.bind(this)}
-							handleListItems={this.handleListItems.bind(this)}
-							listItemsState={this.state.listItems}
 							match={match}
 							history={history}
 						/>}
@@ -150,3 +159,7 @@ export default class TodoList extends Component {
 		);
 	}
 }
+
+
+//export
+export default Faq;

@@ -15,12 +15,15 @@ import {Table} from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
 import PaginationPagesize from './PaginationPagesize';
 import Toolbar from './Toolbar';
-import LoadingModal from './LoadingModal';
-
+import PropTypes from 'prop-types';
+import {provideTranslations} from 'react-translate-maker';
+import provideContext from '../provideContext';
 
 /**
  * Component for the table
  */
+@provideTranslations
+@provideContext
 class FullTable extends Component {
 	
 	/**
@@ -30,6 +33,9 @@ class FullTable extends Component {
 		
 		// parent constructor
 		super(props);
+        
+        // set translation
+        this.t = this.props.t;
 		
 		// prepare cols
 		this.cols = Object.keys(this.props.cols);
@@ -38,9 +44,7 @@ class FullTable extends Component {
 		this.state = {
 			list: [],
 			activePage: 1,
-			pageSize: 5,
-			pageCount: 1,
-			loading: false
+			pageSize: this.props.pageSize
 		};
 	}
 	
@@ -51,11 +55,8 @@ class FullTable extends Component {
 	 */
 	componentWillMount() {
 		
-		// get translation method
-		this.t = this.context.t;
-		
-		// get list items
-		this.getList();
+		// load rows
+	    this.props.reloadRows();
 	}
 	
 	
@@ -72,60 +73,6 @@ class FullTable extends Component {
 		// check if state exists
 		currentState[state] = value;
 		this.setState(currentState);
-	}
-	
-	
-	/**
-	 * getTodoListItems(query)
-	 * retrieves the list items
-	 * 
-	 * @param string query optional string to search for in list
-	 */
-	getList(query = '') {
-		
-		// TODO: get items per AJAX call
-		
-		// show loading modal
-		this.updateState('loading', true);
-		
-		// get all items, page number and size
-		var mockItems = require('../mockTodolist');		
-		var allItems = [];
-		if(query == '' || typeof query != 'string') {
-			allItems = mockItems;
-		} else {
-			// search
-			for(var i in mockItems) {
-				if(mockItems[i].title.indexOf(query) != -1 || mockItems[i].text.indexOf(query) != -1) {
-					allItems.push(mockItems[i]);
-				}
-			}
-		}
-		var page = this.state.activePage;
-		var pageSize = this.state.pageSize;
-		// calculate start/end
-		var start = 0;
-		if(page != 1) {
-			start = pageSize * (page - 1);
-		}
-		var end = (start + pageSize > allItems.length ? allItems.length : start + pageSize);
-		
-		// get items
-		var list = [];
-		for(var i = start; i < end; i++) {
-			list.push(allItems[i]);
-		}
-		
-		// get page count
-		var pageCount = (allItems.length % pageSize != 0 ? Math.floor(allItems.length / pageSize) + 1 : Math.floor(allItems.length / pageSize));
-		
-		// update list and page count
-		this.updateState('list', list);
-		this.updateState('pageCount', pageCount);
-		
-		// simulate ajax call and remove loading modal
-		setTimeout(() => this.updateState('loading', false), 1000);
-		
 	}
 	
 	
@@ -178,16 +125,18 @@ class FullTable extends Component {
 	
 	
 	/**
-	 * getTableBody()
-	 * gets and formats the body rows of the table 
+	 * getTableBody(rows)
+	 * gets and formats the body rows of the table
+	 * 
+	 * @param array rows the list of rows to display in body
 	 */
-	getTableBody() {
+	getTableBody(rows) {
 		
 		// prepare body rows
 		var bodyRows = [];
 		
 		// walk through data
-		for(var i = 0; i < this.state.list.length; i++) {
+		for(var i = 0; i < rows.length; i++) {
 			
 			// prepare cols
 			var cols = [];
@@ -211,17 +160,17 @@ class FullTable extends Component {
 			for(var j = 0; j < this.cols.length; j++) {
 				
 				// format if function "content" is set
-				var content = this.state.list[i][this.cols[j]];
+				var content = rows[i][this.cols[j]];
 				if(this.props.cols[this.cols[j]].content != undefined) {
-					content = this.props.cols[this.cols[j]].content(this.state.list[i][this.cols[j]]);
+					content = this.props.cols[this.cols[j]].content(rows[i][this.cols[j]]);
 				}
 				
 				// prepare on click handler
 				var onClick = undefined;
 				var style = undefined;
 				var title = undefined;
-				if(this.props.cols[this.cols[j]].onClick != undefined) {
-					onClick = this.props.cols[this.cols[j]].onClick.bind(this, this.state.list[i]);
+				if(this.props.cols[this.cols[j]].onClick != undefined && this.props.cols[this.cols[j]].isClickable(rows[i]) === true) {
+					onClick = this.props.cols[this.cols[j]].onClick.bind(this, rows[i]);
 					style = {cursor: "pointer"};
 					title = this.props.cols[this.cols[j]].onClickTitle;
 				}
@@ -240,13 +189,13 @@ class FullTable extends Component {
 			
 			// add view and settings cols
 			if(typeof this.props.infoContent == 'function') {
-				cols.push(<td key={this.cols.length + 1} style={{cursor: "default"}}>{this.props.infoContent(this.state.list[i])}</td>);
+				cols.push(<td key={this.cols.length + 1} style={{cursor: "default"}}>{this.props.infoContent(rows[i])}</td>);
 			}
 			if(typeof this.props.viewContent == 'function') {
-				cols.push(<td key={this.cols.length + 2}>{this.props.viewContent(this.state.list[i])}</td>);
+				cols.push(<td key={this.cols.length + 2}>{this.props.viewContent(rows[i])}</td>);
 			}
 			if(typeof this.props.actionContent == 'function') {
-				cols.push(<td key={this.cols.length + 3}>{this.props.actionContent(this.state.list[i])}</td>);
+				cols.push(<td key={this.cols.length + 3}>{this.props.actionContent(rows[i])}</td>);
 			}
 			
 			// add row
@@ -267,40 +216,6 @@ class FullTable extends Component {
 	
 	
 	/**
-	 * getToolbar()
-	 * sets the toolbar config and returns the toolbar componenet
-	 */
-	getToolbar() {
-		
-		// toolbar config
-		var toolbar = {
-			bsSize: 'default',
-			search: this.handleSearch.bind(this),
-			groups: [
-			 	{
-			 		buttons: [
-			 			{
-			 				type: 'callback',
-							pathname: '',
-							onClick: this.getList.bind(this),
-			 				bsStyle: 'default',
-			 				icon: 'refresh',
-			 				iconIsPrefix: true,
-			 				text: this.t('FullTable.toolbar.refresh')
-			 			}
-			 		]
-				}
-			]
-		};
-		
-		// return component
-		return (
-			<Toolbar config={toolbar} />
-		);
-	}
-	
-	
-	/**
 	 * handlePagination(page, pageSize)
 	 * eventhandler to handle the state change from pagination
 	 * 
@@ -313,23 +228,8 @@ class FullTable extends Component {
 		this.updateState('activePage', parseInt(page, 10));
 		this.updateState('pageSize', parseInt(pageSize, 10));
 		
-		// get items and set to state
-		this.getList();
-	}
-	
-	
-	/**
-	 * handleSearch(query)
-	 * handles the update of the list according to the search term in query
-	 * 
-	 * @param string query the query string to search for
-	 */
-	handleSearch(query) {
-		
-		// check length of query
-		if(query.length > 2 || query == '') {
-			this.getList(query);
-		}
+		// reload rows
+		this.props.reloadRows();
 	}
 	
 	
@@ -351,29 +251,46 @@ class FullTable extends Component {
 	 */
 	render() {
 		
+	    var allRows = this.props.rows;
+        var page = this.state.activePage;
+        var pageSize = this.state.pageSize;
+        // calculate start/end
+        var start = 0;
+        if(page != 1) {
+            start = pageSize * (page - 1);
+        }
+        var end = (start + pageSize > allRows.length ? allRows.length : start + pageSize);
+        
+        // get rows
+        var rows = [];
+        for(var i = start; i < end; i++) {
+            rows.push(allRows[i]);
+        }
+        
+        // get page count
+        var pageCount = (allRows.length % pageSize != 0 ? Math.floor(allRows.length / pageSize) + 1 : Math.floor(allRows.length / pageSize));
+	    
 		return (
-				<LoadingModal
-					show={this.state.loading}
+	        <div>
+				<Toolbar config={this.props.toolbarConfig} />
+				<p></p>
+				<Table
+					striped
+					bordered
+					condensed
+					hover
+					responsive
 				>
-					{this.getToolbar()}
-					<p></p>
-					<Table
-						striped
-						bordered
-						condensed
-						hover
-						responsive
-					>
-						{this.getTableHead()}
-						{this.getTableBody()}
-					</Table>
-					<PaginationPagesize
-						activePage={this.state.activePage}
-						pageSize={this.state.pageSize}
-						pageCount={this.state.pageCount}
-						onSelect={this.handlePagination.bind(this)}
-					/>
-				</LoadingModal>
+					{this.getTableHead()}
+					{this.getTableBody(rows)}
+				</Table>
+				<PaginationPagesize
+					activePage={this.state.activePage}
+					pageSize={this.state.pageSize}
+					pageCount={pageCount}
+					onSelect={this.handlePagination.bind(this)}
+				/>
+			</div>
 		);
 	}
 }
@@ -381,25 +298,23 @@ class FullTable extends Component {
 
 // set prop types
 FullTable.propTypes = {
-	cols: React.PropTypes.object.isRequired,
-	infoContent: React.PropTypes.oneOfType([
-		React.PropTypes.func,
-		React.PropTypes.bool
+	cols: PropTypes.object.isRequired,
+	rows: PropTypes.array.isRequired,
+	reloadRows: PropTypes.func.isRequired,
+	toolbarConfig: PropTypes.object.isRequired,
+	pageSize: PropTypes.number.isRequired,
+	infoContent: PropTypes.oneOfType([
+		PropTypes.func,
+		PropTypes.bool
 	]).isRequired,
-	viewContent: React.PropTypes.oneOfType([
-		React.PropTypes.func,
-		React.PropTypes.bool
+	viewContent: PropTypes.oneOfType([
+		PropTypes.func,
+		PropTypes.bool
 	]).isRequired,
-	actionContent: React.PropTypes.oneOfType([
-		React.PropTypes.func,
-		React.PropTypes.bool
+	actionContent: PropTypes.oneOfType([
+		PropTypes.func,
+		PropTypes.bool
 	]).isRequired
-};
-
-
-//set context types
-FullTable.contextTypes = {
-	t: React.PropTypes.func.isRequired
 };
 
 

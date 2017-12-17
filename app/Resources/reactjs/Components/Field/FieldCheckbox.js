@@ -11,14 +11,14 @@
 
 // import required modules
 import React, {Component} from 'react';
-import {FormControl} from 'react-bootstrap';
+import {Checkbox} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
 
 /**
- * Component for the text field component
+ * Component for the checkbox field component
  */
-class FieldText extends Component {
+class FieldCheckbox extends Component {
 	
 	/**
 	 * constructor
@@ -36,8 +36,7 @@ class FieldText extends Component {
 	render() {
 		
 		return (
-			<FormControl
-				type="text"
+			<Checkbox
 				{...this.props}
 			/>
 		);
@@ -46,12 +45,11 @@ class FieldText extends Component {
 
 
 // set prop types
-FieldText.propTypes = {
-	placeholder: PropTypes.string.isRequired,
-	value: PropTypes.string.isRequired,
+FieldCheckbox.propTypes = {
+	value: PropTypes.bool.isRequired,
 	onChange: PropTypes.func.isRequired
 };
 
 
 // export
-export default FieldText;
+export default FieldCheckbox;

@@ -11,16 +11,21 @@
 
 // import required modules
 import React, {Component} from 'react';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import {PanelGroup, ButtonGroup, Button, Badge} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import FontAwesome from 'react-fontawesome';
 import FullTable from '../FullTable';
+import PropTypes from 'prop-types';
+import {provideTranslations} from 'react-translate-maker';
+import provideContext from '../../provideContext';
 
 
 /**
  * Component for the todo list listall component
  */
+@provideTranslations
+@provideContext
 class TodoListList extends Component {
 	
 	/**
@@ -37,9 +42,7 @@ class TodoListList extends Component {
 		// set initial state
 		this.state = {
 			list: [],
-			activePage: 1,
-			pageSize: 5,
-			pageCount: 1
+            searchQuery: ''
 		};
 	}
 	
@@ -50,14 +53,11 @@ class TodoListList extends Component {
 	 */
 	componentWillMount() {
 		
-		// get translation method
-		this.t = this.context.t;
-		
 		// get list items
 		this.getTodoListItems();
 		
 		// set subtitle
-		this.props.handleSetSubtitle(this.t('TodoListList.subtitle'));
+		this.props.handleSetSubtitle('TodoListList.subtitle');
 	}
 	
 	
@@ -78,14 +78,18 @@ class TodoListList extends Component {
 	
 	
 	/**
-	 * getTodoListItems(query)
+	 * getTodoListItems()
 	 * retrieves the list items
-	 * 
-	 * @param string query optional string to search for in list
 	 */
-	getTodoListItems(query = '') {
-		
-		// TODO: get items per AJAX call
+	getTodoListItems() {
+        
+        // TODO: AJAX calls to get the data
+        
+        // show loading modal
+        this.props.startLoading('TodoListList.getTodoListItems');
+        
+        // get search query
+        var query = this.state.searchQuery;
 		
 		// get all items, page number and size
 		var mockItems = require('../../mockTodolist');
@@ -100,27 +104,12 @@ class TodoListList extends Component {
 				}
 			}
 		}
-		var page = this.state.activePage;
-		var pageSize = this.state.pageSize;
-		// calculate start/end
-		var start = 0;
-		if(page != 1) {
-			start = pageSize * (page - 1);
-		}
-		var end = (start + pageSize > allItems.length ? allItems.length : start + pageSize);
-		
-		// get items
-		var list = [];
-		for(var i = start; i < end; i++) {
-			list.push(allItems[i]);
-		}
-		
-		// get page count
-		var pageCount = (allItems.length % pageSize != 0 ? Math.floor(allItems.length / pageSize) + 1 : Math.floor(allItems.length / pageSize));
 		
 		// update list and page count
-		this.updateState('list', list);
-		this.updateState('pageCount', pageCount);
+		this.updateState('list', allItems);
+        
+        // simulate ajax call and remove loading modal
+        setTimeout(() => this.props.stopLoading('TodoListList.getTodoListItems'), 1000);
 		
 	}
 	
@@ -161,8 +150,38 @@ class TodoListList extends Component {
 	 */
 	handleTitleOnClick(column) {
 		
-		this.context.router.push('/todolist/view/'+ column.id);
+		this.props.history.push('/todolist/view/'+ column.id);
 	}
+    
+    
+    /**
+     * isTitleClickable(row)
+     * eventhandler to determine if a row is clickable
+     * 
+     * @param mixed row the value of the key row
+     */
+    isTitleClickable(row) {
+        
+        return true;
+    }
+    
+    
+    /**
+     * handleSearch(query)
+     * handles the update of the list according to the search term in query
+     * 
+     * @param string query the query string to search for
+     */
+    handleSearch(query) {
+        
+        // set query
+        this.updateState('searchQuery', query);
+        
+        // reload data
+        if(query == '' || query.length > 2) {
+            this.getTodoListItems();
+        }
+    }
 	
 	
 	/**
@@ -240,11 +259,33 @@ class TodoListList extends Component {
 	 * method to render the component
 	 */
 	render() {
+        
+        // prepare toolbar
+        var toolbar = {
+            bsSize: 'default',
+            search: this.handleSearch.bind(this),
+            groups: [
+                {
+                    buttons: [
+                        {
+                            type: 'callback',
+                            pathname: '',
+                            onClick: this.getTodoListItems.bind(this),
+                            bsStyle: 'default',
+                            icon: 'refresh',
+                            iconIsPrefix: true,
+                            text: this.t('TodoListList.toolbar.refresh')
+                        }
+                    ]
+                }
+            ]
+        };
 		
 		// prepare table
 		var cols = {
 			title: {
 				title: this.t('TodoListList.tableCols.title'),
+                isClickable: this.isTitleClickable.bind(this),
 				onClick: this.handleTitleOnClick.bind(this),
 				onClickTitle: this.t('TodoListList.clickToView')
 			},
@@ -264,6 +305,10 @@ class TodoListList extends Component {
 		return (
 			<FullTable
 				cols={cols}
+			    rows={this.state.list}
+			    reloadRows={this.getTodoListItems.bind(this)}
+                toolbarConfig={toolbar}
+                pageSize={5}
 				infoContent={this.infoCol.bind(this)}
 				viewContent={this.viewCol.bind(this)}
 				actionContent={this.actionCol.bind(this)}
@@ -271,13 +316,6 @@ class TodoListList extends Component {
 		);
 	}
 }
-
-
-//set context types
-TodoListList.contextTypes = {
-	router: React.PropTypes.object.isRequired,
-	t: React.PropTypes.func.isRequired
-};
 
 
 //export

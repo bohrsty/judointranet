@@ -18,11 +18,17 @@ import {
 	Button
 } from 'react-bootstrap';
 import Field from './Field';
+import AdditionalFieldSelection from './AdditionalFieldSelection';
+import PropTypes from 'prop-types';
+import {provideTranslations} from 'react-translate-maker';
+import provideContext from '../provideContext';
 
 
 /**
  * Component for the horizontal form component
  */
+@provideTranslations
+@provideContext
 class HorizontalForm extends Component {
 	
 	/**
@@ -32,20 +38,12 @@ class HorizontalForm extends Component {
 		
 		// parent constructor
 		super(props);
+        
+        // set translation
+        this.t = this.props.t;
 		
 		// prepare field objects
 		this.fields = {};
-	}
-	
-	
-	/**
-	 * componentWillMount()
-	 * executed directly before component will be mounted to DOM
-	 */
-	componentWillMount() {
-		
-		// get translation method
-		this.t = this.context.t;
 	}
 	
 	
@@ -97,7 +95,7 @@ class HorizontalForm extends Component {
 		} else {
 			
 			// add error notification
-			this.context.addNotification({
+			this.props.addNotification({
 				type: 'danger',
 				headline: this.t('HorizontalForm.formNotValid.heading'),
 				message: this.t('HorizontalForm.formNotValid.message')
@@ -111,12 +109,23 @@ class HorizontalForm extends Component {
 	 */
 	render() {
 		
+	    // prepare fields
+	    var fields = this.props.fields.map((field, fieldId) => {
+	        
+	        // check formControl
+	        if(field.formControl == 'AdditionalFieldSelection') {
+	            return (<AdditionalFieldSelection data={field} key={fieldId} ref={(ref) => this.addField(ref, field.name)} />);
+	        } else {
+	            return (<Field data={field} key={fieldId} ref={(ref) => this.addField(ref, field.name)} />);
+	        }
+        });
+	        
 		return (
 			<Form horizontal onSubmit={this.onSubmit.bind(this)}>
-				{this.props.fields.map((field, fieldId) => <Field data={field} key={fieldId} ref={(ref) => this.addField(ref, field.name)} />)}
+				{fields}
 				<FormGroup controlId="buttons">
 					<Col mdOffset={this.props.buttonMdOffset || 2} md={this.props.buttonMd || 10} xs={this.props.buttonXs || 12}>
-						<Button onClick={() => this.context.router.goBack()}>{this.props.cancelButtonLabel}</Button>
+						<Button onClick={() => this.props.history.goBack()}>{this.props.cancelButtonLabel}</Button>
 						{' '}
 						<Button type="submit" bsStyle="primary">{this.props.saveButtonLabel}</Button>
 					</Col>
@@ -129,18 +138,11 @@ class HorizontalForm extends Component {
 
 // set prop types
 HorizontalForm.propTypes = {
-	onSubmit: React.PropTypes.func.isRequired,
-	fields: React.PropTypes.array.isRequired,
-	cancelButtonLabel: React.PropTypes.string.isRequired,
-	saveButtonLabel: React.PropTypes.string.isRequired
-};
-
-
-//set context types
-HorizontalForm.contextTypes = {
-	addNotification: React.PropTypes.func.isRequired,
-	t: React.PropTypes.func.isRequired,
-	router: React.PropTypes.object.isRequired
+	onSubmit: PropTypes.func.isRequired,
+	fields: PropTypes.array.isRequired,
+	cancelButtonLabel: PropTypes.string.isRequired,
+	saveButtonLabel: PropTypes.string.isRequired,
+	history: PropTypes.object.isRequired
 };
 
 

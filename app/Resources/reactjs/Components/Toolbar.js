@@ -11,9 +11,19 @@
 
 // import required modules
 import React, {Component} from 'react';
-import {ButtonToolbar, ButtonGroup, Button, InputGroup, FormControl} from 'react-bootstrap';
+import {
+    ButtonToolbar,
+    ButtonGroup,
+    Button,
+    InputGroup,
+    FormControl,
+    SplitButton,
+    MenuItem
+} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import FontAwesome from 'react-fontawesome';
+import PropTypes from 'prop-types';
+import {provideTranslations} from 'react-translate-maker';
 
 
 /**
@@ -152,14 +162,16 @@ class ToolbarButtonGroup extends Component {
 				{this.props.buttons.map((buttonObject, buttonId) => 
 					<ToolbarButton
 						key={buttonId}
+					    id={buttonId}
 						bsStyle={buttonObject.bsStyle}
 						type={buttonObject.type}
-						callback={buttonObject.type == 'link' ? undefined : buttonObject.onClick.bind(this)}
+						callback={buttonObject.type == 'callback' ? buttonObject.onClick.bind(this) : undefined}
 						icon={buttonObject.icon}
 						iconIsPrefix={buttonObject.iconIsPrefix}
 						text={buttonObject.text}
 						pathname={buttonObject.pathname}
 						disabled={buttonObject.disabled}
+					    dropdown={buttonObject.dropdown}
 					/>
 				)}
 			</ButtonGroup>
@@ -203,27 +215,78 @@ class ToolbarButton extends Component {
 			}
 		}
 		
-		// prepare button
-		var button = (
-			<Button
-				bsStyle={this.props.bsStyle}
-				onClick={this.props.type == 'callback' ? this.props.callback.bind(this) : undefined}
-				disabled={this.props.disabled}
-			>
-				{buttonText}
-			</Button>
-		);
-		
-		// prepare link
-		var link = (
-				<LinkContainer to={{pathname: this.props.pathname}}>
-					{button}
-				</LinkContainer>
-			);
+		// check if dropdown
+		var completeButton = null;
+		if(this.props.type == 'dropdown' && this.props.dropdown !== undefined && this.props.dropdown.length > 0) {
+		    
+		    completeButton = (
+	            <SplitButton
+	                id={this.props.id}
+	                bsStyle={this.props.bsStyle}
+	                title={buttonText}
+	            >
+	                {this.props.dropdown.map((item, id) => {
+	                    
+	                    // prepare menu item
+	                    var button = (
+	                        <MenuItem
+	                            key={id}
+	                            onClick={item.type == 'callback' ? item.callback.bind(this) : undefined}
+	                            disabled={item.disabled}
+	                            href={this.props.type == 'linkExternal' ? item.pathname : undefined}
+	                        >
+	                            {item.text}
+	                        </MenuItem>
+	                    );
+	                    
+	                    // prepare link
+	                    var link = (
+	                        <LinkContainer key={id} to={{pathname: item.pathname}}>
+	                            {button}
+	                        </LinkContainer>
+	                    );
+	                    
+	                    // return
+	                    return item.type == 'link' ? link : button;
+	                })}
+	            </SplitButton>
+		    );
+		} else {
+		    
+    		// prepare button
+    		var button = (
+    			<Button
+    				bsStyle={this.props.bsStyle}
+    				onClick={this.props.type == 'callback' ? this.props.callback.bind(this) : undefined}
+    				disabled={this.props.disabled}
+    			    href={this.props.type == 'linkExternal' ? this.props.pathname : undefined}
+    			>
+    				{buttonText}
+    			</Button>
+    		);
+    		
+    		// prepare return
+            switch(this.props.type) {
+                
+                case 'callback':
+                case 'linkExternal':
+                    completeButton = button;
+                    break;
+                
+                case 'link':
+                    var link = (
+                        <LinkContainer to={{pathname: this.props.pathname}}>
+                            {button}
+                        </LinkContainer>
+                    );
+                    completeButton = link;
+                    break;
+            }
+		}
 		
 		return (
 			
-			(this.props.type == 'link' ? link : button)
+			completeButton
 		);
 	}
 }
@@ -232,6 +295,7 @@ class ToolbarButton extends Component {
 /**
  * Component for the toolbar search component
  */
+@provideTranslations
 class ToolbarSearch extends Component {
 	
 	/**
@@ -241,6 +305,9 @@ class ToolbarSearch extends Component {
 		
 		// parent constructor
 		super(props);
+        
+        // set translation
+        this.t = this.props.t;
 		
 		// set initial state
 		this.state = {
@@ -312,14 +379,14 @@ class ToolbarSearch extends Component {
 					</InputGroup.Addon>
 					<FormControl
 						type="text"
-						placeholder={this.context.t('ToolbarSearch.find') +"..."}
+						placeholder={this.t('ToolbarSearch.find') +"..."}
 						value={this.state.value}
 						onChange={this.handleOnChange.bind(this)}
 					/>
 					<InputGroup.Button>
 						<Button
 							onClick={this.handleOnClear.bind(this)}
-							title={this.context.t('ToolbarSearch.clearSearch')}
+							title={this.t('ToolbarSearch.clearSearch')}
 						>
 							<FontAwesome name="close" /> 
 						</Button>
@@ -333,11 +400,5 @@ class ToolbarSearch extends Component {
 
 //set prop types
 ToolbarSearch.propTypes = {
-	onChange: React.PropTypes.func.isRequired
-};
-
-
-//set context types
-ToolbarSearch.contextTypes = {
-	t: React.PropTypes.func.isRequired
+	onChange: PropTypes.func.isRequired
 };
