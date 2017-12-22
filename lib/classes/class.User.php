@@ -327,7 +327,7 @@ class User extends Object {
 				// set message and return false
 				$this->set_login_message('user not active');
 				return false;
-			} elseif($user['password'] != md5($password)) {
+			} elseif($user['password'] != password_hash(md5($password), PASSWORD_BCRYPT)) {
 				
 				// set message and return false
 				$this->set_login_message('wrong password');

@@ -12,6 +12,7 @@
 namespace AppBundle\Controller\ApiV2;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use JudoIntranet\Helper\ApiV2ResponseHelper;
 
 /**
  * global abstract for the v2 api calls
@@ -70,34 +71,10 @@ class AbstractApiController extends Controller {
 	protected function getApiResponse($data, $isError = false) {
 		
 		// prepare values
-		$version = 'v2';
 		$uri = $this->getUri();
 		
-		// check error
-		if($isError === true) {
-			
-			// prepare error response
-			$result = 'ERROR';
-			$message = $data;
-			$values = array();
-		} else {
-			
-			// prepare data response
-			$result = 'OK';
-			$message = '';
-			$values = $data;
-		}
-		
 		// return
-		return array(
-			'result' => $result,
-			'version' => $version,
-			'uri' => $uri,
-			'data' => array(
-				'message' => $message,
-				'values' => $values,
-			),
-		);
+		return ApiV2ResponseHelper::getApiResponse($data, $uri, $isError);
 	}
 	
 	

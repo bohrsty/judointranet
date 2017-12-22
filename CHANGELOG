@@ -44,6 +44,9 @@ file that was distributed with this source code.
 --
 [!!] fixed config for sonatra-security-bundle
 [++] added controller for v2 api and v2 navi controller
+--
+[++] added controller and authenticator for login/logout
+[cc] changed generation of api response into helper class
 
 
 

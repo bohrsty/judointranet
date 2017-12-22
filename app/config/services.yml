@@ -14,3 +14,7 @@ services:
     
     md5bcrypt_encoder:
         class: JudoIntranet\Legacy\Encoder\Md5Bcrypt
+    
+    api_authenticator:
+          class: JudoIntranet\Security\ApiAuthenticator
+          arguments: ["@router"]
