@@ -5,11 +5,11 @@ parameters:
 
 services:
     global_config:
-        class: AppBundle\Collections\ConfigCollection
+        class: JudoIntranet\Collections\ConfigCollection
         arguments: ["@doctrine.orm.entity_manager"]
     
     navi_collection:
-        class: AppBundle\Collections\NaviCollection
+        class: JudoIntranet\Collections\NaviCollection
         arguments: ["@doctrine.orm.entity_manager","@global_config"]
     
     md5bcrypt_encoder:

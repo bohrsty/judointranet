@@ -11,10 +11,12 @@
 
 namespace JudoIntranet;
 
+use Symfony\Component\HttpKernel\Bundle\Bundle;
+
 /**
  * class to get various information about the software
  */
-class JudoIntranet {
+class JudoIntranet extends Bundle {
 	
 	
 	/**

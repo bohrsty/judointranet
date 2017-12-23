@@ -47,6 +47,8 @@ file that was distributed with this source code.
 --
 [++] added controller and authenticator for login/logout
 [cc] changed generation of api response into helper class
+--
+[cc] removed AppBundle namespace, moved everything to JudoIntranet namespace
 
 
 
