@@ -1,10 +1,18 @@
+{#
+ * This file is part of the JudoIntranet package.
+ *
+ * (c) Nils Bohrs
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+#}
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        <link rel="icon" type="image/x-icon" href="favicon.ico" />
     </head>
     <body>
         {% block body %}{% endblock %}

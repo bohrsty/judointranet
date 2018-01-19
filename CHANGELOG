@@ -61,6 +61,8 @@ file that was distributed with this source code.
 [cc] removed legacy Navi class and switch to symfony
 [++] added permission and sharing manager for sonatra
 [!!] fixed a few deprecations in symfony
+--
+[cc] moved react entry point into twig template and adjusted default controller
 
 
 

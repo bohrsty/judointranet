@@ -43,4 +43,13 @@ class DefaultController extends Controller {
     		return new Response(handleExceptions($e, HANDLE_EXCEPTION_VIEW, false));
     	}
     }
+    
+    /**
+     * @Route("/index.html", name="reactIndex")
+     */
+    public function reactAction(Request $request) {
+        
+        // return template
+        return $this->render('react.html.twig');
+    }
 }
