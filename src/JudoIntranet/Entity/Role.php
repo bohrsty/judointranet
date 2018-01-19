@@ -12,13 +12,13 @@
 namespace JudoIntranet\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Sonatra\Component\Security\Model\Role as BaseRole;
+use Fxp\Component\Security\Model\Role as BaseRole;
 use Doctrine\Common\Collections\ArrayCollection;
 
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="son_role")
+ * @ORM\Table(name="orm_role")
  * @ORM\HasLifecycleCallbacks
  */
 class Role extends BaseRole {
@@ -49,7 +49,7 @@ class Role extends BaseRole {
 	/**
 	 * roles are members of roles
 	 * @ORM\ManyToMany(targetEntity="Role", inversedBy="parents")
-	 * @ORM\JoinTable(name="son_role_roles",
+	 * @ORM\JoinTable(name="orm_role_roles",
 	 *      joinColumns={@ORM\JoinColumn(name="parent_id", referencedColumnName="id")},
 	 *      inverseJoinColumns={@ORM\JoinColumn(name="child_id", referencedColumnName="id")}
 	 * )
@@ -59,7 +59,7 @@ class Role extends BaseRole {
 	/**
 	 * permissions of roles
 	 * @ORM\ManyToMany(targetEntity="Permission", inversedBy="roles")
-	 * @ORM\JoinTable(name="son_role_permission",
+	 * @ORM\JoinTable(name="orm_role_permission",
 	 *      joinColumns={@ORM\JoinColumn(name="role_id", referencedColumnName="id")},
 	 *      inverseJoinColumns={@ORM\JoinColumn(name="permission_id", referencedColumnName="id")}
 	 * )

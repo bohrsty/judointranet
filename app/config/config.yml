@@ -9,8 +9,6 @@ parameters:
     locale: en
 
 framework:
-    #esi:             ~
-    #translator:      { fallbacks: ["%locale%"] }
     secret:          "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
@@ -18,7 +16,6 @@ framework:
     form:            ~
     csrf_protection: ~
     validation:      { enable_annotations: true }
-    #serializer:      { enable_annotations: true }
     templating:
         engines: ['twig']
     default_locale:  "%locale%"
@@ -41,7 +38,7 @@ doctrine:
         user:     "%database_user%"
         password: "%database_password%"
         charset:  UTF8
-        schema_filter: ~^(orm_.*|migration_versions|son_.*)~
+        schema_filter: ~^(orm_.*|migration_versions)~
 
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
@@ -51,7 +48,7 @@ doctrine:
                 auto_mapping: true
                 filters:
                     sonatra_sharing:
-                        class:      Sonatra\Component\Security\Doctrine\ORM\Filter\SharingFilter
+                        class:      Fxp\Component\Security\Doctrine\ORM\Filter\SharingFilter
                         enabled:    true
         
 doctrine_migrations:
@@ -60,7 +57,7 @@ doctrine_migrations:
     table_name: migration_versions
     name: JudoIntranet Migrations
 
-# Swiftmailer Configuration
+# Swift mailer Configuration
 swiftmailer:
     transport: "%mailer_transport%"
     host:      "%mailer_host%"
@@ -68,8 +65,8 @@ swiftmailer:
     password:  "%mailer_password%"
     spool:     { type: memory }
 
-# sonatra security configuration
-sonatra_security:
+# fxp security configuration
+fxp_security:
     role_class: JudoIntranet\Entity\Role
     permission_class: JudoIntranet\Entity\Permission
     sharing_class: JudoIntranet\Entity\Sharing
@@ -103,7 +100,7 @@ sonatra_security:
             enabled: true
     doctrine:
         orm:
-            object_filter_voter: true # Ebable the Doctrine ORM Collection Object Filter (optional)
+            object_filter_voter: true # Enable the Doctrine ORM Collection Object Filter (optional)
             listeners:
                 permission_checker: true # Enable the Doctrine ORM Permission Checker Listener (optional)
                 object_filter: true # Enable the Doctrine ORM Object Filter Listener(optional)

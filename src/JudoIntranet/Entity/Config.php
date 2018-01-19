@@ -12,7 +12,7 @@
 namespace JudoIntranet\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Sonatra\Component\Security\Identity\SubjectIdentityInterface;
+use Fxp\Component\Security\Identity\SubjectIdentityInterface;
 
 
 /**

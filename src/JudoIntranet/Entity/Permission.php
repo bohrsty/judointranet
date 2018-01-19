@@ -12,13 +12,13 @@
 namespace JudoIntranet\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Sonatra\Component\Security\Model\Permission as BasePermission;
+use Fxp\Component\Security\Model\Permission as BasePermission;
 use Doctrine\Common\Collections\ArrayCollection;
 
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="son_permission")
+ * @ORM\Table(name="orm_permission")
  * @ORM\HasLifecycleCallbacks
  */
 class Permission extends BasePermission {

@@ -16,7 +16,7 @@
 namespace JudoIntranet\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Sonatra\Component\Security\Model\GroupInterface;
+use Fxp\Component\Security\Model\GroupInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 
 

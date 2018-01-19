@@ -15,7 +15,7 @@ use Doctrine\DBAL\Connection;
 use JudoIntranet\Entity\Navi;
 use JudoIntranet\Entity\Role;
 use Psr\Container\ContainerInterface;
-use Sonatra\Component\Security\Exception\SecurityException;
+use Fxp\Component\Security\Exception\SecurityException;
 
 /**
  * collection of legacy methods to migrate users, groups etc. to fos-user-bundle and sonatra-security-bundle

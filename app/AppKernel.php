@@ -17,7 +17,7 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new JudoIntranet\JudoIntranet(),
         	new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
-        	new Sonatra\Bundle\SecurityBundle\SonatraSecurityBundle(),
+            new Fxp\Bundle\SecurityBundle\FxpSecurityBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

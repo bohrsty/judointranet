@@ -12,13 +12,13 @@
 namespace JudoIntranet\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Sonatra\Component\Security\Model\Sharing as BaseSharing;
+use Fxp\Component\Security\Model\Sharing as BaseSharing;
 use Doctrine\Common\Collections\ArrayCollection;
 
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="son_sharing")
+ * @ORM\Table(name="orm_sharing")
  * @ORM\HasLifecycleCallbacks
  */
 class Sharing extends BaseSharing {
@@ -38,7 +38,7 @@ class Sharing extends BaseSharing {
 	/**
 	 * permissions
 	 * @ORM\ManyToMany(targetEntity="Permission", inversedBy="sharingEntries")
-	 * @ORM\JoinTable(name="son_sharing_permissions",
+	 * @ORM\JoinTable(name="orm_sharing_permissions",
 	 *      joinColumns={@ORM\JoinColumn(name="sharing_id", referencedColumnName="id")},
 	 *      inverseJoinColumns={@ORM\JoinColumn(name="permission_id", referencedColumnName="id")}
 	 * )

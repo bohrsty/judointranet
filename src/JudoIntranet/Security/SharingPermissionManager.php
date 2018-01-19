@@ -13,17 +13,17 @@ namespace JudoIntranet\Security;
 
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\UserBundle\Model\GroupInterface;
-use FOS\UserBundle\Model\UserInterface;
+use Fxp\Component\Security\Model\GroupInterface;
 use JudoIntranet\Entity\Permission;
 use JudoIntranet\Entity\Sharing;
-use Sonatra\Component\Security\Exception\SecurityException;
-use Sonatra\Component\Security\Identity\GroupSecurityIdentity;
-use Sonatra\Component\Security\Identity\RoleSecurityIdentity;
-use Sonatra\Component\Security\Identity\SubjectIdentity;
-use Sonatra\Component\Security\Identity\UserSecurityIdentity;
-use Sonatra\Component\Security\Model\RoleHierarchicalInterface;
-use Sonatra\Component\Security\Model\SharingInterface;
+use Fxp\Component\Security\Exception\SecurityException;
+use Fxp\Component\Security\Identity\GroupSecurityIdentity;
+use Fxp\Component\Security\Identity\RoleSecurityIdentity;
+use Fxp\Component\Security\Identity\SubjectIdentity;
+use Fxp\Component\Security\Identity\UserSecurityIdentity;
+use Fxp\Component\Security\Model\RoleHierarchicalInterface;
+use Fxp\Component\Security\Model\SharingInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 
 class SharingPermissionManager {

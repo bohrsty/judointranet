@@ -63,6 +63,8 @@ file that was distributed with this source code.
 [!!] fixed a few deprecations in symfony
 --
 [cc] moved react entry point into twig template and adjusted default controller
+--
+[!!] renamed sonatra to fxp and adjusted table names, config and namespaces
 
 
 
