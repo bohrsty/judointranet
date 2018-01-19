@@ -23,10 +23,10 @@ class ApiController extends Controller {
     
     /**
      * @Route("/api/", name="apihome")
-     * @Route("/api/{method}/{table}/", name="apipath2", requirements={"method":"!v2"})
-     * @Route("/api/{table}/{method}/{id}", name="apipath3", requirements={"table":"!v2"})
-     * @Route("/api/{table}/{id}/{tid}/{action}", name="apipath", requirements={"table":"!v2"})
-     * @Route("/api/{table}/{id}/{tid}/{action}/", name="apipath4", requirements={"table":"!v2"})
+     * @Route("/api/{method}/{table}/", name="apipath2", requirements={"method"="^(?!v2).*"})
+     * @Route("/api/{table}/{method}/{id}", name="apipath3", requirements={"table"="^(?!v2).*"})
+     * @Route("/api/{table}/{id}/{tid}/{action}", name="apipath", requirements={"table"="^(?!v2).*"})
+     * @Route("/api/{table}/{id}/{tid}/{action}/", name="apipath4", requirements={"table"="^(?!v2).*"})
      * @Route("/api/index.php", name="apiindex")
      */
     public function indexAction(Request $request) {
@@ -36,6 +36,8 @@ class ApiController extends Controller {
     		
     		// create object
     		$api = new \Api();
+    		$api->setContainer($this->container);
+    		$api->setUser($this->getUser());
     		
     		// get data from the api
     		$result = $api->handle(false);
@@ -62,6 +64,8 @@ class ApiController extends Controller {
     		
     		// create object
     		$api = new \InternalApi();
+            $api->setContainer($this->container);
+            $api->setUser($this->getUser());
     		
     		// set doctrine
     		$api->setDoctrine($this->getDoctrine());

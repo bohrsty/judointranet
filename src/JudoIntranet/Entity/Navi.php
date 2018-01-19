@@ -57,7 +57,7 @@ class Navi {
 	private $position;
 	
 	/**
-	 * @ORM\Column(type="boolean")
+	 * @ORM\Column(type="boolean", name="`show`")
 	 */
 	private $show;
 	
@@ -418,13 +418,14 @@ class Navi {
 	
 	
 	/**
-	 * return this navi object and its children as array accorting to $maxDepth
+	 * return this navi object and its children as array according to $maxDepth
 	 * 
 	 * @param int $maxDepth the max depth to return the children
 	 * @param int $currentDepth the current depth in the tree of children
+     * @param bool $isLegacy determines if navi tree should be returned in legacy style (default: false)
 	 * @return array 
 	 */
-	public function getNaviTree(int $maxDepth, int $currentDepth) {
+	public function getNaviTree(int $maxDepth, int $currentDepth, bool $isLegacy) {
 		
 		// if reached max depth, subitems remain empty
 		$children = array();
@@ -432,12 +433,12 @@ class Navi {
 			
 			// return $this and children as array
 			foreach($this->getChildren() as $child) {
-				$children[] = $child->getNaviTree($maxDepth, $currentDepth + 1);
+				$children[] = $child->getNaviTree($maxDepth, $currentDepth + 1, $isLegacy);
 			}
 		}
 		
 		// return array
-		return array(
+		$naviTree = array(
 			'name' => $this->getName(),
 			'url' => $this->getCompleteUrl(),
 			'key' => $this->getKey(),
@@ -445,5 +446,17 @@ class Navi {
 			'router' => $this->getRouter(),
 			'subItems' => $children,
 		);
+		// check legacy
+        if($isLegacy === true) {
+            $naviTree['id'] = $this->getId();
+            $naviTree['position'] = $this->getPosition();
+            $fileParam = explode('|', $this->getFileParam());
+            $naviTree['file'] = $fileParam[0];
+            $naviTree['param'] = isset($fileParam[1]) ? $fileParam[1] : '';
+            $naviTree['level'] = $currentDepth - 1;
+        }
+        
+        // return
+        return $naviTree;
 	}
 }

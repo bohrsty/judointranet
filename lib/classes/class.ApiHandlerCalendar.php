@@ -201,7 +201,7 @@ class ApiHandlerCalendar extends ApiHandler {
 		}
 		
 		// check existance
-		if(Page::exists('navi', $request['data']['tid']) === false) {
+		if(Page::exists('orm_navi', $request['data']['tid']) === false) {
 			return array(
 					'result' => 'ERROR',
 					'message' => 'API call failed [entry does not exists]',

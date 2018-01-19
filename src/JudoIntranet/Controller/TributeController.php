@@ -31,6 +31,8 @@ class TributeController extends Controller {
     		
     		// create object
     		$tributeView = new \TributeView();
+    		$tributeView->setContainer($this->container);
+    		$tributeView->setUser($this->getUser());
     		
     		// get HTML from smarty template, put into response and return
     		return new Response($tributeView->toHtml(false));

@@ -31,6 +31,8 @@ class ResultController extends Controller {
     		
     		// create object
     		$resultView = new \ResultView();
+    		$resultView->setContainer($this->container);
+    		$resultView->setUser($this->getUser());
     		
     		// get HTML from smarty template, put into response and return
     		return new Response($resultView->toHtml(false));

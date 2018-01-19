@@ -36,6 +36,7 @@ class Object {
 	private $get;
 	private static $staticGet;
 	private $post;
+	protected $symfonyUser;
 	
 	
 	/*
@@ -51,22 +52,14 @@ class Object {
 		$GLOBALS['GC'] = $gc;
 	}
 	public function getUser() {
-		return $_SESSION['user'];
+		return $GLOBALS['user'];
 	}
 	public static function staticGetUser() {
-		return $_SESSION['user'];
+		return $GLOBALS['user'];
 	}
-	public function setUser($user=null) {
-		
-		if(is_null($user)) {
-			if(!isset($_SESSION['user'])) {
-				// initialize user
-				$_SESSION['user'] = false;
-				$_SESSION['user'] = new User();
-			}
-		} else {
-			$_SESSION['user'] = $user;
-		}
+	public function setUser($symfonyUser) {
+		$this->symfonyUser = $symfonyUser;
+		$GLOBALS['user'] = new User(true, $symfonyUser);
 	}
 	public function get_get(){
 		return $this->get;
@@ -86,23 +79,36 @@ class Object {
 	public function setPost($post) {
 		$this->post = $post;
 	}
+    public function getContainer() {
+        return $GLOBALS['container'];
+    }
+    public static function staticGetContainer() {
+        return $GLOBALS['container'];
+    }
+    public function setContainer($container) {
+        $GLOBALS['container'] = $container;
+    }
 	
 	/*
 	 * constructor/destructor
 	 */
 	public function __construct() {
-		
-		// set config
-		$GLOBALS['GC'] = new Config();
-		
-		// set default-time-zone
-		date_default_timezone_set($this->getGc()->get_config('default_time_zone'));
-		
-		// set locale
-		setlocale(LC_ALL, $this->getGc()->get_config('locale'));
-		
-		// set user
-		$this->setUser();
+        
+        // set config
+		if(!isset($GLOBALS['GC'])) {
+            $GLOBALS['GC'] = new Config();
+        }
+        
+        // set default-time-zone
+        date_default_timezone_set($this->getGc()->get_config('default_time_zone'));
+        
+        // set locale
+        setlocale(LC_ALL, $this->getGc()->get_config('locale'));
+        
+        // set user
+		if(!isset($GLOBALS['user'])) {
+            $GLOBALS['user'] = null;
+		}
 		
 		// read $_GET and $_POST
 		$this->readGlobals();

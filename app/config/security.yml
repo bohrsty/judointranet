@@ -3,12 +3,14 @@
 security:
     
     encoders:
-        FOS\UserBundle\Model\UserInterface:
+        JudoIntranet\Entity\User:
             id: md5bcrypt_encoder
 
     providers:
-        fos_userbundle:
-            id: fos_user.user_provider.username
+        orm_user_provider:
+            entity:
+                class: JudoIntranet:User
+                property: username
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -18,7 +20,8 @@ security:
 
         main:
             anonymous: true
-            anonymous_role: true
+            anonymous_role:
+                role: ROLE_PUBLIC
             
             guard:
                 authenticators:

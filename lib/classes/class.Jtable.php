@@ -133,9 +133,8 @@ class Jtable extends Object {
 	public function getSetting($setting) {
 		
 		// check $setting value and name for valid JSON characters
-		$servicesJson = new Services_JSON();
-		$name = $servicesJson->encode($this->settingName[$setting]);
-		$value = $servicesJson->encode($this->settingValue[$setting]);
+		$name = json_encode($this->settingName[$setting]);
+		$value = json_encode($this->settingValue[$setting]);
 		
 		// check quoting
 		$return = '';
@@ -160,7 +159,7 @@ class Jtable extends Object {
 			foreach($this->actionsJscriptGet as $get => $jscriptValue) {
 				
 				// quote $get and put togehter
-				$get = '&'.substr($servicesJson->encode($get), 1, -1).'="+'.$jscriptValue.'+"';
+				$get = '&'.substr(json_encode($get), 1, -1).'="+'.$jscriptValue.'+"';
 				
 				// check number of actions
 				if(is_array($work)) {

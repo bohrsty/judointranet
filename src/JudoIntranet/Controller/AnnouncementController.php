@@ -31,6 +31,8 @@ class AnnouncementController extends Controller {
     		
     		// create object
     		$announcementView = new \AnnouncementView();
+    		$announcementView->setContainer($this->container);
+    		$announcementView->setUser($this->getUser());
     		
     		// get HTML from smarty template, put into response and return
     		return new Response($announcementView->toHtml(false));

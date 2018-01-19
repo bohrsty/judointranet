@@ -18,3 +18,7 @@ services:
     api_authenticator:
           class: JudoIntranet\Security\ApiAuthenticator
           arguments: ["@router"]
+
+    sharing_permission_manager:
+        class: JudoIntranet\Security\SharingPermissionManager
+        arguments: ["@doctrine.orm.entity_manager"]

@@ -21,12 +21,6 @@
             "Tests\\": "tests/"
         }
     },
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/pear/Services_JSON"
-        }
-    ],
     "require": {
         "php": ">=5.6",
         "symfony/symfony": "3.3.*",
@@ -41,7 +35,6 @@
         "sensio/framework-extra-bundle": "^3.0.2",
         "stefangabos/zebra_form": "2.9.*",
         "phpoffice/phpexcel": "1.8.*",
-        "pear/services_json": "dev-trunk",
         "spipu/html2pdf": "4.4.*",
         "smarty/smarty": "3.1.*",
         "setasign/fpdi-fpdf": "1.6.*",

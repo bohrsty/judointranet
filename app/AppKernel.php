@@ -17,7 +17,6 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new JudoIntranet\JudoIntranet(),
         	new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
-			new FOS\UserBundle\FOSUserBundle(),
         	new Sonatra\Bundle\SecurityBundle\SonatraSecurityBundle(),
         ];
 

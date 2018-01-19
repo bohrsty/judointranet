@@ -36,12 +36,6 @@ class Sharing extends BaseSharing {
 	private $lastModified;
 	
 	/**
-	 * identity id
-	 * @ORM\Column(type="integer", name="identity_id")
-	 */
-	protected $identityId;
-	
-	/**
 	 * permissions
 	 * @ORM\ManyToMany(targetEntity="Permission", inversedBy="sharingEntries")
 	 * @ORM\JoinTable(name="son_sharing_permissions",
@@ -57,9 +51,6 @@ class Sharing extends BaseSharing {
 	 * Constructor
 	 */
 	public function __construct() {
-		
-		// call parent constructor
-		parent::__construct();
 		
 		// setup modified
 		if(is_null($this->getLastModified())) {
@@ -86,7 +77,7 @@ class Sharing extends BaseSharing {
 	 *
 	 * @param \DateTime $lastModified
 	 *
-	 * @return Permission
+	 * @return Sharing
 	 */
 	public function setLastModified($lastModified) {
 		$this->lastModified = $lastModified;

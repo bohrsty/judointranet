@@ -22,6 +22,8 @@
  * 
  * ********************************************************************************************/
 
+use JudoIntranet\Legacy\Navi;
+
 // secure against direct execution
 if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index.php.");}
 

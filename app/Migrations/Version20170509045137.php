@@ -8,7 +8,7 @@ use JudoIntranet\Legacy;
 use JudoIntranet\Migrate\DbMigrateSecurity;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use AppBundle\Entity\Role;
+use JudoIntranet\Entity\Role;
 
 /**
  * migrate to fos user bundle and sonatra security
@@ -258,8 +258,8 @@ class Version20170509045137 extends AbstractMigration implements ContainerAwareI
 		$em = $this->container->get('doctrine.orm.entity_manager');
 		
 		// get repositories
-		$repositoryGroup = $em->getRepository('AppBundle:Group');
-		$repositoryUser = $em->getRepository('AppBundle:User');
+		$repositoryGroup = $em->getRepository('JudoIntranet:Group');
+		$repositoryUser = $em->getRepository('JudoIntranet:User');
 		
 		// create roles
 		$superAdminRole = new Role('ROLE_SUPER_ADMIN');

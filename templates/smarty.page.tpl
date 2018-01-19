@@ -30,10 +30,8 @@
 		<script type="text/javascript" src="js/jquery-ui-1.11.4.min.js"></script>
 		<script type="text/javascript" src="{if is_file('js/jquery.ui.datepicker-{$sLang}.js')}js/jquery.ui.datepicker-{$sLang}.js{else}js/jquery.ui.datepicker-de.js{/if}"></script>
 		<script type="text/javascript" src="js/jquery.ui.autocomplete.html.js"></script>
-{if isset($zebraform) and $zebraform}
 		<link rel="stylesheet" type="text/css" href="css/zebra_form/zebra_form.css" />
 		<script type="text/javascript" src="js/zebra_form.js"></script>
-{/if}
 {if isset($tinymce) and $tinymce}
 		<script type="text/javascript" src="js/tiny_mce/tiny_mce.js"></script>
 {/if}
@@ -89,11 +87,9 @@
 {if isset($tabsJs) && $tabsJs}
 			$(function() {ldelim} $( "#tabs" ).tabs({if isset($tabsJsOptions)}{$tabsJsOptions}{/if}); {rdelim});
 {/if}
-{if isset($accordionJs) && $accordionJs}
 {literal}
 			$(function() { $( "#accordion" ).accordion({ icons: false, heightStyle: "content", active: {/literal}{$accordionActive}{literal} }); });
 {/literal}
-{/if}
 		</script>
 {if isset($manualjquery) && $manualjquery!='' || isset($help)}
 		<script type="text/javascript">
@@ -140,6 +136,120 @@
 						}
 					})
 				});
+{/literal}
+{literal}
+                $(document).on('click', '#naviItem_2 a', function(event) {
+                    event.preventDefault();
+                    var loginDialog = $('<div>')
+                        .appendTo($('body'))
+                        .dialog({
+                            autoOpen: true,
+                            modal: true,
+                            position:
+                                {
+                                    my: 'center',
+                                    at: 'center',
+                                    of: window
+                                },
+                            minWidth: 400,
+                            minHeight: 200,
+                            maxHeight: 300,
+                            closeText: 'Schließen',
+							title: 'Anmeldung',
+                            close: function() {loginDialog.remove();}
+                        });
+                    loginDialog
+						.append(
+						    $('<form>')
+								.addClass('Zebra_Form')
+							.append(
+								$('<div>')
+									.attr('id', 'loginError')
+									.hide()
+							)
+							.append(
+								$('<div>')
+									.addClass('row')
+									.append(
+										$('<span>')
+											.addClass('Zebra_Form_Wrapper')
+											.append(
+												$('<input>')
+													.addClass('control text inside inline')
+													.attr('type', 'text')
+													.attr('id', '_username')
+													.attr('name', '_username')
+													.attr('placeholder', 'Benutzername')
+											)
+									)
+							)
+							.append(
+								$('<div>')
+									.addClass('row even')
+									.append(
+										$('<span>')
+											.addClass('Zebra_Form_Wrapper')
+											.append(
+												$('<input>')
+													.addClass('control text inside inline')
+													.attr('type', 'password')
+													.attr('id', '_password')
+													.attr('name', '_password')
+													.attr('placeholder', 'Passwort')
+											)
+									)
+							)
+							.append(
+								$('<div>')
+									.addClass('row last')
+									.append(
+										$('<input>')
+											.addClass('submit')
+											.attr('type', 'submit')
+											.attr('id', '_loginButton')
+											.attr('name', '_loginButton')
+											.val('Anmelden')
+									)
+							)
+						);
+
+                    $(document).on('click', '#_loginButton', function(event) {
+                        event.preventDefault();
+
+                        $.ajax({
+                            url:'api/v2/login',
+                            dataType: 'json',
+                            cache: false,
+                            method: 'POST',
+                            data: {
+                                _username: $('#_username').val(),
+                                _password: $('#_password').val()
+                            }
+                        })
+						.done(function(response) {
+							if(response.result == 'OK') {
+								location.reload();
+							} else {
+								$('#loginError')
+									.text(response.data.message)
+									.show();
+							}
+						});
+                    });
+                });
+                $(document).on('click', '#naviItem_3 a, .logininfo a.logoutLink', function(event) {
+                    event.preventDefault();
+
+                    $.ajax({
+                        url:'api/v2/logout',
+                        dataType: 'json',
+                        cache: false,
+                        method: 'POST'
+                    })
+					.always(function(response) {
+						location.reload();
+					});
+                });
 {/literal}
 {if isset($naviSecondJs) && $naviSecondJs===true}
 {literal}
@@ -267,9 +377,13 @@
 				<p><img src="{$systemLogo}" alt="Logo" title="JudoIntranet" /></p>
 			</div>
 {if !isset($setupDisabledNavi)}
-			{if isset($accordionJs) && $accordionJs}<div id="accordion">{/if}
-{$navigation}
-			{if isset($accordionJs) && $accordionJs}</div>{/if}
+			{if $naviStyle!='accordion'}
+				<div>
+                    {lang}The configured navigation style is not supported, please set it to "accordion".{/lang}
+				</div>
+			{else}
+				{$navigation}
+			{/if}
 {/if}
 		</div>
 		<div id="content">

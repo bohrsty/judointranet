@@ -11,8 +11,6 @@
 
 namespace JudoIntranet\Legacy\View\File;
 
-use AppBundle\Entity\Logo;
-
 /**
  * class FileViewLogo implements the control of the id "logo" file page
  */
@@ -75,7 +73,7 @@ class FileViewLogo extends \FileView {
 		$this->smarty->assign('configComplete', $configComplete);
 		
 		// get logos
-		$repositoryLogo = $this->getDoctrine()->getRepository('AppBundle:Logo');
+		$repositoryLogo = $this->getDoctrine()->getRepository('JudoIntranet:Logo');
 		$logos = $repositoryLogo->findByValid(1);
 		
 		// assign to template
@@ -215,7 +213,7 @@ class FileViewLogo extends \FileView {
 		if($config != '') {
 		
 			// create query builder
-			$repositoryFileType = $this->getDoctrine()->getRepository('AppBundle:FileType');
+			$repositoryFileType = $this->getDoctrine()->getRepository('JudoIntranet:FileType');
 			$qb = $repositoryFileType->createQueryBuilder('ft');
 			
 			// create query

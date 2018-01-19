@@ -31,6 +31,8 @@ class CalendarController extends Controller {
     		
     		// create object
     		$calendarView = new \CalendarView();
+    		$calendarView->setContainer($this->container);
+    		$calendarView->setUser($this->getUser());
     		
     		// get HTML from smarty template, put into response and return
     		return new Response($calendarView->toHtml(false));

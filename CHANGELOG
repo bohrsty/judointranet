@@ -49,6 +49,18 @@ file that was distributed with this source code.
 [cc] changed generation of api response into helper class
 --
 [cc] removed AppBundle namespace, moved everything to JudoIntranet namespace
+--
+[!!] fixed some forgotten namespace changes from previous commit
+[cc] remove pear services_JSON, not usable with PHP 7.1, switch to internal functions
+[cc] remove FOSUserBundle, not necessary for sonatra_security_bundle,
+     adapted entities and configuration
+[++] added use of symfony user in legacy classes for user data and login state
+[cc] changed login in legacy views
+[!!] fixed a few table names in sql statements
+[!!] fixed routing for legacy api (v1)
+[cc] removed legacy Navi class and switch to symfony
+[++] added permission and sharing manager for sonatra
+[!!] fixed a few deprecations in symfony
 
 
 

@@ -7,7 +7,6 @@
 !/templates/protocols/tcme_default.css
 /templates/results/*
 /templates/schedules/*
-/.project
 /templates/test.*
 *.z
 /templates/smarty/compile/*tpl.php
@@ -22,7 +21,7 @@
 /files/tribute/thumbs/*.png
 /templates/tributes/*
 !/templates/tributes/index.php
-nbproject/
+.idea
 
 # react
 mock*

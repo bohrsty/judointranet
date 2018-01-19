@@ -31,6 +31,8 @@ class AccountingController extends Controller {
     		
     		// create object
     		$accountingView = new \AccountingView();
+    		$accountingView->setContainer($this->container);
+    		$accountingView->setUser($this->getUser());
     		
     		// get HTML from smarty template, put into response and return
     		return new Response($accountingView->toHtml(false));

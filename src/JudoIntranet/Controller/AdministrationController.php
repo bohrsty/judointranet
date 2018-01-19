@@ -31,6 +31,8 @@ class AdministrationController extends Controller {
     		
     		// create object
     		$administrationView = new \AdministrationView();
+    		$administrationView->setContainer($this->container);
+    		$administrationView->setUser($this->getUser());
     		
     		// get HTML from smarty template, put into response and return
     		return new Response($administrationView->toHtml(false));

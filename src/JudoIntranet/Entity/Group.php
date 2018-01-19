@@ -1,6 +1,10 @@
 <?php
 
 /*
+ * Implementation inspired by Group entity in FOSUserBundle, written by Johannes M. Schmitt <schmittjoh@gmail.com>
+ */
+
+/*
  * This file is part of the JudoIntranet package.
  *
  * (c) Nils Bohrs
@@ -12,17 +16,16 @@
 namespace JudoIntranet\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use FOS\UserBundle\Model\Group as BaseGroup;
 use Sonatra\Component\Security\Model\GroupInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="fos_group")
+ * @ORM\Table(name="orm_group")
  * @ORM\HasLifecycleCallbacks
  */
-class Group extends BaseGroup implements GroupInterface {
+class Group implements GroupInterface {
 	
 	/**
 	 * @ORM\Column(type="integer")
@@ -30,6 +33,16 @@ class Group extends BaseGroup implements GroupInterface {
 	 * @ORM\GeneratedValue(strategy="AUTO")
 	 */
 	protected $id;
+    
+    /**
+     * @ORM\Column(type="string", unique=true)
+     */
+    protected $name;
+    
+    /**
+     * @ORM\Column(type="array")
+     */
+    protected $roles;
 	
 	/**
 	 * @ORM\Column(type="boolean")
@@ -43,14 +56,14 @@ class Group extends BaseGroup implements GroupInterface {
 	
 	/**
 	 * groups are members of groups
-	 * @ORM\ManyToMany(targetEntity="Group", mappedBy="children")
+	 * @ORM\ManyToMany(targetEntity="Group", mappedBy="children", fetch="EAGER")
 	 */
 	private $parents;
 	
 	/**
 	 * groups are members of groups
-	 * @ORM\ManyToMany(targetEntity="Group", inversedBy="parents")
-	 * @ORM\JoinTable(name="fos_group_groups",
+	 * @ORM\ManyToMany(targetEntity="Group", inversedBy="parents", fetch="EAGER")
+	 * @ORM\JoinTable(name="orm_group_groups",
 	 *      joinColumns={@ORM\JoinColumn(name="parent_id", referencedColumnName="id")},
 	 *      inverseJoinColumns={@ORM\JoinColumn(name="child_id", referencedColumnName="id")}
 	 * )
@@ -61,12 +74,16 @@ class Group extends BaseGroup implements GroupInterface {
 	
 	/**
 	 * Constructor
+     *
+     * @param string $name
+     * @param array $roles
 	 */
-	public function __construct() {
+    public function __construct($name, $roles = array()) {
 		
-		// call parent constructor
-		parent::__construct();
-		
+        // setup name and roles
+        $this->name = $name;
+        $this->roles = $roles;
+        
 		// setup modified
 		if(is_null($this->getLastModified())) {
 			$this->setLastModified(new \DateTime());
@@ -92,7 +109,7 @@ class Group extends BaseGroup implements GroupInterface {
 	 * implement interface
 	 */
 	public function getGroup() {
-		$this->getName();
+		return $this->getName();
 	}
 	
 	/**
@@ -159,7 +176,7 @@ class Group extends BaseGroup implements GroupInterface {
 	 * @return Group
 	 */
 	public function removeChild($child) {
-		if (false !== $key = array_search($child, $this->children, true)) {
+		if(false !== $key = array_search($child, $this->children, true)) {
 			unset($this->children[$key]);
 			$this->children = array_values($this->children);
 		}
@@ -184,4 +201,94 @@ class Group extends BaseGroup implements GroupInterface {
 	public function getParents() {
 		return $this->parents;
 	}
+    
+    /**
+     * add role
+     *
+     * @param string $role
+     * @return Group
+     */
+    public function addRole($role) {
+        if(!$this->hasRole($role)) {
+            $this->roles[] = strtoupper($role);
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * get id
+     *
+     * @return int
+     */
+    public function getId() {
+        return $this->id;
+    }
+    
+    /**
+     * get name
+     *
+     * @return string
+     */
+    public function getName() {
+        return $this->name;
+    }
+    
+    /**
+     * checks if has role
+     *
+     * @param string $role
+     * @return bool
+     */
+    public function hasRole($role) {
+        return in_array(strtoupper($role), $this->roles, true);
+    }
+    
+    /**
+     * get roles
+     *
+     * @return array
+     */
+    public function getRoles() {
+        return $this->roles;
+    }
+    
+    /**
+     * remove role
+     *
+     * @param string $role
+     * @return Group
+     */
+    public function removeRole($role) {
+        if (false !== $key = array_search(strtoupper($role), $this->roles, true)) {
+            unset($this->roles[$key]);
+            $this->roles = array_values($this->roles);
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * set name
+     *
+     * @param string $name
+     * @return Group
+     */
+    public function setName($name) {
+        $this->name = $name;
+        
+        return $this;
+    }
+    
+    /**
+     * set roles
+     *
+     * @param array $roles
+     * @return Group
+     */
+    public function setRoles(array $roles) {
+        $this->roles = $roles;
+        
+        return $this;
+    }
 }

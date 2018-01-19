@@ -44,7 +44,7 @@ class ConfigCollection {
 	public function getConfigByName($name) {
 		
 		// get repository
-		$repositoryConfig = $this->em->getRepository('AppBundle:Config');
+		$repositoryConfig = $this->em->getRepository('JudoIntranet:Config');
 		// get config entity
 		$config = $repositoryConfig->findOneBy(
 			array(
@@ -54,7 +54,7 @@ class ConfigCollection {
 		);
 		
 		// check result
-		if(get_class($config) != 'AppBundle\Entity\\Config') {
+		if(get_class($config) != 'JudoIntranet\\Entity\\Config') {
 			return false;
 		} else {
 			return $config->getValue();

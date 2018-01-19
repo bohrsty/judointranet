@@ -23,7 +23,6 @@ framework:
         engines: ['twig']
     default_locale:  "%locale%"
     trusted_hosts:   ~
-    trusted_proxies: ~
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
         handler_id:  null
@@ -42,7 +41,7 @@ doctrine:
         user:     "%database_user%"
         password: "%database_password%"
         charset:  UTF8
-        schema_filter: ~^(orm_.*|migration_versions|fos_.*|son_.*)~
+        schema_filter: ~^(orm_.*|migration_versions|son_.*)~
 
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
@@ -61,17 +60,6 @@ doctrine_migrations:
     table_name: migration_versions
     name: JudoIntranet Migrations
 
-# user configuration
-fos_user:
-    db_driver: orm
-    firewall_name: main
-    user_class: JudoIntranet\Entity\User
-    from_email:
-        address: "%mailer_user%"
-        sender_name: "%mailer_user%"
-    group:
-        group_class: JudoIntranet\Entity\Group
-
 # Swiftmailer Configuration
 swiftmailer:
     transport: "%mailer_transport%"
@@ -88,7 +76,7 @@ sonatra_security:
     anonymous_role:
         enabled: true
     object_filter:
-        enabled: true # Enable the object filter (optional)
+        enabled: false # Enable the object filter (optional)
     role_hierarchy:
         enabled: true # Enable the role hierarchy for organizational context (optional)
         cache: null # Defined the service cache for role hierarchy (optional)

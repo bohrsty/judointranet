@@ -11,6 +11,7 @@
 
 namespace JudoIntranet\Security;
 
+use Symfony\Bridge\Doctrine\Security\User\EntityUserProvider;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +24,6 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use FOS\UserBundle\Security\UserProvider;
 use JudoIntranet\Legacy\Encoder\Md5Bcrypt;
 use JudoIntranet\Helper\ApiV2ResponseHelper;
 
@@ -53,8 +53,8 @@ class ApiAuthenticator extends AbstractGuardAuthenticator {
         
         // return the credentials
         return array(
-            'username' => $request->query->get('_username'),
-            'password' => $request->query->get('_password'),
+            'username' => $request->request->get('_username'),
+            'password' => $request->request->get('_password'),
         );
     }
     
@@ -62,9 +62,9 @@ class ApiAuthenticator extends AbstractGuardAuthenticator {
      * {@inheritdoc}
      */
     public function getUser($credentials, UserProviderInterface $userProvider) {
-        
+
         // check if the correct user provider is used
-        if(!$userProvider instanceof UserProvider) {
+        if(!$userProvider instanceof EntityUserProvider) {
             return;
         }
         

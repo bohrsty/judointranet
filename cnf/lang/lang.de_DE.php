@@ -1386,6 +1386,8 @@ $lang = array(
 	'Logo id not given' => 'Keine Logo-Id angegeben!',
 	'Deletion successful' => 'Erfolgreich gel&ouml;scht',
 	'The config for uploading logos is not complete, please check that none of the config entries starting with "logo." aren\'t empty.' => 'Die Konfiguration f&uuml;r das Hochladen von Logos ist nicht vollst&auml;ndig, bitte pr&uuml;fen, dass keiner der Konfigurationseintr&auml;ge, die mit "logo." beginnen, leer ist.',
+	'Failed to load navigation' => 'Laden der Navigation fehlgeschlagen',
+	'The configured navigation style is not supported, please set it to "accordion".' => 'Der Konfigurierte Stil f&uuml;r die Navigation ist nicht unterst&uuml;tzt, bitte auf "accordion" anpassen.',
 //	'' => '',
 );
 

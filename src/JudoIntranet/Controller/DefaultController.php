@@ -27,12 +27,14 @@ class DefaultController extends Controller {
      * @Route("/index.php", name="index")
      */
     public function indexAction(Request $request) {
-    	
+     
     	// execute old code and catch error 
     	try {
     		
     		// create object
     		$mainView = new \MainView();
+    		$mainView->setContainer($this->container);
+    		$mainView->setUser($this->getUser());
     		
     		// get HTML from smarty template, put into response and return
     		return new Response($mainView->toHtml(false));

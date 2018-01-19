@@ -41,13 +41,14 @@ class NaviCollection {
 	 */
 	/**
 	 * loads navi entries (level 0)
-	 * 
+	 *
+     * @param bool $isLegacy determines if navi tree should be returned in legacy style (default: false)
 	 * @return array
 	 */
-	public function loadNavi() {
+	public function loadNavi($isLegacy = false) {
 		
 		// get all entries level 0 (parent == NULL)
-		$repositoryNavi = $this->em->getRepository('AppBundle:Navi');
+		$repositoryNavi = $this->em->getRepository('JudoIntranet:Navi');
 		$naviEntries = $repositoryNavi->findBy(
 			array(
 				'parent' => null,
@@ -61,8 +62,8 @@ class NaviCollection {
 		$naviTree = array();
 		foreach($naviEntries as $entry) {
 			// exclude "homepage"
-			if($entry->getId() != 1) {
-				$naviTree[] = $entry->getNaviTree($this->gc->getConfigByName('navi.maxDepth'), 1);
+			if($entry->getId() != 1 || $isLegacy === true) {
+				$naviTree[] = $entry->getNaviTree($this->gc->getConfigByName('navi.maxDepth'), 1, $isLegacy);
 			}
 		}
 		

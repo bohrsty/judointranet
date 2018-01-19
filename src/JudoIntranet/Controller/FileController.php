@@ -31,6 +31,8 @@ class FileController extends Controller {
     		
     		// create object
     		$fileView = new \FileView();
+    		$fileView->setContainer($this->container);
+    		$fileView->setUser($this->getUser());
 			
     		// add doctrine to access it from inside
     		$fileView->setDoctrine($this->getDoctrine());

@@ -22,6 +22,8 @@
  * 
  * ********************************************************************************************/
 
+use JudoIntranet\Entity\User as SymfonyUser;
+
 // secure against direct execution
 if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index.php.");}
 
@@ -142,33 +144,63 @@ class User extends Object {
 	/*
 	 * constructor/destructor
 	 */
-	public function __construct($globalUser = true) {
+	public function __construct($globalUser = true, SymfonyUser $symfonyUser = null) {
 		
 		// check if to create local user
 		if($globalUser === true) {
 			
 			// initalize $_SESSION
-			$_SESSION['user'] = null;
+			$GLOBALS['user'] = null;
 		}
 		
-		// set userid default to 0
-		$this->set_id(0);
+		// set symfony user
+		$this->symfonyUser = $symfonyUser;
 		
-		// set loginstatus
-		$this->set_loggedin(false);
-		
-		// set lang
-		$this->set_lang('de_DE');
-		
-		// set login_message
-		$this->set_login_message('please log on');
-		
-		// set userinfo
-		$userinfo = array(
-				'name' => 'Public',
-				'username' => 'public',
-			);
-		$this->set_userinfo($userinfo);
+		// check symfony user
+		if(!is_null($symfonyUser)) {
+   
+			// set userid default to 0
+            $this->set_id($symfonyUser->getId());
+            
+            // set loginstatus
+            $this->set_loggedin(true);
+            
+            // set lang
+            $this->set_lang('de_DE');
+            
+            // set login_message
+            $this->set_login_message('');
+            
+            // set userinfo
+            $userinfo = array(
+                'name' => $symfonyUser->getName(),
+                'username' => $symfonyUser->getUsername(),
+            );
+            $this->set_userinfo($userinfo);
+            
+            // set groups
+            $this->set_groups($this->dbReadGroups());
+		} else {
+            
+            // set userid default to 0
+            $this->set_id(0);
+            
+            // set loginstatus
+            $this->set_loggedin(false);
+            
+            // set lang
+            $this->set_lang('de_DE');
+            
+            // set login_message
+            $this->set_login_message('please log on');
+            
+            // set userinfo
+            $userinfo = array(
+                'name' => 'Public',
+                'username' => 'public',
+            );
+            $this->set_userinfo($userinfo);
+        }
 	}
 	
 	/*
@@ -266,7 +298,7 @@ class User extends Object {
 		}
 		
 		// read config again
-		$this->setGc(new Config());
+		$this->setGc(new Config($this->symfonyUser));
 		
 		// logout-message
 		// smarty
@@ -301,7 +333,7 @@ class User extends Object {
 		
 		// prepare sql-statement
 		$sql = 'SELECT u.password,u.active
-				FROM user AS u
+				FROM orm_user AS u
 				WHERE u.username = \''.$db->real_escape_string($username).'\'';
 		
 		// execute statement
@@ -366,7 +398,7 @@ class User extends Object {
 		
 		// prepare sql-statement
 		$sql = 'SELECT *
-				FROM user AS u
+				FROM orm_user AS u
 				WHERE u.'.$db->real_escape_string($field).' = \''.$db->real_escape_string($value).'\'';
 		
 		// execute statement
@@ -423,7 +455,7 @@ class User extends Object {
 		
 		// prepare sql-statement
 		$sql = "SELECT `g`.`id`,`g`.`name`,`g`.`sortable`
-				FROM `group` AS g";
+				FROM `orm_group` AS g";
 		
 		// execute statement
 		$result = $db->query($sql);
@@ -499,7 +531,7 @@ class User extends Object {
 		
 		// prepare sql-statement
 		$sql = "SELECT u.username
-				FROM user AS u";
+				FROM orm_user AS u";
 		
 		// execute statement
 		$result = $db->query($sql);
@@ -558,7 +590,7 @@ class User extends Object {
 		
 		// prepare sql statement to get group membership
 		$sql = 'SELECT group_id
-				FROM user2groups
+				FROM orm_user_groups
 				WHERE user_id=\''.$db->real_escape_string($this->get_id()).'\'';
 		
 		// execute statement
@@ -568,7 +600,7 @@ class User extends Object {
 		$groups = array();
 		if($result) {
 			while(list($id) = $result->fetch_array(MYSQLI_NUM)) {
-				$groups[] = new Group($id);
+				$groups[] = new Group($id, $this->symfonyUser);
 			}
 		} else {
 			$n = null;
@@ -991,7 +1023,7 @@ class User extends Object {
 		// prepare sql
 		$sql = '
 				SELECT COUNT(*)
-				FROM `user`
+				FROM `orm_user`
 				WHERE `id`=#?
 				';
 		
@@ -1070,7 +1102,7 @@ class User extends Object {
 		
 		$sql = '
 			SELECT COUNT(*)
-			FROM `user2groups`
+			FROM `orm_user_groups`
 			WHERE `user_id`=#?
 		';
 		// get data

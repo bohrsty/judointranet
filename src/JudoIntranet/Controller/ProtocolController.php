@@ -31,6 +31,8 @@ class ProtocolController extends Controller {
     		
     		// create object
     		$protocolView = new \ProtocolView();
+    		$protocolView->setContainer($this->container);
+    		$protocolView->setUser($this->getUser());
     		
     		// get HTML from smarty template, put into response and return
     		return new Response($protocolView->toHtml(false));

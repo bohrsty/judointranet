@@ -108,18 +108,15 @@ class JtableField extends Object {
 		// generate "java script"
 		$jScript = '{';
 		
-		// prepare JSON value check
-		$servicesJson = new Services_JSON();
-		
 		// walk through settings
 		foreach($this->settings as $setting => $nameValue) {
 			
 			// check $setting value and name for valid JSON characters, if not display and child table
-			$name = $servicesJson->encode($setting);
+            $name = json_encode($setting);
 			if($setting == 'display' && $this->getChildTable() === true) {
 				$value = $nameValue;
 			} else {
-				$value = $servicesJson->encode($nameValue);
+                $value = json_encode($nameValue);
 			}
 			
 			// check quoting

@@ -301,7 +301,8 @@ if(!defined("JUDOINTRANET")) {die("Cannot be executed directly! Please use index
 		MYSQLI_ASSOC,
 		array());
 		if($result === false) {
-			throw new MysqlErrorException($this, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
+			$self = self;
+			throw new MysqlErrorException($self, '[Message: "'.Db::$error.'"][Statement: '.Db::$statement.']');
 		}
 		
 		// fill return array

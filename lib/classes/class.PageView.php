@@ -110,16 +110,6 @@ class PageView extends Object {
 		
 		// set logo
 		$this->getTpl()->assign('systemLogo', 'img/'.$this->getGc()->get_config('global.systemLogo'));
-		
-		// assign language
-		$shortLang = explode('_', $this->getUser()->get_lang());
-		$this->getTpl()->assign('lLang', $this->getUser()->get_lang());
-		$this->getTpl()->assign('sLang', $shortLang[0]);
-		
-		// check if webservice runner is added and add if not
-		if($this->getUser()->get_loggedin() === true) {
-			$this->addWebserviceRunner();
-		}
 	}
 	
 	/*
@@ -275,7 +265,7 @@ class PageView extends Object {
 	/**
 	 * put_userinfo sets the userinfo of the actual user on page
 	 * 
-	 * @return void
+	 * @return string
 	 */
 	protected function put_userinfo() {
 		
@@ -310,7 +300,7 @@ class PageView extends Object {
 			$sLogoutImg->assign('img', $logoutArray);
 			$logoutImg = $sLogoutImg->fetch('smarty.img.tpl');
 			
-			$sLogoutLink->assign('params', '');
+			$sLogoutLink->assign('params', 'class="logoutLink"');
 			$sLogoutLink->assign('href', 'index.php?id=logout');
 			$sLogoutLink->assign('title', _l('logout'));
 			$sLogoutLink->assign('content', $logoutImg._l('logout'));
@@ -382,7 +372,7 @@ class PageView extends Object {
 	 * 
 	 * @param string $template name of the template file to use
 	 * @param bool $show uses smarty display method to show, if true, smarty fetch method if false
-	 * @return void
+	 * @return mixed
 	 */
 	public function showPage($template, $show=true) {
 		
@@ -402,40 +392,59 @@ class PageView extends Object {
 		$navi = '';
 		$file = self::requestedFilename();
 		$param = $this->get('id');
-		$naviItems = $this->naviFromDb();
+		$naviItems = $this->getContainer()->get('navi_collection')->loadNavi(true);
 		$active = 0;
 		
 		// get navi position for fileParam
-		$naviPosition = array();
-		foreach($naviItems as $position => $naviItem) {
-			list($positionFile, $positionParam) = explode('|',$naviItem->getFileParam());
-			$naviPosition[$positionFile] = $position;
-		}
-		
-		// walk through $naviItems
-		for($i=0; $i<count($naviItems); $i++){
+        $naviPosition = array();
+        for($i = 0; $i < count($naviItems); $i++) {
+            $naviPosition[$naviItems[$i]['file']] = $naviItems[$i]['position'];
 			
-			// check active
-			list($thisFile, $thisParam) = explode('|',$naviItems[$i]->getFileParam());
-			// check different php files
-			if($file == 'announcement.php') {
-				$active = $naviPosition['calendar.php'];
-			} else {
-				if($thisFile == $file) {
-					$active = $i;
+            // check homepage
+			if($naviItems[$i]['id'] == 1) {
+
+				// check login status
+				if($this->getUser()->get_loggedin() === true) {
+					// remove login
+					if(isset($naviItems[$i]['subItems'][0])) {
+                        unset($naviItems[$i]['subItems'][0]);
+                        $naviItems[$i]['subItems'] = array_merge($naviItems[$i]['subItems']);
+                    }
+				} else {
+                    // remove logout
+					if(isset($naviItems[$i]['subItems'][1])) {
+                        unset($naviItems[$i]['subItems'][1]);
+                    }
 				}
 			}
-			
-			// generate HTML
-			$navi .= $naviItems[$i]->output($file, $param).PHP_EOL;
-		}
-		$this->getTpl()->assign('accordionActive', $active);
-		$this->getTpl()->assign('navigation', $navi);
+        }
+        
+		// check active
+        foreach($naviPosition as $thisFile => $position){
+            
+            // check different php files
+            if($file == 'announcement.php') {
+                $active = $naviPosition['calendar.php'];
+            } else {
+                if($thisFile == $file) {
+                    $active = $position;
+                }
+            }
+        }
+		$naviStyle = $this->getGc()->get_config('navi.style');
 		
-		// check config for accordion
-		if($this->getGc()->get_config('navi.style') == 'accordion') {
-			$this->getTpl()->assign('accordionJs', true);
-		}
+		// fetch complete navi
+		$naviTemplate = new JudoIntranetSmarty();
+		$naviTemplate->assign('naviItems', $naviItems);
+        $naviTemplate->assign('naviStyle', $naviStyle);
+        $naviTemplate->assign('file', $file);
+        $naviTemplate->assign('param', $param);
+
+        // assign global template vars
+        $this->getTpl()->assign('accordionActive', $active);
+        $this->getTpl()->assign('naviStyle', $naviStyle);
+        $this->getTpl()->assign('navigation', $naviTemplate->fetch('smarty.naviSymfony.tpl'));
+        
 		
 		// smarty-display
 		if($show === true) {
@@ -582,7 +591,7 @@ class PageView extends Object {
 			while(list($naviId) = $result->fetch_array(MYSQLI_NUM)) {
 				
 				// get navi object
-				$tempNavi = new Navi($naviId);
+				$tempNavi = new Navi($naviId, $this->symfonyUser);
 				
 				// check permissions
 				if($tempNavi->subItemsPermitted()) {
@@ -825,12 +834,12 @@ class PageView extends Object {
 			if($this->post($permissionId) === false) {
 				
 				// set default value
-				$permissions[$groupId]['group'] = new Group($groupId);
+				$permissions[$groupId]['group'] = new Group($this->symfonyUser, $groupId);
 				$permissions[$groupId]['value'] = 0;
 			} else {
 				
 				// set permission
-				$permissions[$groupId]['group'] = new Group($groupId);
+				$permissions[$groupId]['group'] = new Group($this->symfonyUser, $groupId);
 				$permissions[$groupId]['value'] = $this->post($permissionId);
 			}
 		}
@@ -884,7 +893,32 @@ class PageView extends Object {
 	 * @return void
 	 */
 	final public function toHtml($show=true) {
-		
+        
+        // assign language
+        $shortLang = explode('_', $this->getUser()->get_lang());
+        $this->getTpl()->assign('lLang', $this->getUser()->get_lang());
+        $this->getTpl()->assign('sLang', $shortLang[0]);
+        
+        // assign second navi ids
+        $secondConfig = json_decode($this->getGc()->get_config('navi.secondJs'), true);
+        if(is_null($secondConfig)) {
+            $secondConfig = array();
+        }
+        $keys = array_keys($secondConfig);
+        $secondIds = implode(',', $keys);
+        $secondJs = false;
+        if(count($secondIds) > 0) {
+            $secondJs = true;
+        }
+        $this->getTpl()->assign('naviSecondJs', $secondJs);
+        $this->getTpl()->assign('naviSecondIds', $secondIds);
+        $this->getTpl()->assign('naviSecondCloseText', _l('close'));
+        
+        // check if webservice runner is added and add if not
+        if($this->getUser()->get_loggedin() === true) {
+            $this->addWebserviceRunner();
+        }
+	    
 		// run init
 		if($show === true) {
 			$this->init($show);

@@ -122,9 +122,14 @@ class Group extends Object {
 		$db = Db::newDb();
 		
 		// prepare sql statement to get group details
-		$sql = 'SELECT name,parent,valid
-				FROM groups
-				WHERE id=\''.$db->real_escape_string($this->getId()).'\'';
+		$sql = 'SELECT
+					`name`,
+					(SELECT `fgg`.`parent_id`
+					FROM `orm_group_groups` AS `fgg`
+					WHERE `child_id` = '.$db->real_escape_string($this->getId()).') AS `parent`,
+					`valid`
+				FROM `orm_group`
+				WHERE `id`=\''.$db->real_escape_string($this->getId()).'\'';
 		
 		// execute statement
 		$result = $db->query($sql);
@@ -138,9 +143,9 @@ class Group extends Object {
 		}
 		
 		// prepare sql statement to get subgroups
-		$sql = 'SELECT id
-				FROM groups
-				WHERE parent=\''.$db->real_escape_string($this->getId()).'\'';
+		$sql = 'SELECT `child_id`
+				FROM `orm_group_groups`
+				WHERE `parent_id`=\''.$db->real_escape_string($this->getId()).'\'';
 		
 		// execute statement
 		$result = $db->query($sql);
@@ -219,7 +224,7 @@ class Group extends Object {
 		
 		// prepare sql statement to get group details
 		$sql = 'SELECT id
-				FROM groups
+				FROM orm_group
 				WHERE parent=\''.$db->real_escape_string('-1').'\'';
 		
 		// execute statement
@@ -317,7 +322,7 @@ class Group extends Object {
 		// prepare sql
 		$sql = '
 				SELECT COUNT(*)
-				FROM `groups`
+				FROM `orm_group`
 				WHERE `id`=#?
 				';
 		

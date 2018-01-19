@@ -12,6 +12,10 @@
 namespace JudoIntranet\Migrate;
 
 use Doctrine\DBAL\Connection;
+use JudoIntranet\Entity\Navi;
+use JudoIntranet\Entity\Role;
+use Psr\Container\ContainerInterface;
+use Sonatra\Component\Security\Exception\SecurityException;
 
 /**
  * collection of legacy methods to migrate users, groups etc. to fos-user-bundle and sonatra-security-bundle
@@ -21,7 +25,7 @@ class DbMigrateSecurity extends DbMigrate {
 	/**
 	 * constructor
 	 * 
-	 * @param Doctrine\DBAL\Connection $connection
+	 * @param Connection $connection
 	 */
 	public function __construct(Connection $connection) {
 		
@@ -215,4 +219,97 @@ class DbMigrateSecurity extends DbMigrate {
 		
 		return array('retval' => true, 'result' => $return);
 	}
+    
+    public function migrateNaviPermissionsUp(ContainerInterface $container) {
+        
+        // get entity manager
+        $em = $container->get('doctrine.orm.entity_manager');
+        // get sharing and permission manager
+        $spm = $container->get('sharing_permission_manager');
+        
+        // add custom anonymous role
+        $rolePublic = new Role('ROLE_PUBLIC');
+        $em->persist($rolePublic);
+        $em->flush();
+        
+        // get roles
+        $roleRepository = $em->getRepository('JudoIntranet:Role');
+        $roleUser = $roleRepository->findOneByName('ROLE_USER');
+    
+        // add all users to ROLE_USER
+        $userRepository = $em->getRepository('JudoIntranet:User');
+        $allUsers = $userRepository->findAll();
+        foreach($allUsers as $user) {
+            $user->addRole($roleUser);
+            $em->persist($user);
+            $em->flush();
+        }
+        
+        // catch exception on adding permissions/sharings
+        try {
+        
+            // add permissions for navi entity
+            $readNavi = $spm->addPermission('read', Navi::class);
+            
+            // grant read permission for navi on public and user role
+            $spm->grant($readNavi, $rolePublic);
+            $spm->grant($readNavi, $roleUser);
+            
+            // get legacy permissions for legacy Navi class
+            // get all used groups
+            $groupRepository = $em->getRepository('JudoIntranet:Group');
+            $usedGroups = $this->connection->fetchAll('
+                SELECT DISTINCT group_id
+                FROM permissions
+                WHERE item_table = "navi"
+            ');
+            $securityEntities = array();
+            foreach($usedGroups as $usedGroup) {
+                if($usedGroup['group_id'] == 0) {
+                    $securityEntities[0] = $rolePublic;
+                } else {
+                    $securityEntities[$usedGroup['group_id']] = $groupRepository->findOneById($usedGroup['group_id']);
+                }
+            }
+            // get legacy permission entries
+            $legacyPermissions = $this->connection->fetchAll('
+                SELECT item_id, group_id
+                FROM permissions AS p
+                WHERE p.item_table = "navi"
+                AND EXISTS (
+                	SELECT 1
+                    FROM orm_navi
+                    WHERE id = p.item_id
+                )
+            ');
+            
+            // add sharings based on legacy permissions
+            $naviRepository = $em->getRepository('JudoIntranet:Navi');
+            foreach($legacyPermissions as $legacyPermission) {
+                
+                // get navi entity
+                $navi = $naviRepository->findOneById($legacyPermission['item_id']);
+                // add sharing
+                $spm->share($navi, $securityEntities[$legacyPermission['group_id']]);
+                // check parent
+                if(!empty($navi->getParent()) && !$spm->isShared($navi->getParent(), $securityEntities[$legacyPermission['group_id']])) {
+                    $spm->share($navi->getParent(), $securityEntities[$legacyPermission['group_id']]);
+                }
+            }
+            
+            // switch login and logout show to true
+            $login = $naviRepository->findOneById(2);
+            $logout = $naviRepository->findOneById(3);
+            $login->setShow(true);
+            $logout->setShow(true);
+            $em->persist($login);
+            $em->persist($logout);
+            $em->flush();
+            
+        } catch(SecurityException $e) {
+            return array('retval' => false, 'result' => $e->getMessage());
+        }
+        
+        return array('retval' => true, 'result' => '');
+    }
 }

@@ -57,7 +57,7 @@ class InternalApiJtable extends InternalApi {
 	 * 
 	 * @return array array containing the result data
 	 */
-	protected function result() {
+	public function result() {
 		
 		// switch $_GET['action']
 		switch($this->get('action')) {

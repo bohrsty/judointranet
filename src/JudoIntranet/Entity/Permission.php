@@ -54,9 +54,6 @@ class Permission extends BasePermission {
 	 */
 	public function __construct() {
 		
-		// call parent constructor
-		parent::__construct();
-		
 		// setup modified
 		if(is_null($this->getLastModified())) {
 			$this->setLastModified(new \DateTime());
