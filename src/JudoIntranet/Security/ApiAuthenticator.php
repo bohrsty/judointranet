@@ -44,12 +44,20 @@ class ApiAuthenticator extends AbstractGuardAuthenticator {
     /**
      * {@inheritdoc}
      */
-    public function getCredentials(Request $request) {
+    public function supports(Request $request) {
         
         // check if authenticator has to be used
         if($request->getPathInfo() != '/api/v2/login' || !$request->isMethod('POST')) {
-            return;
+            return false;
+        } else {
+            return true;
         }
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function getCredentials(Request $request) {
         
         // return the credentials
         return array(
@@ -65,7 +73,7 @@ class ApiAuthenticator extends AbstractGuardAuthenticator {
 
         // check if the correct user provider is used
         if(!$userProvider instanceof EntityUserProvider) {
-            return;
+            return null;
         }
         
         // load user

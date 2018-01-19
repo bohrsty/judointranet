@@ -27,7 +27,7 @@ use Fxp\Component\Security\Model\UserInterface;
  * @ORM\Table(name="orm_user")
  * @ORM\HasLifecycleCallbacks
  */
-class User implements UserInterface {
+class User implements UserInterface, \Serializable {
 	
     /*
      * variables
@@ -186,47 +186,30 @@ class User implements UserInterface {
     /**
      * {@inheritdoc}
      */
-    public function serialize()
-    {
+    public function serialize() {
         return serialize(array(
             $this->password,
             $this->salt,
-            $this->usernameCanonical,
             $this->username,
             $this->enabled,
             $this->id,
             $this->email,
-            $this->emailCanonical,
         ));
     }
     
     /**
      * {@inheritdoc}
      */
-    public function unserialize($serialized)
-    {
-        $data = unserialize($serialized);
-        
-        if (13 === count($data)) {
-            // Unserializing a User object from 1.3.x
-            unset($data[4], $data[5], $data[6], $data[9], $data[10]);
-            $data = array_values($data);
-        } elseif (11 === count($data)) {
-            // Unserializing a User from a dev version somewhere between 2.0-alpha3 and 2.0-beta1
-            unset($data[4], $data[7], $data[8]);
-            $data = array_values($data);
-        }
+    public function unserialize($serialized) {
         
         list(
             $this->password,
             $this->salt,
-            $this->usernameCanonical,
             $this->username,
             $this->enabled,
             $this->id,
             $this->email,
-            $this->emailCanonical
-            ) = $data;
+        ) = unserialize($serialized);
     }
     
     /**
@@ -235,7 +218,6 @@ class User implements UserInterface {
      * @return void
      */
     public function eraseCredentials() {
-        $this->password = '';
     }
     
     /**
@@ -488,7 +470,7 @@ class User implements UserInterface {
     /**
      * add group
      *
-     * @param GroupInterface
+     * @param GroupInterface $group
      * @return User
      */
     public function addGroup(GroupInterface $group) {
@@ -502,7 +484,7 @@ class User implements UserInterface {
     /**
      * remove group
      *
-     * @param GroupInterface
+     * @param GroupInterface $group
      * @return User
      */
     public function removeGroup(GroupInterface $group) {

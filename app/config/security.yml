@@ -19,6 +19,7 @@ security:
             security: false
 
         main:
+            logout_on_user_change: true
             anonymous: true
             anonymous_role:
                 role: ROLE_PUBLIC

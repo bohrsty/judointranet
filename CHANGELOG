@@ -65,6 +65,9 @@ file that was distributed with this source code.
 [cc] moved react entry point into twig template and adjusted default controller
 --
 [!!] renamed sonatra to fxp and adjusted table names, config and namespaces
+--
+[!!] fixed deprecations
+[!!] fixed some leftovers from removing FOSUserBundle
 
 
 
