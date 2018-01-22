@@ -28,7 +28,7 @@ class JudoIntranet extends Bundle {
 	public static function getVersion() {
 		
 		// read composer.json
-		$json = file_get_contents(__DIR__.'/../../composer.json');
+		$json = file_get_contents(__DIR__.'/../composer.json');
 		
 		// get json as array
 		$data = json_decode($json, true);

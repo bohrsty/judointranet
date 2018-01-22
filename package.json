@@ -18,7 +18,8 @@
 		"react": "15.*",
 		"react-dom": "15.*",
 		"react-router": "4.*",
-		"react-translate-maker": "0.*",
+		"react-translate-maker": "1.*",
+		"translate-maker": "0.5.*",
 		"webpack": "1.*",
 		"babel-loader": "6.*",
 		"css-loader": "0.*",
@@ -37,6 +38,8 @@
 		"react-bs-notifier": "4.*",
 		"react-bootstrap-table": "2.5.5",
 		"prop-types": "15.*",
-		"react-select": "1.0.0-rc.5"
+		"react-select": "1.*",
+		"react-router-dom": "4.*",
+		"react-provide-props": "2.*"
 	}
 }

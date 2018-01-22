@@ -41,14 +41,14 @@ mock*
 /var/sessions/*
 !var/sessions/.gitkeep
 /vendor/
-/web/bundles/
-/web/config.php
-/web/.htaccess
-/web/css
-/web/js
-/web/img
-/web/templates
-/web/process.php
+/public/bundles/
+/public/config.php
+/public/.htaccess
+/public/css
+/public/js
+/public/img
+/public/templates
+/public/process.php
 /css/zebra_form
 
 # webpack/npm

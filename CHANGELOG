@@ -68,6 +68,9 @@ file that was distributed with this source code.
 --
 [!!] fixed deprecations
 [!!] fixed some leftovers from removing FOSUserBundle
+--
+[cc] moved files in folders in preparation for update on symfony 4 and symfony flex
+[cc] update a few node packages and fixed bugs resulting of it
 
 
 

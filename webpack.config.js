@@ -7,10 +7,10 @@ module.exports = {
 	},
 	entry: [
 		"babel-polyfill",
-		"./app/Resources/reactjs/app.js"
+		"./assets/reactjs/app.js"
 	],
 	output: {
-		path: __dirname + "/web/assets/",
+		path: __dirname + "/public/assets/",
 		publicPath: "assets/",
 		filename: "app.js"
 	},

@@ -210,7 +210,7 @@ class App extends Component {
 		
 		// set locale for date picker (moment)
 		moment.locale(this.state.locale);
-				
+
 		return (
 			<LocaleProvider data={this.locale.data} locale={this.state.locale}>
 				<div>

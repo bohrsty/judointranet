@@ -52,7 +52,7 @@ doctrine:
                         enabled:    true
         
 doctrine_migrations:
-    dir_name: "%kernel.root_dir%/Migrations"
+    dir_name: "%kernel.root_dir%/../src/Migrations"
     namespace: JudoIntranetMigrations
     table_name: migration_versions
     name: JudoIntranet Migrations

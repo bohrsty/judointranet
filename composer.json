@@ -5,7 +5,7 @@
     "version": "2.1.0",
     "autoload": {
         "psr-4": {
-            "": "src/"
+            "JudoIntranet\\": "src/"
         },
         "classmap": [
             "lib/",
@@ -69,18 +69,18 @@
         "symfony-app-dir": "app",
         "symfony-bin-dir": "bin",
         "symfony-var-dir": "var",
-        "symfony-web-dir": "web",
+        "symfony-web-dir": "public",
         "symfony-tests-dir": "tests",
         "symfony-assets-install": "relative",
         "symlinks": {
-        	"js": "web/js",
-        	"css": "web/css",
-        	"img": "web/img",
-        	"templates": "web/templates",
-        	"web/mimes.json": "vendor/stefangabos/zebra_form/mimes.json",
-        	"vendor/stefangabos/zebra_form/process.php": "web/process.php",
-        	"vendor/stefangabos/zebra_form/public/css": "web/css/zebra_form",
-        	"vendor/stefangabos/zebra_form/public/javascript/zebra_form.js": "web/js/zebra_form.js"
+        	"js": "public/js",
+        	"css": "public/css",
+        	"img": "public/img",
+        	"templates": "public/templates",
+        	"public/mimes.json": "vendor/stefangabos/zebra_form/mimes.json",
+        	"vendor/stefangabos/zebra_form/process.php": "public/process.php",
+        	"vendor/stefangabos/zebra_form/public/css": "public/css/zebra_form",
+        	"vendor/stefangabos/zebra_form/public/javascript/zebra_form.js": "public/js/zebra_form.js"
         }
     }
 }
