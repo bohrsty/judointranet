@@ -28,4 +28,5 @@ security:
                 authenticators:
                     - api_authenticator
             logout:
-                path: /api/v2/logout        
+                path: /api/v2/logout
+                success_handler: logout_success_handler

@@ -23,3 +23,6 @@ services:
     sharing_permission_manager:
         class: JudoIntranet\Security\SharingPermissionManager
         arguments: ["@doctrine.orm.entity_manager"]
+
+    logout_success_handler:
+        class: JudoIntranet\Security\LogoutSuccessHandler

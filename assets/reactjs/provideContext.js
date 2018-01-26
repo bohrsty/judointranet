@@ -19,10 +19,14 @@ import createProvider from 'react-provide-props';
 export default createProvider('ContextProvider', (props, context) => ({
 	addNotification: context.addNotification,
 	startLoading: context.startLoading,
-	stopLoading: context.stopLoading
+	stopLoading: context.stopLoading,
+	user: context.user,
+    reloadInit: context.reloadInit
 }), {
 }, {
 	addNotification: PropTypes.func.isRequired,
 	startLoading: PropTypes.func.isRequired,
-	stopLoading: PropTypes.func.isRequired
+	stopLoading: PropTypes.func.isRequired,
+	user: PropTypes.object.isRequired,
+    reloadInit: PropTypes.func.isRequired
 });

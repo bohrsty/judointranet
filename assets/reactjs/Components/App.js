@@ -16,12 +16,14 @@ import MainMenu from './MainMenu';
 import {LocaleProvider} from 'react-translate-maker';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import AppInit from './AppInit';
 import IndexPage from './IndexPage';
 import TodoList from './TodoList';
 import Faq from './Faq';
 import Notification from './Notification';
 import LoadingModal from './LoadingModal';
 import Calendar from './Calendar';
+import UserProfile from './UserProfile';
 
 
 /**
@@ -36,35 +38,29 @@ class App extends Component {
 		
 		// parent constructor
 		super(props);
-		
-		// prepare locale
-		this.locale = {};
+
 		// prepare menu
 		this.menu = {};
 		
 		// set initial state
 		this.state = {
-			locale: '',
+			currentLocale: 'de_DE',
+            locale: {
+			    data:{
+			        de_DE: {}
+                },
+                locales: []
+            },
+            config: {},
 			alerts: [],
-			loading: []
-		}
-	}
-	
-	
-	/**
-	 * updates given parts of the state
-	 * 
-	 * @param state the state name to be updated
-	 * @param value the value for state
-	 */
-	updateState(state, value) {
-		
-		var currentState = this.state;
-		
-		// check if state exists
-		if(this.state[state] != undefined) {
-			currentState[state] = value;
-			this.setState(currentState);
+			loading: [],
+			user: {
+				id: 0,
+				username: '',
+				name: '',
+                loggedIn: false
+            },
+            reloadInit: false
 		}
 	}
 	
@@ -74,10 +70,9 @@ class App extends Component {
 	 * executed directly before component will be mounted to DOM
 	 */
 	componentWillMount() {
-		
-		// get mock locale (to be replaced by AJAX call to api)
-		this.locale = require('../mockLocale');
-		this.updateState('locale', this.locale.defaultLocale);
+
+        // mock locale
+        this.setState({locale: require('../mockLocale')});
 		
 		/*
 		 * mock menu (old and new), to be replaced with AJAX call to api
@@ -117,7 +112,9 @@ class App extends Component {
 		return {
 		    addNotification: this.addNotification.bind(this),
 		    startLoading: this.startLoading.bind(this),
-		    stopLoading: this.stopLoading.bind(this)
+		    stopLoading: this.stopLoading.bind(this),
+            user: this.state.user,
+            reloadInit: this.reloadInit.bind(this)
 	    };
 	}
 	
@@ -126,12 +123,12 @@ class App extends Component {
 	 * addNotification(params)
 	 * given to context to add notifications
 	 * 
-	 * @param object params the parameter object for the notification
+	 * @param params the parameter object for the notification
 	 */
 	addNotification(params) {
 		
 		// get current alerts
-		var alerts = this.state.alerts;
+		let alerts = this.state.alerts;
 		
 		// add new alert
 		alerts.unshift({
@@ -143,60 +140,110 @@ class App extends Component {
 		});
 		
 		// update state
-		this.updateState('alerts', alerts);
+		this.setState({alerts: alerts});
 	}
+
+
+    /**
+     * setUser(user)
+     * sets the given user
+     *
+     * @param user the user to set
+     */
+    setUser(user) {
+
+        // set state
+        this.setState({user: user});
+    }
+
+
+    /**
+     * setConfig(config)
+     * sets the given config
+     *
+     * @param config the config to set
+     */
+    setConfig(config) {
+
+        // set state
+        this.setState({config: config});
+    }
+
+
+    /**
+     * setLocale(locale)
+     * sets the given config
+     *
+     * @param locale the locale to set
+     */
+    setLocale(locale) {
+
+        // set state
+        this.setState({locale: locale});
+    }
 	
 	
 	/**
 	 * handleLocaleChange(locale)
-	 * eventhandler to handle the locale change
+	 * event handler to handle the locale change
 	 * 
-	 * @param string locale the new locale to change to
+	 * @param locale the new locale to change to
 	 */
 	handleLocaleChange(locale) {
-		
-		this.updateState('locale', locale);
+
+		this.setState({locale: locale});
 	}
     
     
     /**
      * startLoading(loader)
-     * eventhandler to start loading state
+     * event handler to start loading state
      * 
-     * @param string loader the loader to remember
+     * @param loader the loader to remember
      */
 	startLoading(loader) {
         
 	    // get current state
-	    var loading = this.state.loading;
+	    let loading = this.state.loading;
 	    
 	    // add loader
 	    loading.push(loader);
 	    
 	    // update state
-        this.updateState('loading', loading);
+		this.setState({loading: loading});
     }
     
     
     /**
      * stopLoading(loader)
-     * eventhandler to start loading state
+     * event handler to start loading state
      * 
-     * @param string loader the loader to remove
+     * @param loader the loader to remove
      */
     stopLoading(loader) {
         
         // get current state
-        var loading = this.state.loading;
+        let loading = this.state.loading;
         
         // check loader
-        var index = loading.indexOf(loader);
+        let index = loading.indexOf(loader);
         if(index > -1) {
             loading.splice(index, 1);
         }
         
         // update state
-        this.updateState('loading', loading);
+        this.setState({loading: loading});
+    }
+
+
+    /**
+     * reloadInit()
+     * event handler to start loading state
+     */
+    reloadInit(bool) {
+
+        // update state
+        this.setState({reloadInit: bool});
     }
 	
 	
@@ -209,26 +256,30 @@ class App extends Component {
 		document.title = 'JudoIntranet';
 		
 		// set locale for date picker (moment)
-		moment.locale(this.state.locale);
+		moment.locale(this.state.currentLocale);
 
 		return (
-			<LocaleProvider data={this.locale.data} locale={this.state.locale}>
+			<LocaleProvider data={this.state.locale.data} locale={this.state.currentLocale}>
 				<div>
-					{/* mocked loggedin user, TODO: get from session/cookie */}
+                    <AppInit
+                        setConfig={this.setConfig.bind(this)}
+                        setUser={this.setUser.bind(this)}
+                        reload={this.state.reloadInit}
+                    />
 					<MainMenu
 						navitems={this.menu}
-						user="Administrator"
-						locales={this.locale.locales}
+						locales={this.state.locale.locales}
 						handleLocaleChange={this.handleLocaleChange.bind(this)}
 					/>
 					<Switch>
 						<Route exact path="/" children={() => <IndexPage pageContent="homePage" />} />
-						<Route path="/todolist" component={TodoList} />
+                        <Route path="/profile" component={UserProfile} />
+                        <Route path="/todolist" component={TodoList} />
 						<Route path="/faq" component={Faq} />
 						<Route path="/calendar" component={Calendar} />
 					</Switch>
 					<Notification alerts={this.state.alerts} />
-				    {this.state.loading.length != 0 ? <LoadingModal show={true} /> : ''}
+				    {this.state.loading.length !== 0 ? <LoadingModal show={true} /> : ''}
 				</div>
 			</LocaleProvider>
 		);
@@ -240,7 +291,9 @@ class App extends Component {
 App.childContextTypes = {
 	addNotification: PropTypes.func.isRequired,
 	startLoading: PropTypes.func.isRequired,
-	stopLoading: PropTypes.func.isRequired
+	stopLoading: PropTypes.func.isRequired,
+    user: PropTypes.object.isRequired,
+    reloadInit: PropTypes.func.isRequired
 };
 
 

@@ -81,7 +81,7 @@ class ApiAuthenticator extends AbstractGuardAuthenticator {
             return $userProvider->loadUserByUsername($credentials['username']);
         }
         catch(UsernameNotFoundException $e) {
-            throw new CustomUserMessageAuthenticationException('User not found');
+            throw new CustomUserMessageAuthenticationException('API.login.unknownUser');
         }
     }
     
@@ -97,7 +97,7 @@ class ApiAuthenticator extends AbstractGuardAuthenticator {
         if($encoder->isPasswordValid($user->getPassword(), $credentials['password'], null)) {
             return true;
         }
-        throw new CustomUserMessageAuthenticationException('Wrong password');
+        throw new CustomUserMessageAuthenticationException('API.login.wrongPassword');
     }
     
     /**
@@ -142,7 +142,7 @@ class ApiAuthenticator extends AbstractGuardAuthenticator {
     public function start(Request $request, AuthenticationException $authException = null) {
         
         // generate api response
-        $response = ApiV2ResponseHelper::getApiResponse('User not logged in, please login.', $this->router->generate('login'), true);
+        $response = ApiV2ResponseHelper::getApiResponse('API.login.forbidden', $this->router->generate('login'), true);
         
         // return response
         return new JsonResponse($response, Response::HTTP_FORBIDDEN);

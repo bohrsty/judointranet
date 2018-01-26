@@ -9,7 +9,7 @@
 }
 
 .noMarginBottom {
-	margin-bottom: 0px;
+	margin-bottom: 0;
 }
 
 .notSelectableText {
@@ -69,11 +69,21 @@ p.noMargin {
 
 .clickable-blue:hover,
 .clickable-blue:focus {
-  color: #23527c;
-  text-decoration: underline;
+    color: #23527c;
+    text-decoration: underline;
 }
 
 .clickable-blue:focus {
-  outline: 5px auto -webkit-focus-ring-color;
-  outline-offset: -2px;
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;
+}
+
+.empty-row {
+    height: 2em;
+}
+
+.bsStyle-danger {
+    background-color: #f2dede;
+	border-color: #ebccd1;
+	color: #a94442;
 }
